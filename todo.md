@@ -12,3 +12,8 @@
 - [x] Responsive design for mobile and desktop
 - [x] Elegant and polished visual design throughout
 - [x] Owner notification on new submissions
+
+## Updates
+- [x] Rename website to "Add a Pair of Chopsticks" / "加一雙筷子" concept
+- [x] Update pilot year from 2025 to 2026
+- [x] Remove trust indicators section (Airbnb text, countries, families, location)

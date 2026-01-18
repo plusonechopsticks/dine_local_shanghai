@@ -43,7 +43,7 @@ function Navigation() {
         <a href="#" className="flex items-center gap-2">
           <Utensils className="h-6 w-6 text-primary" />
           <span className="font-semibold text-lg" style={{ fontFamily: "var(--font-serif)" }}>
-            Dine Local
+            加一雙筷子
           </span>
         </a>
         <div className="hidden md:flex items-center gap-8">
@@ -90,16 +90,14 @@ function HeroSection() {
             className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            Dine at Local Family Homes
-            <span className="block text-primary mt-2">A New Authentic Travel Experience</span>
+            加一雙筷子
+            <span className="block text-primary mt-2 text-2xl md:text-3xl lg:text-4xl">Add a Pair of Chopsticks</span>
           </h1>
 
           {/* Subheading */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
             Experience genuine hospitality by sharing dinner with local families in Shanghai.
-            Not a restaurant—a real family dinner where they simply{" "}
-            <span className="text-foreground font-medium">"add an extra pair of chopsticks"</span>{" "}
-            <span className="text-muted-foreground/80">(加一雙筷子)</span>.
+            Not a restaurant—a real family dinner where they simply add an extra pair of chopsticks for you.
           </p>
 
           {/* CTA buttons */}
@@ -117,24 +115,7 @@ function HeroSection() {
             </a>
           </div>
 
-          {/* Trust indicators */}
-          <div className="mt-12 pt-8 border-t border-border/50">
-            <p className="text-sm text-muted-foreground mb-4">Think Airbnb, but for dinner tables</p>
-            <div className="flex flex-wrap items-center justify-center gap-8 text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                <span className="text-sm">60+ Countries Explored</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                <span className="text-sm">5-10 Pilot Families</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                <span className="text-sm">Shanghai, China</span>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </section>
@@ -406,7 +387,7 @@ function AboutSection() {
               <div className="text-sm text-muted-foreground">Pilot Host Families</div>
             </div>
             <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="text-3xl font-bold text-primary mb-2">2025</div>
+              <div className="text-3xl font-bold text-primary mb-2">2026</div>
               <div className="text-sm text-muted-foreground">Launch Year</div>
             </div>
             <div className="p-6 rounded-xl bg-card border border-border/50">
@@ -578,14 +559,14 @@ function Footer() {
           <div className="flex items-center gap-2">
             <Utensils className="h-5 w-5 text-primary" />
             <span className="font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
-              Dine Local Shanghai
+              加一雙筷子 · Add a Pair of Chopsticks
             </span>
           </div>
           <p className="text-sm text-muted-foreground text-center">
             Let's make travel more meaningful, one dinner table at a time. 🥢
           </p>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Dine Local. All rights reserved.
+            © {new Date().getFullYear()} 加一雙筷子. All rights reserved.
           </p>
         </div>
       </div>
