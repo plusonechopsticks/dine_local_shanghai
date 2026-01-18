@@ -8,18 +8,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
-  Utensils,
   Users,
   Heart,
   Globe,
   Home as HomeIcon,
-  MapPin,
   ChefHat,
   MessageCircle,
   ArrowRight,
   Check,
   Sparkles,
 } from "lucide-react";
+import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 
 export default function Home() {
   return (
@@ -41,9 +40,9 @@ function Navigation() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container flex items-center justify-between h-16">
         <a href="#" className="flex items-center gap-2">
-          <Utensils className="h-6 w-6 text-primary" />
+          <ChopsticksLogo className="h-6 w-6 text-primary" />
           <span className="font-semibold text-lg" style={{ fontFamily: "var(--font-serif)" }}>
-            加一雙筷子
+            +1 Chopsticks
           </span>
         </a>
         <div className="hidden md:flex items-center gap-8">
@@ -90,8 +89,8 @@ function HeroSection() {
             className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-6"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            加一雙筷子
-            <span className="block text-primary mt-2 text-2xl md:text-3xl lg:text-4xl">Add a Pair of Chopsticks</span>
+            +1 Chopsticks
+            <span className="block text-primary mt-2 text-2xl md:text-3xl lg:text-4xl">加一雙筷子</span>
           </h1>
 
           {/* Subheading */}
@@ -557,16 +556,16 @@ function Footer() {
       <div className="container">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <Utensils className="h-5 w-5 text-primary" />
+            <ChopsticksLogo className="h-5 w-5 text-primary" />
             <span className="font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
-              加一雙筷子 · Add a Pair of Chopsticks
+              +1 Chopsticks
             </span>
           </div>
           <p className="text-sm text-muted-foreground text-center">
             Let's make travel more meaningful, one dinner table at a time. 🥢
           </p>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} 加一雙筷子. All rights reserved.
+            © {new Date().getFullYear()} +1 Chopsticks. All rights reserved.
           </p>
         </div>
       </div>

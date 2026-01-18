@@ -17,3 +17,5 @@
 - [x] Rename website to "Add a Pair of Chopsticks" / "加一雙筷子" concept
 - [x] Update pilot year from 2025 to 2026
 - [x] Remove trust indicators section (Airbnb text, countries, families, location)
+- [x] Update branding to "+1 Chopsticks"
+- [x] Create custom chopsticks logo (replace fork/knife icon)
