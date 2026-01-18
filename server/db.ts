@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, interestSubmissions, InsertInterestSubmission, InterestSubmission } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,44 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Interest submission helpers
+export async function createInterestSubmission(submission: InsertInterestSubmission): Promise<InterestSubmission | null> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create submission: database not available");
+    return null;
+  }
+
+  try {
+    await db.insert(interestSubmissions).values(submission);
+    // Get the inserted record
+    const result = await db
+      .select()
+      .from(interestSubmissions)
+      .where(eq(interestSubmissions.email, submission.email))
+      .orderBy(desc(interestSubmissions.createdAt))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to create interest submission:", error);
+    throw error;
+  }
+}
+
+export async function getAllInterestSubmissions(): Promise<InterestSubmission[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get submissions: database not available");
+    return [];
+  }
+
+  try {
+    return await db
+      .select()
+      .from(interestSubmissions)
+      .orderBy(desc(interestSubmissions.createdAt));
+  } catch (error) {
+    console.error("[Database] Failed to get interest submissions:", error);
+    throw error;
+  }
+}

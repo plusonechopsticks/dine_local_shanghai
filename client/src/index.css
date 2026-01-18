@@ -3,6 +3,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "Playfair Display";
+  src: url("https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtM.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKd6vnDXbtM.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKcBvnDXbtM.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,39 +67,45 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --primary: oklch(0.42 0.12 25);
+  --primary-foreground: oklch(0.98 0.01 75);
+  --sidebar-primary: oklch(0.42 0.12 25);
+  --sidebar-primary-foreground: oklch(0.98 0.01 75);
+  --chart-1: oklch(0.42 0.12 25);
+  --chart-2: oklch(0.55 0.15 45);
+  --chart-3: oklch(0.65 0.12 85);
+  --chart-4: oklch(0.70 0.08 145);
+  --chart-5: oklch(0.75 0.12 75);
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.008 75);
+  --foreground: oklch(0.22 0.02 30);
+  --card: oklch(0.995 0.005 75);
+  --card-foreground: oklch(0.22 0.02 30);
+  --popover: oklch(0.995 0.005 75);
+  --popover-foreground: oklch(0.22 0.02 30);
+  --secondary: oklch(0.96 0.015 75);
+  --secondary-foreground: oklch(0.30 0.02 30);
+  --muted: oklch(0.94 0.01 75);
+  --muted-foreground: oklch(0.50 0.02 30);
+  --accent: oklch(0.55 0.14 45);
+  --accent-foreground: oklch(0.98 0.01 75);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.98 0.01 75);
+  --border: oklch(0.90 0.015 75);
+  --input: oklch(0.90 0.015 75);
+  --ring: oklch(0.42 0.12 25);
+  --sidebar: oklch(0.97 0.01 75);
+  --sidebar-foreground: oklch(0.22 0.02 30);
+  --sidebar-accent: oklch(0.94 0.015 75);
+  --sidebar-accent-foreground: oklch(0.25 0.02 30);
+  --sidebar-border: oklch(0.90 0.015 75);
+  --sidebar-ring: oklch(0.42 0.12 25);
+  --warm-cream: oklch(0.97 0.02 85);
+  --warm-gold: oklch(0.75 0.12 75);
+  --warm-terracotta: oklch(0.55 0.15 35);
+  --warm-burgundy: oklch(0.40 0.15 20);
+  --warm-sage: oklch(0.70 0.08 145);
 }
 
 .dark {
@@ -117,8 +147,15 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  ::selection {
+    @apply bg-primary/20 text-foreground;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
