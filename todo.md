@@ -19,3 +19,24 @@
 - [x] Remove trust indicators section (Airbnb text, countries, families, location)
 - [x] Update branding to "+1 Chopsticks"
 - [x] Create custom chopsticks logo (replace fork/knife icon)
+
+## Host Registration Form
+- [x] Database schema for host listings
+- [x] Host registration page with form fields:
+  - [x] Name and profile photo
+  - [x] Languages spoken
+  - [x] Brief bio/story
+  - [x] Availability (days + lunch/dinner)
+  - [x] Number of guests (default 2)
+  - [x] Cuisine style
+  - [x] What they'll cook (text + 3 photos minimum)
+  - [x] Dietary accommodations
+  - [x] Meal duration estimate
+  - [x] District location
+  - [x] Price per person (default 100 RMB)
+  - [x] Kids/family friendly
+  - [x] Pets in home
+  - [x] WeChat ID or phone
+- [x] Image upload functionality (S3 storage)
+- [x] Backend API for host registration
+- [x] Form validation and submission

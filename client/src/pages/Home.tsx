@@ -346,7 +346,7 @@ function CTASection() {
                 <span>Flexible hosting schedule</span>
               </li>
             </ul>
-            <a href="#contact">
+            <a href="/host-register">
               <Button
                 size="lg"
                 variant="secondary"

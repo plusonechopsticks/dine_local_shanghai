@@ -1,6 +1,15 @@
 import { eq, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, interestSubmissions, InsertInterestSubmission, InterestSubmission } from "../drizzle/schema";
+import { 
+  InsertUser, 
+  users, 
+  interestSubmissions, 
+  InsertInterestSubmission, 
+  InterestSubmission,
+  hostListings,
+  InsertHostListing,
+  HostListing
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -127,6 +136,98 @@ export async function getAllInterestSubmissions(): Promise<InterestSubmission[]>
       .orderBy(desc(interestSubmissions.createdAt));
   } catch (error) {
     console.error("[Database] Failed to get interest submissions:", error);
+    throw error;
+  }
+}
+
+// Host listing helpers
+export async function createHostListing(listing: InsertHostListing): Promise<HostListing | null> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create host listing: database not available");
+    return null;
+  }
+
+  try {
+    await db.insert(hostListings).values(listing);
+    // Get the inserted record
+    const result = await db
+      .select()
+      .from(hostListings)
+      .where(eq(hostListings.email, listing.email))
+      .orderBy(desc(hostListings.createdAt))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to create host listing:", error);
+    throw error;
+  }
+}
+
+export async function getHostListingById(id: number): Promise<HostListing | null> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get host listing: database not available");
+    return null;
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(hostListings)
+      .where(eq(hostListings.id, id))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get host listing:", error);
+    throw error;
+  }
+}
+
+export async function getAllHostListings(status?: "pending" | "approved" | "rejected"): Promise<HostListing[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get host listings: database not available");
+    return [];
+  }
+
+  try {
+    if (status) {
+      return await db
+        .select()
+        .from(hostListings)
+        .where(eq(hostListings.status, status))
+        .orderBy(desc(hostListings.createdAt));
+    }
+    return await db
+      .select()
+      .from(hostListings)
+      .orderBy(desc(hostListings.createdAt));
+  } catch (error) {
+    console.error("[Database] Failed to get host listings:", error);
+    throw error;
+  }
+}
+
+export async function updateHostListingStatus(
+  id: number, 
+  status: "pending" | "approved" | "rejected",
+  adminNotes?: string
+): Promise<boolean> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update host listing: database not available");
+    return false;
+  }
+
+  try {
+    await db
+      .update(hostListings)
+      .set({ status, adminNotes: adminNotes || null })
+      .where(eq(hostListings.id, id));
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to update host listing status:", error);
     throw error;
   }
 }

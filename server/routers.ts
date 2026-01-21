@@ -3,8 +3,17 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import { createInterestSubmission, getAllInterestSubmissions } from "./db";
+import { 
+  createInterestSubmission, 
+  getAllInterestSubmissions,
+  createHostListing,
+  getAllHostListings,
+  getHostListingById,
+  updateHostListingStatus
+} from "./db";
 import { notifyOwner } from "./_core/notification";
+import { storagePut } from "./storage";
+import { nanoid } from "nanoid";
 
 export const appRouter = router({
   system: systemRouter,
@@ -53,6 +62,136 @@ export const appRouter = router({
       }
       return getAllInterestSubmissions();
     }),
+  }),
+
+  // Image upload endpoint
+  upload: router({
+    image: publicProcedure
+      .input(z.object({
+        base64Data: z.string(),
+        fileName: z.string(),
+        contentType: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        // Decode base64 to buffer
+        const buffer = Buffer.from(input.base64Data, "base64");
+        
+        // Generate unique file key
+        const ext = input.fileName.split('.').pop() || 'jpg';
+        const uniqueKey = `host-images/${nanoid()}.${ext}`;
+        
+        // Upload to S3
+        const { url } = await storagePut(uniqueKey, buffer, input.contentType);
+        
+        return { url };
+      }),
+  }),
+
+  // Host listing endpoints
+  host: router({
+    // Submit a new host listing
+    submit: publicProcedure
+      .input(z.object({
+        // Host Profile
+        hostName: z.string().min(1, "Name is required"),
+        profilePhotoUrl: z.string().url().optional(),
+        languages: z.array(z.string()).min(1, "At least one language is required"),
+        bio: z.string().min(20, "Please write at least 20 characters about yourself"),
+        
+        // Contact
+        email: z.string().email("Valid email is required"),
+        wechatOrPhone: z.string().min(1, "WeChat ID or phone number is required"),
+        
+        // Location
+        district: z.string().min(1, "District is required"),
+        
+        // Availability
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))),
+        
+        // Dining Details
+        maxGuests: z.number().min(1).max(20).default(2),
+        cuisineStyle: z.string().min(1, "Cuisine style is required"),
+        menuDescription: z.string().min(20, "Please describe your menu in at least 20 characters"),
+        foodPhotoUrls: z.array(z.string().url()).min(3, "At least 3 food photos are required"),
+        dietaryAccommodations: z.array(z.string()).optional(),
+        mealDurationMinutes: z.number().min(30).max(480).default(120),
+        pricePerPerson: z.number().min(1).default(100),
+        
+        // Household Info
+        kidsFriendly: z.boolean().default(true),
+        hasPets: z.boolean().default(false),
+        petDetails: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const listing = await createHostListing({
+          hostName: input.hostName,
+          profilePhotoUrl: input.profilePhotoUrl || null,
+          languages: input.languages,
+          bio: input.bio,
+          email: input.email,
+          wechatOrPhone: input.wechatOrPhone,
+          district: input.district,
+          availability: input.availability as Record<string, string[]>,
+          maxGuests: input.maxGuests,
+          cuisineStyle: input.cuisineStyle,
+          menuDescription: input.menuDescription,
+          foodPhotoUrls: input.foodPhotoUrls,
+          dietaryAccommodations: input.dietaryAccommodations || null,
+          mealDurationMinutes: input.mealDurationMinutes,
+          pricePerPerson: input.pricePerPerson,
+          kidsFriendly: input.kidsFriendly,
+          hasPets: input.hasPets,
+          petDetails: input.petDetails || null,
+        });
+
+        // Notify owner of new host application
+        await notifyOwner({
+          title: `New Host Application: ${input.hostName}`,
+          content: `Name: ${input.hostName}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\n\nBio: ${input.bio}`,
+        });
+
+        return { success: true, listing };
+      }),
+
+    // Get a single listing by ID (public - for viewing approved listings)
+    get: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const listing = await getHostListingById(input.id);
+        // Only return approved listings to public
+        if (listing && listing.status !== "approved") {
+          return null;
+        }
+        return listing;
+      }),
+
+    // List all approved host listings (public)
+    listApproved: publicProcedure.query(async () => {
+      return getAllHostListings("approved");
+    }),
+
+    // Admin: List all host listings
+    listAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        return [];
+      }
+      return getAllHostListings();
+    }),
+
+    // Admin: Update listing status
+    updateStatus: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["pending", "approved", "rejected"]),
+        adminNotes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        const success = await updateHostListingStatus(input.id, input.status, input.adminNotes);
+        return { success };
+      }),
   }),
 });
 
