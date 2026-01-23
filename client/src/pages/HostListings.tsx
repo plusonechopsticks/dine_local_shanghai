@@ -144,9 +144,9 @@ export default function HostListings() {
               Find Hosts
             </a>
           </nav>
-          <a href="/#contact">
+          <a href="/host-register">
             <Button size="sm" className="hidden md:inline-flex">
-              Join Waitlist
+              Become a Host
             </Button>
           </a>
         </div>
@@ -154,11 +154,11 @@ export default function HostListings() {
 
       <main className="container py-8 md:py-12">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3" style={{ fontFamily: "var(--font-serif)" }}>
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4" style={{ fontFamily: "var(--font-serif)" }}>
             Find Your Host Family
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl">
             Browse our curated selection of welcoming families ready to share authentic home-cooked meals
           </p>
         </div>
@@ -415,7 +415,7 @@ function HostCard({ host }: { host: any }) {
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-lg" style={{ fontFamily: "var(--font-serif)" }}>
+                <h3 className="font-bold text-xl md:text-2xl mb-1" style={{ fontFamily: "var(--font-serif)" }}>
                   {host.hostName}
                 </h3>
                 <p className="text-sm text-muted-foreground flex items-center gap-1">
@@ -425,8 +425,8 @@ function HostCard({ host }: { host: any }) {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">¥{host.pricePerPerson}</div>
-              <div className="text-xs text-muted-foreground">per person</div>
+              <div className="text-3xl md:text-4xl font-bold text-primary">¥{host.pricePerPerson}</div>
+              <div className="text-sm text-muted-foreground">per person</div>
             </div>
           </div>
 

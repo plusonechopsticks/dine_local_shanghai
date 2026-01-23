@@ -64,3 +64,8 @@
 - [x] Create test host entry with approved status
 - [x] Verify listings page shows test host
 - [x] Improve navigation visibility for Find Hosts link
+
+## Homepage & Typography Improvements
+- [x] Move "Browse Hosts" button to hero section
+- [x] Remove "Join Waitlist" button from hero
+- [x] Improve typography hierarchy on listings page (larger titles, better visual layers)

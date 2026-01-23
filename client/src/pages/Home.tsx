@@ -58,12 +58,12 @@ function Navigation() {
           <a href="/hosts" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Find Hosts
           </a>
-          <a href="#contact">
-            <Button size="sm">Join Waitlist</Button>
+          <a href="/host-register">
+            <Button size="sm">Become a Host</Button>
           </a>
         </div>
-        <a href="#contact" className="md:hidden">
-          <Button size="sm">Join</Button>
+        <a href="/host-register" className="md:hidden">
+          <Button size="sm">Host</Button>
         </a>
       </div>
     </nav>
@@ -104,9 +104,9 @@ function HeroSection() {
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#contact">
+            <a href="/hosts">
               <Button size="lg" className="gap-2 px-8">
-                Join the Waitlist
+                Browse Hosts
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </a>
