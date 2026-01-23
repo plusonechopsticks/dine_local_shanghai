@@ -69,3 +69,13 @@
 - [x] Move "Browse Hosts" button to hero section
 - [x] Remove "Join Waitlist" button from hero
 - [x] Improve typography hierarchy on listings page (larger titles, better visual layers)
+
+## Airbnb-Style Listing Redesign
+- [x] Change to vertical card grid layout
+- [x] Large hero image (60-70% of card height)
+- [x] Image carousel with dot indicators
+- [x] Heart icon for favorites overlay on image
+- [x] Badge overlays for special attributes
+- [x] Compact info below image: title, description, price
+- [x] Price prominently displayed with underline
+- [x] Responsive grid (1 col mobile, 2-3 cols tablet, 3-4 cols desktop)

@@ -2,26 +2,19 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { trpc } from "@/lib/trpc";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import {
   MapPin,
-  Users,
-  Calendar,
-  ChefHat,
-  DollarSign,
   Filter,
   X,
   Loader2,
   Heart,
-  Languages,
-  Clock,
-  Baby,
-  Dog,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const DAYS_OF_WEEK = [
@@ -79,18 +72,13 @@ export default function HostListings() {
       // Availability filter
       if (selectedDay !== "any" && selectedMealType !== "any") {
         const availability = host.availability as Record<string, string[]>;
-        const dayAvailability = availability[selectedDay] || [];
-        if (!dayAvailability.includes(selectedMealType)) {
-          return false;
-        }
-      } else if (selectedDay !== "any") {
-        const availability = host.availability as Record<string, string[]>;
-        if (!availability[selectedDay] || availability[selectedDay].length === 0) {
+        const dayAvailability = availability[selectedDay];
+        if (!dayAvailability || !dayAvailability.includes(selectedMealType)) {
           return false;
         }
       }
 
-      // Max guests filter
+      // Guest filter
       if (minGuests && host.maxGuests < parseInt(minGuests)) {
         return false;
       }
@@ -152,354 +140,230 @@ export default function HostListings() {
         </div>
       </header>
 
-      <main className="container py-8 md:py-12">
-        {/* Page Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4" style={{ fontFamily: "var(--font-serif)" }}>
-            Find Your Host Family
+      <main className="container py-6 md:py-8">
+        {/* Compact Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-semibold mb-2">
+            Host Families in Shanghai
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl">
-            Browse our curated selection of welcoming families ready to share authentic home-cooked meals
+          <p className="text-muted-foreground">
+            {filteredHosts?.length || 0} {filteredHosts?.length === 1 ? "home" : "homes"}
           </p>
         </div>
 
-        {/* Filter Toggle (Mobile) */}
-        <div className="md:hidden mb-4">
-          <Button
-            variant="outline"
-            className="w-full gap-2"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="h-4 w-4" />
-            {showFilters ? "Hide Filters" : "Show Filters"}
-            {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-auto">
-                Active
-              </Badge>
-            )}
-          </Button>
+        {/* Filter Bar */}
+        <div className="mb-6 flex flex-wrap gap-3">
+          <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+            <SelectTrigger className="w-[140px] h-10">
+              <SelectValue placeholder="District" />
+            </SelectTrigger>
+            <SelectContent>
+              {SHANGHAI_DISTRICTS.map(district => (
+                <SelectItem key={district} value={district}>
+                  {district}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedDay} onValueChange={setSelectedDay}>
+            <SelectTrigger className="w-[140px] h-10">
+              <SelectValue placeholder="Any day" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">Any day</SelectItem>
+              {DAYS_OF_WEEK.map(day => (
+                <SelectItem key={day.id} value={day.id}>
+                  {day.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedMealType} onValueChange={setSelectedMealType}>
+            <SelectTrigger className="w-[140px] h-10">
+              <SelectValue placeholder="Meal type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">Any meal</SelectItem>
+              <SelectItem value="lunch">Lunch</SelectItem>
+              <SelectItem value="dinner">Dinner</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Input
+            type="number"
+            placeholder="Min guests"
+            value={minGuests}
+            onChange={(e) => setMinGuests(e.target.value)}
+            className="w-[120px] h-10"
+          />
+
+          <Input
+            type="number"
+            placeholder="Max price"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="w-[120px] h-10"
+          />
+
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="h-10 gap-1"
+            >
+              <X className="h-4 w-4" />
+              Clear
+            </Button>
+          )}
         </div>
 
-        <div className="grid md:grid-cols-[280px_1fr] gap-8">
-          {/* Filter Panel */}
-          <aside className={`${showFilters ? "block" : "hidden md:block"}`}>
-            <Card className="sticky top-20">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
-                    Filters
-                  </CardTitle>
-                  {hasActiveFilters && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearFilters}
-                      className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-                    >
-                      Clear all
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* District Filter */}
-                <div>
-                  <Label className="mb-2 flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    District
-                  </Label>
-                  <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SHANGHAI_DISTRICTS.map(district => (
-                        <SelectItem key={district} value={district}>
-                          {district}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Separator />
-
-                {/* Availability Filter */}
-                <div>
-                  <Label className="mb-2 flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Availability
-                  </Label>
-                  <div className="space-y-3">
-                    <Select value={selectedDay} onValueChange={setSelectedDay}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Any day" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any day</SelectItem>
-                        {DAYS_OF_WEEK.map(day => (
-                          <SelectItem key={day.id} value={day.id}>
-                            {day.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={selectedMealType} onValueChange={setSelectedMealType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Any meal" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any meal</SelectItem>
-                        <SelectItem value="lunch">Lunch</SelectItem>
-                        <SelectItem value="dinner">Dinner</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Guests Filter */}
-                <div>
-                  <Label htmlFor="minGuests" className="mb-2 flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    Minimum Guests Capacity
-                  </Label>
-                  <Input
-                    id="minGuests"
-                    type="number"
-                    min="1"
-                    max="20"
-                    value={minGuests}
-                    onChange={(e) => setMinGuests(e.target.value)}
-                    placeholder="e.g., 2"
-                  />
-                </div>
-
-                <Separator />
-
-                {/* Price Filter */}
-                <div>
-                  <Label htmlFor="maxPrice" className="mb-2 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
-                    Max Price (¥/person)
-                  </Label>
-                  <Input
-                    id="maxPrice"
-                    type="number"
-                    min="0"
-                    value={maxPrice}
-                    onChange={(e) => setMaxPrice(e.target.value)}
-                    placeholder="e.g., 150"
-                  />
-                </div>
-
-                {/* Future filters placeholder */}
-                <div className="pt-4 border-t border-dashed border-border">
-                  <p className="text-xs text-muted-foreground italic">
-                    More filters coming soon: dietary options, languages, ratings, and more
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </aside>
-
-          {/* Listings Grid */}
-          <div>
-            {isLoading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : filteredHosts.length === 0 ? (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <ChefHat className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No hosts found</h3>
-                  <p className="text-muted-foreground mb-4">
-                    {hasActiveFilters
-                      ? "Try adjusting your filters to see more results"
-                      : "No approved hosts available yet. Check back soon!"}
-                  </p>
-                  {hasActiveFilters && (
-                    <Button variant="outline" onClick={clearFilters}>
-                      Clear Filters
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-muted-foreground">
-                    {filteredHosts.length} {filteredHosts.length === 1 ? "host" : "hosts"} available
-                  </p>
-                </div>
-                <div className="grid gap-6">
-                  {filteredHosts.map(host => (
-                    <HostCard key={host.id} host={host} />
-                  ))}
-                </div>
-              </>
-            )}
+        {/* Listings Grid */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        </div>
+        ) : filteredHosts && filteredHosts.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-lg text-muted-foreground mb-2">No hosts found</p>
+            <p className="text-sm text-muted-foreground">
+              Try adjusting your filters
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredHosts?.map(host => (
+              <HostCard key={host.id} host={host} />
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
 }
 
 function HostCard({ host }: { host: any }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const foodPhotos = host.foodPhotoUrls as string[];
   const availability = host.availability as Record<string, string[]>;
   const availableDays = Object.keys(availability);
-  const foodPhotos = host.foodPhotoUrls as string[];
-  const languages = host.languages as string[];
-  const dietaryAccommodations = host.dietaryAccommodations as string[] | null;
+
+  const images = [
+    host.profilePhotoUrl,
+    ...(foodPhotos || []),
+  ].filter(Boolean);
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="grid md:grid-cols-[300px_1fr] gap-0">
-        {/* Image Gallery */}
-        <div className="relative aspect-[4/3] md:aspect-auto bg-secondary">
-          {foodPhotos && foodPhotos.length > 0 ? (
-            <div className="grid grid-cols-2 gap-1 h-full">
-              <img
-                src={foodPhotos[0]}
-                alt="Food 1"
-                className="w-full h-full object-cover col-span-2"
-              />
-              {foodPhotos[1] && (
-                <img
-                  src={foodPhotos[1]}
-                  alt="Food 2"
-                  className="w-full h-full object-cover"
-                />
-              )}
-              {foodPhotos[2] && (
-                <img
-                  src={foodPhotos[2]}
-                  alt="Food 3"
-                  className="w-full h-full object-cover"
-                />
-              )}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <ChefHat className="h-12 w-12 text-muted-foreground" />
-            </div>
-          )}
-          <Button
-            size="icon"
-            variant="secondary"
-            className="absolute top-3 right-3 rounded-full shadow-md"
-          >
-            <Heart className="h-4 w-4" />
-          </Button>
+    <div className="group cursor-pointer">
+      {/* Image Container */}
+      <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary">
+        {images.length > 0 ? (
+          <>
+            <img
+              src={images[currentImageIndex]}
+              alt={host.hostName}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            
+            {/* Badge Overlay */}
+            {host.cuisineStyle && (
+              <Badge className="absolute top-3 left-3 bg-background/90 text-foreground border-0 shadow-md">
+                {host.cuisineStyle}
+              </Badge>
+            )}
+
+            {/* Heart Icon */}
+            <button
+              className="absolute top-3 right-3 p-2 rounded-full hover:bg-background/80 transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                // TODO: Add to favorites
+              }}
+            >
+              <Heart className="h-5 w-5 stroke-2 text-foreground/80 hover:fill-primary hover:text-primary transition-colors" />
+            </button>
+
+            {/* Image Navigation */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+
+                {/* Dot Indicators */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+                  {images.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`h-1.5 rounded-full transition-all ${
+                        index === currentImageIndex
+                          ? "w-4 bg-background"
+                          : "w-1.5 bg-background/60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <span className="text-4xl text-muted-foreground">
+              {host.hostName.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Info Below Image */}
+      <div className="space-y-1">
+        {/* Location & Title */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-base truncate">
+              {host.hostName}
+            </h3>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <MapPin className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{host.district}</span>
+            </p>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              {host.profilePhotoUrl ? (
-                <img
-                  src={host.profilePhotoUrl}
-                  alt={host.hostName}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-lg font-semibold text-primary">
-                    {host.hostName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-              <div>
-                <h3 className="font-bold text-xl md:text-2xl mb-1" style={{ fontFamily: "var(--font-serif)" }}>
-                  {host.hostName}
-                </h3>
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  {host.district}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl md:text-4xl font-bold text-primary">¥{host.pricePerPerson}</div>
-              <div className="text-sm text-muted-foreground">per person</div>
-            </div>
-          </div>
+        {/* Availability */}
+        <p className="text-sm text-muted-foreground">
+          {availableDays.length} {availableDays.length === 1 ? "day" : "days"} available
+        </p>
 
-          {/* Cuisine & Bio */}
-          <div className="mb-4">
-            <Badge variant="secondary" className="mb-2">
-              <ChefHat className="h-3 w-3 mr-1" />
-              {host.cuisineStyle}
-            </Badge>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {host.bio}
-            </p>
-          </div>
-
-          {/* Menu Description */}
-          <div className="mb-4">
-            <p className="text-sm line-clamp-2">
-              {host.menuDescription}
-            </p>
-          </div>
-
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span>Up to {host.maxGuests} guests</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>{Math.round(host.mealDurationMinutes / 60)}h meal</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Languages className="h-4 w-4" />
-              <span>{languages.slice(0, 2).join(", ")}</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>{availableDays.length} days available</span>
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {host.kidsFriendly && (
-              <Badge variant="outline" className="text-xs">
-                <Baby className="h-3 w-3 mr-1" />
-                Kids Friendly
-              </Badge>
-            )}
-            {host.hasPets && (
-              <Badge variant="outline" className="text-xs">
-                <Dog className="h-3 w-3 mr-1" />
-                Has Pets
-              </Badge>
-            )}
-            {dietaryAccommodations && dietaryAccommodations.length > 0 && (
-              <Badge variant="outline" className="text-xs">
-                {dietaryAccommodations[0]}
-              </Badge>
-            )}
-          </div>
-
-          {/* CTA */}
-          <div className="flex gap-2">
-            <Button className="flex-1">
-              Request Booking
-            </Button>
-            <Button variant="outline">
-              View Profile
-            </Button>
-          </div>
+        {/* Price */}
+        <div className="flex items-baseline gap-1">
+          <span className="font-semibold text-base underline decoration-2">
+            ¥{host.pricePerPerson}
+          </span>
+          <span className="text-sm text-muted-foreground">per person</span>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
