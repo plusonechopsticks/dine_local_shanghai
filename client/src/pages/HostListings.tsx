@@ -246,6 +246,8 @@ export default function HostListings() {
 
 function HostCard({ host }: { host: any }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   const foodPhotos = host.foodPhotoUrls as string[];
   const availability = host.availability as Record<string, string[]>;
   const availableDays = Object.keys(availability);
@@ -255,20 +257,49 @@ function HostCard({ host }: { host: any }) {
     ...(foodPhotos || []),
   ].filter(Boolean);
 
-  const nextImage = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const nextImage = (e?: React.MouseEvent) => {
+    e?.preventDefault();
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
-  const prevImage = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const prevImage = (e?: React.MouseEvent) => {
+    e?.preventDefault();
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe) {
+      nextImage();
+    }
+    if (isRightSwipe) {
+      prevImage();
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
   return (
     <div className="group cursor-pointer">
       {/* Image Container */}
-      <div className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary">
+      <div 
+        className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {images.length > 0 ? (
           <>
             <img

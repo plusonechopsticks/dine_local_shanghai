@@ -79,3 +79,9 @@
 - [x] Compact info below image: title, description, price
 - [x] Price prominently displayed with underline
 - [x] Responsive grid (1 col mobile, 2-3 cols tablet, 3-4 cols desktop)
+
+## Photo Update & Carousel Improvement
+- [x] Upload new host group photo to S3
+- [x] Update test host's profile photo in database
+- [x] Add horizontal scrolling support for image carousel
+- [x] Improve mobile swipe experience for images
