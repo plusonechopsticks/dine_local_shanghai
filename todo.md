@@ -40,3 +40,22 @@
 - [x] Image upload functionality (S3 storage)
 - [x] Backend API for host registration
 - [x] Form validation and submission
+
+## Host Listings Page
+- [x] Create listings page at `/hosts` route
+- [x] Display approved host profiles in card format
+- [x] Filter panel with key filters:
+  - [x] District (Shanghai districts)
+  - [x] Availability (day of week + lunch/dinner)
+  - [x] Max guests
+  - [x] Price range
+- [x] Host cards showing:
+  - [x] Profile photo and name
+  - [x] Cuisine style
+  - [x] Price per person
+  - [x] District location
+  - [x] Available days
+  - [x] Food photos
+- [x] Link to listings page from main navigation
+- [x] Responsive design for mobile and desktop
+- [x] Extensible filter design for future additions

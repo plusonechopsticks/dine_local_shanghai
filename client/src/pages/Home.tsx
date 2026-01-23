@@ -55,6 +55,9 @@ function Navigation() {
           <a href="#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             About
           </a>
+          <a href="/hosts" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            Find Hosts
+          </a>
           <a href="#contact">
             <Button size="sm">Join Waitlist</Button>
           </a>
@@ -305,13 +308,13 @@ function CTASection() {
                 <span>Language support provided</span>
               </li>
             </ul>
-            <a href="#contact">
+            <a href="/hosts">
               <Button
                 size="lg"
                 variant="secondary"
                 className="gap-2"
               >
-                Join as Traveler
+                Browse Hosts
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </a>
