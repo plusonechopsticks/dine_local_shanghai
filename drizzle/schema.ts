@@ -35,6 +35,21 @@ export type InterestSubmission = typeof interestSubmissions.$inferSelect;
 export type InsertInterestSubmission = typeof interestSubmissions.$inferInsert;
 
 /**
+ * Simplified host interest submissions for inaugural batch
+ * Collects basic contact info before full application
+ */
+export const hostInterests = mysqlTable("host_interests", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  district: varchar("district", { length: 100 }).notNull(),
+  contact: varchar("contact", { length: 255 }).notNull(), // Email or WeChat ID
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type HostInterest = typeof hostInterests.$inferSelect;
+export type InsertHostInterest = typeof hostInterests.$inferInsert;
+
+/**
  * Host listings - detailed profiles for host families
  */
 export const hostListings = mysqlTable("host_listings", {

@@ -6,6 +6,8 @@ import { z } from "zod";
 import { 
   createInterestSubmission, 
   getAllInterestSubmissions,
+  createHostInterest,
+  getAllHostInterests,
   createHostListing,
   getAllHostListings,
   getHostListingById,
@@ -25,6 +27,39 @@ export const appRouter = router({
       return {
         success: true,
       } as const;
+    }),
+  }),
+
+  // Simplified host interest (inaugural batch)
+  hostInterest: router({
+    submit: publicProcedure
+      .input(z.object({
+        name: z.string().min(1, "Name is required"),
+        district: z.string().min(1, "District is required"),
+        contact: z.string().min(1, "Email or WeChat ID is required"),
+      }))
+      .mutation(async ({ input }) => {
+        const interest = await createHostInterest({
+          name: input.name,
+          district: input.district,
+          contact: input.contact,
+        });
+
+        // Notify owner of new host interest
+        await notifyOwner({
+          title: `New Host Interest: ${input.name}`,
+          content: `Name: ${input.name}\nDistrict: ${input.district}\nContact: ${input.contact}`,
+        });
+
+        return { success: true, interest };
+      }),
+
+    // Protected endpoint for admin to view all host interests
+    list: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        return [];
+      }
+      return getAllHostInterests();
     }),
   }),
 

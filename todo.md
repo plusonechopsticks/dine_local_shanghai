@@ -98,3 +98,10 @@
 - [x] Increase font sizes for better readability
 - [x] Make form experience more joyful and engaging
 - [x] Ensure benefits section doesn't hide the form
+
+## Simplified Host Registration
+- [x] Replace complex 5-step form with simple 3-question form
+- [x] Ask only: name, district, email/WeChat ID
+- [x] Add "We are looking for an inaugural batch of hosts!" messaging
+- [x] Update database schema to support simplified host interest submissions
+- [x] Update backend API for simplified submission
