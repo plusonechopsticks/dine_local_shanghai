@@ -88,3 +88,6 @@
 
 ## Hero Section Update
 - [x] Replace "Learn More" button with "Become a Host" button in hero section
+
+## Button Hierarchy Update
+- [x] Swap button styles: "Become a Host" as primary (solid), "Browse Hosts" as secondary (outline)

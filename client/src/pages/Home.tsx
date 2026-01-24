@@ -104,15 +104,15 @@ function HeroSection() {
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/hosts">
+            <a href="/host-register">
               <Button size="lg" className="gap-2 px-8">
-                Browse Hosts
+                Become a Host
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </a>
-            <a href="/host-register">
+            <a href="/hosts">
               <Button size="lg" variant="outline" className="gap-2 px-8 bg-background">
-                Become a Host
+                Browse Hosts
               </Button>
             </a>
           </div>
