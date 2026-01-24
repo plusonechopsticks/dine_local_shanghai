@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import {
   ArrowLeft,
+  ArrowRight,
   Upload,
   X,
   Camera,
@@ -27,6 +28,10 @@ import {
   Phone,
   Loader2,
   Check,
+  Heart,
+  Globe,
+  Home as HomeIcon,
+  Sparkles,
 } from "lucide-react";
 
 const DAYS_OF_WEEK = [
@@ -102,12 +107,12 @@ export default function HostRegister() {
   
   // Form state
   const [hostName, setHostName] = useState("");
+  const [district, setDistrict] = useState("");
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(["Mandarin"]);
   const [bio, setBio] = useState("");
   const [email, setEmail] = useState("");
   const [wechatOrPhone, setWechatOrPhone] = useState("");
-  const [district, setDistrict] = useState("");
   const [availability, setAvailability] = useState<Record<string, ("lunch" | "dinner")[]>>({});
   const [maxGuests, setMaxGuests] = useState(2);
   const [cuisineStyle, setCuisineStyle] = useState("");
@@ -225,6 +230,12 @@ export default function HostRegister() {
           toast.error("Please enter your name");
           return false;
         }
+        if (!district) {
+          toast.error("Please select your district");
+          return false;
+        }
+        return true;
+      case 2:
         if (selectedLanguages.length === 0) {
           toast.error("Please select at least one language");
           return false;
@@ -233,8 +244,6 @@ export default function HostRegister() {
           toast.error("Please write at least 20 characters about yourself");
           return false;
         }
-        return true;
-      case 2:
         if (!email.trim() || !email.includes("@")) {
           toast.error("Please enter a valid email");
           return false;
@@ -243,14 +252,10 @@ export default function HostRegister() {
           toast.error("Please enter your WeChat ID or phone number");
           return false;
         }
-        if (!district) {
-          toast.error("Please select your district");
-          return false;
-        }
         return true;
       case 3:
         if (Object.keys(availability).length === 0) {
-          toast.error("Please select at least one available time slot");
+          toast.error("Please select at least one available time");
           return false;
         }
         return true;
@@ -259,73 +264,77 @@ export default function HostRegister() {
           toast.error("Please select a cuisine style");
           return false;
         }
-        if (menuDescription.length < 20) {
-          toast.error("Please describe your menu in at least 20 characters");
+        if (menuDescription.length < 30) {
+          toast.error("Please describe your menu in at least 30 characters");
           return false;
         }
         if (foodPhotos.length < 3) {
-          toast.error("Please upload at least 3 food photos");
+          toast.error("Please upload at least 3 photos of your food");
           return false;
         }
         return true;
-      default:
+      case 5:
         return true;
+      default:
+        return false;
     }
   };
 
-  const nextStep = () => {
+  const handleNext = () => {
     if (validateStep(step)) {
       setStep(prev => Math.min(prev + 1, 5));
     }
   };
 
-  const prevStep = () => {
+  const handleBack = () => {
     setStep(prev => Math.max(prev - 1, 1));
   };
 
   const handleSubmit = async () => {
-    if (!validateStep(4)) return;
-    
+    if (!validateStep(5)) return;
+
     setIsSubmitting(true);
-    
-    submitMutation.mutate({
-      hostName,
-      profilePhotoUrl: profilePhoto || undefined,
-      languages: selectedLanguages,
-      bio,
-      email,
-      wechatOrPhone,
-      district,
-      availability,
-      maxGuests,
-      cuisineStyle,
-      menuDescription,
-      foodPhotoUrls: foodPhotos,
-      dietaryAccommodations: dietaryAccommodations.length > 0 ? dietaryAccommodations : undefined,
-      mealDurationMinutes: mealDuration,
-      pricePerPerson,
-      kidsFriendly,
-      hasPets,
-      petDetails: hasPets ? petDetails : undefined,
-    });
+    try {
+      await submitMutation.mutateAsync({
+        hostName,
+        profilePhotoUrl: profilePhoto || undefined,
+        languages: selectedLanguages,
+        bio,
+        email,
+        wechatOrPhone,
+        district,
+        availability,
+        maxGuests,
+        cuisineStyle,
+        menuDescription,
+        foodPhotoUrls: foodPhotos,
+        dietaryAccommodations,
+        mealDurationMinutes: mealDuration,
+        pricePerPerson,
+        kidsFriendly,
+        hasPets,
+        petDetails: hasPets ? petDetails : undefined,
+      });
+    } catch (error) {
+      // Error handled by mutation
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="max-w-md w-full text-center">
-          <CardContent className="pt-8 pb-8">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-              <Check className="h-8 w-8 text-green-600" />
+          <CardContent className="pt-12 pb-8">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Check className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
               Application Submitted!
             </h2>
-            <p className="text-muted-foreground mb-6">
-              Thank you for applying to become a host with +1 Chopsticks! We'll review your application and get back to you within 3-5 business days.
-            </p>
-            <p className="text-sm text-muted-foreground mb-8">
-              Once approved, we'll contact you to collect your full address and schedule an onboarding call.
+            <p className="text-muted-foreground mb-8 text-base leading-relaxed">
+              Thank you for your interest in becoming a host! We'll review your application and get back to you within 3-5 business days.
             </p>
             <a href="/">
               <Button className="gap-2">
@@ -359,47 +368,135 @@ export default function HostRegister() {
         </div>
       </header>
 
-      <main className="container py-8 md:py-12">
+      {/* Benefits Section */}
+      <section className="bg-primary/5 border-b border-border/30 py-8">
+        <div className="container max-w-4xl">
+          <h2 className="text-2xl font-bold mb-4 text-center" style={{ fontFamily: "var(--font-serif)" }}>
+            Why Become a Host?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                <Heart className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-1 text-base">Share Your Culture</h3>
+              <p className="text-sm text-muted-foreground">Connect with travelers and share authentic Shanghai hospitality</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                <Globe className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-1 text-base">Meet New Friends</h3>
+              <p className="text-sm text-muted-foreground">Build meaningful connections with guests from around the world</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                <DollarSign className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-1 text-base">Earn Extra Income</h3>
+              <p className="text-sm text-muted-foreground">Set your own price and hosting schedule that works for you</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <main className="container py-10 md:py-14">
         <div className="max-w-2xl mx-auto">
           {/* Progress indicator */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">Step {step} of 5</span>
-              <span className="text-sm text-muted-foreground">{Math.round((step / 5) * 100)}% complete</span>
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-base text-muted-foreground font-medium">Step {step} of 5</span>
+              <span className="text-base text-muted-foreground">{Math.round((step / 5) * 100)}% complete</span>
             </div>
-            <div className="h-2 bg-secondary rounded-full overflow-hidden">
+            <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
               <div 
-                className="h-full bg-primary transition-all duration-300"
+                className="h-full bg-primary transition-all duration-300 ease-out"
                 style={{ width: `${(step / 5) * 100}%` }}
               />
             </div>
           </div>
 
-          {/* Step 1: Profile */}
+          {/* Step 1: Basic Info */}
           {step === 1 && (
-            <Card>
+            <Card className="border-2">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-serif)" }}>
-                  <User className="h-5 w-5 text-primary" />
-                  Your Profile
+                <CardTitle className="flex items-center gap-2 text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+                  <User className="h-6 w-6 text-primary" />
+                  Let's start with the basics
                 </CardTitle>
-                <CardDescription>
-                  Tell us about yourself so guests can get to know you
+                <CardDescription className="text-base">
+                  Tell us your name and where you're located in Shanghai
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-7">
+                {/* Name */}
+                <div>
+                  <Label htmlFor="hostName" className="text-base font-medium mb-2 block">What's your name? *</Label>
+                  <Input
+                    id="hostName"
+                    value={hostName}
+                    onChange={(e) => setHostName(e.target.value)}
+                    placeholder="How should guests address you?"
+                    className="mt-1.5 h-12 text-base"
+                  />
+                </div>
+
+                {/* District */}
+                <div>
+                  <Label htmlFor="district" className="text-base font-medium mb-2 block flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Which district do you live in? *
+                  </Label>
+                  <Select value={district} onValueChange={setDistrict}>
+                    <SelectTrigger className="mt-1.5 h-12 text-base">
+                      <SelectValue placeholder="Select your Shanghai district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SHANGHAI_DISTRICTS.map(d => (
+                        <SelectItem key={d} value={d} className="text-base">{d}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Once approved, you'll provide your full address
+                  </p>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                  <Button onClick={handleNext} size="lg" className="gap-2 text-base px-8">
+                    Continue
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Step 2: Profile & Contact */}
+          {step === 2 && (
+            <Card className="border-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+                  <User className="h-6 w-6 text-primary" />
+                  Tell us about yourself
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Help guests get to know you better
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-7">
                 {/* Profile Photo */}
                 <div>
-                  <Label className="mb-2 block">Profile Photo (optional)</Label>
-                  <div className="flex items-center gap-4">
+                  <Label className="text-base font-medium mb-3 block">Profile Photo (optional)</Label>
+                  <div className="flex items-center gap-5">
                     <div 
-                      className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center overflow-hidden cursor-pointer border-2 border-dashed border-border hover:border-primary transition-colors"
+                      className="w-28 h-28 rounded-full bg-secondary flex items-center justify-center overflow-hidden cursor-pointer border-2 border-dashed border-border hover:border-primary transition-colors"
                       onClick={() => profilePhotoRef.current?.click()}
                     >
                       {profilePhoto ? (
                         <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
                       ) : (
-                        <Camera className="h-8 w-8 text-muted-foreground" />
+                        <Camera className="h-10 w-10 text-muted-foreground" />
                       )}
                     </div>
                     <input
@@ -410,39 +507,27 @@ export default function HostRegister() {
                       onChange={handleProfilePhotoUpload}
                     />
                     <div className="text-sm text-muted-foreground">
-                      <p>Click to upload a photo</p>
+                      <p className="text-base mb-1">Click to upload a photo</p>
                       <p>Max 5MB, JPG or PNG</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Name */}
-                <div>
-                  <Label htmlFor="hostName">Your Name *</Label>
-                  <Input
-                    id="hostName"
-                    value={hostName}
-                    onChange={(e) => setHostName(e.target.value)}
-                    placeholder="How should guests address you?"
-                    className="mt-1"
-                  />
-                </div>
-
                 {/* Languages */}
                 <div>
-                  <Label className="mb-2 block flex items-center gap-2">
-                    <Languages className="h-4 w-4" />
-                    Languages Spoken *
+                  <Label className="text-base font-medium mb-3 block flex items-center gap-2">
+                    <Languages className="h-5 w-5" />
+                    Languages you speak *
                   </Label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2.5">
                     {LANGUAGES.map(lang => (
                       <Button
                         key={lang}
                         type="button"
                         variant={selectedLanguages.includes(lang) ? "default" : "outline"}
-                        size="sm"
+                        size="default"
                         onClick={() => toggleLanguage(lang)}
-                        className="transition-all"
+                        className="transition-all text-base h-10"
                       >
                         {lang}
                       </Button>
@@ -452,51 +537,38 @@ export default function HostRegister() {
 
                 {/* Bio */}
                 <div>
-                  <Label htmlFor="bio">About You *</Label>
+                  <Label htmlFor="bio" className="text-base font-medium mb-2 block">
+                    Tell us about yourself *
+                  </Label>
                   <Textarea
                     id="bio"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    placeholder="Tell guests about yourself, your family, and why you love hosting..."
-                    className="mt-1 min-h-[120px]"
+                    placeholder="Share your story... Why do you love hosting? What makes your home special?"
+                    className="mt-1.5 min-h-32 text-base resize-none"
+                    rows={5}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {bio.length}/20 characters minimum
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {bio.length} / 20 characters minimum
                   </p>
                 </div>
-              </CardContent>
-            </Card>
-          )}
 
-          {/* Step 2: Contact & Location */}
-          {step === 2 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-serif)" }}>
-                  <MapPin className="h-5 w-5 text-primary" />
-                  Contact & Location
-                </CardTitle>
-                <CardDescription>
-                  How can we reach you and where are you located?
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
                 {/* Email */}
                 <div>
-                  <Label htmlFor="email">Email Address *</Label>
+                  <Label htmlFor="email" className="text-base font-medium mb-2 block">Email *</Label>
                   <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    className="mt-1"
+                    placeholder="your.email@example.com"
+                    className="mt-1.5 h-12 text-base"
                   />
                 </div>
 
                 {/* WeChat/Phone */}
                 <div>
-                  <Label htmlFor="wechatOrPhone" className="flex items-center gap-2">
+                  <Label htmlFor="wechatOrPhone" className="text-base font-medium mb-2 block flex items-center gap-2">
                     <Phone className="h-4 w-4" />
                     WeChat ID or Phone Number *
                   </Label>
@@ -504,27 +576,20 @@ export default function HostRegister() {
                     id="wechatOrPhone"
                     value={wechatOrPhone}
                     onChange={(e) => setWechatOrPhone(e.target.value)}
-                    placeholder="For coordination with guests"
-                    className="mt-1"
+                    placeholder="For guest coordination"
+                    className="mt-1.5 h-12 text-base"
                   />
                 </div>
 
-                {/* District */}
-                <div>
-                  <Label>District in Shanghai *</Label>
-                  <Select value={district} onValueChange={setDistrict}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select your district" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SHANGHAI_DISTRICTS.map(d => (
-                        <SelectItem key={d} value={d}>{d}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    📍 Once approved, we'll ask for your full address (kept private until booking confirmed)
-                  </p>
+                <div className="flex justify-between pt-4">
+                  <Button onClick={handleBack} variant="outline" size="lg" className="gap-2 text-base">
+                    <ArrowLeft className="h-5 w-5" />
+                    Back
+                  </Button>
+                  <Button onClick={handleNext} size="lg" className="gap-2 text-base px-8">
+                    Continue
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -532,138 +597,139 @@ export default function HostRegister() {
 
           {/* Step 3: Availability */}
           {step === 3 && (
-            <Card>
+            <Card className="border-2">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-serif)" }}>
-                  <Calendar className="h-5 w-5 text-primary" />
-                  Availability
+                <CardTitle className="flex items-center gap-2 text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+                  <Calendar className="h-6 w-6 text-primary" />
+                  When can you host?
                 </CardTitle>
-                <CardDescription>
-                  When are you available to host guests?
+                <CardDescription className="text-base">
+                  Select your available days and meal times
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  {DAYS_OF_WEEK.map(day => (
-                    <div key={day.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
-                      <span className="font-medium">{day.label}</span>
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant={availability[day.id]?.includes("lunch") ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => toggleAvailability(day.id, "lunch")}
-                        >
-                          Lunch
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={availability[day.id]?.includes("dinner") ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => toggleAvailability(day.id, "dinner")}
-                        >
-                          Dinner
-                        </Button>
+              <CardContent className="space-y-7">
+                {/* Availability Grid */}
+                <div>
+                  <Label className="text-base font-medium mb-3 block">Available days and times *</Label>
+                  <div className="space-y-3">
+                    {DAYS_OF_WEEK.map(day => (
+                      <div key={day.id} className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary/50 transition-colors">
+                        <span className="text-base font-medium w-28">{day.label}</span>
+                        <div className="flex gap-3">
+                          <Button
+                            type="button"
+                            variant={availability[day.id]?.includes("lunch") ? "default" : "outline"}
+                            size="default"
+                            onClick={() => toggleAvailability(day.id, "lunch")}
+                            className="text-base"
+                          >
+                            Lunch
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={availability[day.id]?.includes("dinner") ? "default" : "outline"}
+                            size="default"
+                            onClick={() => toggleAvailability(day.id, "dinner")}
+                            className="text-base"
+                          >
+                            Dinner
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
                 {/* Max Guests */}
                 <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <Users className="h-4 w-4" />
-                    Maximum Guests
+                  <Label htmlFor="maxGuests" className="text-base font-medium mb-2 block flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Maximum number of guests
                   </Label>
-                  <div className="flex items-center gap-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setMaxGuests(prev => Math.max(1, prev - 1))}
-                    >
-                      -
-                    </Button>
-                    <span className="text-xl font-semibold w-12 text-center">{maxGuests}</span>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setMaxGuests(prev => Math.min(20, prev + 1))}
-                    >
-                      +
-                    </Button>
-                  </div>
+                  <Input
+                    id="maxGuests"
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={maxGuests}
+                    onChange={(e) => setMaxGuests(parseInt(e.target.value) || 2)}
+                    className="mt-1.5 h-12 text-base"
+                  />
                 </div>
 
                 {/* Meal Duration */}
                 <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <Clock className="h-4 w-4" />
-                    Estimated Meal Duration
+                  <Label htmlFor="mealDuration" className="text-base font-medium mb-2 block flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Typical meal duration (minutes)
                   </Label>
-                  <Select value={mealDuration.toString()} onValueChange={(v) => setMealDuration(parseInt(v))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="60">1 hour</SelectItem>
-                      <SelectItem value="90">1.5 hours</SelectItem>
-                      <SelectItem value="120">2 hours</SelectItem>
-                      <SelectItem value="150">2.5 hours</SelectItem>
-                      <SelectItem value="180">3 hours</SelectItem>
-                      <SelectItem value="240">4 hours</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="mealDuration"
+                    type="number"
+                    min="60"
+                    max="300"
+                    step="15"
+                    value={mealDuration}
+                    onChange={(e) => setMealDuration(parseInt(e.target.value) || 120)}
+                    className="mt-1.5 h-12 text-base"
+                  />
                 </div>
 
                 {/* Price */}
                 <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <DollarSign className="h-4 w-4" />
-                    Price per Person (RMB)
+                  <Label htmlFor="pricePerPerson" className="text-base font-medium mb-2 block flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" />
+                    Price per person (RMB)
                   </Label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">¥</span>
-                    <Input
-                      type="number"
-                      value={pricePerPerson}
-                      onChange={(e) => setPricePerPerson(Math.max(1, parseInt(e.target.value) || 0))}
-                      className="w-32"
-                    />
-                    <span className="text-muted-foreground">/ person</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Suggested: ¥80-150 for casual meals, ¥150-300 for special occasions
-                  </p>
+                  <Input
+                    id="pricePerPerson"
+                    type="number"
+                    min="50"
+                    max="1000"
+                    step="10"
+                    value={pricePerPerson}
+                    onChange={(e) => setPricePerPerson(parseInt(e.target.value) || 100)}
+                    className="mt-1.5 h-12 text-base"
+                  />
+                </div>
+
+                <div className="flex justify-between pt-4">
+                  <Button onClick={handleBack} variant="outline" size="lg" className="gap-2 text-base">
+                    <ArrowLeft className="h-5 w-5" />
+                    Back
+                  </Button>
+                  <Button onClick={handleNext} size="lg" className="gap-2 text-base px-8">
+                    Continue
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Step 4: Menu & Food */}
+          {/* Step 4: Menu */}
           {step === 4 && (
-            <Card>
+            <Card className="border-2">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-serif)" }}>
-                  <ChefHat className="h-5 w-5 text-primary" />
-                  Your Menu
+                <CardTitle className="flex items-center gap-2 text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+                  <ChefHat className="h-6 w-6 text-primary" />
+                  What will you cook?
                 </CardTitle>
-                <CardDescription>
-                  What will you cook for your guests?
+                <CardDescription className="text-base">
+                  Share your culinary style and menu details
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-7">
                 {/* Cuisine Style */}
                 <div>
-                  <Label>Cuisine Style *</Label>
+                  <Label htmlFor="cuisineStyle" className="text-base font-medium mb-2 block">Cuisine style *</Label>
                   <Select value={cuisineStyle} onValueChange={setCuisineStyle}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select your cuisine style" />
+                    <SelectTrigger className="mt-1.5 h-12 text-base">
+                      <SelectValue placeholder="Select your cooking style" />
                     </SelectTrigger>
                     <SelectContent>
                       {CUISINE_STYLES.map(style => (
-                        <SelectItem key={style} value={style}>{style}</SelectItem>
+                        <SelectItem key={style} value={style} className="text-base">{style}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -671,30 +737,32 @@ export default function HostRegister() {
 
                 {/* Menu Description */}
                 <div>
-                  <Label htmlFor="menuDescription">Describe Your Menu *</Label>
+                  <Label htmlFor="menuDescription" className="text-base font-medium mb-2 block">
+                    Describe your typical menu *
+                  </Label>
                   <Textarea
                     id="menuDescription"
                     value={menuDescription}
                     onChange={(e) => setMenuDescription(e.target.value)}
-                    placeholder="What dishes will you typically prepare? Any signature dishes or family recipes?"
-                    className="mt-1 min-h-[120px]"
+                    placeholder="What dishes do you typically prepare? Any signature specialties?"
+                    className="mt-1.5 min-h-32 text-base resize-none"
+                    rows={5}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {menuDescription.length}/20 characters minimum
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {menuDescription.length} / 30 characters minimum
                   </p>
                 </div>
 
                 {/* Food Photos */}
                 <div>
-                  <Label className="mb-2 block">Food Photos * (minimum 3)</Label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <Label className="text-base font-medium mb-3 block">Food photos (minimum 3) *</Label>
+                  <div className="grid grid-cols-3 gap-4">
                     {foodPhotos.map((photo, index) => (
                       <div key={index} className="relative aspect-square rounded-lg overflow-hidden group">
                         <img src={photo} alt={`Food ${index + 1}`} className="w-full h-full object-cover" />
                         <button
-                          type="button"
                           onClick={() => removeFoodPhoto(index)}
-                          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 p-1.5 bg-background/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -702,11 +770,11 @@ export default function HostRegister() {
                     ))}
                     {foodPhotos.length < 10 && (
                       <div
-                        className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors flex flex-col items-center justify-center cursor-pointer bg-secondary/30"
                         onClick={() => foodPhotoRef.current?.click()}
+                        className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors bg-secondary/30"
                       >
-                        <Upload className="h-6 w-6 text-muted-foreground mb-1" />
-                        <span className="text-xs text-muted-foreground">Add Photo</span>
+                        <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                        <span className="text-sm text-muted-foreground">Upload</span>
                       </div>
                     )}
                   </div>
@@ -718,159 +786,156 @@ export default function HostRegister() {
                     className="hidden"
                     onChange={handleFoodPhotoUpload}
                   />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {foodPhotos.length}/3 minimum photos uploaded. Show off your best dishes!
+                  <p className="text-sm text-muted-foreground mt-3">
+                    {foodPhotos.length} / 3 photos minimum (max 10)
                   </p>
                 </div>
 
                 {/* Dietary Accommodations */}
                 <div>
-                  <Label className="mb-2 block">Dietary Accommodations (optional)</Label>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    What dietary requirements can you accommodate?
-                  </p>
-                  <div className="flex flex-wrap gap-2">
+                  <Label className="text-base font-medium mb-3 block">
+                    Dietary options you can accommodate (optional)
+                  </Label>
+                  <div className="flex flex-wrap gap-2.5">
                     {DIETARY_OPTIONS.map(option => (
                       <Button
                         key={option}
                         type="button"
                         variant={dietaryAccommodations.includes(option) ? "default" : "outline"}
-                        size="sm"
+                        size="default"
                         onClick={() => toggleDietary(option)}
+                        className="text-base"
                       >
                         {option}
                       </Button>
                     ))}
                   </div>
                 </div>
+
+                <div className="flex justify-between pt-4">
+                  <Button onClick={handleBack} variant="outline" size="lg" className="gap-2 text-base">
+                    <ArrowLeft className="h-5 w-5" />
+                    Back
+                  </Button>
+                  <Button onClick={handleNext} size="lg" className="gap-2 text-base px-8">
+                    Continue
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Step 5: Household Info */}
+          {/* Step 5: Household */}
           {step === 5 && (
-            <Card>
+            <Card className="border-2">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{ fontFamily: "var(--font-serif)" }}>
-                  <Baby className="h-5 w-5 text-primary" />
-                  Household Info
+                <CardTitle className="flex items-center gap-2 text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+                  <HomeIcon className="h-6 w-6 text-primary" />
+                  About your home
                 </CardTitle>
-                <CardDescription>
-                  Help guests know what to expect
+                <CardDescription className="text-base">
+                  Final details about your household
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-7">
                 {/* Kids Friendly */}
-                <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30">
-                  <div className="flex items-center gap-3">
-                    <Baby className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">Kids & Family Friendly</p>
-                      <p className="text-sm text-muted-foreground">Suitable for guests with children</p>
-                    </div>
-                  </div>
+                <div className="flex items-start gap-4 p-5 border border-border rounded-lg">
                   <Checkbox
+                    id="kidsFriendly"
                     checked={kidsFriendly}
                     onCheckedChange={(checked) => setKidsFriendly(checked as boolean)}
+                    className="mt-1"
                   />
+                  <div className="flex-1">
+                    <Label htmlFor="kidsFriendly" className="text-base font-medium cursor-pointer flex items-center gap-2">
+                      <Baby className="h-5 w-5" />
+                      Family-friendly (suitable for children)
+                    </Label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Check if your home is welcoming to families with kids
+                    </p>
+                  </div>
                 </div>
 
                 {/* Pets */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30">
-                    <div className="flex items-center gap-3">
-                      <Dog className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Pets in Home</p>
-                        <p className="text-sm text-muted-foreground">Do you have any pets?</p>
-                      </div>
-                    </div>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4 p-5 border border-border rounded-lg">
                     <Checkbox
+                      id="hasPets"
                       checked={hasPets}
                       onCheckedChange={(checked) => setHasPets(checked as boolean)}
+                      className="mt-1"
                     />
+                    <div className="flex-1">
+                      <Label htmlFor="hasPets" className="text-base font-medium cursor-pointer flex items-center gap-2">
+                        <Dog className="h-5 w-5" />
+                        I have pets at home
+                      </Label>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Let guests know if you have pets (for allergies)
+                      </p>
+                    </div>
                   </div>
+
                   {hasPets && (
-                    <Input
-                      value={petDetails}
-                      onChange={(e) => setPetDetails(e.target.value)}
-                      placeholder="e.g., One friendly golden retriever"
-                      className="ml-8"
-                    />
+                    <div>
+                      <Label htmlFor="petDetails" className="text-base font-medium mb-2 block">
+                        Tell us about your pets
+                      </Label>
+                      <Textarea
+                        id="petDetails"
+                        value={petDetails}
+                        onChange={(e) => setPetDetails(e.target.value)}
+                        placeholder="What kind of pets do you have?"
+                        className="mt-1.5 text-base resize-none"
+                        rows={3}
+                      />
+                    </div>
                   )}
                 </div>
 
-                {/* Summary */}
-                <div className="mt-8 p-4 rounded-lg bg-primary/5 border border-primary/20">
-                  <h4 className="font-semibold mb-3">Review Your Listing</h4>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>Name:</strong> {hostName}</p>
-                    <p><strong>District:</strong> {district}</p>
-                    <p><strong>Cuisine:</strong> {cuisineStyle}</p>
-                    <p><strong>Price:</strong> ¥{pricePerPerson}/person</p>
-                    <p><strong>Max Guests:</strong> {maxGuests}</p>
-                    <p><strong>Photos:</strong> {foodPhotos.length} uploaded</p>
-                  </div>
+                <div className="flex justify-between pt-4">
+                  <Button onClick={handleBack} variant="outline" size="lg" className="gap-2 text-base">
+                    <ArrowLeft className="h-5 w-5" />
+                    Back
+                  </Button>
+                  <Button 
+                    onClick={handleSubmit} 
+                    disabled={isSubmitting}
+                    size="lg" 
+                    className="gap-2 text-base px-8"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Submit Application
+                        <Check className="h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           )}
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={prevStep}
-              disabled={step === 1}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Previous
-            </Button>
-            
-            {step < 5 ? (
-              <Button onClick={nextStep} className="gap-2">
-                Next
-                <ArrowLeft className="h-4 w-4 rotate-180" />
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleSubmit} 
-                disabled={isSubmitting}
-                className="gap-2"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    Submit Application
-                    <Check className="h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
         </div>
       </main>
     </div>
   );
 }
 
-// Helper function
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
       const result = reader.result as string;
-      // Remove the data URL prefix (e.g., "data:image/png;base64,")
-      const base64 = result.split(",")[1];
-      resolve(base64);
+      resolve(result.split(",")[1]);
     };
-    reader.onerror = reject;
+    reader.onerror = error => reject(error);
   });
 }
