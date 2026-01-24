@@ -110,9 +110,9 @@ function HeroSection() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </a>
-            <a href="#experience">
+            <a href="/host-register">
               <Button size="lg" variant="outline" className="gap-2 px-8 bg-background">
-                Learn More
+                Become a Host
               </Button>
             </a>
           </div>

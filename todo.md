@@ -85,3 +85,6 @@
 - [x] Update test host's profile photo in database
 - [x] Add horizontal scrolling support for image carousel
 - [x] Improve mobile swipe experience for images
+
+## Hero Section Update
+- [x] Replace "Learn More" button with "Become a Host" button in hero section
