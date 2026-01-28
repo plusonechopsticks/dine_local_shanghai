@@ -108,17 +108,32 @@ export const appRouter = router({
         contentType: z.string(),
       }))
       .mutation(async ({ input }) => {
-        // Decode base64 to buffer
-        const buffer = Buffer.from(input.base64Data, "base64");
-        
-        // Generate unique file key
-        const ext = input.fileName.split('.').pop() || 'jpg';
-        const uniqueKey = `host-images/${nanoid()}.${ext}`;
-        
-        // Upload to S3
-        const { url } = await storagePut(uniqueKey, buffer, input.contentType);
-        
-        return { url };
+        try {
+          console.log(`[Upload] Starting upload for: ${input.fileName}`);
+          
+          // Validate base64 data
+          if (!input.base64Data || input.base64Data.length === 0) {
+            throw new Error("No image data provided");
+          }
+
+          // Decode base64 to buffer
+          const buffer = Buffer.from(input.base64Data, "base64");
+          console.log(`[Upload] Buffer size: ${buffer.length} bytes for ${input.fileName}`);
+          
+          // Generate unique file key
+          const ext = input.fileName.split('.').pop() || 'jpg';
+          const uniqueKey = `host-images/${nanoid()}.${ext}`;
+          
+          // Upload to S3
+          console.log(`[Upload] Uploading to storage: ${uniqueKey}`);
+          const { url } = await storagePut(uniqueKey, buffer, input.contentType);
+          
+          console.log(`[Upload] Upload successful: ${url}`);
+          return { url };
+        } catch (error: any) {
+          console.error(`[Upload] Upload failed:`, error);
+          throw new Error(`Upload failed: ${error?.message || "Unknown error"}`);
+        }
       }),
   }),
 

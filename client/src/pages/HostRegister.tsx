@@ -96,7 +96,7 @@ export default function HostRegister() {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isProfilePhoto: boolean = false) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
     setIsUploading(true);
     const uploadedUrls: string[] = [];
@@ -104,6 +104,7 @@ export default function HostRegister() {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        console.log(`Starting upload for file: ${file.name}, size: ${file.size} bytes`);
         
         // Validate file size (10MB max)
         if (file.size > 10 * 1024 * 1024) {
@@ -112,23 +113,48 @@ export default function HostRegister() {
         }
 
         // Convert to base64
+        console.log(`Converting ${file.name} to base64...`);
         const reader = new FileReader();
         const base64Promise = new Promise<string>((resolve, reject) => {
           reader.onload = () => {
-            const result = reader.result as string;
-            const base64 = result.split(',')[1];
-            resolve(base64);
+            try {
+              const result = reader.result as string;
+              const base64 = result.split(',')[1];
+              if (!base64) {
+                reject(new Error("Failed to extract base64 data"));
+                return;
+              }
+              console.log(`Base64 conversion complete for ${file.name}, length: ${base64.length}`);
+              resolve(base64);
+            } catch (err) {
+              reject(err);
+            }
           };
-          reader.onerror = reject;
+          reader.onerror = (error) => {
+            console.error(`FileReader error for ${file.name}:`, error);
+            reject(new Error(`Failed to read file: ${file.name}`));
+          };
+          reader.onabort = () => {
+            console.error(`FileReader aborted for ${file.name}`);
+            reject(new Error(`File reading aborted: ${file.name}`));
+          };
         });
 
-        const base64 = await base64Promise;
-        const url = await uploadImageMutation.mutateAsync({
-          base64Data: base64,
-          fileName: file.name,
-          contentType: file.type,
-        });
-        uploadedUrls.push(url.url);
+        try {
+          const base64 = await base64Promise;
+          console.log(`Uploading ${file.name} to server...`);
+          const url = await uploadImageMutation.mutateAsync({
+            base64Data: base64,
+            fileName: file.name,
+            contentType: file.type,
+          });
+          console.log(`Upload successful for ${file.name}: ${url.url}`);
+          uploadedUrls.push(url.url);
+        } catch (uploadError: any) {
+          const errorMsg = uploadError?.message || "Unknown upload error";
+          console.error(`Upload failed for ${file.name}:`, errorMsg);
+          toast.error(`Failed to upload ${file.name}: ${errorMsg}`);
+        }
       }
 
       if (uploadedUrls.length > 0) {
@@ -143,8 +169,9 @@ export default function HostRegister() {
           toast.success(`${uploadedUrls.length} photo(s) uploaded!`);
         }
       }
-    } catch (error) {
-      toast.error("Upload failed. Please try again.");
+    } catch (error: any) {
+      console.error("Unexpected error in handleFileUpload:", error);
+      toast.error(error?.message || "Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
