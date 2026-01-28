@@ -14,7 +14,7 @@ import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Sparkles, Heart, Users, Upload, ArrowRight, Check } from "lucide-react";
+import { Sparkles, Heart, Users, Upload, ArrowRight, Check, Loader2, User } from "lucide-react";
 
 const SHANGHAI_DISTRICTS = [
   "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou",
@@ -73,6 +73,7 @@ export default function HostRegister() {
     pricePerPerson: 100,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const submitInterestMutation = trpc.hostInterest.submit.useMutation({
     onSuccess: () => {
@@ -85,6 +86,69 @@ export default function HostRegister() {
       setIsSubmitting(false);
     },
   });
+
+  const uploadImageMutation = trpc.upload.image.useMutation({
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to upload image");
+      setIsUploading(false);
+    },
+  });
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isProfilePhoto: boolean = false) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setIsUploading(true);
+    const uploadedUrls: string[] = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validate file size (10MB max)
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error(`File ${file.name} is too large (max 10MB)`);
+          continue;
+        }
+
+        // Convert to base64
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve, reject) => {
+          reader.onload = () => {
+            const result = reader.result as string;
+            const base64 = result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = reject;
+        });
+
+        const base64 = await base64Promise;
+        const url = await uploadImageMutation.mutateAsync({
+          base64Data: base64,
+          fileName: file.name,
+          contentType: file.type,
+        });
+        uploadedUrls.push(url.url);
+      }
+
+      if (uploadedUrls.length > 0) {
+        if (isProfilePhoto) {
+          setData({ ...data, profilePhotoUrl: uploadedUrls[0] });
+          toast.success("Photo uploaded!");
+        } else {
+          setData({ 
+            ...data, 
+            foodPhotoUrls: [...(data.foodPhotoUrls || []), ...uploadedUrls]
+          });
+          toast.success(`${uploadedUrls.length} photo(s) uploaded!`);
+        }
+      }
+    } catch (error) {
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleInterestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -414,13 +478,46 @@ export default function HostRegister() {
 
                 <div className="space-y-3">
                   <Label className="text-lg font-medium">Food Photos (minimum 3) *</Label>
-                  <div className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors">
+                  <label className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors block">
                     <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
                     <p className="text-muted-foreground">Click to upload or drag and drop</p>
                     <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB each</p>
-                  </div>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, false)}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+                  </label>
+                  {isUploading && (
+                    <div className="flex items-center justify-center gap-2 py-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm text-muted-foreground">Uploading...</span>
+                    </div>
+                  )}
                   {data.foodPhotoUrls && data.foodPhotoUrls.length > 0 && (
-                    <p className="text-sm text-muted-foreground">{data.foodPhotoUrls.length} photo(s) selected</p>
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-foreground">{data.foodPhotoUrls.length} photo(s) uploaded</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {data.foodPhotoUrls.map((url, idx) => (
+                          <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-secondary">
+                            <img src={url} alt={`Food ${idx + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setData({
+                                ...data,
+                                foodPhotoUrls: data.foodPhotoUrls!.filter((_, i) => i !== idx)
+                              })}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
 
@@ -442,12 +539,37 @@ export default function HostRegister() {
                 <h2 className="text-2xl font-bold text-foreground mb-6">About You</h2>
                 
                 <div className="space-y-3">
-                  <Label className="text-lg font-medium">Your Selfie</Label>
-                  <div className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors">
-                    <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
-                    <p className="text-muted-foreground">Upload your photo</p>
+                  <Label className="text-lg font-medium">Your Selfie *</Label>
+                  <label className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors block">
+                    <User className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground">Click to upload or drag and drop</p>
                     <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB</p>
-                  </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, true)}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+                  </label>
+                  {isUploading && (
+                    <div className="flex items-center justify-center gap-2 py-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm text-muted-foreground">Uploading...</span>
+                    </div>
+                  )}
+                  {data.profilePhotoUrl && (
+                    <div className="relative w-32 h-32 mx-auto rounded-lg overflow-hidden bg-secondary">
+                      <img src={data.profilePhotoUrl} alt="Your profile" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setData({ ...data, profilePhotoUrl: "" })}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3">
