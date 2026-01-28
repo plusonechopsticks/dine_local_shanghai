@@ -229,18 +229,16 @@ export default function HostRegister() {
                   </p>
                 </div>
 
-                <div className="space-y-3 mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg shadow-md transition-all disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit Interest"}
-                  </Button>
-                  <p className="text-center text-xs md:text-sm text-gray-600 mt-2">
-                    After submitting, you'll have the option to complete your full profile
-                  </p>
-                </div>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 px-4 text-base font-bold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg shadow-md transition-all disabled:opacity-50 mt-6"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Interest"}
+                </Button>
+                <p className="text-center text-xs text-gray-600 mt-3">
+                  After submitting, you'll have the option to complete your full profile
+                </p>
               </form>
             </CardContent>
           </Card>
