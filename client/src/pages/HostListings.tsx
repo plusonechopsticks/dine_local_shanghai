@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -292,109 +293,111 @@ function HostCard({ host }: { host: any }) {
   };
 
   return (
-    <div className="group cursor-pointer">
-      {/* Image Container */}
-      <div 
-        className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {images.length > 0 ? (
-          <>
-            <img
-              src={images[currentImageIndex]}
-              alt={host.hostName}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            
-            {/* Badge Overlay */}
-            {host.cuisineStyle && (
-              <Badge className="absolute top-3 left-3 bg-background/90 text-foreground border-0 shadow-md">
-                {host.cuisineStyle}
-              </Badge>
-            )}
+    <Link href={`/hosts/${host.id}`}>
+      <a className="group cursor-pointer block">
+        {/* Image Container */}
+        <div 
+          className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {images.length > 0 ? (
+            <>
+              <img
+                src={images[currentImageIndex]}
+                alt={host.hostName}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              
+              {/* Badge Overlay */}
+              {host.cuisineStyle && (
+                <Badge className="absolute top-3 left-3 bg-background/90 text-foreground border-0 shadow-md">
+                  {host.cuisineStyle}
+                </Badge>
+              )}
 
-            {/* Heart Icon */}
-            <button
-              className="absolute top-3 right-3 p-2 rounded-full hover:bg-background/80 transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                // TODO: Add to favorites
-              }}
-            >
-              <Heart className="h-5 w-5 stroke-2 text-foreground/80 hover:fill-primary hover:text-primary transition-colors" />
-            </button>
+              {/* Heart Icon */}
+              <button
+                className="absolute top-3 right-3 p-2 rounded-full hover:bg-background/80 transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // TODO: Add to favorites
+                }}
+              >
+                <Heart className="h-5 w-5 stroke-2 text-foreground/80 hover:fill-primary hover:text-primary transition-colors" />
+              </button>
 
-            {/* Image Navigation */}
-            {images.length > 1 && (
-              <>
-                <button
-                  onClick={prevImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+              {/* Image Navigation */}
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
 
-                {/* Dot Indicators */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
-                  {images.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`h-1.5 rounded-full transition-all ${
-                        index === currentImageIndex
-                          ? "w-4 bg-background"
-                          : "w-1.5 bg-background/60"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <span className="text-4xl text-muted-foreground">
-              {host.hostName.charAt(0).toUpperCase()}
+                  {/* Dot Indicators */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+                    {images.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`h-1.5 rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? "w-4 bg-background"
+                            : "w-1.5 bg-background/60"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <span className="text-4xl text-muted-foreground">
+                {host.hostName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Info Below Image */}
+        <div className="space-y-1">
+          {/* Location & Title */}
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-base truncate">
+                {host.hostName}
+              </h3>
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <MapPin className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate">{host.district}</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Availability */}
+          <p className="text-sm text-muted-foreground">
+            {availableDays.length} {availableDays.length === 1 ? "day" : "days"} available
+          </p>
+
+          {/* Price */}
+          <div className="flex items-baseline gap-1">
+            <span className="font-semibold text-base underline decoration-2">
+              ¥{host.pricePerPerson}
             </span>
-          </div>
-        )}
-      </div>
-
-      {/* Info Below Image */}
-      <div className="space-y-1">
-        {/* Location & Title */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-base truncate">
-              {host.hostName}
-            </h3>
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <MapPin className="h-3 w-3 flex-shrink-0" />
-              <span className="truncate">{host.district}</span>
-            </p>
+            <span className="text-sm text-muted-foreground">per person</span>
           </div>
         </div>
-
-        {/* Availability */}
-        <p className="text-sm text-muted-foreground">
-          {availableDays.length} {availableDays.length === 1 ? "day" : "days"} available
-        </p>
-
-        {/* Price */}
-        <div className="flex items-baseline gap-1">
-          <span className="font-semibold text-base underline decoration-2">
-            ¥{host.pricePerPerson}
-          </span>
-          <span className="text-sm text-muted-foreground">per person</span>
-        </div>
-      </div>
-    </div>
+      </a>
+    </Link>
   );
 }
