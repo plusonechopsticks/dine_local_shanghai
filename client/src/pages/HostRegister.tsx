@@ -133,23 +133,23 @@ export default function HostRegister() {
         </header>
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-12 max-w-2xl">
+        <main className="container mx-auto px-4 py-6 md:py-12 max-w-2xl">
           {/* Hero Section */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-burgundy-50 text-burgundy-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="text-center mb-8 md:mb-12">
+            <div className="inline-flex items-center gap-2 bg-burgundy-50 text-burgundy-700 px-4 py-2 rounded-full text-sm font-medium mb-4 md:mb-6">
               <Sparkles className="w-4 h-4" />
               We are looking for an inaugural batch of hosts!
             </div>
             
-            <h1 className="font-serif text-5xl font-bold text-burgundy-900 mb-4">
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-burgundy-900 mb-2 md:mb-4">
               Become a Host
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8">
               Share your culture, meet amazing travelers, and earn income by hosting authentic home dinners
             </p>
 
             {/* Quick Benefits */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
               <Card className="border-burgundy-100">
                 <CardContent className="pt-6 text-center">
                   <Heart className="w-8 h-8 text-burgundy-600 mx-auto mb-3" />
@@ -177,9 +177,9 @@ export default function HostRegister() {
           {/* Simple Form */}
           <Card className="border-burgundy-200 shadow-lg">
             <CardContent className="pt-8 pb-8">
-              <form onSubmit={handleInterestSubmit} className="space-y-8">
-                <div className="space-y-3">
-                  <Label htmlFor="name" className="text-lg font-medium text-gray-900">
+              <form onSubmit={handleInterestSubmit} className="space-y-6 md:space-y-8">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-base md:text-lg font-medium text-gray-900">
                     What's your name?
                   </Label>
                   <Input
@@ -193,8 +193,8 @@ export default function HostRegister() {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="district" className="text-lg font-medium text-gray-900">
+                <div className="space-y-2">
+                  <Label htmlFor="district" className="text-base md:text-lg font-medium text-gray-900">
                     Which district do you live in Shanghai?
                   </Label>
                   <Select value={data.district} onValueChange={(value) => setData({ ...data, district: value })} required>
@@ -211,8 +211,8 @@ export default function HostRegister() {
                   </Select>
                 </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="contact" className="text-lg font-medium text-gray-900">
+                <div className="space-y-2">
+                  <Label htmlFor="contact" className="text-base md:text-lg font-medium text-gray-900">
                     Leave your email or WeChat ID
                   </Label>
                   <Input
@@ -229,15 +229,15 @@ export default function HostRegister() {
                   </p>
                 </div>
 
-                <div className="space-y-4 mt-8 pt-8 border-t border-gray-200">
+                <div className="space-y-3 mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-16 text-xl font-bold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg shadow-md transition-all disabled:opacity-50"
+                    className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg shadow-md transition-all disabled:opacity-50"
                   >
                     {isSubmitting ? "Submitting..." : "Submit Interest"}
                   </Button>
-                  <p className="text-center text-sm text-gray-600 mt-4">
+                  <p className="text-center text-xs md:text-sm text-gray-600 mt-2">
                     After submitting, you'll have the option to complete your full profile
                   </p>
                 </div>
