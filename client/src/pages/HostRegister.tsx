@@ -307,7 +307,7 @@ export default function HostRegister() {
             {REGISTRATION_STEPS.map((s) => (
               <div
                 key={s.id}
-                className={`text-center p-3 rounded-lg transition-all ${
+                className={`text-center p-2 rounded-lg transition-all min-w-0 ${
                   s.id === currentFullStep
                     ? "bg-burgundy-100 border-2 border-burgundy-600"
                     : s.id < currentFullStep
@@ -315,8 +315,8 @@ export default function HostRegister() {
                     : "bg-gray-100 border-2 border-gray-300"
                 }`}
               >
-                <div className="font-bold text-sm mb-1">{s.id}</div>
-                <div className="text-xs text-gray-700">{s.title}</div>
+                <div className="font-bold text-xs mb-0.5">{s.id}</div>
+                <div className="text-xs text-gray-700 truncate">{s.title}</div>
               </div>
             ))}
           </div>
@@ -540,17 +540,16 @@ export default function HostRegister() {
               <Button
                 onClick={handleFullStepPrev}
                 disabled={currentFullStep === 1}
-                variant="outline"
-                className="flex-1 h-12"
+                className="flex-1 h-14 text-lg bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </Button>
               {currentFullStep < REGISTRATION_STEPS.length ? (
                 <Button
                   onClick={handleFullStepNext}
-                  className="flex-1 h-12 bg-burgundy-600 hover:bg-burgundy-700 flex items-center justify-center gap-2"
+                  className="flex-1 h-14 text-lg bg-burgundy-600 hover:bg-burgundy-700 text-white font-semibold flex items-center justify-center gap-2 transition-all"
                 >
-                  Next <ArrowRight className="w-4 h-4" />
+                  Next <ArrowRight className="w-5 h-5" />
                 </Button>
               ) : (
                 <Button

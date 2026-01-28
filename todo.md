@@ -115,3 +115,12 @@
 - [x] Add step indicators (e.g., "Step 2 of 5: Profile Details")
 - [x] Preserve host interest data when transitioning to full form
 - [x] Test complete registration flow from interest to submission
+
+## Submit Button After Email Step
+- [x] Add submit button after email/WeChat ID field in quick interest form
+- [x] Allow hosts to submit interest without completing full registration
+- [x] Provide option to continue to full form after submission
+- [x] Make submit button more prominent (burgundy, larger)
+- [x] Improve visibility of Next button in full registration form
+- [x] Fix progress box text overflow with truncate and smaller padding
+- [x] Improve Previous button visibility with gray background
