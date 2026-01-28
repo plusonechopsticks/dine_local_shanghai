@@ -27,7 +27,9 @@ const testHost = {
     "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=800&h=600&fit=crop",
     "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&h=600&fit=crop"
   ],
-  dietaryAccommodations: ["Vegetarian", "Halal"],
+  dietaryNote: "I can accommodate vegetarian, vegan, and halal dietary preferences. Please inform me of any allergies.",
+  activities: ["cooking-class", "market", "traditional-craft"],
+  otherNotes: "Please arrive 15 minutes early. Casual dress is fine. We can arrange transportation if needed.",
   mealDurationMinutes: 120,
   pricePerPerson: 150,
   kidsFriendly: true,
