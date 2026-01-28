@@ -232,7 +232,8 @@ export default function HostRegister() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 px-4 text-base font-bold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg shadow-md transition-all disabled:opacity-50 mt-6"
+                  className="w-full py-3 px-4 text-base font-bold text-white rounded-lg shadow-md transition-all disabled:opacity-50 mt-6 hover:opacity-90"
+                  style={{ backgroundColor: "var(--warm-burgundy)" }}
                 >
                   {isSubmitting ? "Submitting..." : "Submit Interest"}
                 </Button>
@@ -545,13 +546,15 @@ export default function HostRegister() {
               {currentFullStep < REGISTRATION_STEPS.length ? (
                 <Button
                   onClick={handleFullStepNext}
-                  className="flex-1 h-14 text-lg bg-burgundy-600 hover:bg-burgundy-700 text-white font-semibold flex items-center justify-center gap-2 transition-all"
+                  className="flex-1 h-14 text-lg text-white font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                  style={{ backgroundColor: "var(--warm-burgundy)" }}
                 >
                   Next <ArrowRight className="w-5 h-5" />
                 </Button>
               ) : (
                 <Button
-                  className="flex-1 h-12 bg-burgundy-600 hover:bg-burgundy-700"
+                  className="flex-1 h-12 text-white hover:opacity-90"
+                  style={{ backgroundColor: "var(--warm-burgundy)" }}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Submitting..." : "Submit Profile"}
