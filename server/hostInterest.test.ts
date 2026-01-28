@@ -1,6 +1,23 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
+
+// Mock the database functions
+vi.mock("./db", () => ({
+  createHostInterest: vi.fn().mockResolvedValue({
+    id: 1,
+    name: "Test Host",
+    district: "Xuhui",
+    contact: "test@example.com",
+    createdAt: new Date(),
+  }),
+  getAllHostInterests: vi.fn().mockResolvedValue([]),
+}));
+
+// Mock the notification function
+vi.mock("./_core/notification", () => ({
+  notifyOwner: vi.fn().mockResolvedValue(true),
+}));
 
 function createPublicContext(): TrpcContext {
   return {

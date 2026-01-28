@@ -96,11 +96,9 @@ describe("host.submit", () => {
     const caller = appRouter.createCaller(ctx);
 
     const result = await caller.host.submit({
-      hostName: "Test Host",
-      languages: ["Mandarin", "English"],
+      name: "Test Host",
       bio: "I love cooking and sharing my culture with travelers from around the world.",
       email: "test@example.com",
-      wechatOrPhone: "test_wechat",
       district: "Pudong",
       availability: { saturday: ["dinner"], sunday: ["lunch", "dinner"] },
       maxGuests: 4,
@@ -111,10 +109,7 @@ describe("host.submit", () => {
         "https://example.com/photo2.jpg",
         "https://example.com/photo3.jpg",
       ],
-      mealDurationMinutes: 120,
       pricePerPerson: 150,
-      kidsFriendly: true,
-      hasPets: false,
     });
 
     expect(result.success).toBe(true);
@@ -127,22 +122,16 @@ describe("host.submit", () => {
 
     await expect(
       caller.host.submit({
-        hostName: "",
-        languages: [],
+        name: "",
         bio: "Short",
         email: "invalid-email",
-        wechatOrPhone: "",
         district: "",
         availability: {},
-        maxGuests: 2,
         cuisineStyle: "",
         menuDescription: "Short",
         foodPhotoUrls: [],
-        mealDurationMinutes: 120,
         pricePerPerson: 100,
-        kidsFriendly: true,
-        hasPets: false,
-      })
+      } as any)
     ).rejects.toThrow();
   });
 
@@ -152,21 +141,15 @@ describe("host.submit", () => {
 
     await expect(
       caller.host.submit({
-        hostName: "Test Host",
-        languages: ["Mandarin"],
+        name: "Test Host",
         bio: "I love cooking and sharing my culture with travelers.",
         email: "test@example.com",
-        wechatOrPhone: "test_wechat",
         district: "Pudong",
         availability: { saturday: ["dinner"] },
-        maxGuests: 2,
         cuisineStyle: "Home-style Chinese",
         menuDescription: "Traditional home-cooked Chinese dishes.",
         foodPhotoUrls: ["https://example.com/photo1.jpg"], // Only 1 photo
-        mealDurationMinutes: 120,
         pricePerPerson: 100,
-        kidsFriendly: true,
-        hasPets: false,
       })
     ).rejects.toThrow();
   });

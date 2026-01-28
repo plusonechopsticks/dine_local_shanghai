@@ -514,7 +514,7 @@ export default function HostRegister() {
                                 type="checkbox"
                                 checked={(data.availability?.[day] || []).includes(meal)}
                                 onChange={(e) => {
-                                  const availability = { ...data.availability } || {};
+                                  const availability = { ...data.availability };
                                   if (e.target.checked) {
                                     availability[day] = [...(availability[day] || []), meal];
                                   } else {

@@ -144,7 +144,10 @@ export const appRouter = router({
         activities: z.array(z.string()).optional(),
         
         // Step 4: Availability
-        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).min(1, "Please select at least one day/meal"),
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).refine(
+          (obj) => Object.keys(obj).length > 0,
+          "Please select at least one day/meal"
+        ),
         maxGuests: z.number().min(1).max(20).default(2),
         
         // Step 5: Pricing & Notes
