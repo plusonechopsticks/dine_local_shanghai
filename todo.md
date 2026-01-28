@@ -105,3 +105,13 @@
 - [x] Add "We are looking for an inaugural batch of hosts!" messaging
 - [x] Update database schema to support simplified host interest submissions
 - [x] Update backend API for simplified submission
+
+
+## Two-Step Host Registration Flow
+- [x] Redesign registration flow: quick 3-question form → optional full registration
+- [x] Add "Continue to Full Registration" button after email submission
+- [x] Create progress bar component showing completion percentage
+- [x] Bring back full multi-step form with progress tracking
+- [x] Add step indicators (e.g., "Step 2 of 5: Profile Details")
+- [x] Preserve host interest data when transitioning to full form
+- [x] Test complete registration flow from interest to submission
