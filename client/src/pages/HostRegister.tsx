@@ -14,53 +14,63 @@ import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Sparkles, Heart, Users, Upload, ArrowRight } from "lucide-react";
+import { Sparkles, Heart, Users, Upload, ArrowRight, Check } from "lucide-react";
 
 const SHANGHAI_DISTRICTS = [
-  "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou", 
-  "Yangpu", "Minhang", "Baoshan", "Jiading", "Pudong", "Jinshan", 
+  "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou",
+  "Yangpu", "Minhang", "Baoshan", "Jiading", "Pudong", "Jinshan",
   "Songjiang", "Qingpu", "Fengxian", "Chongming"
 ];
 
+const ACTIVITY_OPTIONS = [
+  { id: "cooking-class", label: "Cooking Class" },
+  { id: "park-visit", label: "Park Visit" },
+  { id: "shopping", label: "Shopping" },
+  { id: "museum", label: "Museum Tour" },
+  { id: "temple", label: "Temple Visit" },
+  { id: "market", label: "Local Market Tour" },
+  { id: "traditional-craft", label: "Traditional Craft" },
+];
+
 const REGISTRATION_STEPS = [
-  { id: 1, title: "Profile", description: "Name, photo, bio" },
-  { id: 2, title: "Contact", description: "Email, WeChat" },
-  { id: 3, title: "Availability", description: "Days, times, guests" },
-  { id: 4, title: "Menu", description: "Cuisine, dishes, photos" },
-  { id: 5, title: "Household", description: "Kids, pets, details" },
+  { id: 1, title: "Contact", description: "Name, district, email" },
+  { id: 2, title: "Cuisine", description: "Dishes & dietary info" },
+  { id: 3, title: "About You", description: "Bio & activities" },
+  { id: 4, title: "Availability", description: "Days & meals" },
+  { id: 5, title: "Pricing", description: "Price & notes" },
 ];
 
 interface RegistrationData {
-  // Step 1: Quick interest
+  // Step 1
   name: string;
   district: string;
-  contact: string;
-  // Step 2: Full registration
-  profilePhoto?: string;
-  bio?: string;
-  languagesSpoken?: string;
-  email?: string;
-  wechatId?: string;
-  availability?: string[];
-  mealType?: ("lunch" | "dinner")[];
-  maxGuests?: number;
-  mealDurationMinutes?: number;
-  pricePerPerson?: number;
-  cuisineStyle?: string;
-  menuDescription?: string;
-  foodPhotos?: string[];
-  dietaryAccommodations?: string;
-  kidsFreindly?: boolean;
-  petsInHome?: boolean;
+  email: string;
+  // Step 2
+  cuisineStyle: string;
+  menuDescription: string;
+  foodPhotoUrls: string[];
+  dietaryNote: string;
+  // Step 3
+  bio: string;
+  profilePhotoUrl: string;
+  activities: string[];
+  // Step 4
+  availability: Record<string, string[]>;
+  maxGuests: number;
+  // Step 5
+  pricePerPerson: number;
+  otherNotes: string;
 }
 
 export default function HostRegister() {
   const [step, setStep] = useState<"interest" | "full">("interest");
   const [currentFullStep, setCurrentFullStep] = useState(1);
-  const [data, setData] = useState<RegistrationData>({
-    name: "",
-    district: "",
-    contact: "",
+  const [data, setData] = useState<Partial<RegistrationData>>({
+    foodPhotoUrls: [],
+    activities: [],
+    availability: {},
+    maxGuests: 2,
+    pricePerPerson: 100,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -78,8 +88,7 @@ export default function HostRegister() {
 
   const handleInterestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!data.name.trim()) {
+    if (!data.name?.trim()) {
       toast.error("Please enter your name");
       return;
     }
@@ -87,8 +96,8 @@ export default function HostRegister() {
       toast.error("Please select your district");
       return;
     }
-    if (!data.contact.trim()) {
-      toast.error("Please enter your email or WeChat ID");
+    if (!data.email?.trim()) {
+      toast.error("Please enter your email");
       return;
     }
 
@@ -96,11 +105,34 @@ export default function HostRegister() {
     await submitInterestMutation.mutateAsync({
       name: data.name.trim(),
       district: data.district,
-      contact: data.contact.trim(),
+      contact: data.email.trim(),
     });
   };
 
   const handleFullStepNext = () => {
+    // Basic validation per step
+    if (currentFullStep === 1) {
+      if (!data.name?.trim() || !data.district || !data.email?.trim()) {
+        toast.error("Please fill all fields");
+        return;
+      }
+    } else if (currentFullStep === 2) {
+      if (!data.cuisineStyle?.trim() || !data.menuDescription?.trim() || (data.foodPhotoUrls?.length || 0) < 3) {
+        toast.error("Please add cuisine, description, and at least 3 photos");
+        return;
+      }
+    } else if (currentFullStep === 3) {
+      if (!data.bio?.trim()) {
+        toast.error("Please write a bio");
+        return;
+      }
+    } else if (currentFullStep === 4) {
+      if (Object.keys(data.availability || {}).length === 0) {
+        toast.error("Please select at least one day/meal combo");
+        return;
+      }
+    }
+    
     if (currentFullStep < REGISTRATION_STEPS.length) {
       setCurrentFullStep(currentFullStep + 1);
     }
@@ -114,17 +146,16 @@ export default function HostRegister() {
 
   const progressPercentage = (currentFullStep / REGISTRATION_STEPS.length) * 100;
 
-  // Step 1: Quick Interest Form
+  // Step 1: Quick Interest
   if (step === "interest") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-cream-50 to-white">
-        {/* Header */}
-        <header className="border-b border-burgundy-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+        <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <Link href="/">
               <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <ChopsticksLogo className="w-8 h-8 text-burgundy-600" />
-                <span className="font-serif text-xl font-bold text-burgundy-900">
+                <ChopsticksLogo className="w-8 h-8 text-primary" />
+                <span className="font-serif text-xl font-bold text-foreground">
                   +1 Chopsticks
                 </span>
               </a>
@@ -132,72 +163,68 @@ export default function HostRegister() {
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="container mx-auto px-4 py-6 md:py-12 max-w-2xl">
-          {/* Hero Section */}
           <div className="text-center mb-8 md:mb-12">
-            <div className="inline-flex items-center gap-2 bg-burgundy-50 text-burgundy-700 px-4 py-2 rounded-full text-sm font-medium mb-4 md:mb-6">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4 md:mb-6">
               <Sparkles className="w-4 h-4" />
-              We are looking for an inaugural batch of hosts!
+              We are looking for inaugural batch hosts!
             </div>
             
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-burgundy-900 mb-2 md:mb-4">
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-2 md:mb-4">
               Become a Host
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8">
+            <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">
               Share your culture, meet amazing travelers, and earn income by hosting authentic home dinners
             </p>
 
-            {/* Quick Benefits */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
-              <Card className="border-burgundy-100">
+              <Card className="border-primary/20">
                 <CardContent className="pt-6 text-center">
-                  <Heart className="w-8 h-8 text-burgundy-600 mx-auto mb-3" />
+                  <Heart className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold text-lg mb-2">Share Culture</h3>
-                  <p className="text-sm text-gray-600">Introduce travelers to authentic Shanghai home cooking</p>
+                  <p className="text-sm text-muted-foreground">Introduce travelers to authentic home cooking</p>
                 </CardContent>
               </Card>
-              <Card className="border-burgundy-100">
+              <Card className="border-primary/20">
                 <CardContent className="pt-6 text-center">
-                  <Users className="w-8 h-8 text-burgundy-600 mx-auto mb-3" />
+                  <Users className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold text-lg mb-2">Meet Friends</h3>
-                  <p className="text-sm text-gray-600">Connect with interesting people from around the world</p>
+                  <p className="text-sm text-muted-foreground">Connect with people from around the world</p>
                 </CardContent>
               </Card>
-              <Card className="border-burgundy-100">
+              <Card className="border-primary/20">
                 <CardContent className="pt-6 text-center">
-                  <Sparkles className="w-8 h-8 text-burgundy-600 mx-auto mb-3" />
+                  <Sparkles className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold text-lg mb-2">Earn Income</h3>
-                  <p className="text-sm text-gray-600">Get paid for sharing your hospitality and cooking</p>
+                  <p className="text-sm text-muted-foreground">Get paid for sharing your hospitality</p>
                 </CardContent>
               </Card>
             </div>
           </div>
 
-          {/* Simple Form */}
-          <Card className="border-burgundy-200 shadow-lg">
+          <Card className="border-primary/20 shadow-lg">
             <CardContent className="pt-8 pb-8">
               <form onSubmit={handleInterestSubmit} className="space-y-6 md:space-y-8">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-base md:text-lg font-medium text-gray-900">
-                    What's your name?
+                  <Label htmlFor="name" className="text-base md:text-lg font-medium text-foreground">
+                    What's your name? *
                   </Label>
                   <Input
                     id="name"
                     type="text"
-                    value={data.name}
+                    value={data.name || ""}
                     onChange={(e) => setData({ ...data, name: e.target.value })}
-                    placeholder="Enter your name"
+                    placeholder="Your name"
                     className="h-12 text-base"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="district" className="text-base md:text-lg font-medium text-gray-900">
-                    Which district do you live in Shanghai?
+                  <Label htmlFor="district" className="text-base md:text-lg font-medium text-foreground">
+                    Which district in Shanghai? *
                   </Label>
-                  <Select value={data.district} onValueChange={(value) => setData({ ...data, district: value })} required>
+                  <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })} required>
                     <SelectTrigger id="district" className="h-12 text-base">
                       <SelectValue placeholder="Select your district" />
                     </SelectTrigger>
@@ -212,20 +239,20 @@ export default function HostRegister() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="contact" className="text-base md:text-lg font-medium text-gray-900">
-                    Leave your email or WeChat ID
+                  <Label htmlFor="email" className="text-base md:text-lg font-medium text-foreground">
+                    Your email *
                   </Label>
                   <Input
-                    id="contact"
-                    type="text"
-                    value={data.contact}
-                    onChange={(e) => setData({ ...data, contact: e.target.value })}
-                    placeholder="email@example.com or WeChat ID"
+                    id="email"
+                    type="email"
+                    value={data.email || ""}
+                    onChange={(e) => setData({ ...data, email: e.target.value })}
+                    placeholder="your@email.com"
                     className="h-12 text-base"
                     required
                   />
-                  <p className="text-sm text-gray-500">
-                    We'll contact you shortly to discuss next steps
+                  <p className="text-sm text-muted-foreground">
+                    We'll use this to contact you about your application
                   </p>
                 </div>
 
@@ -235,17 +262,13 @@ export default function HostRegister() {
                   className="w-full py-3 px-4 text-base font-bold text-white rounded-lg shadow-md transition-all disabled:opacity-50 mt-6 hover:opacity-90"
                   style={{ backgroundColor: "var(--warm-burgundy)" }}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Interest"}
+                  {isSubmitting ? "Submitting..." : "Continue to Full Profile"}
                 </Button>
-                <p className="text-center text-xs text-gray-600 mt-3">
-                  After submitting, you'll have the option to complete your full profile
-                </p>
               </form>
             </CardContent>
           </Card>
 
-          {/* Additional Info */}
-          <div className="mt-8 text-center text-sm text-gray-600">
+          <div className="mt-8 text-center text-sm text-muted-foreground">
             <p>
               By submitting, you agree to be contacted about the +1 Chopsticks pilot program.
             </p>
@@ -255,16 +278,15 @@ export default function HostRegister() {
     );
   }
 
-  // Step 2: Full Registration Form with Progress
+  // Step 2: Full Registration (5 steps)
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream-50 to-white">
-      {/* Header */}
-      <header className="border-b border-burgundy-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/">
             <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <ChopsticksLogo className="w-8 h-8 text-burgundy-600" />
-              <span className="font-serif text-xl font-bold text-burgundy-900">
+              <ChopsticksLogo className="w-8 h-8 text-primary" />
+              <span className="font-serif text-xl font-bold text-foreground">
                 +1 Chopsticks
               </span>
             </a>
@@ -272,45 +294,42 @@ export default function HostRegister() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-3xl">
-        {/* Progress Section */}
+        {/* Progress */}
         <div className="mb-12">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="font-serif text-4xl font-bold text-burgundy-900 mb-2">
+              <h1 className="font-serif text-4xl font-bold text-foreground mb-2">
                 Complete Your Profile
               </h1>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Step {currentFullStep} of {REGISTRATION_STEPS.length}: {REGISTRATION_STEPS[currentFullStep - 1]?.title}
               </p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-burgundy-600">
+              <div className="text-3xl font-bold text-primary">
                 {Math.round(progressPercentage)}%
               </div>
-              <p className="text-sm text-gray-600">Complete</p>
+              <p className="text-sm text-muted-foreground">Complete</p>
             </div>
           </div>
 
-          {/* Progress Bar */}
           <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div
-              className="bg-burgundy-600 h-full transition-all duration-300 ease-out"
+              className="bg-primary h-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
-          {/* Step Indicators */}
           <div className="grid grid-cols-5 gap-2 mt-8">
             {REGISTRATION_STEPS.map((s) => (
               <div
                 key={s.id}
                 className={`text-center p-2 rounded-lg transition-all min-w-0 ${
                   s.id === currentFullStep
-                    ? "bg-burgundy-100 border-2 border-burgundy-600"
+                    ? "bg-primary/10 border-2 border-primary"
                     : s.id < currentFullStep
-                    ? "bg-burgundy-50 border-2 border-burgundy-300"
+                    ? "bg-primary/5 border-2 border-primary/30"
                     : "bg-gray-100 border-2 border-gray-300"
                 }`}
               >
@@ -322,61 +341,42 @@ export default function HostRegister() {
         </div>
 
         {/* Form Content */}
-        <Card className="border-burgundy-200 shadow-lg">
+        <Card className="border-primary/20 shadow-lg">
           <CardContent className="pt-8 pb-8">
-            {/* Step 1: Profile */}
+            {/* Step 1: Contact */}
             {currentFullStep === 1 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-burgundy-900 mb-6">Profile Details</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-6">Your Contact Details</h2>
                 
                 <div className="space-y-3">
-                  <Label className="text-lg font-medium">Profile Photo</Label>
-                  <div className="border-2 border-dashed border-burgundy-200 rounded-lg p-8 text-center cursor-pointer hover:bg-burgundy-50 transition-colors">
-                    <Upload className="w-8 h-8 text-burgundy-400 mx-auto mb-3" />
-                    <p className="text-gray-600">Click to upload or drag and drop</p>
-                    <p className="text-sm text-gray-500">PNG, JPG up to 10MB</p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="bio" className="text-lg font-medium">
-                    Tell us about yourself
-                  </Label>
-                  <textarea
-                    id="bio"
-                    value={data.bio || ""}
-                    onChange={(e) => setData({ ...data, bio: e.target.value })}
-                    placeholder="Share your story, why you want to host, your cooking background..."
-                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-burgundy-600 focus:border-transparent"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="languages" className="text-lg font-medium">
-                    Languages you speak
-                  </Label>
+                  <Label className="text-lg font-medium">Name *</Label>
                   <Input
-                    id="languages"
-                    value={data.languagesSpoken || ""}
-                    onChange={(e) => setData({ ...data, languagesSpoken: e.target.value })}
-                    placeholder="e.g., Mandarin, English, Shanghainese"
+                    value={data.name || ""}
+                    onChange={(e) => setData({ ...data, name: e.target.value })}
+                    placeholder="Your full name"
                     className="h-12 text-base"
                   />
                 </div>
-              </div>
-            )}
 
-            {/* Step 2: Contact */}
-            {currentFullStep === 2 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-burgundy-900 mb-6">Contact Information</h2>
-                
                 <div className="space-y-3">
-                  <Label htmlFor="email" className="text-lg font-medium">
-                    Email Address
-                  </Label>
+                  <Label className="text-lg font-medium">District *</Label>
+                  <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })}>
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="Select your district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SHANGHAI_DISTRICTS.map((d) => (
+                        <SelectItem key={d} value={d}>
+                          {d}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Email *</Label>
                   <Input
-                    id="email"
                     type="email"
                     value={data.email || ""}
                     onChange={(e) => setData({ ...data, email: e.target.value })}
@@ -384,162 +384,197 @@ export default function HostRegister() {
                     className="h-12 text-base"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* Step 2: Cuisine & Food */}
+            {currentFullStep === 2 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Your Cuisine & Dishes</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Cuisine Style *</Label>
+                  <Input
+                    value={data.cuisineStyle || ""}
+                    onChange={(e) => setData({ ...data, cuisineStyle: e.target.value })}
+                    placeholder="e.g., Shanghainese, Sichuan, Cantonese"
+                    className="h-12 text-base"
+                  />
+                </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="wechat" className="text-lg font-medium">
-                    WeChat ID
-                  </Label>
-                  <Input
-                    id="wechat"
-                    value={data.wechatId || ""}
-                    onChange={(e) => setData({ ...data, wechatId: e.target.value })}
-                    placeholder="Your WeChat ID"
-                    className="h-12 text-base"
+                  <Label className="text-lg font-medium">What will you cook? *</Label>
+                  <textarea
+                    value={data.menuDescription || ""}
+                    onChange={(e) => setData({ ...data, menuDescription: e.target.value })}
+                    placeholder="Describe your typical menu, special dishes, seasonal specialties..."
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Food Photos (minimum 3) *</Label>
+                  <div className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors">
+                    <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground">Click to upload or drag and drop</p>
+                    <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB each</p>
+                  </div>
+                  {data.foodPhotoUrls && data.foodPhotoUrls.length > 0 && (
+                    <p className="text-sm text-muted-foreground">{data.foodPhotoUrls.length} photo(s) selected</p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Dietary Info</Label>
+                  <textarea
+                    value={data.dietaryNote || ""}
+                    onChange={(e) => setData({ ...data, dietaryNote: e.target.value })}
+                    placeholder="e.g., 'Can accommodate vegetarian, vegan, gluten-free. Not suitable for people with shellfish allergy.'"
+                    className="w-full h-24 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
               </div>
             )}
 
-            {/* Step 3: Availability */}
+            {/* Step 3: About You & Activities */}
             {currentFullStep === 3 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-burgundy-900 mb-6">Availability</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-6">About You</h2>
                 
                 <div className="space-y-3">
-                  <Label className="text-lg font-medium">Meal Duration (minutes)</Label>
-                  <Input
-                    type="number"
-                    value={data.mealDurationMinutes || 120}
-                    onChange={(e) => setData({ ...data, mealDurationMinutes: parseInt(e.target.value) })}
-                    placeholder="120"
-                    className="h-12 text-base"
+                  <Label className="text-lg font-medium">Your Selfie</Label>
+                  <div className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors">
+                    <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground">Upload your photo</p>
+                    <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Tell us about yourself *</Label>
+                  <textarea
+                    value={data.bio || ""}
+                    onChange={(e) => setData({ ...data, bio: e.target.value })}
+                    placeholder="Share your story, why you want to host, your cooking background, what you love about Shanghai..."
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">What else can you do with guests?</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {ACTIVITY_OPTIONS.map((activity) => (
+                      <label key={activity.id} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={(data.activities || []).includes(activity.id)}
+                          onChange={(e) => {
+                            const newActivities = e.target.checked
+                              ? [...(data.activities || []), activity.id]
+                              : (data.activities || []).filter(a => a !== activity.id);
+                            setData({ ...data, activities: newActivities });
+                          }}
+                          className="w-5 h-5 rounded border-gray-300"
+                        />
+                        <span className="text-sm font-medium">{activity.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Availability */}
+            {currentFullStep === 4 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Your Availability</h2>
+                
                 <div className="space-y-3">
                   <Label className="text-lg font-medium">Max Guests</Label>
                   <Input
                     type="number"
                     value={data.maxGuests || 2}
-                    onChange={(e) => setData({ ...data, maxGuests: parseInt(e.target.value) })}
-                    placeholder="2"
+                    onChange={(e) => setData({ ...data, maxGuests: parseInt(e.target.value) || 2 })}
                     className="h-12 text-base"
+                    min="1"
+                    max="20"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-lg font-medium">Price per Person (RMB)</Label>
+                  <Label className="text-lg font-medium">When are you available? *</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
+                      <div key={day} className="border border-gray-200 rounded-lg p-4">
+                        <div className="font-semibold text-sm mb-3 capitalize">{day}</div>
+                        <div className="flex gap-2">
+                          {["lunch", "dinner"].map((meal) => (
+                            <label key={`${day}-${meal}`} className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={(data.availability?.[day] || []).includes(meal)}
+                                onChange={(e) => {
+                                  const availability = { ...data.availability } || {};
+                                  if (e.target.checked) {
+                                    availability[day] = [...(availability[day] || []), meal];
+                                  } else {
+                                    availability[day] = (availability[day] || []).filter(m => m !== meal);
+                                  }
+                                  setData({ ...data, availability });
+                                }}
+                                className="w-4 h-4 rounded border-gray-300"
+                              />
+                              <span className="text-xs capitalize">{meal}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Pricing & Notes */}
+            {currentFullStep === 5 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Pricing & Notes</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Price per Person (RMB) *</Label>
                   <Input
                     type="number"
                     value={data.pricePerPerson || 100}
-                    onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) })}
-                    placeholder="100"
+                    onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) || 100 })}
                     className="h-12 text-base"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Menu */}
-            {currentFullStep === 4 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-burgundy-900 mb-6">Your Menu</h2>
-                
-                <div className="space-y-3">
-                  <Label htmlFor="cuisine" className="text-lg font-medium">
-                    Cuisine Style
-                  </Label>
-                  <Input
-                    id="cuisine"
-                    value={data.cuisineStyle || ""}
-                    onChange={(e) => setData({ ...data, cuisineStyle: e.target.value })}
-                    placeholder="e.g., Shanghainese, Sichuan, Home-style"
-                    className="h-12 text-base"
+                    min="1"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="menu" className="text-lg font-medium">
-                    What will you cook?
-                  </Label>
+                  <Label className="text-lg font-medium">Additional Notes (optional)</Label>
                   <textarea
-                    id="menu"
-                    value={data.menuDescription || ""}
-                    onChange={(e) => setData({ ...data, menuDescription: e.target.value })}
-                    placeholder="Describe your typical menu, special dishes, seasonal specialties..."
-                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-burgundy-600 focus:border-transparent"
+                    value={data.otherNotes || ""}
+                    onChange={(e) => setData({ ...data, otherNotes: e.target.value })}
+                    placeholder="Anything else guests should know? House rules, parking info, transportation tips, etc."
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <Label className="text-lg font-medium">Food Photos (minimum 3)</Label>
-                  <div className="border-2 border-dashed border-burgundy-200 rounded-lg p-8 text-center cursor-pointer hover:bg-burgundy-50 transition-colors">
-                    <Upload className="w-8 h-8 text-burgundy-400 mx-auto mb-3" />
-                    <p className="text-gray-600">Upload photos of your dishes</p>
-                    <p className="text-sm text-gray-500">PNG, JPG up to 10MB each</p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="dietary" className="text-lg font-medium">
-                    Dietary Accommodations
-                  </Label>
-                  <Input
-                    id="dietary"
-                    value={data.dietaryAccommodations || ""}
-                    onChange={(e) => setData({ ...data, dietaryAccommodations: e.target.value })}
-                    placeholder="e.g., Vegetarian options, Halal, Allergies you can handle"
-                    className="h-12 text-base"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Step 5: Household */}
-            {currentFullStep === 5 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-burgundy-900 mb-6">Household Details</h2>
-                
-                <div className="space-y-4">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={data.kidsFreindly || false}
-                      onChange={(e) => setData({ ...data, kidsFreindly: e.target.checked })}
-                      className="w-5 h-5 rounded border-gray-300"
-                    />
-                    <span className="text-lg font-medium text-gray-900">
-                      Kids and families are welcome
-                    </span>
-                  </label>
-
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={data.petsInHome || false}
-                      onChange={(e) => setData({ ...data, petsInHome: e.target.checked })}
-                      className="w-5 h-5 rounded border-gray-300"
-                    />
-                    <span className="text-lg font-medium text-gray-900">
-                      I have pets in my home
-                    </span>
-                  </label>
-                </div>
-
-                <div className="bg-burgundy-50 border border-burgundy-200 rounded-lg p-4 mt-6">
-                  <p className="text-sm text-burgundy-900">
-                    ✓ Once your profile is approved, you'll need to provide your full address for verification
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-6">
+                  <p className="text-sm text-foreground">
+                    ✓ Once your profile is approved, you'll be able to login and manage your bookings, dates, and availability.
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Navigation Buttons */}
+            {/* Navigation */}
             <div className="flex gap-4 mt-8 pt-8 border-t border-gray-200">
               <Button
                 onClick={handleFullStepPrev}
                 disabled={currentFullStep === 1}
-                className="flex-1 h-14 text-lg bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="flex-1 h-14 text-lg bg-gray-200 hover:bg-gray-300 text-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </Button>
@@ -553,7 +588,7 @@ export default function HostRegister() {
                 </Button>
               ) : (
                 <Button
-                  className="flex-1 h-12 text-white hover:opacity-90"
+                  className="flex-1 h-14 text-white hover:opacity-90"
                   style={{ backgroundColor: "var(--warm-burgundy)" }}
                   disabled={isSubmitting}
                 >

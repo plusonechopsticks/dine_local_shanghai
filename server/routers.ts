@@ -127,62 +127,57 @@ export const appRouter = router({
     // Submit a new host listing
     submit: publicProcedure
       .input(z.object({
-        // Host Profile
-        hostName: z.string().min(1, "Name is required"),
-        profilePhotoUrl: z.string().url().optional(),
-        languages: z.array(z.string()).min(1, "At least one language is required"),
-        bio: z.string().min(20, "Please write at least 20 characters about yourself"),
-        
-        // Contact
-        email: z.string().email("Valid email is required"),
-        wechatOrPhone: z.string().min(1, "WeChat ID or phone number is required"),
-        
-        // Location
+        // Step 1: Contact
+        name: z.string().min(1, "Name is required"),
         district: z.string().min(1, "District is required"),
+        email: z.string().email("Valid email is required"),
         
-        // Availability
-        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))),
-        
-        // Dining Details
-        maxGuests: z.number().min(1).max(20).default(2),
+        // Step 2: Cuisine & Food
         cuisineStyle: z.string().min(1, "Cuisine style is required"),
-        menuDescription: z.string().min(20, "Please describe your menu in at least 20 characters"),
+        menuDescription: z.string().min(20, "Please describe your menu"),
         foodPhotoUrls: z.array(z.string().url()).min(3, "At least 3 food photos are required"),
-        dietaryAccommodations: z.array(z.string()).optional(),
-        mealDurationMinutes: z.number().min(30).max(480).default(120),
-        pricePerPerson: z.number().min(1).default(100),
+        dietaryNote: z.string().optional(),
         
-        // Household Info
-        kidsFriendly: z.boolean().default(true),
-        hasPets: z.boolean().default(false),
-        petDetails: z.string().optional(),
+        // Step 3: About You & Activities
+        bio: z.string().min(20, "Please write at least 20 characters about yourself"),
+        profilePhotoUrl: z.string().url().optional(),
+        activities: z.array(z.string()).optional(),
+        
+        // Step 4: Availability
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).min(1, "Please select at least one day/meal"),
+        maxGuests: z.number().min(1).max(20).default(2),
+        
+        // Step 5: Pricing & Notes
+        pricePerPerson: z.number().min(1).default(100),
+        otherNotes: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const listing = await createHostListing({
-          hostName: input.hostName,
+          hostName: input.name,
           profilePhotoUrl: input.profilePhotoUrl || null,
-          languages: input.languages,
+          languages: ["Mandarin"], // Default for now; can be collected later
           bio: input.bio,
           email: input.email,
-          wechatOrPhone: input.wechatOrPhone,
+          wechatOrPhone: "", // Can be collected in host dashboard later
           district: input.district,
           availability: input.availability as Record<string, string[]>,
           maxGuests: input.maxGuests,
           cuisineStyle: input.cuisineStyle,
           menuDescription: input.menuDescription,
           foodPhotoUrls: input.foodPhotoUrls,
-          dietaryAccommodations: input.dietaryAccommodations || null,
-          mealDurationMinutes: input.mealDurationMinutes,
+          dietaryNote: input.dietaryNote || null,
+          activities: input.activities || [],
+          otherNotes: input.otherNotes || null,
           pricePerPerson: input.pricePerPerson,
-          kidsFriendly: input.kidsFriendly,
-          hasPets: input.hasPets,
-          petDetails: input.petDetails || null,
+          kidsFriendly: true,
+          hasPets: false,
+          mealDurationMinutes: 120,
         });
 
         // Notify owner of new host application
         await notifyOwner({
-          title: `New Host Application: ${input.hostName}`,
-          content: `Name: ${input.hostName}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\n\nBio: ${input.bio}`,
+          title: `New Host Application: ${input.name}`,
+          content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\n\nBio: ${input.bio}`,
         });
 
         return { success: true, listing };

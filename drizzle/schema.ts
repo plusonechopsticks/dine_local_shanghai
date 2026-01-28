@@ -57,9 +57,10 @@ export const hostListings = mysqlTable("host_listings", {
   
   // Host Profile
   hostName: varchar("hostName", { length: 255 }).notNull(),
-  profilePhotoUrl: varchar("profilePhotoUrl", { length: 500 }),
+  profilePhotoUrl: varchar("profilePhotoUrl", { length: 500 }), // Selfie
   languages: json("languages").$type<string[]>().notNull(), // e.g., ["English", "Mandarin"]
   bio: text("bio").notNull(),
+  activities: json("activities").$type<string[]>().default([] as any).notNull(), // e.g., ["cooking-class", "park-visit", "shopping"]
   
   // Contact
   email: varchar("email", { length: 320 }).notNull(),
@@ -78,9 +79,10 @@ export const hostListings = mysqlTable("host_listings", {
   cuisineStyle: varchar("cuisineStyle", { length: 255 }).notNull(),
   menuDescription: text("menuDescription").notNull(),
   foodPhotoUrls: json("foodPhotoUrls").$type<string[]>().notNull(), // At least 3 photos
-  dietaryAccommodations: json("dietaryAccommodations").$type<string[]>(), // e.g., ["vegetarian", "halal"]
+  dietaryNote: text("dietaryNote"), // e.g., "Can accommodate vegetarian, vegan, gluten-free. Not suitable for shellfish allergy."
   mealDurationMinutes: int("mealDurationMinutes").notNull().default(120),
   pricePerPerson: int("pricePerPerson").notNull().default(100), // in RMB
+  otherNotes: text("otherNotes"), // Additional notes about the experience
   
   // Household Info
   kidsFriendly: boolean("kidsFriendly").notNull().default(true),
