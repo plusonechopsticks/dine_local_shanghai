@@ -271,7 +271,7 @@ export default function HostRegister() {
 
     setIsUploading(true);
     try {
-      const urls = await handleFileUpload(files, setUploadProgress);
+      const urls = await handleFileUpload(files, (progress: number) => setUploadProgress({ profile: progress }));
       if (urls.length > 0) {
         setData({ ...data, profilePhotoUrl: urls[0] });
         toast.success("Profile photo uploaded!");
@@ -290,7 +290,7 @@ export default function HostRegister() {
 
     setIsUploading(true);
     try {
-      const urls = await handleFileUpload(files, setUploadProgress);
+      const urls = await handleFileUpload(files, (progress: number) => setUploadProgress({ food: progress }));
       if (urls.length > 0) {
         setData({ ...data, foodPhotoUrls: [...(data.foodPhotoUrls || []), ...urls] });
         toast.success(`${urls.length} photo(s) uploaded!`);
