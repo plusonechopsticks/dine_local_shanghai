@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -130,20 +130,74 @@ async function compressImage(file: File, maxWidth: number = 1200, maxHeight: num
   });
 }
 
+const STORAGE_KEY = "hostRegistrationData";
+const STORAGE_STEP_KEY = "hostRegistrationStep";
+const STORAGE_FULL_STEP_KEY = "hostRegistrationFullStep";
+
 export default function HostRegister() {
-  const [step, setStep] = useState<"initial" | "full">("initial");
-  const [currentFullStep, setCurrentFullStep] = useState(1);
-  const [data, setData] = useState<Partial<RegistrationData>>({
-    foodPhotoUrls: [],
-    activities: [],
-    householdFeatures: [],
-    availability: {} as Record<string, ("lunch" | "dinner")[]>,
-    maxGuests: 4,
-    pricePerPerson: 150,
+  // Initialize state from localStorage
+  const [step, setStep] = useState<"initial" | "full">(() => {
+    if (typeof window === "undefined") return "initial";
+    const saved = localStorage.getItem(STORAGE_STEP_KEY);
+    return (saved as "initial" | "full") || "initial";
   });
+
+  const [currentFullStep, setCurrentFullStep] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    const saved = localStorage.getItem(STORAGE_FULL_STEP_KEY);
+    return saved ? parseInt(saved) : 1;
+  });
+
+  const [data, setData] = useState<Partial<RegistrationData>>(() => {
+    if (typeof window === "undefined") {
+      return {
+        foodPhotoUrls: [],
+        activities: [],
+        householdFeatures: [],
+        availability: {} as Record<string, ("lunch" | "dinner")[]>,
+        maxGuests: 4,
+        pricePerPerson: 150,
+      };
+    }
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse saved data:", e);
+      }
+    }
+    return {
+      foodPhotoUrls: [],
+      activities: [],
+      householdFeatures: [],
+      availability: {} as Record<string, ("lunch" | "dinner")[]>,
+      maxGuests: 4,
+      pricePerPerson: 150,
+    };
+  });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+
+  // Auto-save form data to localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, [data]);
+
+  // Auto-save step to localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(STORAGE_STEP_KEY, step);
+  }, [step]);
+
+  // Auto-save full step to localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(STORAGE_FULL_STEP_KEY, currentFullStep.toString());
+  }, [currentFullStep]);
 
   const uploadImageMutation = trpc.upload.image.useMutation({
     onError: (error: any) => {
@@ -339,8 +393,14 @@ export default function HostRegister() {
         otherHouseholdInfo: data.otherHouseholdInfo || undefined,
       });
 
-      if (result.success) {
+        if (result.success) {
         toast.success("Profile submitted successfully!");
+        // Clear localStorage after successful submission
+        if (typeof window !== "undefined") {
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(STORAGE_STEP_KEY);
+          localStorage.removeItem(STORAGE_FULL_STEP_KEY);
+        }
         // Reset form and show confirmation
         setStep("initial");
         setCurrentFullStep(1);
@@ -355,10 +415,9 @@ export default function HostRegister() {
           maxGuests: 4,
           pricePerPerson: 150,
         });
-      }
-    } catch (error: any) {
-      // Error is already handled by mutation onError
-      console.error("Submit error:", error);
+      } else {
+        toast.error("Failed to submit profile. Please try again.");
+      }   console.error("Submit error:", error);
     } finally {
       setIsSubmitting(false);
     }
