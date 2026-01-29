@@ -9,6 +9,7 @@ import HostRegister from "./pages/HostRegister";
 import HostListings from "./pages/HostListings";
 import HostDetail from "./pages/HostDetail";
 import AdminDashboard from "./pages/AdminDashboard";
+import HostDashboard from "./pages/HostDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -18,6 +19,7 @@ function Router() {
       <Route path={"/host-register"} component={HostRegister} />
       <Route path={"/hosts"} component={HostListings} />
       <Route path={"/hosts/:id"} component={HostDetail} />
+      <Route path={"/host-dashboard"} component={HostDashboard} />
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

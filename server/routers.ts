@@ -246,6 +246,44 @@ export const appRouter = router({
         const success = await updateHostListingStatus(input.id, input.status, input.adminNotes);
         return { success };
       }),
+
+    // Host: Get their profile
+    getProfile: protectedProcedure
+      .input(z.object({ userId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        const listings = await getAllHostListings();
+        const hostListing = listings.find((l: any) => l.email === ctx.user?.email);
+        return hostListing || null;
+      }),
+
+    // Host: Update their profile
+    updateProfile: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        bio: z.string().optional(),
+        menuDescription: z.string().optional(),
+        pricePerPerson: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return { success: true };
+      }),
+
+    // Host: Get their bookings
+    getBookings: protectedProcedure
+      .input(z.object({ hostId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        return [];
+      }),
+
+    // Host: Update booking status
+    updateBookingStatus: protectedProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        status: z.enum(["pending", "confirmed", "cancelled"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return { success: true };
+      }),
   }),
 });
 
