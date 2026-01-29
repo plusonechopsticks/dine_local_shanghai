@@ -142,37 +142,41 @@ export const appRouter = router({
     // Submit a new host listing
     submit: publicProcedure
       .input(z.object({
-        // Step 1: Contact
+        // Initial entry
         name: z.string().min(1, "Name is required"),
         district: z.string().min(1, "District is required"),
         email: z.string().email("Valid email is required"),
         
-        // Step 2: Cuisine & Food
+        // Step 1: Cuisine & Dishes
         cuisineStyle: z.string().min(1, "Cuisine style is required"),
         menuDescription: z.string().min(20, "Please describe your menu"),
         foodPhotoUrls: z.array(z.string().url()).min(3, "At least 3 food photos are required"),
+        maxGuests: z.number().min(1).max(20).default(4),
         dietaryNote: z.string().optional(),
         
-        // Step 3: About You & Activities
+        // Step 2: Self Intro & Selfie
         bio: z.string().min(20, "Please write at least 20 characters about yourself"),
-        profilePhotoUrl: z.string().url().optional(),
+        profilePhotoUrl: z.string().url(),
         activities: z.array(z.string()).optional(),
         
-        // Step 4: Availability
+        // Step 3: Availability
         availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).refine(
           (obj) => Object.keys(obj).length > 0,
           "Please select at least one day/meal"
         ),
-        maxGuests: z.number().min(1).max(20).default(2),
         
-        // Step 5: Pricing & Notes
-        pricePerPerson: z.number().min(1).default(100),
+        // Step 4: Pricing & Notes
+        pricePerPerson: z.number().min(1).default(150),
         otherNotes: z.string().optional(),
+        
+        // Step 5: Household Info
+        householdFeatures: z.array(z.string()).optional(),
+        otherHouseholdInfo: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const listing = await createHostListing({
           hostName: input.name,
-          profilePhotoUrl: input.profilePhotoUrl || null,
+          profilePhotoUrl: input.profilePhotoUrl,
           languages: ["Mandarin"], // Default for now; can be collected later
           bio: input.bio,
           email: input.email,
@@ -188,14 +192,16 @@ export const appRouter = router({
           otherNotes: input.otherNotes || null,
           pricePerPerson: input.pricePerPerson,
           kidsFriendly: true,
-          hasPets: false,
+          hasPets: (input.householdFeatures || []).includes("has-pets"),
+          householdFeatures: input.householdFeatures || [],
+          otherHouseholdInfo: input.otherHouseholdInfo || null,
           mealDurationMinutes: 120,
         });
 
         // Notify owner of new host application
         await notifyOwner({
           title: `New Host Application: ${input.name}`,
-          content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\n\nBio: ${input.bio}`,
+          content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\nMax Guests: ${input.maxGuests}\n\nBio: ${input.bio}`,
         });
 
         return { success: true, listing };

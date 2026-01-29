@@ -10,11 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Sparkles, Heart, Users, Upload, ArrowRight, Check, Loader2, User } from "lucide-react";
+import { Sparkles, Heart, Users, Upload, ArrowRight, Loader2, User, X } from "lucide-react";
 
 const SHANGHAI_DISTRICTS = [
   "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou",
@@ -30,67 +31,92 @@ const ACTIVITY_OPTIONS = [
   { id: "temple", label: "Temple Visit" },
   { id: "market", label: "Local Market Tour" },
   { id: "traditional-craft", label: "Traditional Craft" },
+  { id: "tea-ceremony", label: "Tea Ceremony" },
+  { id: "calligraphy", label: "Calligraphy" },
+];
+
+const HOUSEHOLD_FEATURES = [
+  { id: "has-pets", label: "We have pets" },
+  { id: "has-stairs", label: "Stairs only (no elevator)" },
+  { id: "kids-present", label: "Children in household" },
+  { id: "elderly-present", label: "Elderly family members" },
+  { id: "small-space", label: "Small space / apartment" },
+  { id: "garden", label: "Garden or outdoor space" },
 ];
 
 const REGISTRATION_STEPS = [
-  { id: 1, title: "Contact", description: "Name, district, email" },
-  { id: 2, title: "Cuisine", description: "Dishes & dietary info" },
-  { id: 3, title: "About You", description: "Bio & activities" },
-  { id: 4, title: "Availability", description: "Days & meals" },
-  { id: 5, title: "Pricing", description: "Price & notes" },
+  { id: 1, title: "Cuisine & Dishes", description: "What you cook" },
+  { id: 2, title: "Self Intro", description: "About you" },
+  { id: 3, title: "Availability", description: "When available" },
+  { id: 4, title: "Pricing & Notes", description: "Cost & details" },
+  { id: 5, title: "Household Info", description: "House details" },
 ];
 
 interface RegistrationData {
-  // Step 1
+  // Initial entry
   name: string;
   district: string;
   email: string;
-  // Step 2
+  // Step 1: Cuisine & Dishes
   cuisineStyle: string;
   menuDescription: string;
   foodPhotoUrls: string[];
+  maxGuests: number;
   dietaryNote: string;
-  // Step 3
+  // Step 2: Self Intro
   bio: string;
   profilePhotoUrl: string;
   activities: string[];
-  // Step 4
+  // Step 3: Availability
   availability: Record<string, string[]>;
-  maxGuests: number;
-  // Step 5
+  // Step 4: Pricing & Notes
   pricePerPerson: number;
   otherNotes: string;
+  // Step 5: Household Info
+  householdFeatures: string[];
+  otherHouseholdInfo: string;
 }
 
 export default function HostRegister() {
-  const [step, setStep] = useState<"interest" | "full">("interest");
+  const [step, setStep] = useState<"initial" | "full">("initial");
   const [currentFullStep, setCurrentFullStep] = useState(1);
   const [data, setData] = useState<Partial<RegistrationData>>({
     foodPhotoUrls: [],
     activities: [],
+    householdFeatures: [],
     availability: {},
-    maxGuests: 2,
-    pricePerPerson: 100,
+    maxGuests: 4,
+    pricePerPerson: 150,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-
-  const submitInterestMutation = trpc.hostInterest.submit.useMutation({
-    onSuccess: () => {
-      toast.success("Thank you! Ready to complete your full profile?");
-      setStep("full");
-      setCurrentFullStep(1);
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to submit. Please try again.");
-      setIsSubmitting(false);
-    },
-  });
 
   const uploadImageMutation = trpc.upload.image.useMutation({
     onError: (error: any) => {
       toast.error(error.message || "Failed to upload image");
       setIsUploading(false);
+    },
+  });
+
+  const submitProfileMutation = trpc.host.submit.useMutation({
+    onSuccess: () => {
+      toast.success("Your profile has been submitted! We'll review it and contact you soon.");
+      setData({
+        foodPhotoUrls: [],
+        activities: [],
+        householdFeatures: [],
+        availability: {},
+        maxGuests: 4,
+        pricePerPerson: 150,
+      });
+      // Reset form or redirect
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to submit profile");
+      setIsSubmitting(false);
     },
   });
 
@@ -104,7 +130,6 @@ export default function HostRegister() {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        console.log(`Starting upload for file: ${file.name}, size: ${file.size} bytes`);
         
         // Validate file size (10MB max)
         if (file.size > 10 * 1024 * 1024) {
@@ -113,7 +138,6 @@ export default function HostRegister() {
         }
 
         // Convert to base64
-        console.log(`Converting ${file.name} to base64...`);
         const reader = new FileReader();
         const base64Promise = new Promise<string>((resolve, reject) => {
           reader.onload = () => {
@@ -124,35 +148,25 @@ export default function HostRegister() {
                 reject(new Error("Failed to extract base64 data"));
                 return;
               }
-              console.log(`Base64 conversion complete for ${file.name}, length: ${base64.length}`);
               resolve(base64);
             } catch (err) {
               reject(err);
             }
           };
-          reader.onerror = (error) => {
-            console.error(`FileReader error for ${file.name}:`, error);
-            reject(new Error(`Failed to read file: ${file.name}`));
-          };
-          reader.onabort = () => {
-            console.error(`FileReader aborted for ${file.name}`);
-            reject(new Error(`File reading aborted: ${file.name}`));
-          };
+          reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
+          reader.onabort = () => reject(new Error(`File reading aborted: ${file.name}`));
         });
 
         try {
           const base64 = await base64Promise;
-          console.log(`Uploading ${file.name} to server...`);
           const url = await uploadImageMutation.mutateAsync({
             base64Data: base64,
             fileName: file.name,
             contentType: file.type,
           });
-          console.log(`Upload successful for ${file.name}: ${url.url}`);
           uploadedUrls.push(url.url);
         } catch (uploadError: any) {
           const errorMsg = uploadError?.message || "Unknown upload error";
-          console.error(`Upload failed for ${file.name}:`, errorMsg);
           toast.error(`Failed to upload ${file.name}: ${errorMsg}`);
         }
       }
@@ -170,14 +184,13 @@ export default function HostRegister() {
         }
       }
     } catch (error: any) {
-      console.error("Unexpected error in handleFileUpload:", error);
       toast.error(error?.message || "Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleInterestSubmit = async (e: React.FormEvent) => {
+  const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!data.name?.trim()) {
       toast.error("Please enter your name");
@@ -192,34 +205,46 @@ export default function HostRegister() {
       return;
     }
 
-    setIsSubmitting(true);
-    await submitInterestMutation.mutateAsync({
-      name: data.name.trim(),
-      district: data.district,
-      contact: data.email.trim(),
-    });
+    setStep("full");
+    setCurrentFullStep(1);
   };
 
   const handleFullStepNext = () => {
-    // Basic validation per step
+    // Validation per step
     if (currentFullStep === 1) {
-      if (!data.name?.trim() || !data.district || !data.email?.trim()) {
-        toast.error("Please fill all fields");
+      if (!data.cuisineStyle?.trim()) {
+        toast.error("Please enter cuisine style");
+        return;
+      }
+      if (!data.menuDescription?.trim()) {
+        toast.error("Please describe your menu");
+        return;
+      }
+      if ((data.foodPhotoUrls?.length || 0) < 3) {
+        toast.error("Please upload at least 3 food photos");
+        return;
+      }
+      if (!data.maxGuests || data.maxGuests < 1) {
+        toast.error("Please enter max guests");
         return;
       }
     } else if (currentFullStep === 2) {
-      if (!data.cuisineStyle?.trim() || !data.menuDescription?.trim() || (data.foodPhotoUrls?.length || 0) < 3) {
-        toast.error("Please add cuisine, description, and at least 3 photos");
-        return;
-      }
-    } else if (currentFullStep === 3) {
       if (!data.bio?.trim()) {
         toast.error("Please write a bio");
         return;
       }
-    } else if (currentFullStep === 4) {
+      if (!data.profilePhotoUrl) {
+        toast.error("Please upload a selfie");
+        return;
+      }
+    } else if (currentFullStep === 3) {
       if (Object.keys(data.availability || {}).length === 0) {
-        toast.error("Please select at least one day/meal combo");
+        toast.error("Please select at least one day and meal time");
+        return;
+      }
+    } else if (currentFullStep === 4) {
+      if (!data.pricePerPerson || data.pricePerPerson < 1) {
+        toast.error("Please enter a price");
         return;
       }
     }
@@ -235,10 +260,72 @@ export default function HostRegister() {
     }
   };
 
+  const handleSubmitProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Final validation for Step 5
+    // All previous steps are validated before proceeding
+
+    // Ensure all required fields are filled
+    if (!data.name?.trim() || !data.district || !data.email?.trim()) {
+      toast.error("Missing contact information");
+      return;
+    }
+    if (!data.cuisineStyle?.trim() || !data.menuDescription?.trim()) {
+      toast.error("Missing cuisine information");
+      return;
+    }
+    if ((data.foodPhotoUrls?.length || 0) < 3) {
+      toast.error("Need at least 3 food photos");
+      return;
+    }
+    if (!data.bio?.trim()) {
+      toast.error("Missing bio");
+      return;
+    }
+    if (!data.profilePhotoUrl) {
+      toast.error("Missing selfie");
+      return;
+    }
+    if (Object.keys(data.availability || {}).length === 0) {
+      toast.error("Missing availability");
+      return;
+    }
+    if (!data.pricePerPerson || data.pricePerPerson < 1) {
+      toast.error("Missing price");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await submitProfileMutation.mutateAsync({
+        name: data.name.trim(),
+        district: data.district,
+        email: data.email.trim(),
+        cuisineStyle: data.cuisineStyle.trim(),
+        menuDescription: data.menuDescription.trim(),
+        foodPhotoUrls: data.foodPhotoUrls || [],
+        maxGuests: data.maxGuests || 4,
+        dietaryNote: data.dietaryNote || "",
+        bio: data.bio.trim(),
+        profilePhotoUrl: data.profilePhotoUrl,
+        activities: data.activities || [],
+        availability: data.availability || {},
+        pricePerPerson: data.pricePerPerson || 150,
+        otherNotes: data.otherNotes || "",
+      });
+    } catch (error: any) {
+      // Error is already handled by mutation onError
+      console.error("Submit error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const progressPercentage = (currentFullStep / REGISTRATION_STEPS.length) * 100;
 
-  // Step 1: Quick Interest
-  if (step === "interest") {
+  // Initial step: name, district, email
+  if (step === "initial") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
         <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
@@ -295,7 +382,7 @@ export default function HostRegister() {
 
           <Card className="border-primary/20 shadow-lg">
             <CardContent className="pt-8 pb-8">
-              <form onSubmit={handleInterestSubmit} className="space-y-6 md:space-y-8">
+              <form onSubmit={handleInitialSubmit} className="space-y-6 md:space-y-8">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-base md:text-lg font-medium text-foreground">
                     What's your name? *
@@ -349,11 +436,10 @@ export default function HostRegister() {
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3 px-4 text-base font-bold text-white rounded-lg shadow-md transition-all disabled:opacity-50 mt-6 hover:opacity-90"
+                  className="w-full py-3 px-4 text-base font-bold text-white rounded-lg shadow-md transition-all hover:opacity-90"
                   style={{ backgroundColor: "var(--warm-burgundy)" }}
                 >
-                  {isSubmitting ? "Submitting..." : "Continue to Full Profile"}
+                  Continue to Full Profile
                 </Button>
               </form>
             </CardContent>
@@ -369,7 +455,7 @@ export default function HostRegister() {
     );
   }
 
-  // Step 2: Full Registration (5 steps)
+  // Full registration (5 steps)
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
@@ -434,52 +520,8 @@ export default function HostRegister() {
         {/* Form Content */}
         <Card className="border-primary/20 shadow-lg">
           <CardContent className="pt-8 pb-8">
-            {/* Step 1: Contact */}
+            {/* Step 1: Cuisine & Dishes */}
             {currentFullStep === 1 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-foreground mb-6">Your Contact Details</h2>
-                
-                <div className="space-y-3">
-                  <Label className="text-lg font-medium">Name *</Label>
-                  <Input
-                    value={data.name || ""}
-                    onChange={(e) => setData({ ...data, name: e.target.value })}
-                    placeholder="Your full name"
-                    className="h-12 text-base"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label className="text-lg font-medium">District *</Label>
-                  <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })}>
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue placeholder="Select your district" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SHANGHAI_DISTRICTS.map((d) => (
-                        <SelectItem key={d} value={d}>
-                          {d}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-3">
-                  <Label className="text-lg font-medium">Email *</Label>
-                  <Input
-                    type="email"
-                    value={data.email || ""}
-                    onChange={(e) => setData({ ...data, email: e.target.value })}
-                    placeholder="your@email.com"
-                    className="h-12 text-base"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Cuisine & Food */}
-            {currentFullStep === 2 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-foreground mb-6">Your Cuisine & Dishes</h2>
                 
@@ -539,7 +581,7 @@ export default function HostRegister() {
                               })}
                               className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600"
                             >
-                              ✕
+                              <X className="w-3 h-3" />
                             </button>
                           </div>
                         ))}
@@ -549,7 +591,20 @@ export default function HostRegister() {
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-lg font-medium">Dietary Info</Label>
+                  <Label className="text-lg font-medium">Maximum Guests Allowed *</Label>
+                  <Input
+                    type="number"
+                    value={data.maxGuests || 4}
+                    onChange={(e) => setData({ ...data, maxGuests: parseInt(e.target.value) || 4 })}
+                    className="h-12 text-base"
+                    min="1"
+                    max="20"
+                  />
+                  <p className="text-sm text-muted-foreground">How many guests can you host at one dinner?</p>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Dietary Restrictions & Allergies</Label>
                   <textarea
                     value={data.dietaryNote || ""}
                     onChange={(e) => setData({ ...data, dietaryNote: e.target.value })}
@@ -560,8 +615,8 @@ export default function HostRegister() {
               </div>
             )}
 
-            {/* Step 3: About You & Activities */}
-            {currentFullStep === 3 && (
+            {/* Step 2: Self Intro & Selfie */}
+            {currentFullStep === 2 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-foreground mb-6">About You</h2>
                 
@@ -593,7 +648,7 @@ export default function HostRegister() {
                         onClick={() => setData({ ...data, profilePhotoUrl: "" })}
                         className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600"
                       >
-                        ✕
+                        <X className="w-3 h-3" />
                       </button>
                     </div>
                   )}
@@ -611,19 +666,18 @@ export default function HostRegister() {
 
                 <div className="space-y-3">
                   <Label className="text-lg font-medium">What else can you do with guests?</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Select all that apply (optional)</p>
                   <div className="grid grid-cols-2 gap-3">
                     {ACTIVITY_OPTIONS.map((activity) => (
                       <label key={activity.id} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={(data.activities || []).includes(activity.id)}
-                          onChange={(e) => {
-                            const newActivities = e.target.checked
+                          onCheckedChange={(checked) => {
+                            const newActivities = checked
                               ? [...(data.activities || []), activity.id]
                               : (data.activities || []).filter(a => a !== activity.id);
                             setData({ ...data, activities: newActivities });
                           }}
-                          className="w-5 h-5 rounded border-gray-300"
                         />
                         <span className="text-sm font-medium">{activity.label}</span>
                       </label>
@@ -633,47 +687,34 @@ export default function HostRegister() {
               </div>
             )}
 
-            {/* Step 4: Availability */}
-            {currentFullStep === 4 && (
+            {/* Step 3: Availability */}
+            {currentFullStep === 3 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-foreground mb-6">Your Availability</h2>
                 
                 <div className="space-y-3">
-                  <Label className="text-lg font-medium">Max Guests</Label>
-                  <Input
-                    type="number"
-                    value={data.maxGuests || 2}
-                    onChange={(e) => setData({ ...data, maxGuests: parseInt(e.target.value) || 2 })}
-                    className="h-12 text-base"
-                    min="1"
-                    max="20"
-                  />
-                </div>
-
-                <div className="space-y-3">
                   <Label className="text-lg font-medium">When are you available? *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Select days and meal times (you can block out specific dates later)</p>
                   <div className="grid grid-cols-2 gap-4">
                     {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
                       <div key={day} className="border border-gray-200 rounded-lg p-4">
                         <div className="font-semibold text-sm mb-3 capitalize">{day}</div>
-                        <div className="flex gap-2">
+                        <div className="space-y-2">
                           {["lunch", "dinner"].map((meal) => (
                             <label key={`${day}-${meal}`} className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
+                              <Checkbox
                                 checked={(data.availability?.[day] || []).includes(meal)}
-                                onChange={(e) => {
+                                onCheckedChange={(checked) => {
                                   const availability = { ...data.availability };
-                                  if (e.target.checked) {
+                                  if (checked) {
                                     availability[day] = [...(availability[day] || []), meal];
                                   } else {
                                     availability[day] = (availability[day] || []).filter(m => m !== meal);
                                   }
                                   setData({ ...data, availability });
                                 }}
-                                className="w-4 h-4 rounded border-gray-300"
                               />
-                              <span className="text-xs capitalize">{meal}</span>
+                              <span className="text-sm capitalize">{meal}</span>
                             </label>
                           ))}
                         </div>
@@ -681,11 +722,17 @@ export default function HostRegister() {
                     ))}
                   </div>
                 </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-900">
+                    💡 Tip: Once you complete your profile, you can block out specific dates on a calendar if needed.
+                  </p>
+                </div>
               </div>
             )}
 
-            {/* Step 5: Pricing & Notes */}
-            {currentFullStep === 5 && (
+            {/* Step 4: Pricing & Notes */}
+            {currentFullStep === 4 && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-foreground mb-6">Pricing & Notes</h2>
                 
@@ -693,11 +740,12 @@ export default function HostRegister() {
                   <Label className="text-lg font-medium">Price per Person (RMB) *</Label>
                   <Input
                     type="number"
-                    value={data.pricePerPerson || 100}
-                    onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) || 100 })}
+                    value={data.pricePerPerson || 150}
+                    onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) || 150 })}
                     className="h-12 text-base"
                     min="1"
                   />
+                  <p className="text-sm text-muted-foreground">This is what guests will pay per person for the dining experience</p>
                 </div>
 
                 <div className="space-y-3">
@@ -705,14 +753,52 @@ export default function HostRegister() {
                   <textarea
                     value={data.otherNotes || ""}
                     onChange={(e) => setData({ ...data, otherNotes: e.target.value })}
-                    placeholder="Anything else guests should know? House rules, parking info, transportation tips, etc."
+                    placeholder="Anything else guests should know? Meal duration, cancellation policy, special requirements, etc."
                     className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Household Info */}
+            {currentFullStep === 5 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Useful Information</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">What should guests know about your home?</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Select all that apply</p>
+                  <div className="space-y-3">
+                    {HOUSEHOLD_FEATURES.map((feature) => (
+                      <label key={feature.id} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <Checkbox
+                          checked={(data.householdFeatures || []).includes(feature.id)}
+                          onCheckedChange={(checked) => {
+                            const newFeatures = checked
+                              ? [...(data.householdFeatures || []), feature.id]
+                              : (data.householdFeatures || []).filter(f => f !== feature.id);
+                            setData({ ...data, householdFeatures: newFeatures });
+                          }}
+                        />
+                        <span className="text-sm font-medium">{feature.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Other important information (optional)</Label>
+                  <textarea
+                    value={data.otherHouseholdInfo || ""}
+                    onChange={(e) => setData({ ...data, otherHouseholdInfo: e.target.value })}
+                    placeholder="Any other details about your home guests should know..."
+                    className="w-full h-24 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                 </div>
 
                 <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-6">
                   <p className="text-sm text-foreground">
-                    ✓ Once your profile is approved, you'll be able to login and manage your bookings, dates, and availability.
+                    ✓ Once your profile is submitted, our team will review your application. We'll contact you within 3-5 business days. Approved hosts can then login to manage bookings and availability.
                   </p>
                 </div>
               </div>
@@ -737,7 +823,8 @@ export default function HostRegister() {
                 </Button>
               ) : (
                 <Button
-                  className="flex-1 h-14 text-white hover:opacity-90"
+                  onClick={handleSubmitProfile}
+                  className="flex-1 h-14 text-lg text-white hover:opacity-90 font-semibold"
                   style={{ backgroundColor: "var(--warm-burgundy)" }}
                   disabled={isSubmitting}
                 >
