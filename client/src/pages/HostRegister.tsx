@@ -371,7 +371,7 @@ export default function HostRegister() {
 
         {/* Progress */}
         <div className="mb-8">
-          <div className="flex justify-between mb-4 items-end">
+          <div className="flex justify-between mb-4">
             {REGISTRATION_STEPS.map((s) => (
               <div
                 key={s.id}
@@ -380,7 +380,7 @@ export default function HostRegister() {
                 }`}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-semibold ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2 ${
                     s.id < currentFullStep
                       ? "bg-burgundy-600 text-white"
                       : s.id === currentFullStep
@@ -781,13 +781,14 @@ export default function HostRegister() {
               )}
 
               {/* Navigation Buttons */}
-              <div className="flex gap-3 pt-8 pb-4">
+              <div className="flex gap-3 pt-6">
                 {currentFullStep > 1 && (
                   <Button
                     type="button"
+                    variant="outline"
                     onClick={() => setCurrentFullStep(currentFullStep - 1)}
                     disabled={isSubmitting}
-                    className="flex-1 h-14 text-base border border-gray-300 text-gray-700 hover:bg-gray-50 bg-white"
+                    className="flex-1 h-12 text-base"
                   >
                     Previous
                   </Button>
@@ -797,7 +798,7 @@ export default function HostRegister() {
                     type="button"
                     onClick={() => setCurrentFullStep(currentFullStep + 1)}
                     disabled={isSubmitting}
-                    className="flex-1 h-14 text-base font-semibold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg transition-all"
+                    className="flex-1 h-12 text-base bg-burgundy-600 hover:bg-burgundy-700 text-white"
                   >
                     Next
                   </Button>
@@ -806,7 +807,7 @@ export default function HostRegister() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 h-14 text-base font-semibold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg transition-all flex items-center justify-center gap-2"
+                    className="flex-1 h-12 text-base bg-burgundy-600 hover:bg-burgundy-700 text-white flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
