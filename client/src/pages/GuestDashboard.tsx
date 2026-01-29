@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { MessageSquare, LogOut, Send, Calendar, MapPin, Users } from "lucide-react";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ export default function GuestDashboard() {
   const [activeTab, setActiveTab] = useState("bookings");
   const [selectedConversation, setSelectedConversation] = useState<any | null>(null);
   const [messageContent, setMessageContent] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
 
   // Fetch guest bookings
   const { data: bookings, isLoading: bookingsLoading } = trpc.booking.getGuestBookings.useQuery(
@@ -38,10 +40,45 @@ export default function GuestDashboard() {
   );
 
   // Fetch conversations for guest
-  const { data: conversations, isLoading: conversationsLoading } = trpc.messaging.getGuestConversations.useQuery(
+  const { data: conversations, isLoading: conversationsLoading, refetch: refetchConversations } = trpc.messaging.getGuestConversations.useQuery(
     { guestEmail: user?.email || "" },
     { enabled: !!user?.email }
   );
+
+  // Fetch messages for selected conversation
+  const { data: conversationMessages, refetch: refetchMessages } = trpc.messaging.getMessages.useQuery(
+    { conversationId: selectedConversation?.id || 0 },
+    { enabled: !!selectedConversation?.id }
+  );
+
+  // Auto-poll messages every 3 seconds when conversation is selected
+  useEffect(() => {
+    if (!selectedConversation?.id) return;
+    
+    const interval = setInterval(() => {
+      refetchMessages();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [selectedConversation?.id, refetchMessages]);
+
+  // Auto-poll conversations every 5 seconds
+  useEffect(() => {
+    if (!user?.email) return;
+    
+    const interval = setInterval(() => {
+      refetchConversations();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [user?.email, refetchConversations]);
+
+  // Update messages when conversation changes
+  useEffect(() => {
+    if (conversationMessages) {
+      setMessages(conversationMessages);
+    }
+  }, [conversationMessages]);
 
   // Send message mutation
   const sendMessageMutation = trpc.messaging.sendMessage.useMutation({
@@ -239,10 +276,32 @@ export default function GuestDashboard() {
                     <CardHeader className="border-b">
                       <CardTitle className="text-lg">Chat with {selectedConversation.guestName}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 overflow-y-auto p-4">
-                      <div className="text-center text-gray-500 py-8">
-                        <p>Messages will appear here</p>
-                      </div>
+                    <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+                      {messages.length === 0 ? (
+                        <div className="text-center text-gray-500 py-8">
+                          <p>No messages yet</p>
+                        </div>
+                      ) : (
+                        messages.map((msg: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className={`flex ${msg.senderType === 'guest' ? 'justify-end' : 'justify-start'}`}
+                          >
+                            <div
+                              className={`max-w-xs px-4 py-2 rounded-lg ${
+                                msg.senderType === 'guest'
+                                  ? 'bg-burgundy-600 text-white'
+                                  : 'bg-gray-200 text-gray-900'
+                              }`}
+                            >
+                              <p className="text-sm">{msg.content}</p>
+                              <p className="text-xs mt-1 opacity-70">
+                                {new Date(msg.createdAt).toLocaleTimeString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </CardContent>
                     <div className="border-t p-4 flex gap-2">
                       <input
