@@ -427,9 +427,6 @@ export default function HostDetail() {
           </div>
         </div>
       </main>
-    </div>
-  );
-}
 
       {/* Booking Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
