@@ -88,6 +88,8 @@ export const hostListings = mysqlTable("host_listings", {
   kidsFriendly: boolean("kidsFriendly").notNull().default(true),
   hasPets: boolean("hasPets").notNull().default(false),
   petDetails: varchar("petDetails", { length: 255 }), // e.g., "One friendly cat"
+  householdFeatures: json("householdFeatures").$type<string[]>().default([] as any).notNull(), // e.g., ["has-pets", "has-stairs"]
+  otherHouseholdInfo: text("otherHouseholdInfo"), // Additional household information
   
   // Status
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
