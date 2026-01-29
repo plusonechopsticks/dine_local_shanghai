@@ -68,7 +68,7 @@ interface RegistrationData {
   profilePhotoUrl: string;
   activities: string[];
   // Step 3: Availability
-  availability: Record<string, string[]>;
+  availability: Record<string, ("lunch" | "dinner")[]>;
   // Step 4: Pricing & Notes
   pricePerPerson: number;
   otherNotes: string;
@@ -84,7 +84,7 @@ export default function HostRegister() {
     foodPhotoUrls: [],
     activities: [],
     householdFeatures: [],
-    availability: {},
+    availability: {} as Record<string, ("lunch" | "dinner")[]>,
     maxGuests: 4,
     pricePerPerson: 150,
   });
@@ -310,7 +310,7 @@ export default function HostRegister() {
         bio: data.bio.trim(),
         profilePhotoUrl: data.profilePhotoUrl,
         activities: data.activities || [],
-        availability: data.availability || {},
+        availability: (data.availability || {}) as Record<string, ("lunch" | "dinner")[]>,
         pricePerPerson: data.pricePerPerson || 150,
         otherNotes: data.otherNotes || "",
       });
