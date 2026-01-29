@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { Edit2, Calendar, MessageSquare, LogOut, Save, X } from "lucide-react";
+import { Edit2, Calendar, MessageSquare, LogOut, Save, X, Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -48,7 +48,26 @@ export default function HostDashboard() {
   const { user } = useAuth();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editData, setEditData] = useState<Partial<HostProfile>>({});
+  const [selectedConversation, setSelectedConversation] = useState<any | null>(null);
+  const [messageContent, setMessageContent] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Fetch conversations for host
+  const { data: conversations, isLoading: conversationsLoading } = trpc.messaging.getHostConversations.useQuery(
+    { hostListingId: profile?.id || 0 },
+    { enabled: !!profile?.id }
+  );
+
+  // Send message mutation
+  const sendMessageMutation = trpc.messaging.sendMessage.useMutation({
+    onSuccess: () => {
+      setMessageContent("");
+      toast.success("Message sent");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to send message");
+    },
+  });
 
   // Fetch host profile
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = trpc.host.getProfile.useQuery(
@@ -397,13 +416,79 @@ export default function HostDashboard() {
           </TabsContent>
 
           {/* Messages Tab */}
-          <TabsContent value="messages">
-            <Card className="border-0 shadow-lg">
-              <CardContent className="pt-8 pb-8 text-center">
-                <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">Messaging system coming soon</p>
-              </CardContent>
-            </Card>
+          <TabsContent value="messages" className="space-y-4">
+            <div className="grid grid-cols-3 gap-6">
+              <div className="col-span-1">
+                <Card className="border-0 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Conversations</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 max-h-96 overflow-y-auto">
+                    {conversationsLoading ? (
+                      <div className="text-sm text-gray-600 text-center py-8">
+                        <p>Loading conversations...</p>
+                      </div>
+                    ) : !conversations || conversations.length === 0 ? (
+                      <div className="text-sm text-gray-600 text-center py-8">
+                        <MessageSquare className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p>No conversations yet</p>
+                      </div>
+                    ) : (
+                      conversations.map((conv: any) => (
+                        <div
+                          key={conv.id}
+                          onClick={() => setSelectedConversation(conv)}
+                          className={`p-3 rounded-lg cursor-pointer transition ${ selectedConversation?.id === conv.id ? "bg-burgundy-100 border-l-4 border-burgundy-600" : "bg-gray-50 hover:bg-gray-100"}`}
+                        >
+                          <p className="font-semibold text-sm text-gray-900">{conv.guestName}</p>
+                          <p className="text-xs text-gray-600 truncate">{conv.lastMessage || "No messages yet"}</p>
+                          {conv.lastMessageAt && (
+                            <p className="text-xs text-gray-500 mt-1">{new Date(conv.lastMessageAt).toLocaleDateString()}</p>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="col-span-2">
+                {selectedConversation ? (
+                  <Card className="border-0 shadow-lg h-96 flex flex-col">
+                    <CardHeader className="border-b">
+                      <CardTitle className="text-lg">Chat with {selectedConversation.guestName}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1 overflow-y-auto p-4">
+                      <div className="text-center text-gray-500 py-8">
+                        <p>Messages will appear here</p>
+                      </div>
+                    </CardContent>
+                    <div className="border-t p-4 flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Type a message..."
+                        value={messageContent}
+                        onChange={(e) => setMessageContent(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      />
+                      <Button
+                        size="sm"
+                        className="bg-burgundy-600 hover:bg-burgundy-700 text-white"
+                        disabled={!messageContent.trim() || sendMessageMutation.isPending}
+                      >
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ) : (
+                  <Card className="border-0 shadow-lg h-96 flex items-center justify-center">
+                    <CardContent className="text-center">
+                      <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600">Select a conversation to start messaging</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
