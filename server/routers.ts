@@ -40,6 +40,7 @@ export const appRouter = router({
         });
         return { success: true };
       }),
+  }),
   messaging: router({
     // Create or get conversation
     getOrCreateConversation: publicProcedure
@@ -114,7 +115,6 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         return await markMessagesAsRead(input.conversationId);
       }),
-  }),
   }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -300,7 +300,7 @@ export const appRouter = router({
           content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\nMax Guests: ${input.maxGuests}\n\nBio: ${input.bio}`,
         });
 
-        return { success: true, listing };
+        return { success: true };
       }),
 
     // Get a single listing by ID (public - for viewing approved listings)

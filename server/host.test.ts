@@ -116,7 +116,7 @@ describe("host.submit", () => {
     });
 
     expect(result.success).toBe(true);
-    expect(result.listing).toBeDefined();
+    // listing is no longer returned in the response
   });
 
   it("rejects submission with missing required fields", async () => {

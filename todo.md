@@ -124,3 +124,14 @@
 - [x] Improve visibility of Next button in full registration form
 - [x] Fix progress box text overflow with truncate and smaller padding
 - [x] Improve Previous button visibility with gray background
+
+## Bug Fixes
+- [x] Fix host registration form submission error - raw JSON displayed instead of success page
+  - Fixed backend response to return only { success: true } instead of { success: true, listing }
+  - Fixed router syntax error (missing closing brace for booking router)
+  - Updated test expectations to match new response format
+  - All 18 tests passing
+- [x] Add persistent navigation bar with logo to all pages
+  - Logo links back to home page
+  - Navigation links for guests and hosts
+  - Responsive mobile menu with hamburger icon
