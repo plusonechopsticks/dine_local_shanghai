@@ -689,8 +689,9 @@ export default function HostRegister() {
                     <Input
                       type="number"
                       min="1"
-                      value={data.pricePerPerson || 150}
-                      onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) })}
+                      value={data.pricePerPerson ?? ""}
+                      onChange={(e) => setData({ ...data, pricePerPerson: e.target.value ? parseInt(e.target.value) : undefined })}
+                      placeholder="150"
                       className="mt-2 h-12"
                     />
                   </div>
