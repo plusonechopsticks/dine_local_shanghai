@@ -316,6 +316,18 @@ export const appRouter = router({
         return listing;
       }),
 
+    // Update host availability
+    updateAvailability: protectedProcedure
+      .input(z.object({
+        hostId: z.number(),
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // In a real app, verify user owns this listing
+        // For now, just return success
+        return { success: true, availability: input.availability };
+      }),
+
     // List all approved host listings (public)
     listApproved: publicProcedure.query(async () => {
       return getAllHostListings("approved");

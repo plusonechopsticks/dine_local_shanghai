@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import BookingCalendar from "@/components/BookingCalendar";
+import AvailabilityEditor from "@/components/AvailabilityEditor";
 
 interface HostProfile {
   id: number;
