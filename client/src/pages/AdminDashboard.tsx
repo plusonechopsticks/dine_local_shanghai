@@ -56,6 +56,16 @@ export default function AdminDashboard() {
     },
   });
 
+  // Send host approval email mutation
+  const sendHostApprovalEmailMutation = trpc.host.sendHostApprovalEmail.useMutation({
+    onSuccess: () => {
+      toast.success("Approval email sent to host");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to send email");
+    },
+  });
+
   const handleApprove = async (listing: HostListing) => {
     setSelectedListing(listing);
     setAdminNotes("");
@@ -76,6 +86,16 @@ export default function AdminDashboard() {
       status,
       adminNotes: adminNotes || undefined,
     });
+
+    // Send approval email if approving
+    if (status === "approved") {
+      sendHostApprovalEmailMutation.mutate({
+        hostName: selectedListing.hostName,
+        hostEmail: selectedListing.email,
+        district: selectedListing.district,
+        cuisineStyle: selectedListing.cuisineStyle,
+      });
+    }
   };
 
   const filteredListings = (listings as HostListing[]).filter((listing: HostListing) => {

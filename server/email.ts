@@ -128,8 +128,68 @@ export async function sendHostConfirmationEmail(data: BookingEmailData) {
 }
 
 /**
- * Send booking rejection email to guest
+ * Send host profile approval email
  */
+export async function sendHostApprovalEmail(
+  hostName: string,
+  hostEmail: string,
+  district: string,
+  cuisineStyle: string
+) {
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #8B3A3A;">🎉 Your Profile Has Been Approved!</h2>
+      
+      <p>Hi ${hostName},</p>
+      
+      <p>Congratulations! Your host profile has been approved and is now live on our platform.</p>
+      
+      <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0; color: #333;">Your Profile Details</h3>
+        <p><strong>District:</strong> ${district}</p>
+        <p><strong>Cuisine Style:</strong> ${cuisineStyle}</p>
+        <p><strong>Status:</strong> <span style="color: #22c55e; font-weight: bold;">APPROVED</span></p>
+      </div>
+      
+      <p><strong>What Happens Next:</strong></p>
+      <ul>
+        <li>Your profile is now visible to guests searching for dinner experiences</li>
+        <li>You can log in to your dashboard to manage bookings and availability</li>
+        <li>Guests will start sending booking requests based on your availability</li>
+        <li>You'll receive notifications when guests request to dine with you</li>
+      </ul>
+      
+      <p><strong>Quick Links:</strong></p>
+      <ul>
+        <li><a href="https://dineatlocal.com/host-dashboard" style="color: #8B3A3A; text-decoration: none;">Go to Host Dashboard</a></li>
+        <li><a href="https://dineatlocal.com/help" style="color: #8B3A3A; text-decoration: none;">View Help Center</a></li>
+      </ul>
+      
+      <p>We're excited to have you as part of our community! If you have any questions, please don't hesitate to reach out.</p>
+      
+      <p>Happy hosting!<br>The +1 Chopsticks Team</p>
+      
+      <p style="color: #666; font-size: 12px; margin-top: 30px;">
+        This is an automated email. Please do not reply to this address.
+      </p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER || "noreply@dineatlocal.com",
+      to: hostEmail,
+      subject: "🎉 Your Host Profile Has Been Approved!",
+      html: htmlContent,
+    });
+    console.log(`[Email] Host approval email sent to ${hostEmail}`);
+    return true;
+  } catch (error) {
+    console.error("[Email] Failed to send host approval email:", error);
+    return false;
+  }
+}
+
 export async function sendGuestRejectionEmail(
   guestName: string,
   guestEmail: string,

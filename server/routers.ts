@@ -15,7 +15,7 @@ import {
 } from "./db";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
-import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail } from "./email";
+import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
 import { nanoid } from "nanoid";
 
 export const appRouter = router({
@@ -374,6 +374,29 @@ export const appRouter = router({
           input.guestEmail,
           input.hostName,
           input.reason
+        );
+
+        return { success: true, emailSent };
+      }),
+
+    // Admin: Send host profile approval email
+    sendHostApprovalEmail: protectedProcedure
+      .input(z.object({
+        hostName: z.string(),
+        hostEmail: z.string().email(),
+        district: z.string(),
+        cuisineStyle: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+
+        const emailSent = await sendHostApprovalEmail(
+          input.hostName,
+          input.hostEmail,
+          input.district,
+          input.cuisineStyle
         );
 
         return { success: true, emailSent };
