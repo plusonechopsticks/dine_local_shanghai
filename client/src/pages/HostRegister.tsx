@@ -462,6 +462,23 @@ export default function HostRegister() {
                   />
                 </div>
 
+                <div>
+                  <Label htmlFor="district" className="text-base font-semibold text-gray-700">District *</Label>
+                  <select
+                    id="district"
+                    value={data.district || ""}
+                    onChange={(e) => setData({ ...data, district: e.target.value })}
+                    className="w-full mt-2 h-12 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">Select your district</option>
+                    {DISTRICTS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <Button
                   type="submit"
                   className="w-full h-14 text-lg text-white font-semibold hover:opacity-90"
