@@ -152,6 +152,12 @@ export default function HostRegister() {
     },
   });
 
+  const submitMutation = trpc.host.submit.useMutation({
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to submit profile");
+    },
+  });
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isProfilePhoto: boolean = false) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -314,7 +320,7 @@ export default function HostRegister() {
 
     setIsSubmitting(true);
     try {
-      const result = await trpc.host.submit.useMutation().mutateAsync({
+      const result = await submitMutation.mutateAsync({
         name: data.name.trim(),
         district: data.district,
         email: data.email.trim(),
@@ -335,10 +341,13 @@ export default function HostRegister() {
 
       if (result.success) {
         toast.success("Profile submitted successfully!");
-        // Reset form
+        // Reset form and show confirmation
         setStep("initial");
         setCurrentFullStep(1);
         setData({
+          name: "",
+          email: "",
+          district: "",
           foodPhotoUrls: [],
           activities: [],
           householdFeatures: [],
@@ -348,7 +357,8 @@ export default function HostRegister() {
         });
       }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to submit profile");
+      // Error is already handled by mutation onError
+      console.error("Submit error:", error);
     } finally {
       setIsSubmitting(false);
     }
