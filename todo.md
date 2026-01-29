@@ -135,3 +135,10 @@
   - Logo links back to home page
   - Navigation links for guests and hosts
   - Responsive mobile menu with hamburger icon
+
+## Current Issues
+- [x] Fix host registration form submission - raw JSON displaying instead of success page
+  - Root cause: Form was missing onSubmit handler, causing traditional HTML form submission
+  - Fixed by adding onSubmit={(e) => { e.preventDefault(); }} to form element
+  - Changed submit button from type="button" to type="submit"
+  - Now properly handles tRPC mutation response and displays success page

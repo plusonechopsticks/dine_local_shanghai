@@ -624,7 +624,7 @@ export default function HostRegister() {
 
         <Card className="border-0 shadow-lg">
           <CardContent className="pt-8">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); }}>
               {currentFullStep === 1 && (
                 <>
                   <div>
@@ -926,7 +926,7 @@ export default function HostRegister() {
                   </Button>
                 ) : (
                   <Button
-                    type="button"
+                    type="submit"
                     onClick={handleSubmitProfile}
                     className="flex-1 h-14 text-lg text-white hover:opacity-90 font-semibold"
                     style={{ backgroundColor: "var(--warm-burgundy)" }}
