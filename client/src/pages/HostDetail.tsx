@@ -17,8 +17,6 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
-import { useParams } from "wouter";
-import { useLocation } from "wouter";
 import {
   Dialog,
   DialogContent,

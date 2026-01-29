@@ -52,7 +52,7 @@ export default function HostDashboard() {
 
   // Fetch host profile
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = trpc.host.getProfile.useQuery(
-    { userId: user?.id || "" },
+    { userId: String(user?.id || "") },
     { enabled: !!user?.id }
   );
 
@@ -97,8 +97,8 @@ export default function HostDashboard() {
 
     updateProfileMutation.mutate({
       id: profile.id,
-      bio: editData.bio,
-      menuDescription: editData.menuDescription,
+      bio: editData.bio || undefined,
+      menuDescription: editData.menuDescription || undefined,
       pricePerPerson: editData.pricePerPerson,
     });
   };
