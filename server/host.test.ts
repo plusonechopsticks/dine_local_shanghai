@@ -109,7 +109,10 @@ describe("host.submit", () => {
         "https://example.com/photo2.jpg",
         "https://example.com/photo3.jpg",
       ],
+      profilePhotoUrl: "https://example.com/profile.jpg",
       pricePerPerson: 150,
+      householdFeatures: [],
+      otherHouseholdInfo: "",
     });
 
     expect(result.success).toBe(true);

@@ -703,13 +703,13 @@ export default function HostRegister() {
                           {["lunch", "dinner"].map((meal) => (
                             <label key={`${day}-${meal}`} className="flex items-center gap-2 cursor-pointer">
                               <Checkbox
-                                checked={(data.availability?.[day] || []).includes(meal)}
+                                checked={(data.availability?.[day] || []).includes(meal as "lunch" | "dinner")}
                                 onCheckedChange={(checked) => {
                                   const availability = { ...data.availability };
                                   if (checked) {
-                                    availability[day] = [...(availability[day] || []), meal];
+                                    availability[day] = [...(availability[day] || []), meal as "lunch" | "dinner"];
                                   } else {
-                                    availability[day] = (availability[day] || []).filter(m => m !== meal);
+                                    availability[day] = (availability[day] || []).filter(m => m !== (meal as "lunch" | "dinner"));
                                   }
                                   setData({ ...data, availability });
                                 }}
