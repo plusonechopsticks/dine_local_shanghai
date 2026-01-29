@@ -10,11 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Sparkles, Heart, Users, Upload, ArrowRight, Check, Loader2, User } from "lucide-react";
+import { Sparkles, Heart, Users, Upload, ArrowRight, Loader2, User, X } from "lucide-react";
 
 const SHANGHAI_DISTRICTS = [
   "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou",
@@ -30,59 +31,91 @@ const ACTIVITY_OPTIONS = [
   { id: "temple", label: "Temple Visit" },
   { id: "market", label: "Local Market Tour" },
   { id: "traditional-craft", label: "Traditional Craft" },
+  { id: "tea-ceremony", label: "Tea Ceremony" },
+  { id: "calligraphy", label: "Calligraphy" },
+];
+
+const HOUSEHOLD_FEATURES = [
+  { id: "has-pets", label: "We have pets" },
+  { id: "has-stairs", label: "Stairs only (no elevator)" },
+  { id: "kids-present", label: "Children in household" },
+  { id: "elderly-present", label: "Elderly family members" },
+  { id: "small-space", label: "Small space / apartment" },
+  { id: "garden", label: "Garden or outdoor space" },
 ];
 
 const REGISTRATION_STEPS = [
-  { id: 1, title: "Contact", description: "Name, district, email" },
-  { id: 2, title: "Cuisine", description: "Dishes & dietary info" },
-  { id: 3, title: "About You", description: "Bio & activities" },
-  { id: 4, title: "Availability", description: "Days & meals" },
-  { id: 5, title: "Pricing", description: "Price & notes" },
+  { id: 1, title: "Cuisine & Dishes", description: "What you cook" },
+  { id: 2, title: "Self Intro", description: "About you" },
+  { id: 3, title: "Availability", description: "When available" },
+  { id: 4, title: "Pricing & Notes", description: "Cost & details" },
+  { id: 5, title: "Household Info", description: "House details" },
 ];
 
 interface RegistrationData {
-  // Step 1
+  // Initial entry
   name: string;
   district: string;
   email: string;
-  // Step 2
+  // Step 1: Cuisine & Dishes
   cuisineStyle: string;
   menuDescription: string;
   foodPhotoUrls: string[];
+  maxGuests: number;
   dietaryNote: string;
-  // Step 3
+  // Step 2: Self Intro
   bio: string;
   profilePhotoUrl: string;
   activities: string[];
-  // Step 4
+  // Step 3: Availability
   availability: Record<string, string[]>;
-  maxGuests: number;
-  // Step 5
+  // Step 4: Pricing & Notes
   pricePerPerson: number;
   otherNotes: string;
+  // Step 5: Household Info
+  householdFeatures: string[];
+  otherHouseholdInfo: string;
 }
 
 export default function HostRegister() {
-  const [step, setStep] = useState<"interest" | "full">("interest");
+  const [step, setStep] = useState<"initial" | "full">("initial");
   const [currentFullStep, setCurrentFullStep] = useState(1);
   const [data, setData] = useState<Partial<RegistrationData>>({
     foodPhotoUrls: [],
     activities: [],
-    availability: {} as Record<string, ("lunch" | "dinner")[]>,
-    maxGuests: 2,
-    pricePerPerson: 100,
+    householdFeatures: [],
+    availability: {},
+    maxGuests: 4,
+    pricePerPerson: 150,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const submitInterestMutation = trpc.hostInterest.submit.useMutation({
+  const uploadImageMutation = trpc.upload.image.useMutation({
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to upload image");
+      setIsUploading(false);
+    },
+  });
+
+  const submitProfileMutation = trpc.host.submit.useMutation({
     onSuccess: () => {
-      toast.success("Thank you! Ready to complete your full profile?");
-      setStep("full");
-      setCurrentFullStep(1);
+      toast.success("Your profile has been submitted! We'll review it and contact you soon.");
+      setData({
+        foodPhotoUrls: [],
+        activities: [],
+        householdFeatures: [],
+        availability: {},
+        maxGuests: 4,
+        pricePerPerson: 150,
+      });
+      // Reset form or redirect
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to submit. Please try again.");
+      toast.error(error.message || "Failed to submit profile");
       setIsSubmitting(false);
     },
   });
@@ -97,7 +130,6 @@ export default function HostRegister() {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        console.log(`Starting upload for file: ${file.name}, size: ${file.size} bytes`);
         
         // Validate file size (10MB max)
         if (file.size > 10 * 1024 * 1024) {
@@ -105,29 +137,36 @@ export default function HostRegister() {
           continue;
         }
 
+        // Convert to base64
+        const reader = new FileReader();
+        const base64Promise = new Promise<string>((resolve, reject) => {
+          reader.onload = () => {
+            try {
+              const result = reader.result as string;
+              const base64 = result.split(',')[1];
+              if (!base64) {
+                reject(new Error("Failed to extract base64 data"));
+                return;
+              }
+              resolve(base64);
+            } catch (err) {
+              reject(err);
+            }
+          };
+          reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
+          reader.onabort = () => reject(new Error(`File reading aborted: ${file.name}`));
+        });
+
         try {
-          // Upload directly using FormData to storage endpoint
-          console.log(`Uploading ${file.name} directly to storage...`);
-          const formData = new FormData();
-          formData.append('file', file);
-          
-          const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-            signal: AbortSignal.timeout(120000), // 120 second timeout
+          const base64 = await base64Promise;
+          const url = await uploadImageMutation.mutateAsync({
+            base64Data: base64,
+            fileName: file.name,
+            contentType: file.type,
           });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Upload failed: ${response.status} ${errorText}`);
-          }
-          
-          const result = await response.json();
-          console.log(`Upload successful for ${file.name}: ${result.url}`);
-          uploadedUrls.push(result.url);
+          uploadedUrls.push(url.url);
         } catch (uploadError: any) {
           const errorMsg = uploadError?.message || "Unknown upload error";
-          console.error(`Upload failed for ${file.name}:`, errorMsg);
           toast.error(`Failed to upload ${file.name}: ${errorMsg}`);
         }
       }
@@ -145,14 +184,13 @@ export default function HostRegister() {
         }
       }
     } catch (error: any) {
-      console.error("Unexpected error in handleFileUpload:", error);
       toast.error(error?.message || "Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleInterestSubmit = async (e: React.FormEvent) => {
+  const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!data.name?.trim()) {
       toast.error("Please enter your name");
@@ -167,665 +205,636 @@ export default function HostRegister() {
       return;
     }
 
-    setIsSubmitting(true);
-    await submitInterestMutation.mutateAsync({
-      name: data.name.trim(),
-      district: data.district,
-      contact: data.email.trim(),
-    });
+    setStep("full");
+    setCurrentFullStep(1);
   };
 
-  const handleFullRegistrationSubmit = async (e: React.FormEvent) => {
+  const handleFullStepNext = () => {
+    // Validation per step
+    if (currentFullStep === 1) {
+      if (!data.cuisineStyle?.trim()) {
+        toast.error("Please enter cuisine style");
+        return;
+      }
+      if (!data.menuDescription?.trim()) {
+        toast.error("Please describe your menu");
+        return;
+      }
+      if ((data.foodPhotoUrls?.length || 0) < 3) {
+        toast.error("Please upload at least 3 food photos");
+        return;
+      }
+      if (!data.maxGuests || data.maxGuests < 1) {
+        toast.error("Please enter max guests");
+        return;
+      }
+    } else if (currentFullStep === 2) {
+      if (!data.bio?.trim()) {
+        toast.error("Please write a bio");
+        return;
+      }
+      if (!data.profilePhotoUrl) {
+        toast.error("Please upload a selfie");
+        return;
+      }
+    } else if (currentFullStep === 3) {
+      if (Object.keys(data.availability || {}).length === 0) {
+        toast.error("Please select at least one day and meal time");
+        return;
+      }
+    } else if (currentFullStep === 4) {
+      if (!data.pricePerPerson || data.pricePerPerson < 1) {
+        toast.error("Please enter a price");
+        return;
+      }
+    }
+    
+    if (currentFullStep < REGISTRATION_STEPS.length) {
+      setCurrentFullStep(currentFullStep + 1);
+    }
+  };
+
+  const handleFullStepPrev = () => {
+    if (currentFullStep > 1) {
+      setCurrentFullStep(currentFullStep - 1);
+    }
+  };
+
+  const handleSubmitProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Final validation for Step 5
+    // All previous steps are validated before proceeding
+
+    // Ensure all required fields are filled
     if (!data.name?.trim() || !data.district || !data.email?.trim()) {
-      toast.error("Please complete all required fields");
+      toast.error("Missing contact information");
       return;
     }
     if (!data.cuisineStyle?.trim() || !data.menuDescription?.trim()) {
-      toast.error("Please describe your cuisine and menu");
+      toast.error("Missing cuisine information");
       return;
     }
-    if (!data.foodPhotoUrls || data.foodPhotoUrls.length < 3) {
-      toast.error("Please upload at least 3 food photos");
+    if ((data.foodPhotoUrls?.length || 0) < 3) {
+      toast.error("Need at least 3 food photos");
       return;
     }
-    if (!data.bio?.trim() || data.bio.length < 20) {
-      toast.error("Please write at least 20 characters about yourself");
+    if (!data.bio?.trim()) {
+      toast.error("Missing bio");
       return;
     }
-    if (!data.availability || Object.keys(data.availability).length === 0) {
-      toast.error("Please select at least one day/meal availability");
+    if (!data.profilePhotoUrl) {
+      toast.error("Missing selfie");
+      return;
+    }
+    if (Object.keys(data.availability || {}).length === 0) {
+      toast.error("Missing availability");
+      return;
+    }
+    if (!data.pricePerPerson || data.pricePerPerson < 1) {
+      toast.error("Missing price");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const result = await trpc.host.submit.useMutation().mutateAsync({
+      await submitProfileMutation.mutateAsync({
         name: data.name.trim(),
         district: data.district,
         email: data.email.trim(),
         cuisineStyle: data.cuisineStyle.trim(),
         menuDescription: data.menuDescription.trim(),
-        foodPhotoUrls: data.foodPhotoUrls,
-        dietaryNote: data.dietaryNote || undefined,
+        foodPhotoUrls: data.foodPhotoUrls || [],
+        maxGuests: data.maxGuests || 4,
+        dietaryNote: data.dietaryNote || "",
         bio: data.bio.trim(),
-        profilePhotoUrl: data.profilePhotoUrl || undefined,
+        profilePhotoUrl: data.profilePhotoUrl,
         activities: data.activities || [],
-        availability: data.availability as Record<string, ("lunch" | "dinner")[]>,
-        maxGuests: data.maxGuests || 2,
-        pricePerPerson: data.pricePerPerson || 100,
-        otherNotes: data.otherNotes || undefined,
+        availability: data.availability || {},
+        pricePerPerson: data.pricePerPerson || 150,
+        otherNotes: data.otherNotes || "",
       });
-
-      if (result.success) {
-        toast.success("Registration submitted! We'll review your profile soon.");
-        // Reset form
-        setStep("interest");
-        setCurrentFullStep(1);
-        setData({
-          foodPhotoUrls: [],
-          activities: [],
-          availability: {},
-          maxGuests: 2,
-          pricePerPerson: 100,
-        });
-      }
     } catch (error: any) {
-      toast.error(error?.message || "Failed to submit registration");
+      // Error is already handled by mutation onError
+      console.error("Submit error:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Interest form
-  if (step === "interest") {
+  const progressPercentage = (currentFullStep / REGISTRATION_STEPS.length) * 100;
+
+  // Initial step: name, district, email
+  if (step === "initial") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-cream-50 to-white">
-        <div className="max-w-2xl mx-auto px-4 py-12">
-          {/* Header */}
-          <div className="text-center mb-12">
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+        <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+          <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <Link href="/">
-              <ChopsticksLogo className="w-12 h-12 mx-auto mb-4" />
+              <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <ChopsticksLogo className="w-8 h-8 text-primary" />
+                <span className="font-serif text-xl font-bold text-foreground">
+                  +1 Chopsticks
+                </span>
+              </a>
             </Link>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Join Our Inaugural Batch
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-6 md:py-12 max-w-2xl">
+          <div className="text-center mb-8 md:mb-12">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4 md:mb-6">
+              <Sparkles className="w-4 h-4" />
+              We are looking for inaugural batch hosts!
+            </div>
+            
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-2 md:mb-4">
+              Become a Host
             </h1>
-            <p className="text-lg text-gray-600">
-              We are looking for an inaugural batch of hosts for our 2026 pilot program!
+            <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">
+              Share your culture, meet amazing travelers, and earn income by hosting authentic home dinners
             </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+              <Card className="border-primary/20">
+                <CardContent className="pt-6 text-center">
+                  <Heart className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <h3 className="font-semibold text-lg mb-2">Share Culture</h3>
+                  <p className="text-sm text-muted-foreground">Introduce travelers to authentic home cooking</p>
+                </CardContent>
+              </Card>
+              <Card className="border-primary/20">
+                <CardContent className="pt-6 text-center">
+                  <Users className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <h3 className="font-semibold text-lg mb-2">Meet Friends</h3>
+                  <p className="text-sm text-muted-foreground">Connect with people from around the world</p>
+                </CardContent>
+              </Card>
+              <Card className="border-primary/20">
+                <CardContent className="pt-6 text-center">
+                  <Sparkles className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <h3 className="font-semibold text-lg mb-2">Earn Income</h3>
+                  <p className="text-sm text-muted-foreground">Get paid for sharing your hospitality</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          {/* Benefits */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <Card className="border-0 shadow-sm bg-white">
-              <CardContent className="pt-6">
-                <Heart className="w-8 h-8 text-burgundy-600 mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Share Culture</h3>
-                <p className="text-sm text-gray-600">Share your authentic Shanghai culture and family traditions</p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-sm bg-white">
-              <CardContent className="pt-6">
-                <Users className="w-8 h-8 text-burgundy-600 mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Meet Friends</h3>
-                <p className="text-sm text-gray-600">Connect with travelers from around the world</p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-sm bg-white">
-              <CardContent className="pt-6">
-                <Sparkles className="w-8 h-8 text-burgundy-600 mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Earn Income</h3>
-                <p className="text-sm text-gray-600">Earn money by sharing meals with guests</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Interest Form */}
-          <Card className="border-0 shadow-lg bg-white">
-            <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Tell Us About Yourself</h2>
-              <form onSubmit={handleInterestSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="name" className="text-base font-semibold text-gray-700">
-                    Your Name *
+          <Card className="border-primary/20 shadow-lg">
+            <CardContent className="pt-8 pb-8">
+              <form onSubmit={handleInitialSubmit} className="space-y-6 md:space-y-8">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-base md:text-lg font-medium text-foreground">
+                    What's your name? *
                   </Label>
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Enter your full name"
                     value={data.name || ""}
                     onChange={(e) => setData({ ...data, name: e.target.value })}
-                    className="mt-2 h-12 text-base"
-                    disabled={isSubmitting}
+                    placeholder="Your name"
+                    className="h-12 text-base"
+                    required
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="district" className="text-base font-semibold text-gray-700">
-                    District *
+                <div className="space-y-2">
+                  <Label htmlFor="district" className="text-base md:text-lg font-medium text-foreground">
+                    Which district in Shanghai? *
                   </Label>
-                  <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })}>
-                    <SelectTrigger id="district" className="mt-2 h-12 text-base">
+                  <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })} required>
+                    <SelectTrigger id="district" className="h-12 text-base">
                       <SelectValue placeholder="Select your district" />
                     </SelectTrigger>
                     <SelectContent>
-                      {SHANGHAI_DISTRICTS.map((district) => (
-                        <SelectItem key={district} value={district}>
-                          {district}
+                      {SHANGHAI_DISTRICTS.map((d) => (
+                        <SelectItem key={d} value={d}>
+                          {d}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div>
-                  <Label htmlFor="email" className="text-base font-semibold text-gray-700">
-                    Email or WeChat ID *
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-base md:text-lg font-medium text-foreground">
+                    Your email *
                   </Label>
                   <Input
                     id="email"
-                    type="text"
-                    placeholder="your@email.com or WeChat ID"
+                    type="email"
                     value={data.email || ""}
                     onChange={(e) => setData({ ...data, email: e.target.value })}
-                    className="mt-2 h-12 text-base"
-                    disabled={isSubmitting}
+                    placeholder="your@email.com"
+                    className="h-12 text-base"
+                    required
                   />
+                  <p className="text-sm text-muted-foreground">
+                    We'll use this to contact you about your application
+                  </p>
                 </div>
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-14 text-lg font-bold bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 text-base font-bold text-white rounded-lg shadow-md transition-all hover:opacity-90"
+                  style={{ backgroundColor: "var(--warm-burgundy)" }}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      Continue <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
+                  Continue to Full Profile
                 </Button>
               </form>
             </CardContent>
           </Card>
-        </div>
+
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            <p>
+              By submitting, you agree to be contacted about the +1 Chopsticks pilot program.
+            </p>
+          </div>
+        </main>
       </div>
     );
   }
 
-  // Full registration form
+  // Full registration (5 steps)
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cream-50 to-white">
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/">
-            <ChopsticksLogo className="w-12 h-12 mx-auto mb-4" />
+            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <ChopsticksLogo className="w-8 h-8 text-primary" />
+              <span className="font-serif text-xl font-bold text-foreground">
+                +1 Chopsticks
+              </span>
+            </a>
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Complete Your Profile</h1>
         </div>
+      </header>
 
+      <main className="container mx-auto px-4 py-12 max-w-3xl">
         {/* Progress */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-4">
+        <div className="mb-12">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="font-serif text-4xl font-bold text-foreground mb-2">
+                Complete Your Profile
+              </h1>
+              <p className="text-muted-foreground">
+                Step {currentFullStep} of {REGISTRATION_STEPS.length}: {REGISTRATION_STEPS[currentFullStep - 1]?.title}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-bold text-primary">
+                {Math.round(progressPercentage)}%
+              </div>
+              <p className="text-sm text-muted-foreground">Complete</p>
+            </div>
+          </div>
+
+          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div
+              className="bg-primary h-full transition-all duration-300 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+
+          <div className="grid grid-cols-5 gap-2 mt-8">
             {REGISTRATION_STEPS.map((s) => (
               <div
                 key={s.id}
-                className={`flex-1 mx-1 text-center ${
-                  s.id === currentFullStep ? "font-bold text-burgundy-600" : "text-gray-500"
+                className={`text-center p-2 rounded-lg transition-all min-w-0 ${
+                  s.id === currentFullStep
+                    ? "bg-primary/10 border-2 border-primary"
+                    : s.id < currentFullStep
+                    ? "bg-primary/5 border-2 border-primary/30"
+                    : "bg-gray-100 border-2 border-gray-300"
                 }`}
               >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2 ${
-                    s.id < currentFullStep
-                      ? "bg-burgundy-600 text-white"
-                      : s.id === currentFullStep
-                      ? "bg-burgundy-600 text-white"
-                      : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {s.id < currentFullStep ? <Check className="w-5 h-5" /> : s.id}
-                </div>
-                <p className="text-xs md:text-sm">{s.title}</p>
+                <div className="font-bold text-xs mb-0.5">{s.id}</div>
+                <div className="text-xs text-gray-700 truncate">{s.title}</div>
               </div>
             ))}
           </div>
-          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-            <div
-              className="bg-burgundy-600 h-full transition-all"
-              style={{ width: `${(currentFullStep / REGISTRATION_STEPS.length) * 100}%` }}
-            />
-          </div>
         </div>
 
-        {/* Form */}
-        <Card className="border-0 shadow-lg bg-white mb-8">
-          <CardContent className="p-8">
-            <form onSubmit={handleFullRegistrationSubmit} className="space-y-6">
-              {/* Step 1: Contact */}
-              {currentFullStep === 1 && (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
-                  <div>
-                    <Label htmlFor="name" className="text-base font-semibold text-gray-700">
-                      Your Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={data.name || ""}
-                      onChange={(e) => setData({ ...data, name: e.target.value })}
-                      className="mt-2 h-12 text-base"
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="district" className="text-base font-semibold text-gray-700">
-                      District *
-                    </Label>
-                    <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })}>
-                      <SelectTrigger id="district" className="mt-2 h-12 text-base">
-                        <SelectValue placeholder="Select your district" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SHANGHAI_DISTRICTS.map((district) => (
-                          <SelectItem key={district} value={district}>
-                            {district}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="email" className="text-base font-semibold text-gray-700">
-                      Email *
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={data.email || ""}
-                      onChange={(e) => setData({ ...data, email: e.target.value })}
-                      className="mt-2 h-12 text-base"
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </>
-              )}
+        {/* Form Content */}
+        <Card className="border-primary/20 shadow-lg">
+          <CardContent className="pt-8 pb-8">
+            {/* Step 1: Cuisine & Dishes */}
+            {currentFullStep === 1 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Your Cuisine & Dishes</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Cuisine Style *</Label>
+                  <Input
+                    value={data.cuisineStyle || ""}
+                    onChange={(e) => setData({ ...data, cuisineStyle: e.target.value })}
+                    placeholder="e.g., Shanghainese, Sichuan, Cantonese"
+                    className="h-12 text-base"
+                  />
+                </div>
 
-              {/* Step 2: Cuisine */}
-              {currentFullStep === 2 && (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Cuisine</h2>
-                  <div>
-                    <Label htmlFor="cuisineStyle" className="text-base font-semibold text-gray-700">
-                      Cuisine Style *
-                    </Label>
-                    <Input
-                      id="cuisineStyle"
-                      type="text"
-                      placeholder="e.g., Shanghai, Sichuan, Fusion"
-                      value={data.cuisineStyle || ""}
-                      onChange={(e) => setData({ ...data, cuisineStyle: e.target.value })}
-                      className="mt-2 h-12 text-base"
-                      disabled={isSubmitting}
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">What will you cook? *</Label>
+                  <textarea
+                    value={data.menuDescription || ""}
+                    onChange={(e) => setData({ ...data, menuDescription: e.target.value })}
+                    placeholder="Describe your typical menu, special dishes, seasonal specialties..."
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Food Photos (minimum 3) *</Label>
+                  <label className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors block">
+                    <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground">Click to upload or drag and drop</p>
+                    <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB each</p>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, false)}
+                      disabled={isUploading}
+                      className="hidden"
                     />
-                  </div>
-                  <div>
-                    <Label htmlFor="menuDescription" className="text-base font-semibold text-gray-700">
-                      Menu Description *
-                    </Label>
-                    <textarea
-                      id="menuDescription"
-                      placeholder="Describe the dishes you typically prepare"
-                      value={data.menuDescription || ""}
-                      onChange={(e) => setData({ ...data, menuDescription: e.target.value })}
-                      className="mt-2 w-full p-3 border border-gray-300 rounded-lg text-base"
-                      rows={4}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dietaryNote" className="text-base font-semibold text-gray-700">
-                      Dietary Restrictions You Can Accommodate
-                    </Label>
-                    <Input
-                      id="dietaryNote"
-                      type="text"
-                      placeholder="e.g., Vegetarian, Halal, Gluten-free"
-                      value={data.dietaryNote || ""}
-                      onChange={(e) => setData({ ...data, dietaryNote: e.target.value })}
-                      className="mt-2 h-12 text-base"
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-base font-semibold text-gray-700 block mb-3">
-                      Food Photos ({data.foodPhotoUrls?.length || 0}/3+) *
-                    </Label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600 mb-2">Click to upload food photos</p>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(e, false)}
-                        disabled={isUploading}
-                        className="hidden"
-                        id="foodPhotos"
-                      />
-                      <label htmlFor="foodPhotos" className="cursor-pointer">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={isUploading}
-                          onClick={() => document.getElementById("foodPhotos")?.click()}
-                        >
-                          {isUploading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                              Uploading...
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-4 h-4 mr-2" />
-                              Select Photos
-                            </>
-                          )}
-                        </Button>
-                      </label>
+                  </label>
+                  {isUploading && (
+                    <div className="flex items-center justify-center gap-2 py-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm text-muted-foreground">Uploading...</span>
                     </div>
-                    {data.foodPhotoUrls && data.foodPhotoUrls.length > 0 && (
-                      <div className="mt-4 grid grid-cols-3 gap-2">
+                  )}
+                  {data.foodPhotoUrls && data.foodPhotoUrls.length > 0 && (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-foreground">{data.foodPhotoUrls.length} photo(s) uploaded</p>
+                      <div className="grid grid-cols-3 gap-2">
                         {data.foodPhotoUrls.map((url, idx) => (
-                          <img
-                            key={idx}
-                            src={url}
-                            alt={`Food ${idx + 1}`}
-                            className="w-full h-20 object-cover rounded"
-                          />
+                          <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-secondary">
+                            <img src={url} alt={`Food ${idx + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setData({
+                                ...data,
+                                foodPhotoUrls: data.foodPhotoUrls!.filter((_, i) => i !== idx)
+                              })}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
                         ))}
                       </div>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {/* Step 3: About You */}
-              {currentFullStep === 3 && (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">About You</h2>
-                  <div>
-                    <Label htmlFor="bio" className="text-base font-semibold text-gray-700">
-                      Tell Us About Yourself *
-                    </Label>
-                    <textarea
-                      id="bio"
-                      placeholder="Share your story, interests, and why you want to host"
-                      value={data.bio || ""}
-                      onChange={(e) => setData({ ...data, bio: e.target.value })}
-                      className="mt-2 w-full p-3 border border-gray-300 rounded-lg text-base"
-                      rows={4}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-base font-semibold text-gray-700 block mb-3">
-                      Profile Photo
-                    </Label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                      <User className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600 mb-2">Click to upload your photo</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(e, true)}
-                        disabled={isUploading}
-                        className="hidden"
-                        id="profilePhoto"
-                      />
-                      <label htmlFor="profilePhoto" className="cursor-pointer">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={isUploading}
-                          onClick={() => document.getElementById("profilePhoto")?.click()}
-                        >
-                          {isUploading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                              Uploading...
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="w-4 h-4 mr-2" />
-                              Select Photo
-                            </>
-                          )}
-                        </Button>
-                      </label>
                     </div>
-                    {data.profilePhotoUrl && (
-                      <img
-                        src={data.profilePhotoUrl}
-                        alt="Profile"
-                        className="mt-4 w-32 h-32 object-cover rounded-lg mx-auto"
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <Label className="text-base font-semibold text-gray-700 block mb-3">
-                      Activities You Can Offer
-                    </Label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {ACTIVITY_OPTIONS.map((activity) => (
-                        <label key={activity.id} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={data.activities?.includes(activity.id) || false}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setData({
-                                  ...data,
-                                  activities: [...(data.activities || []), activity.id],
-                                });
-                              } else {
-                                setData({
-                                  ...data,
-                                  activities: (data.activities || []).filter((a) => a !== activity.id),
-                                });
-                              }
-                            }}
-                            disabled={isSubmitting}
-                            className="w-4 h-4"
-                          />
-                          <span className="text-sm text-gray-700">{activity.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
+                  )}
+                </div>
 
-              {/* Step 4: Availability */}
-              {currentFullStep === 4 && (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Availability</h2>
-                  <div>
-                    <Label className="text-base font-semibold text-gray-700 block mb-3">
-                      When Can You Host? *
-                    </Label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                        <div key={day} className="border border-gray-300 rounded-lg p-3">
-                          <p className="font-semibold text-sm text-gray-900 mb-2">{day}</p>
-                          <label className="flex items-center gap-2 mb-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={data.availability?.[day]?.includes("lunch") || false}
-                              onChange={(e) => {
-                                const current = data.availability?.[day] || [];
-                                if (e.target.checked) {
-                                  setData({
-                                    ...data,
-                                    availability: {
-                                      ...data.availability,
-                                      [day]: [...current, "lunch"],
-                                    },
-                                  });
-                                } else {
-                                  setData({
-                                    ...data,
-                                    availability: {
-                                      ...data.availability,
-                                      [day]: current.filter((m) => m !== "lunch"),
-                                    },
-                                  });
-                                }
-                              }}
-                              disabled={isSubmitting}
-                              className="w-4 h-4"
-                            />
-                            <span className="text-xs text-gray-700">Lunch</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={data.availability?.[day]?.includes("dinner") || false}
-                              onChange={(e) => {
-                                const current = data.availability?.[day] || [];
-                                if (e.target.checked) {
-                                  setData({
-                                    ...data,
-                                    availability: {
-                                      ...data.availability,
-                                      [day]: [...current, "dinner"],
-                                    },
-                                  });
-                                } else {
-                                  setData({
-                                    ...data,
-                                    availability: {
-                                      ...data.availability,
-                                      [day]: current.filter((m) => m !== "dinner"),
-                                    },
-                                  });
-                                }
-                              }}
-                              disabled={isSubmitting}
-                              className="w-4 h-4"
-                            />
-                            <span className="text-xs text-gray-700">Dinner</span>
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="maxGuests" className="text-base font-semibold text-gray-700">
-                      Maximum Guests Per Meal
-                    </Label>
-                    <Input
-                      id="maxGuests"
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={data.maxGuests || 2}
-                      onChange={(e) => setData({ ...data, maxGuests: parseInt(e.target.value) })}
-                      className="mt-2 h-12 text-base"
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </>
-              )}
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Maximum Guests Allowed *</Label>
+                  <Input
+                    type="number"
+                    value={data.maxGuests || 4}
+                    onChange={(e) => setData({ ...data, maxGuests: parseInt(e.target.value) || 4 })}
+                    className="h-12 text-base"
+                    min="1"
+                    max="20"
+                  />
+                  <p className="text-sm text-muted-foreground">How many guests can you host at one dinner?</p>
+                </div>
 
-              {/* Step 5: Pricing */}
-              {currentFullStep === 5 && (
-                <>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Pricing & Notes</h2>
-                  <div>
-                    <Label htmlFor="pricePerPerson" className="text-base font-semibold text-gray-700">
-                      Price Per Person (¥) *
-                    </Label>
-                    <Input
-                      id="pricePerPerson"
-                      type="number"
-                      min="1"
-                      value={data.pricePerPerson || 100}
-                      onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) })}
-                      className="mt-2 h-12 text-base"
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="otherNotes" className="text-base font-semibold text-gray-700">
-                      Additional Notes
-                    </Label>
-                    <textarea
-                      id="otherNotes"
-                      placeholder="Any other information you'd like to share"
-                      value={data.otherNotes || ""}
-                      onChange={(e) => setData({ ...data, otherNotes: e.target.value })}
-                      className="mt-2 w-full p-3 border border-gray-300 rounded-lg text-base"
-                      rows={4}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* Navigation Buttons */}
-              <div className="flex gap-3 pt-6">
-                {currentFullStep > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setCurrentFullStep(currentFullStep - 1)}
-                    disabled={isSubmitting}
-                    className="flex-1 h-12 text-base"
-                  >
-                    Previous
-                  </Button>
-                )}
-                {currentFullStep < REGISTRATION_STEPS.length && (
-                  <Button
-                    type="button"
-                    onClick={() => setCurrentFullStep(currentFullStep + 1)}
-                    disabled={isSubmitting}
-                    className="flex-1 h-12 text-base bg-burgundy-600 hover:bg-burgundy-700 text-white"
-                  >
-                    Next
-                  </Button>
-                )}
-                {currentFullStep === REGISTRATION_STEPS.length && (
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 h-12 text-base bg-burgundy-600 hover:bg-burgundy-700 text-white flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        Submit Registration <Check className="w-5 h-5" />
-                      </>
-                    )}
-                  </Button>
-                )}
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Dietary Restrictions & Allergies</Label>
+                  <textarea
+                    value={data.dietaryNote || ""}
+                    onChange={(e) => setData({ ...data, dietaryNote: e.target.value })}
+                    placeholder="e.g., 'Can accommodate vegetarian, vegan, gluten-free. Not suitable for people with shellfish allergy.'"
+                    className="w-full h-24 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
               </div>
-            </form>
+            )}
+
+            {/* Step 2: Self Intro & Selfie */}
+            {currentFullStep === 2 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">About You</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Your Selfie *</Label>
+                  <label className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors block">
+                    <User className="w-8 h-8 text-primary/40 mx-auto mb-3" />
+                    <p className="text-muted-foreground">Click to upload or drag and drop</p>
+                    <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, true)}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+                  </label>
+                  {isUploading && (
+                    <div className="flex items-center justify-center gap-2 py-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm text-muted-foreground">Uploading...</span>
+                    </div>
+                  )}
+                  {data.profilePhotoUrl && (
+                    <div className="relative w-32 h-32 mx-auto rounded-lg overflow-hidden bg-secondary">
+                      <img src={data.profilePhotoUrl} alt="Your profile" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setData({ ...data, profilePhotoUrl: "" })}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:bg-red-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Tell us about yourself *</Label>
+                  <textarea
+                    value={data.bio || ""}
+                    onChange={(e) => setData({ ...data, bio: e.target.value })}
+                    placeholder="Share your story, why you want to host, your cooking background, what you love about Shanghai..."
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">What else can you do with guests?</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Select all that apply (optional)</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {ACTIVITY_OPTIONS.map((activity) => (
+                      <label key={activity.id} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <Checkbox
+                          checked={(data.activities || []).includes(activity.id)}
+                          onCheckedChange={(checked) => {
+                            const newActivities = checked
+                              ? [...(data.activities || []), activity.id]
+                              : (data.activities || []).filter(a => a !== activity.id);
+                            setData({ ...data, activities: newActivities });
+                          }}
+                        />
+                        <span className="text-sm font-medium">{activity.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Availability */}
+            {currentFullStep === 3 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Your Availability</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">When are you available? *</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Select days and meal times (you can block out specific dates later)</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
+                      <div key={day} className="border border-gray-200 rounded-lg p-4">
+                        <div className="font-semibold text-sm mb-3 capitalize">{day}</div>
+                        <div className="space-y-2">
+                          {["lunch", "dinner"].map((meal) => (
+                            <label key={`${day}-${meal}`} className="flex items-center gap-2 cursor-pointer">
+                              <Checkbox
+                                checked={(data.availability?.[day] || []).includes(meal)}
+                                onCheckedChange={(checked) => {
+                                  const availability = { ...data.availability };
+                                  if (checked) {
+                                    availability[day] = [...(availability[day] || []), meal];
+                                  } else {
+                                    availability[day] = (availability[day] || []).filter(m => m !== meal);
+                                  }
+                                  setData({ ...data, availability });
+                                }}
+                              />
+                              <span className="text-sm capitalize">{meal}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-900">
+                    💡 Tip: Once you complete your profile, you can block out specific dates on a calendar if needed.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Pricing & Notes */}
+            {currentFullStep === 4 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Pricing & Notes</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Price per Person (RMB) *</Label>
+                  <Input
+                    type="number"
+                    value={data.pricePerPerson || 150}
+                    onChange={(e) => setData({ ...data, pricePerPerson: parseInt(e.target.value) || 150 })}
+                    className="h-12 text-base"
+                    min="1"
+                  />
+                  <p className="text-sm text-muted-foreground">This is what guests will pay per person for the dining experience</p>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Additional Notes (optional)</Label>
+                  <textarea
+                    value={data.otherNotes || ""}
+                    onChange={(e) => setData({ ...data, otherNotes: e.target.value })}
+                    placeholder="Anything else guests should know? Meal duration, cancellation policy, special requirements, etc."
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Household Info */}
+            {currentFullStep === 5 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground mb-6">Useful Information</h2>
+                
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">What should guests know about your home?</Label>
+                  <p className="text-sm text-muted-foreground mb-3">Select all that apply</p>
+                  <div className="space-y-3">
+                    {HOUSEHOLD_FEATURES.map((feature) => (
+                      <label key={feature.id} className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <Checkbox
+                          checked={(data.householdFeatures || []).includes(feature.id)}
+                          onCheckedChange={(checked) => {
+                            const newFeatures = checked
+                              ? [...(data.householdFeatures || []), feature.id]
+                              : (data.householdFeatures || []).filter(f => f !== feature.id);
+                            setData({ ...data, householdFeatures: newFeatures });
+                          }}
+                        />
+                        <span className="text-sm font-medium">{feature.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-lg font-medium">Other important information (optional)</Label>
+                  <textarea
+                    value={data.otherHouseholdInfo || ""}
+                    onChange={(e) => setData({ ...data, otherHouseholdInfo: e.target.value })}
+                    placeholder="Any other details about your home guests should know..."
+                    className="w-full h-24 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-6">
+                  <p className="text-sm text-foreground">
+                    ✓ Once your profile is submitted, our team will review your application. We'll contact you within 3-5 business days. Approved hosts can then login to manage bookings and availability.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Navigation */}
+            <div className="flex gap-4 mt-8 pt-8 border-t border-gray-200">
+              <Button
+                onClick={handleFullStepPrev}
+                disabled={currentFullStep === 1}
+                className="flex-1 h-14 text-lg bg-gray-200 hover:bg-gray-300 text-foreground font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </Button>
+              {currentFullStep < REGISTRATION_STEPS.length ? (
+                <Button
+                  onClick={handleFullStepNext}
+                  className="flex-1 h-14 text-lg text-white font-semibold flex items-center justify-center gap-2 transition-all hover:opacity-90"
+                  style={{ backgroundColor: "var(--warm-burgundy)" }}
+                >
+                  Next <ArrowRight className="w-5 h-5" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmitProfile}
+                  className="flex-1 h-14 text-lg text-white hover:opacity-90 font-semibold"
+                  style={{ backgroundColor: "var(--warm-burgundy)" }}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Profile"}
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
-      </div>
+      </main>
     </div>
   );
 }
