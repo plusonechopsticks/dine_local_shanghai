@@ -15,6 +15,7 @@ import {
 } from "./db";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
+import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail } from "./email";
 import { nanoid } from "nanoid";
 
 export const appRouter = router({
@@ -303,6 +304,79 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         return { success: true };
+      }),
+
+    // Admin: Approve booking with email confirmation
+    approveBooking: protectedProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        guestName: z.string(),
+        guestEmail: z.string().email(),
+        hostName: z.string(),
+        hostEmail: z.string().email(),
+        bookingDate: z.string(),
+        mealType: z.enum(["lunch", "dinner"]),
+        numberOfGuests: z.number(),
+        cuisine: z.string(),
+        hostAddress: z.string().optional(),
+        specialRequests: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+
+        const guestEmailSent = await sendGuestConfirmationEmail({
+          guestName: input.guestName,
+          guestEmail: input.guestEmail,
+          hostName: input.hostName,
+          hostEmail: input.hostEmail,
+          bookingDate: input.bookingDate,
+          mealType: input.mealType,
+          numberOfGuests: input.numberOfGuests,
+          cuisine: input.cuisine,
+          hostAddress: input.hostAddress,
+          specialRequests: input.specialRequests,
+        });
+
+        const hostEmailSent = await sendHostConfirmationEmail({
+          guestName: input.guestName,
+          guestEmail: input.guestEmail,
+          hostName: input.hostName,
+          hostEmail: input.hostEmail,
+          bookingDate: input.bookingDate,
+          mealType: input.mealType,
+          numberOfGuests: input.numberOfGuests,
+          cuisine: input.cuisine,
+          hostAddress: input.hostAddress,
+          specialRequests: input.specialRequests,
+        });
+
+        return { success: true, guestEmailSent, hostEmailSent };
+      }),
+
+    // Admin: Reject booking with email notification
+    rejectBooking: protectedProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        guestName: z.string(),
+        guestEmail: z.string().email(),
+        hostName: z.string(),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+
+        const emailSent = await sendGuestRejectionEmail(
+          input.guestName,
+          input.guestEmail,
+          input.hostName,
+          input.reason
+        );
+
+        return { success: true, emailSent };
       }),
   }),
 });
