@@ -1,16 +1,6 @@
 import { eq, desc, and } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
 import { conversations, messages } from "../drizzle/schema";
-import mysql from "mysql2/promise";
-
-const pool = mysql.createPool({
-  host: process.env.DATABASE_URL?.split("@")[1]?.split("/")[0] || "localhost",
-  user: process.env.DATABASE_URL?.split("://")[1]?.split(":")[0] || "root",
-  password: process.env.DATABASE_URL?.split(":")[1]?.split("@")[0] || "",
-  database: process.env.DATABASE_URL?.split("/").pop() || "dine_local",
-});
-
-const db = drizzle(pool);
+import { getDb } from "./db";
 
 /**
  * Create or get a conversation between host and guest
@@ -22,6 +12,9 @@ export async function getOrCreateConversation(
   bookingId?: number,
   subject?: string
 ) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   // Check if conversation already exists
   const existing = await db
     .select()
@@ -71,6 +64,9 @@ export async function sendMessage(
   senderEmail: string,
   content: string
 ) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   // Insert message
   const result = await db.insert(messages).values({
     conversationId,
@@ -105,6 +101,9 @@ export async function sendMessage(
  * Get all messages in a conversation
  */
 export async function getConversationMessages(conversationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   return await db
     .select()
     .from(messages)
@@ -116,6 +115,9 @@ export async function getConversationMessages(conversationId: number) {
  * Get all conversations for a host
  */
 export async function getHostConversations(hostListingId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   return await db
     .select()
     .from(conversations)
@@ -127,6 +129,9 @@ export async function getHostConversations(hostListingId: number) {
  * Get all conversations for a guest
  */
 export async function getGuestConversations(guestEmail: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   return await db
     .select()
     .from(conversations)
@@ -138,6 +143,9 @@ export async function getGuestConversations(guestEmail: string) {
  * Mark messages as read
  */
 export async function markMessagesAsRead(conversationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   return await db
     .update(messages)
     .set({ isRead: true })
@@ -153,12 +161,16 @@ export async function markMessagesAsRead(conversationId: number) {
  * Get unread message count for a host
  */
 export async function getHostUnreadCount(hostListingId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not initialized");
+  
   const result = await db
     .select()
     .from(messages)
+    .innerJoin(conversations, eq(messages.conversationId, conversations.id))
     .where(
       and(
-        eq(messages.conversationId, hostListingId),
+        eq(conversations.hostListingId, hostListingId),
         eq(messages.isRead, false)
       )
     );

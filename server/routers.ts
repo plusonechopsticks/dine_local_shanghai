@@ -267,7 +267,6 @@ export const appRouter = router({
         otherNotes: z.string().optional(),
         
         // Step 5: Household Info
-        householdFeatures: z.array(z.string()).optional(),
         otherHouseholdInfo: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
