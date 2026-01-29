@@ -132,3 +132,57 @@ export const bookings = mysqlTable("bookings", {
 
 export type Booking = typeof bookings.$inferSelect;
 export type InsertBooking = typeof bookings.$inferInsert;
+
+/**
+ * Conversations - chat threads between hosts and guests
+ */
+export const conversations = mysqlTable("conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Participants
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
+  guestEmail: varchar("guestEmail", { length: 320 }).notNull(),
+  guestName: varchar("guestName", { length: 255 }).notNull(),
+  
+  // Related booking (optional - conversation can exist without confirmed booking)
+  bookingId: int("bookingId").references(() => bookings.id),
+  
+  // Metadata
+  subject: varchar("subject", { length: 255 }).notNull(), // e.g., "Booking for Feb 8"
+  lastMessage: text("lastMessage"), // Preview of last message
+  lastMessageAt: timestamp("lastMessageAt"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = typeof conversations.$inferInsert;
+
+/**
+ * Messages - individual messages in a conversation
+ */
+export const messages = mysqlTable("messages", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Conversation reference
+  conversationId: int("conversationId").notNull().references(() => conversations.id, { onDelete: "cascade" }),
+  
+  // Sender info
+  senderType: mysqlEnum("senderType", ["host", "guest"]).notNull(),
+  senderName: varchar("senderName", { length: 255 }).notNull(),
+  senderEmail: varchar("senderEmail", { length: 320 }).notNull(),
+  
+  // Message content
+  content: text("content").notNull(),
+  
+  // Read status
+  isRead: boolean("isRead").default(false).notNull(),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;

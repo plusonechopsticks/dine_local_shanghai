@@ -13,6 +13,7 @@ import {
   getHostListingById,
   updateHostListingStatus
 } from "./db";
+import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
@@ -39,6 +40,81 @@ export const appRouter = router({
         });
         return { success: true };
       }),
+  messaging: router({
+    // Create or get conversation
+    getOrCreateConversation: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+        guestEmail: z.string().email(),
+        guestName: z.string(),
+        bookingId: z.number().optional(),
+        subject: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await getOrCreateConversation(
+          input.hostListingId,
+          input.guestEmail,
+          input.guestName,
+          input.bookingId,
+          input.subject
+        );
+      }),
+
+    // Send a message
+    sendMessage: publicProcedure
+      .input(z.object({
+        conversationId: z.number(),
+        senderType: z.enum(["host", "guest"]),
+        senderName: z.string(),
+        senderEmail: z.string().email(),
+        content: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        return await sendMessage(
+          input.conversationId,
+          input.senderType,
+          input.senderName,
+          input.senderEmail,
+          input.content
+        );
+      }),
+
+    // Get all messages in a conversation
+    getMessages: publicProcedure
+      .input(z.object({
+        conversationId: z.number(),
+      }))
+      .query(async ({ input }) => {
+        return await getConversationMessages(input.conversationId);
+      }),
+
+    // Get conversations for host
+    getHostConversations: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+      }))
+      .query(async ({ input }) => {
+        return await getHostConversations(input.hostListingId);
+      }),
+
+    // Get conversations for guest
+    getGuestConversations: publicProcedure
+      .input(z.object({
+        guestEmail: z.string().email(),
+      }))
+      .query(async ({ input }) => {
+        return await getGuestConversations(input.guestEmail);
+      }),
+
+    // Mark messages as read
+    markAsRead: publicProcedure
+      .input(z.object({
+        conversationId: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        return await markMessagesAsRead(input.conversationId);
+      }),
+  }),
   }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
