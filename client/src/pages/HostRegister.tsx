@@ -3,129 +3,173 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChopsticksLogo } from "@/components/ChopsticksLogo";
-import { Link } from "wouter";
-import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Sparkles, Heart, Users, Upload, ArrowRight, Loader2, User, X } from "lucide-react";
+import { ChopsticksLogo } from "@/components/ChopsticksLogo";
+import { ArrowRight } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
-const SHANGHAI_DISTRICTS = [
-  "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou",
-  "Yangpu", "Minhang", "Baoshan", "Jiading", "Pudong", "Jinshan",
-  "Songjiang", "Qingpu", "Fengxian", "Chongming"
-];
+interface RegistrationData {
+  name?: string;
+  email?: string;
+  district?: string;
+  cuisineStyle?: string;
+  menuDescription?: string;
+  foodPhotoUrls?: string[];
+  bio?: string;
+  profilePhotoUrl?: string;
+  activities?: string[];
+  availability?: Record<string, ("lunch" | "dinner")[]>;
+  maxGuests?: number;
+  pricePerPerson?: number;
+  otherNotes?: string;
+  householdFeatures?: string[];
+  otherHouseholdInfo?: string;
+  dietaryNote?: string;
+}
 
-const ACTIVITY_OPTIONS = [
-  { id: "cooking-class", label: "Cooking Class" },
-  { id: "park-visit", label: "Park Visit" },
-  { id: "shopping", label: "Shopping" },
-  { id: "museum", label: "Museum Tour" },
-  { id: "temple", label: "Temple Visit" },
-  { id: "market", label: "Local Market Tour" },
-  { id: "traditional-craft", label: "Traditional Craft" },
-  { id: "tea-ceremony", label: "Tea Ceremony" },
-  { id: "calligraphy", label: "Calligraphy" },
+const REGISTRATION_STEPS = [
+  { id: 1, title: "Cuisine & Dishes", description: "What do you cook?" },
+  { id: 2, title: "Self Intro", description: "Tell us about you" },
+  { id: 3, title: "Availability", description: "When can you host?" },
+  { id: 4, title: "Pricing & Notes", description: "Set your rates" },
+  { id: 5, title: "Household Info", description: "Home details" },
 ];
 
 const HOUSEHOLD_FEATURES = [
   { id: "has-pets", label: "We have pets" },
-  { id: "has-stairs", label: "Stairs only (no elevator)" },
-  { id: "kids-present", label: "Children in household" },
-  { id: "elderly-present", label: "Elderly family members" },
-  { id: "small-space", label: "Small space / apartment" },
-  { id: "garden", label: "Garden or outdoor space" },
+  { id: "has-stairs", label: "We have stairs" },
+  { id: "kids-present", label: "We have kids" },
+  { id: "elderly-present", label: "We have elderly" },
+  { id: "large-space", label: "Large space" },
+  { id: "garden", label: "We have a garden" },
 ];
 
-const REGISTRATION_STEPS = [
-  { id: 1, title: "Cuisine & Dishes", description: "What you cook" },
-  { id: 2, title: "Self Intro", description: "About you" },
-  { id: 3, title: "Availability", description: "When available" },
-  { id: 4, title: "Pricing & Notes", description: "Cost & details" },
-  { id: 5, title: "Household Info", description: "House details" },
+const ACTIVITY_OPTIONS = [
+  { id: "cooking-class", label: "Cooking class" },
+  { id: "market-visit", label: "Market visit" },
+  { id: "park-visit", label: "Park visit" },
+  { id: "shopping", label: "Shopping" },
+  { id: "cultural-tour", label: "Cultural tour" },
+  { id: "other", label: "Other" },
 ];
 
-interface RegistrationData {
-  // Initial entry
-  name: string;
-  district: string;
-  email: string;
-  // Step 1: Cuisine & Dishes
-  cuisineStyle: string;
-  menuDescription: string;
-  foodPhotoUrls: string[];
-  maxGuests: number;
-  dietaryNote: string;
-  // Step 2: Self Intro
-  bio: string;
-  profilePhotoUrl: string;
-  activities: string[];
-  // Step 3: Availability
-  availability: Record<string, ("lunch" | "dinner")[]>;
-  // Step 4: Pricing & Notes
-  pricePerPerson: number;
-  otherNotes: string;
-  // Step 5: Household Info
-  householdFeatures: string[];
-  otherHouseholdInfo: string;
+const DISTRICTS = [
+  "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou", "Yangpu",
+  "Minhang", "Pudong", "Songjiang", "Jiading", "Baoshan", "Jinshan", "Fengxian", "Chongming"
+];
+
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-// Compress image to reduce file size
-async function compressImage(file: File, maxWidth: number = 1200, maxHeight: number = 1200, quality: number = 0.8): Promise<Blob> {
+function compressImage(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
+        const maxSize = 1200;
         let width = img.width;
         let height = img.height;
 
-        // Calculate new dimensions
         if (width > height) {
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
+          if (width > maxSize) {
+            height *= maxSize / width;
+            width = maxSize;
           }
         } else {
-          if (height > maxHeight) {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
+          if (height > maxSize) {
+            width *= maxSize / height;
+            height = maxSize;
           }
         }
 
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Failed to get canvas context'));
-          return;
-        }
-
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("Failed to get canvas context"));
         ctx.drawImage(img, 0, 0, width, height);
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Failed to compress image'));
-            }
-          },
-          file.type,
-          quality
-        );
+
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Failed to compress image"));
+        }, "image/jpeg", 0.8);
       };
-      img.onerror = () => reject(new Error('Failed to load image'));
+      img.onerror = reject;
       img.src = e.target?.result as string;
     };
-    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImageToServer(file: File, onProgress: (progress: number) => void): Promise<string> {
+  const compressed = await compressImage(file);
+  const formData = new FormData();
+  formData.append("file", compressed, file.name);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        const progress = (e.loaded / e.total) * 100;
+        onProgress(progress);
+      }
+    });
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        resolve(response.url);
+      } else {
+        reject(new Error("Upload failed"));
+      }
+    });
+
+    xhr.addEventListener("error", () => reject(new Error("Upload error")));
+    xhr.open("POST", "/api/upload");
+    xhr.send(formData);
+  });
+}
+
+async function handleFileUpload(files: FileList | null, onProgress: (progress: number) => void): Promise<string[]> {
+  if (!files) return [];
+
+  const urls: string[] = [];
+  const uploadPromises: Promise<string>[] = [];
+
+  for (let i = 0; i < Math.min(files.length, 3); i++) {
+    uploadPromises.push(
+      uploadImageToServer(files[i], (progress) => {
+        onProgress((i * 100 + progress) / Math.min(files.length, 3));
+      })
+    );
+  }
+
+  try {
+    const results = await Promise.all(uploadPromises);
+    return results;
+  } catch (error) {
+    throw error;
+  }
+}
+
+function fileInputToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
@@ -136,10 +180,10 @@ const STORAGE_FULL_STEP_KEY = "hostRegistrationFullStep";
 
 export default function HostRegister() {
   // Initialize state from localStorage
-  const [step, setStep] = useState<"initial" | "full">(() => {
+  const [step, setStep] = useState<"initial" | "full" | "success">(() => {
     if (typeof window === "undefined") return "initial";
     const saved = localStorage.getItem(STORAGE_STEP_KEY);
-    return (saved as "initial" | "full") || "initial";
+    return (saved as "initial" | "full" | "success") || "initial";
   });
 
   const [currentFullStep, setCurrentFullStep] = useState(() => {
@@ -212,100 +256,91 @@ export default function HostRegister() {
     },
   });
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, isProfilePhoto: boolean = false) => {
+  const handleInitialSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!data.name?.trim() || !data.email?.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    setStep("full");
+  };
+
+  const handleProfilePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+    if (!files) return;
 
     setIsUploading(true);
-    const uploadedUrls: string[] = [];
-    const filesToUpload: { file: File; name: string }[] = [];
-
     try {
-      // Compress all files first
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        // Validate file size (10MB max before compression)
-        if (file.size > 10 * 1024 * 1024) {
-          toast.error(`File ${file.name} is too large (max 10MB)`);
-          continue;
-        }
-
-        setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-        
-        try {
-          // Compress the image
-          const compressedBlob = await compressImage(file);
-          const compressedFile = new File([compressedBlob], file.name, { type: file.type });
-          filesToUpload.push({ file: compressedFile, name: file.name });
-          setUploadProgress(prev => ({ ...prev, [file.name]: 30 }));
-        } catch (err) {
-          toast.error(`Failed to compress ${file.name}`);
-        }
+      const urls = await handleFileUpload(files, setUploadProgress);
+      if (urls.length > 0) {
+        setData({ ...data, profilePhotoUrl: urls[0] });
+        toast.success("Profile photo uploaded!");
       }
-
-      // Upload all files in parallel (max 3 at a time)
-      const uploadBatch = async (fileBatch: { file: File; name: string }[]) => {
-        const promises = fileBatch.map(async ({ file, name }) => {
-          try {
-            setUploadProgress(prev => ({ ...prev, [name]: 50 }));
-            
-            // Read file as FormData
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            // Upload directly via fetch to /api/upload
-            const response = await fetch('/api/upload', {
-              method: 'POST',
-              body: formData,
-            });
-
-            if (!response.ok) {
-              throw new Error(`Upload failed: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            setUploadProgress(prev => ({ ...prev, [name]: 100 }));
-            return result.url;
-          } catch (err) {
-            toast.error(`Failed to upload ${name}`);
-            setUploadProgress(prev => ({ ...prev, [name]: 0 }));
-            throw err;
-          }
-        });
-
-        return Promise.all(promises);
-      };
-
-      // Process files in batches of 3
-      for (let i = 0; i < filesToUpload.length; i += 3) {
-        const batch = filesToUpload.slice(i, i + 3);
-        const batchUrls = await uploadBatch(batch);
-        uploadedUrls.push(...batchUrls.filter(url => url));
-      }
-
-      if (uploadedUrls.length > 0) {
-        if (isProfilePhoto) {
-          setData({ ...data, profilePhotoUrl: uploadedUrls[0] });
-          toast.success("Photo uploaded!");
-        } else {
-          setData({ 
-            ...data, 
-            foodPhotoUrls: [...(data.foodPhotoUrls || []), ...uploadedUrls]
-          });
-          toast.success(`${uploadedUrls.length} photo(s) uploaded!`);
-        }
-      }
-    } catch (error: any) {
-      toast.error(error?.message || "Upload failed. Please try again.");
+    } catch (error) {
+      toast.error("Failed to upload profile photo");
     } finally {
       setIsUploading(false);
       setUploadProgress({});
     }
   };
 
-  const handleInitialSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleFoodPhotosUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setIsUploading(true);
+    try {
+      const urls = await handleFileUpload(files, setUploadProgress);
+      if (urls.length > 0) {
+        setData({ ...data, foodPhotoUrls: [...(data.foodPhotoUrls || []), ...urls] });
+        toast.success(`${urls.length} photo(s) uploaded!`);
+      }
+    } catch (error) {
+      toast.error("Failed to upload food photos");
+    } finally {
+      setIsUploading(false);
+      setUploadProgress({});
+    }
+  };
+
+  const handleNextStep = () => {
+    // Validate current step
+    if (currentFullStep === 1) {
+      if (!data.cuisineStyle?.trim() || !data.menuDescription?.trim() || !data.foodPhotoUrls?.length) {
+        toast.error("Please complete all required fields");
+        return;
+      }
+    }
+    if (currentFullStep === 2) {
+      if (!data.bio?.trim() || !data.profilePhotoUrl?.trim()) {
+        toast.error("Please complete all required fields");
+        return;
+      }
+    }
+    if (currentFullStep === 3) {
+      if (!data.availability || Object.keys(data.availability).length === 0) {
+        toast.error("Please select at least one day and meal time");
+        return;
+      }
+    }
+    if (currentFullStep < 5) {
+      setCurrentFullStep(currentFullStep + 1);
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (currentFullStep > 1) {
+      setCurrentFullStep(currentFullStep - 1);
+    }
+  };
+
+  const handleSubmitProfile = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Validate all required fields
     if (!data.name?.trim()) {
       toast.error("Please enter your name");
       return;
@@ -318,57 +353,32 @@ export default function HostRegister() {
       toast.error("Please enter your email");
       return;
     }
-    setStep("full");
-  };
-
-  const handlePreviousStep = () => {
-    if (currentFullStep > 1) {
-      setCurrentFullStep(currentFullStep - 1);
-    }
-  };
-
-  const handleNextStep = () => {
-    if (currentFullStep === 1) {
-      if (!data.cuisineStyle?.trim()) {
-        toast.error("Please describe your cuisine style");
-        return;
-      }
-      if (!data.menuDescription?.trim() || (data.menuDescription?.length || 0) < 20) {
-        toast.error("Please describe your menu (at least 20 characters)");
-        return;
-      }
-      if (!data.foodPhotoUrls || data.foodPhotoUrls.length < 3) {
-        toast.error("Please upload at least 3 food photos");
-        return;
-      }
-    } else if (currentFullStep === 2) {
-      if (!data.bio?.trim() || (data.bio?.length || 0) < 20) {
-        toast.error("Please write about yourself (at least 20 characters)");
-        return;
-      }
-      if (!data.profilePhotoUrl?.trim()) {
-        toast.error("Please upload a profile photo");
-        return;
-      }
-    } else if (currentFullStep === 3) {
-      if (!data.availability || Object.keys(data.availability).length === 0) {
-        toast.error("Please select at least one day and meal time");
-        return;
-      }
-    }
-    if (currentFullStep < 5) {
-      setCurrentFullStep(currentFullStep + 1);
-    }
-  };
-
-  const handleSubmitProfile = async () => {
-    if (!data.name || !data.email || !data.district) {
-      toast.error("Please complete all required fields");
+    if (!data.cuisineStyle?.trim()) {
+      toast.error("Please describe your cuisine style");
       return;
     }
-
-    if (!data.profilePhotoUrl) {
+    if (!data.menuDescription?.trim()) {
+      toast.error("Please describe your menu");
+      return;
+    }
+    if (!data.foodPhotoUrls || data.foodPhotoUrls.length < 3) {
+      toast.error("Please upload at least 3 food photos");
+      return;
+    }
+    if (!data.bio?.trim()) {
+      toast.error("Please write about yourself");
+      return;
+    }
+    if (!data.profilePhotoUrl?.trim()) {
       toast.error("Profile photo is required");
+      return;
+    }
+    if (!data.availability || Object.keys(data.availability).length === 0) {
+      toast.error("Please select at least one day and meal time");
+      return;
+    }
+    if (!data.pricePerPerson || data.pricePerPerson < 1) {
+      toast.error("Please enter a valid price");
       return;
     }
 
@@ -378,46 +388,36 @@ export default function HostRegister() {
         name: data.name.trim(),
         district: data.district,
         email: data.email.trim(),
-        cuisineStyle: data.cuisineStyle?.trim() || "",
-        menuDescription: data.menuDescription?.trim() || "",
-        foodPhotoUrls: data.foodPhotoUrls || [],
+        cuisineStyle: data.cuisineStyle.trim(),
+        menuDescription: data.menuDescription.trim(),
+        foodPhotoUrls: data.foodPhotoUrls,
         dietaryNote: data.dietaryNote || undefined,
-        bio: data.bio?.trim() || "",
+        bio: data.bio.trim(),
         profilePhotoUrl: data.profilePhotoUrl,
         activities: data.activities || [],
         availability: (data.availability || {}) as Record<string, ("lunch" | "dinner")[]>,
-        maxGuests: data.maxGuests || 2,
-        pricePerPerson: data.pricePerPerson || 100,
+        maxGuests: data.maxGuests || 4,
+        pricePerPerson: data.pricePerPerson,
         otherNotes: data.otherNotes || undefined,
         householdFeatures: data.householdFeatures || [],
         otherHouseholdInfo: data.otherHouseholdInfo || undefined,
       });
 
-        if (result.success) {
-        toast.success("Profile submitted successfully!");
+      if (result.success) {
         // Clear localStorage after successful submission
         if (typeof window !== "undefined") {
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem(STORAGE_STEP_KEY);
           localStorage.removeItem(STORAGE_FULL_STEP_KEY);
         }
-        // Reset form and show confirmation
-        setStep("initial");
-        setCurrentFullStep(1);
-        setData({
-          name: "",
-          email: "",
-          district: "",
-          foodPhotoUrls: [],
-          activities: [],
-          householdFeatures: [],
-          availability: {} as Record<string, ("lunch" | "dinner")[]>,
-          maxGuests: 4,
-          pricePerPerson: 150,
-        });
+        // Show success page instead of resetting
+        setStep("success");
       } else {
         toast.error("Failed to submit profile. Please try again.");
-      }   console.error("Submit error:", error);
+      }
+    } catch (error: any) {
+      console.error("Submit error:", error);
+      toast.error(error?.message || "Failed to submit profile");
     } finally {
       setIsSubmitting(false);
     }
@@ -451,22 +451,6 @@ export default function HostRegister() {
                 </div>
 
                 <div>
-                  <Label htmlFor="district" className="text-base font-semibold text-gray-700">District *</Label>
-                  <Select value={data.district || ""} onValueChange={(value) => setData({ ...data, district: value })}>
-                    <SelectTrigger id="district" className="mt-2 h-12">
-                      <SelectValue placeholder="Select your district" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {SHANGHAI_DISTRICTS.map((district) => (
-                        <SelectItem key={district} value={district}>
-                          {district}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
                   <Label htmlFor="email" className="text-base font-semibold text-gray-700">Email *</Label>
                   <Input
                     id="email"
@@ -488,6 +472,96 @@ export default function HostRegister() {
               </form>
             </CardContent>
           </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "success") {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12 px-4 flex items-center justify-center">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="mb-8">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to the Family!</h1>
+            <p className="text-xl text-gray-600 mb-8">Your host profile has been submitted successfully.</p>
+          </div>
+
+          <Card className="border-0 shadow-lg mb-8">
+            <CardContent className="pt-8 pb-8">
+              <div className="space-y-6 text-left">
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                  <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
+                  <p className="text-blue-800 text-sm mb-3">Our team is reviewing your application to ensure the best experience for both you and our guests.</p>
+                  <p className="text-blue-800 text-sm font-semibold">⏱️ Approval Timeline: 3-5 business days</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 text-sm font-bold text-white" style={{ backgroundColor: "var(--warm-burgundy)" }}>
+                      1
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Profile Review</h4>
+                      <p className="text-gray-600 text-sm">We'll carefully review your profile, photos, and availability to ensure quality standards.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 text-sm font-bold text-white" style={{ backgroundColor: "var(--warm-burgundy)" }}>
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Approval Notification</h4>
+                      <p className="text-gray-600 text-sm">Once approved, you'll receive an email confirmation and can start accepting bookings.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 text-sm font-bold text-white" style={{ backgroundColor: "var(--warm-burgundy)" }}>
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Start Hosting</h4>
+                      <p className="text-gray-600 text-sm">Welcome your first guests and share your culinary traditions with travelers from around the world!</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8">
+            <p className="text-amber-900 text-sm">
+              <strong>💡 Tip:</strong> Check your email regularly for our approval notification. If you have any questions in the meantime, feel free to reach out to us.
+            </p>
+          </div>
+
+          <Button
+            onClick={() => {
+              setStep("initial");
+              setCurrentFullStep(1);
+              setData({
+                name: "",
+                email: "",
+                district: "",
+                foodPhotoUrls: [],
+                activities: [],
+                householdFeatures: [],
+                availability: {} as Record<string, ("lunch" | "dinner")[]>,
+                maxGuests: 4,
+                pricePerPerson: 150,
+              });
+            }}
+            className="h-14 text-lg font-semibold px-8 text-white hover:opacity-90"
+            style={{ backgroundColor: "var(--warm-burgundy)" }}
+          >
+            Back to Home
+          </Button>
         </div>
       </div>
     );
@@ -539,7 +613,8 @@ export default function HostRegister() {
                   <div>
                     <Label className="text-lg font-medium">Cuisine Style *</Label>
                     <Input
-                      placeholder="e.g., Shanghainese, Sichuan, Fusion"
+                      type="text"
+                      placeholder="e.g., Shanghai home cooking"
                       value={data.cuisineStyle || ""}
                       onChange={(e) => setData({ ...data, cuisineStyle: e.target.value })}
                       className="mt-2 h-12"
@@ -549,7 +624,7 @@ export default function HostRegister() {
                   <div>
                     <Label className="text-lg font-medium">Menu Description *</Label>
                     <textarea
-                      placeholder="Describe the dishes you typically cook..."
+                      placeholder="Describe the dishes you typically prepare..."
                       value={data.menuDescription || ""}
                       onChange={(e) => setData({ ...data, menuDescription: e.target.value })}
                       className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
@@ -557,65 +632,35 @@ export default function HostRegister() {
                     />
                   </div>
 
-                  <div className="space-y-3">
+                  <div>
                     <Label className="text-lg font-medium">Food Photos (minimum 3) *</Label>
-                    <label className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors block">
-                      <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
-                      <p className="text-muted-foreground">Click to upload or drag and drop</p>
-                      <p className="text-sm text-muted-foreground">PNG, JPG up to 10MB each</p>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mt-2">
                       <input
                         type="file"
                         multiple
                         accept="image/*"
-                        onChange={(e) => handleFileUpload(e, false)}
+                        onChange={handleFoodPhotosUpload}
                         disabled={isUploading}
                         className="hidden"
+                        id="food-photos"
                       />
-                    </label>
-                    {isUploading && (
-                      <div className="space-y-2">
-                        {Object.entries(uploadProgress).map(([fileName, progress]) => (
-                          <div key={fileName} className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600 truncate">{fileName}</span>
-                              <span className="text-gray-500">{progress}%</span>
-                            </div>
-                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className="h-full transition-all"
-                                style={{
-                                  width: `${progress}%`,
-                                  backgroundColor: "var(--warm-burgundy)",
-                                }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                      <label htmlFor="food-photos" className="cursor-pointer block">
+                        <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        <p className="text-gray-600">Click to upload or drag and drop</p>
+                        <p className="text-sm text-gray-500">PNG, JPG up to 10MB each</p>
+                      </label>
+                    </div>
                     {data.foodPhotoUrls && data.foodPhotoUrls.length > 0 && (
-                      <div className="grid grid-cols-3 gap-3 mt-4">
-                        {data.foodPhotoUrls.map((url, idx) => (
-                          <div key={idx} className="relative">
-                            <img src={url} alt={`Food ${idx + 1}`} className="w-full h-24 object-cover rounded-lg" />
-                            <button
-                              type="button"
-                              onClick={() => setData({
-                                ...data,
-                                foodPhotoUrls: data.foodPhotoUrls?.filter((_, i) => i !== idx) || []
-                              })}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
+                      <div className="mt-4">
+                        <p className="text-sm font-semibold text-gray-700 mb-2">Uploaded: {data.foodPhotoUrls.length} photo(s)</p>
                       </div>
                     )}
                   </div>
 
                   <div>
-                    <Label className="text-lg font-medium">Maximum Guests Allowed *</Label>
+                    <Label className="text-lg font-medium">Maximum Guests *</Label>
                     <Input
                       type="number"
                       min="1"
@@ -625,54 +670,39 @@ export default function HostRegister() {
                       className="mt-2 h-12"
                     />
                   </div>
-
-                  <div>
-                    <Label className="text-lg font-medium">Dietary Restrictions & Allergies</Label>
-                    <textarea
-                      placeholder="Can accommodate vegetarian, vegan, gluten-free, etc."
-                      value={data.dietaryNote || ""}
-                      onChange={(e) => setData({ ...data, dietaryNote: e.target.value })}
-                      className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                      rows={3}
-                    />
-                  </div>
                 </>
               )}
 
               {currentFullStep === 2 && (
                 <>
                   <div>
-                    <Label className="text-lg font-medium">Profile Photo *</Label>
-                    <label className="border-2 border-dashed border-primary/20 rounded-lg p-8 text-center cursor-pointer hover:bg-primary/5 transition-colors block mt-2">
-                      <Upload className="w-8 h-8 text-primary/40 mx-auto mb-3" />
-                      <p className="text-muted-foreground">Click to upload your photo</p>
+                    <Label className="text-lg font-medium">Profile Photo (Selfie) *</Label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mt-2">
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleFileUpload(e, true)}
+                        onChange={handleProfilePhotoUpload}
                         disabled={isUploading}
                         className="hidden"
+                        id="profile-photo"
                       />
-                    </label>
-                    {isUploading && <div className="mt-2 text-center text-sm text-gray-600">Uploading...</div>}
+                      <label htmlFor="profile-photo" className="cursor-pointer block">
+                        <svg className="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        <p className="text-gray-600">Click to upload or drag and drop</p>
+                        <p className="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                      </label>
+                    </div>
                     {data.profilePhotoUrl && (
-                      <div className="mt-4 relative w-32 h-32 mx-auto">
-                        <img src={data.profilePhotoUrl} alt="Profile" className="w-full h-full object-cover rounded-lg" />
-                        <button
-                          type="button"
-                          onClick={() => setData({ ...data, profilePhotoUrl: "" })}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
+                      <p className="mt-2 text-sm text-green-600">✓ Photo uploaded</p>
                     )}
                   </div>
 
                   <div>
-                    <Label className="text-lg font-medium">About You *</Label>
+                    <Label className="text-lg font-medium">About You (Bio) *</Label>
                     <textarea
-                      placeholder="Tell us about yourself, your cooking background, and what makes your home special..."
+                      placeholder="Tell us about yourself, your family, and what makes your home special..."
                       value={data.bio || ""}
                       onChange={(e) => setData({ ...data, bio: e.target.value })}
                       className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
@@ -681,7 +711,7 @@ export default function HostRegister() {
                   </div>
 
                   <div>
-                    <Label className="text-lg font-medium">Activities You Offer</Label>
+                    <Label className="text-lg font-medium">Activities You Can Offer</Label>
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {ACTIVITY_OPTIONS.map((activity) => (
                         <label key={activity.id} className="flex items-center gap-2 cursor-pointer">
@@ -710,35 +740,71 @@ export default function HostRegister() {
               )}
 
               {currentFullStep === 3 && (
-                <div>
-                  <Label className="text-lg font-medium mb-4 block">Availability *</Label>
-                  <div className="space-y-6">
-                    {DAYS_OF_WEEK.map((day) => (
-                      <div key={day} className="border rounded-lg p-4">
-                        <div className="font-semibold text-sm mb-3 capitalize">{day}</div>
-                        <div className="space-y-2">
-                          {["lunch", "dinner"].map((meal) => (
-                            <label key={`${day}-${meal}`} className="flex items-center gap-2 cursor-pointer">
-                              <Checkbox
-                                checked={(data.availability?.[day] || []).includes(meal as "lunch" | "dinner")}
-                                onCheckedChange={(checked) => {
-                                  const availability = { ...data.availability };
-                                  if (checked) {
-                                    availability[day] = [...(availability[day] || []), meal as "lunch" | "dinner"];
-                                  } else {
-                                    availability[day] = (availability[day] || []).filter(m => m !== (meal as "lunch" | "dinner"));
-                                  }
-                                  setData({ ...data, availability });
-                                }}
-                              />
-                              <span className="text-sm capitalize">{meal}</span>
-                            </label>
-                          ))}
+                <>
+                  <div>
+                    <Label className="text-lg font-medium">When Can You Host? *</Label>
+                    <p className="text-sm text-gray-600 mt-2 mb-4">Select the days and meal times you're available</p>
+                    <div className="space-y-3">
+                      {DAYS_OF_WEEK.map((day) => (
+                        <div key={day} className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg">
+                          <label className="flex items-center gap-2 flex-1 cursor-pointer">
+                            <Checkbox
+                              checked={!!data.availability?.[day]}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setData({
+                                    ...data,
+                                    availability: {
+                                      ...data.availability,
+                                      [day]: ["lunch", "dinner"],
+                                    },
+                                  });
+                                } else {
+                                  const newAvail = { ...data.availability };
+                                  delete newAvail[day];
+                                  setData({ ...data, availability: newAvail });
+                                }
+                              }}
+                            />
+                            <span className="capitalize font-semibold text-gray-700">{day}</span>
+                          </label>
+                          {data.availability?.[day] && (
+                            <div className="flex gap-2">
+                              {["lunch", "dinner"].map((meal) => (
+                                <label key={meal} className="flex items-center gap-1 cursor-pointer">
+                                  <Checkbox
+                                    checked={data.availability?.[day]?.includes(meal as "lunch" | "dinner") || false}
+                                    onCheckedChange={(checked) => {
+                                      const current = data.availability?.[day] || [];
+                                      if (checked) {
+                                        setData({
+                                          ...data,
+                                          availability: {
+                                            ...data.availability,
+                                            [day]: [...current, meal as "lunch" | "dinner"],
+                                          },
+                                        });
+                                      } else {
+                                        setData({
+                                          ...data,
+                                          availability: {
+                                            ...data.availability,
+                                            [day]: current.filter(m => m !== meal),
+                                          },
+                                        });
+                                      }
+                                    }}
+                                  />
+                                  <span className="text-xs capitalize">{meal}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
 
               {currentFullStep === 4 && (
@@ -763,6 +829,17 @@ export default function HostRegister() {
                       onChange={(e) => setData({ ...data, otherNotes: e.target.value })}
                       className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       rows={4}
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-lg font-medium">Dietary Restrictions & Allergies</Label>
+                    <textarea
+                      placeholder="e.g., Can accommodate vegetarian, vegan, gluten-free..."
+                      value={data.dietaryNote || ""}
+                      onChange={(e) => setData({ ...data, dietaryNote: e.target.value })}
+                      className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      rows={3}
                     />
                   </div>
                 </>
@@ -800,7 +877,7 @@ export default function HostRegister() {
                   <div>
                     <Label className="text-lg font-medium">Other Household Information</Label>
                     <textarea
-                      placeholder="Any other details about your home..."
+                      placeholder="Any additional information about your household..."
                       value={data.otherHouseholdInfo || ""}
                       onChange={(e) => setData({ ...data, otherHouseholdInfo: e.target.value })}
                       className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
