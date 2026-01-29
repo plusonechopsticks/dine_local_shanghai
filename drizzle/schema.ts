@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json, date } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -102,3 +102,33 @@ export const hostListings = mysqlTable("host_listings", {
 
 export type HostListing = typeof hostListings.$inferSelect;
 export type InsertHostListing = typeof hostListings.$inferInsert;
+
+/**
+ * Bookings - guest requests to dine with hosts
+ */
+export const bookings = mysqlTable("bookings", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Host and Guest
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
+  guestName: varchar("guestName", { length: 255 }).notNull(),
+  guestEmail: varchar("guestEmail", { length: 320 }).notNull(),
+  guestPhone: varchar("guestPhone", { length: 20 }),
+  
+  // Booking Details
+  requestedDate: date("requestedDate").notNull(), // The date they want to dine
+  mealType: mysqlEnum("mealType", ["lunch", "dinner"]).notNull(),
+  numberOfGuests: int("numberOfGuests").notNull().default(1),
+  specialRequests: text("specialRequests"), // Dietary restrictions, allergies, preferences
+  
+  // Status
+  status: mysqlEnum("bookingStatus", ["pending", "confirmed", "cancelled", "rejected"]).default("pending").notNull(),
+  hostNotes: text("hostNotes"), // Host's response/notes
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Booking = typeof bookings.$inferSelect;
+export type InsertBooking = typeof bookings.$inferInsert;

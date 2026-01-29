@@ -17,6 +17,26 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
+import { useParams } from "wouter";
+import { useLocation } from "wouter";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
 const ACTIVITY_LABELS: Record<string, string> = {
   "cooking-class": "Cooking Class",
@@ -34,12 +54,60 @@ export default function HostDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [bookingData, setBookingData] = useState({
+    guestName: "",
+    guestEmail: "",
+    guestPhone: "",
+    requestedDate: "",
+    mealType: "dinner",
+    numberOfGuests: "1",
+    specialRequests: "",
+  });
 
   const hostId = params?.id ? parseInt(params.id) : null;
   const { data: host, isLoading, isError } = trpc.host.get.useQuery(
     { id: hostId || 0 },
     { enabled: !!hostId }
   );
+
+  // Booking mutation
+  const createBookingMutation = trpc.booking.create.useMutation({
+    onSuccess: () => {
+      toast.success("Booking request submitted! The host will respond soon.");
+      setIsBookingOpen(false);
+      setBookingData({
+        guestName: "",
+        guestEmail: "",
+        guestPhone: "",
+        requestedDate: "",
+        mealType: "dinner",
+        numberOfGuests: "1",
+        specialRequests: "",
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to submit booking request");
+    },
+  });
+
+  const handleSubmitBooking = () => {
+    if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.requestedDate) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    createBookingMutation.mutate({
+      hostListingId: hostId || 0,
+      guestName: bookingData.guestName,
+      guestEmail: bookingData.guestEmail,
+      guestPhone: bookingData.guestPhone,
+      requestedDate: bookingData.requestedDate,
+      mealType: bookingData.mealType as "lunch" | "dinner",
+      numberOfGuests: parseInt(bookingData.numberOfGuests),
+      specialRequests: bookingData.specialRequests,
+    });
+  };
 
   if (!hostId) return <div className="text-center py-12">Invalid host ID</div>;
   if (isLoading) return <div className="text-center py-12">Loading...</div>;
@@ -312,6 +380,7 @@ export default function HostDetail() {
 
                   {/* CTA Button */}
                   <Button
+                    onClick={() => setIsBookingOpen(true)}
                     className="w-full h-12 text-base font-semibold mt-4"
                     style={{ backgroundColor: "var(--warm-burgundy)" }}
                   >
@@ -358,6 +427,146 @@ export default function HostDetail() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+      {/* Booking Dialog */}
+      <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Request a Dinner with {host?.hostName}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Your Name *</Label>
+                <Input
+                  id="name"
+                  placeholder="John Doe"
+                  value={bookingData.guestName}
+                  onChange={(e) =>
+                    setBookingData({ ...bookingData, guestName: e.target.value })
+                  }
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={bookingData.guestEmail}
+                  onChange={(e) =>
+                    setBookingData({ ...bookingData, guestEmail: e.target.value })
+                  }
+                  className="mt-2"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  placeholder="+86 138 1234 5678"
+                  value={bookingData.guestPhone}
+                  onChange={(e) =>
+                    setBookingData({ ...bookingData, guestPhone: e.target.value })
+                  }
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label htmlFor="date">Preferred Date *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={bookingData.requestedDate}
+                  onChange={(e) =>
+                    setBookingData({ ...bookingData, requestedDate: e.target.value })
+                  }
+                  className="mt-2"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="meal">Meal Type *</Label>
+                <Select
+                  value={bookingData.mealType}
+                  onValueChange={(value) =>
+                    setBookingData({ ...bookingData, mealType: value })
+                  }
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lunch">Lunch</SelectItem>
+                    <SelectItem value="dinner">Dinner</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="guests">Number of Guests *</Label>
+                <Select
+                  value={bookingData.numberOfGuests}
+                  onValueChange={(value) =>
+                    setBookingData({ ...bookingData, numberOfGuests: value })
+                  }
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: (host?.maxGuests || 10) }).map((_, i) => (
+                      <SelectItem key={i + 1} value={String(i + 1)}>
+                        {i + 1} {i === 0 ? "Guest" : "Guests"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="requests">Special Requests (Allergies, Preferences, etc.)</Label>
+              <Textarea
+                id="requests"
+                placeholder="Tell the host about any dietary restrictions, allergies, or preferences..."
+                value={bookingData.specialRequests}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, specialRequests: e.target.value })
+                }
+                rows={4}
+                className="mt-2"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsBookingOpen(false)}
+              disabled={createBookingMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmitBooking}
+              disabled={createBookingMutation.isPending}
+              style={{ backgroundColor: "var(--warm-burgundy)" }}
+            >
+              {createBookingMutation.isPending ? "Submitting..." : "Submit Request"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

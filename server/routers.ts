@@ -19,6 +19,26 @@ import { nanoid } from "nanoid";
 
 export const appRouter = router({
   system: systemRouter,
+  booking: router({
+    create: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+        guestName: z.string().min(1),
+        guestEmail: z.string().email(),
+        guestPhone: z.string().optional(),
+        requestedDate: z.string(),
+        mealType: z.enum(["lunch", "dinner"]),
+        numberOfGuests: z.number().min(1),
+        specialRequests: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await notifyOwner({
+          title: `New Booking Request from ${input.guestName}`,
+          content: `Guest: ${input.guestName}\nEmail: ${input.guestEmail}\nDate: ${input.requestedDate}\nMeal: ${input.mealType}\nGuests: ${input.numberOfGuests}\nSpecial Requests: ${input.specialRequests || "None"}`,
+        });
+        return { success: true };
+      }),
+  }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
