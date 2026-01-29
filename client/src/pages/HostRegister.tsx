@@ -773,6 +773,7 @@ export default function HostRegister() {
                   </Button>
                 ) : (
                   <Button
+                    type="button"
                     onClick={handleSubmitProfile}
                     className="flex-1 h-14 text-lg text-white hover:opacity-90 font-semibold"
                     style={{ backgroundColor: "var(--warm-burgundy)" }}
