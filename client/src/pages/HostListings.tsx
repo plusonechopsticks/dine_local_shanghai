@@ -113,38 +113,7 @@ export default function HostListings() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container flex items-center justify-between h-16">
-          <a href="/" className="flex items-center gap-2">
-            <ChopsticksLogo className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg" style={{ fontFamily: "var(--font-serif)" }}>
-              +1 Chopsticks
-            </span>
-          </a>
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="/#experience" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Experience
-            </a>
-            <a href="/#benefits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Benefits
-            </a>
-            <a href="/#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              About
-            </a>
-            <a href="/hosts" className="text-sm font-medium text-foreground">
-              Find Hosts
-            </a>
-          </nav>
-          <a href="/host-register">
-            <Button size="sm" className="hidden md:inline-flex">
-              Become a Host
-            </Button>
-          </a>
-        </div>
-      </header>
-
-      <main className="container py-6 md:py-8">
+      <div className="container py-6 md:py-8">
         {/* Compact Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
@@ -259,7 +228,7 @@ export default function HostListings() {
             ))}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }
