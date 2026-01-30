@@ -16,6 +16,9 @@ import {
   ChevronRight,
   AlertCircle,
   CheckCircle,
+  Wine,
+  Utensils,
+  Calendar,
 } from "lucide-react";
 import {
   Dialog,
@@ -53,6 +56,8 @@ export default function HostDetail() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [expandedBio, setExpandedBio] = useState(false);
+  const [activeTab, setActiveTab] = useState<"experience" | "host">("experience");
   const [bookingData, setBookingData] = useState({
     guestName: "",
     guestEmail: "",
@@ -147,6 +152,11 @@ export default function HostDetail() {
 
   const daysOrder = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
   const availableDays = daysOrder.filter(day => availability[day]?.length > 0);
+
+  // Truncate bio for preview
+  const bioPreview = host.bio && host.bio.length > 200 
+    ? host.bio.substring(0, 200) + "..." 
+    : host.bio;
 
   return (
     <div className="min-h-screen bg-background">
@@ -261,17 +271,130 @@ export default function HostDetail() {
               )}
             </div>
 
-            {/* Bio Section */}
+            {/* Title and Host Info */}
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold">{host.menuDescription || "Experience"}</h1>
+              <p className="text-lg text-muted-foreground">
+                Hosted by <span className="text-primary font-semibold">{host.hostName}</span> in <span className="text-primary font-semibold">{host.district}</span>
+              </p>
+            </div>
+
+            {/* Experience/Host Toggle */}
+            <div className="flex gap-2 bg-muted p-1 rounded-full w-fit">
+              <button
+                onClick={() => setActiveTab("experience")}
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                  activeTab === "experience"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                The Experience
+              </button>
+              <button
+                onClick={() => setActiveTab("host")}
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                  activeTab === "host"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                The Host
+              </button>
+            </div>
+
+            {/* Content Based on Tab */}
             <Card className="border-border/50">
               <CardContent className="pt-6">
-                <h2 className="text-2xl font-bold mb-2">{host.hostName}</h2>
-                <p className="flex items-center gap-2 text-muted-foreground mb-4">
-                  <MapPin className="h-4 w-4" />
-                  {host.district}
-                </p>
-                <p className="text-base leading-relaxed text-foreground/90">
-                  {host.bio}
-                </p>
+                {activeTab === "experience" ? (
+                  <div className="space-y-6">
+                    {/* Key Details with Icons */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {/* Cuisine Type */}
+                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                        <Utensils className="h-8 w-8 text-primary mb-2" />
+                        <p className="text-sm font-semibold text-foreground">{host.cuisineStyle}</p>
+                        <p className="text-xs text-muted-foreground">Cuisine</p>
+                      </div>
+
+                      {/* Max Guests */}
+                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                        <Users className="h-8 w-8 text-primary mb-2" />
+                        <p className="text-sm font-semibold text-foreground">{host.maxGuests} guests</p>
+                        <p className="text-xs text-muted-foreground">Maximum</p>
+                      </div>
+
+                      {/* Duration */}
+                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                        <Clock className="h-8 w-8 text-primary mb-2" />
+                        <p className="text-sm font-semibold text-foreground">{host.mealDurationMinutes || 120} min</p>
+                        <p className="text-xs text-muted-foreground">Duration</p>
+                      </div>
+
+                      {/* Beverages */}
+                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                        <Wine className="h-8 w-8 text-primary mb-2" />
+                        <p className="text-sm font-semibold text-foreground">Included</p>
+                        <p className="text-xs text-muted-foreground">Beverages</p>
+                      </div>
+                    </div>
+
+                    {/* Experience Description */}
+                    <div className="space-y-3">
+                      <p className="text-base leading-relaxed text-foreground/90">
+                        {expandedBio ? host.bio : bioPreview}
+                      </p>
+                      {host.bio && host.bio.length > 200 && (
+                        <button
+                          onClick={() => setExpandedBio(!expandedBio)}
+                          className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
+                        >
+                          {expandedBio ? "Read less" : "Read more"}
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Host Profile */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                        {host.profilePhotoUrl ? (
+                          <img
+                            src={host.profilePhotoUrl}
+                            alt={host.hostName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                            {host.hostName.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold text-primary">{host.hostName}</h3>
+                        <p className="text-muted-foreground">{host.district}</p>
+                      </div>
+                    </div>
+
+                    {/* Host Bio */}
+                    <div className="space-y-3">
+                      <p className="text-base leading-relaxed text-foreground/90">
+                        {expandedBio ? host.bio : bioPreview}
+                      </p>
+                      {host.bio && host.bio.length > 200 && (
+                        <button
+                          onClick={() => setExpandedBio(!expandedBio)}
+                          className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
+                        >
+                          {expandedBio ? "Read less" : "Read more"}
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -280,146 +403,78 @@ export default function HostDetail() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-4">
                   <ChefHat className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-semibold">What You'll Eat</h3>
+                  <h3 className="text-xl font-bold">Menu</h3>
                 </div>
-                <p className="text-base leading-relaxed text-foreground/90 mb-4">
+                <p className="text-foreground/90 leading-relaxed">
                   {host.menuDescription}
                 </p>
-                {host.dietaryNote && (
-                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                    <p className="text-sm font-medium text-foreground mb-1">
-                      <CheckCircle className="inline h-4 w-4 mr-2 text-primary" />
-                      Dietary Accommodations
-                    </p>
-                    <p className="text-sm text-foreground/80">{host.dietaryNote}</p>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
-            {/* Activities Section */}
-            {activities.length > 0 && (
+            {/* Availability Section */}
+            {availableDays.length > 0 && (
               <Card className="border-border/50">
                 <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-4">Activities & Experiences</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {activities.map((activity) => (
-                      <Badge key={activity} variant="secondary" className="text-sm">
-                        {ACTIVITY_LABELS[activity] || activity}
-                      </Badge>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <h3 className="text-xl font-bold">Availability</h3>
+                  </div>
+                  <div className="space-y-2">
+                    {availableDays.map((day) => (
+                      <div key={day} className="flex items-center justify-between">
+                        <span className="capitalize font-medium text-foreground">
+                          {day.charAt(0).toUpperCase() + day.slice(1)}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {availability[day]?.join(", ")}
+                        </span>
+                      </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
             )}
-
-            {/* Additional Notes */}
-            {host.otherNotes && (
-              <Card className="border-border/50">
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-4">Additional Information</h3>
-                  <p className="text-base leading-relaxed text-foreground/90">
-                    {host.otherNotes}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
-          {/* Right: Sidebar */}
-          <div className="space-y-4">
-            {/* Booking Card */}
-            <Card className="border-primary/30 bg-primary/5 sticky top-24">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {/* Price */}
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Price per person</p>
-                    <p className="text-3xl font-bold text-primary">¥{host.pricePerPerson}</p>
-                  </div>
-
-                  {/* Key Details */}
-                  <div className="space-y-3 py-4 border-y border-border/50">
-                    <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Max Guests</p>
-                        <p className="font-semibold">{host.maxGuests} people</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <Clock className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Meal Duration</p>
-                        <p className="font-semibold">{host.mealDurationMinutes} minutes</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Availability */}
-                  <div>
-                    <p className="text-sm font-semibold text-foreground mb-3">Available</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {daysOrder.map((day) => {
-                        const dayMeals = availability[day];
-                        if (!dayMeals) return null;
-                        return (
-                          <div key={day} className="text-sm">
-                            <p className="font-medium capitalize">{day.slice(0, 3)}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {dayMeals.join(", ")}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <Button
-                    onClick={() => setIsBookingOpen(true)}
-                    className="w-full h-12 text-base font-semibold mt-4"
-                    style={{ backgroundColor: "var(--warm-burgundy)" }}
-                  >
-                    Reserve Now
-                  </Button>
-                  <Button variant="outline" className="w-full h-12 text-base font-semibold">
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share
-                  </Button>
+          {/* Right: Booking Card */}
+          <div className="lg:col-span-1">
+            <Card className="border-border/50 sticky top-24">
+              <CardContent className="pt-6 space-y-4">
+                {/* Price */}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-primary">¥{host.pricePerPerson}</span>
+                  <span className="text-muted-foreground">/person</span>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Contact Card */}
-            <Card className="border-border/50">
-              <CardContent className="pt-6">
-                <h3 className="text-lg font-semibold mb-4">Contact</h3>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="text-muted-foreground mb-1">Email</p>
-                    <a
-                      href={`mailto:${host.email}`}
-                      className="text-primary hover:underline break-all"
-                    >
-                      {host.email}
-                    </a>
+                {/* Quick Info */}
+                <div className="space-y-3 py-4 border-y border-border/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Meal Type</span>
+                    <span className="font-semibold">Dinner</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Max Guests</span>
+                    <span className="font-semibold">{host.maxGuests}</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Info Banner */}
-            <Card className="border-blue-200/50 bg-blue-50/50">
-              <CardContent className="pt-6">
-                <div className="flex gap-3">
-                  <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-blue-900">
-                    <p className="font-semibold mb-1">Before You Book</p>
-                    <p>Make sure to check the host's availability and dietary accommodations for your dates.</p>
-                  </div>
-                </div>
+                {/* Book Button */}
+                <Button
+                  onClick={() => setIsBookingOpen(true)}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-lg"
+                >
+                  Book Now
+                </Button>
+
+                {/* Share Button */}
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => toast.success("Link copied to clipboard!")}
+                >
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -428,134 +483,97 @@ export default function HostDetail() {
 
       {/* Booking Dialog */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Request a Dinner with {host?.hostName}</DialogTitle>
+            <DialogTitle>Request a Booking</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Your Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="John Doe"
-                  value={bookingData.guestName}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, guestName: e.target.value })
-                  }
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="john@example.com"
-                  value={bookingData.guestEmail}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, guestEmail: e.target.value })
-                  }
-                  className="mt-2"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  placeholder="+86 138 1234 5678"
-                  value={bookingData.guestPhone}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, guestPhone: e.target.value })
-                  }
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <Label htmlFor="date">Preferred Date *</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={bookingData.requestedDate}
-                  onChange={(e) =>
-                    setBookingData({ ...bookingData, requestedDate: e.target.value })
-                  }
-                  className="mt-2"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="meal">Meal Type *</Label>
-                <Select
-                  value={bookingData.mealType}
-                  onValueChange={(value) =>
-                    setBookingData({ ...bookingData, mealType: value })
-                  }
-                >
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lunch">Lunch</SelectItem>
-                    <SelectItem value="dinner">Dinner</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="guests">Number of Guests *</Label>
-                <Select
-                  value={bookingData.numberOfGuests}
-                  onValueChange={(value) =>
-                    setBookingData({ ...bookingData, numberOfGuests: value })
-                  }
-                >
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: (host?.maxGuests || 10) }).map((_, i) => (
-                      <SelectItem key={i + 1} value={String(i + 1)}>
-                        {i + 1} {i === 0 ? "Guest" : "Guests"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="guestName">Your Name *</Label>
+              <Input
+                id="guestName"
+                placeholder="Enter your name"
+                value={bookingData.guestName}
+                onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
+              />
             </div>
 
             <div>
-              <Label htmlFor="requests">Special Requests (Allergies, Preferences, etc.)</Label>
+              <Label htmlFor="guestEmail">Email *</Label>
+              <Input
+                id="guestEmail"
+                type="email"
+                placeholder="your@email.com"
+                value={bookingData.guestEmail}
+                onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="guestPhone">Phone (Optional)</Label>
+              <Input
+                id="guestPhone"
+                placeholder="Your phone number"
+                value={bookingData.guestPhone}
+                onChange={(e) => setBookingData({ ...bookingData, guestPhone: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="requestedDate">Preferred Date *</Label>
+              <Input
+                id="requestedDate"
+                type="date"
+                value={bookingData.requestedDate}
+                onChange={(e) => setBookingData({ ...bookingData, requestedDate: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="mealType">Meal Type</Label>
+              <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
+                <SelectTrigger id="mealType">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lunch">Lunch</SelectItem>
+                  <SelectItem value="dinner">Dinner</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="numberOfGuests">Number of Guests</Label>
+              <Input
+                id="numberOfGuests"
+                type="number"
+                min="1"
+                max={host.maxGuests}
+                value={bookingData.numberOfGuests}
+                onChange={(e) => setBookingData({ ...bookingData, numberOfGuests: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="specialRequests">Special Requests (Optional)</Label>
               <Textarea
-                id="requests"
-                placeholder="Tell the host about any dietary restrictions, allergies, or preferences..."
+                id="specialRequests"
+                placeholder="Any dietary restrictions or special requests?"
                 value={bookingData.specialRequests}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, specialRequests: e.target.value })
-                }
-                rows={4}
-                className="mt-2"
+                onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
               />
             </div>
           </div>
 
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setIsBookingOpen(false)}
-              disabled={createBookingMutation.isPending}
-            >
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsBookingOpen(false)}>
               Cancel
             </Button>
             <Button
               onClick={handleSubmitBooking}
               disabled={createBookingMutation.isPending}
-              style={{ backgroundColor: "var(--warm-burgundy)" }}
+              className="bg-primary hover:bg-primary/90"
             >
               {createBookingMutation.isPending ? "Submitting..." : "Submit Request"}
             </Button>
