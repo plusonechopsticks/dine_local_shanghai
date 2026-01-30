@@ -276,3 +276,25 @@ export async function updateHostListingStatus(
     throw error;
   }
 }
+
+export async function updateHostListing(
+  id: number,
+  data: Partial<InsertHostListing>
+): Promise<boolean> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update host listing: database not available");
+    return false;
+  }
+
+  try {
+    await db
+      .update(hostListings)
+      .set(data)
+      .where(eq(hostListings.id, id));
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to update host listing:", error);
+    throw error;
+  }
+}

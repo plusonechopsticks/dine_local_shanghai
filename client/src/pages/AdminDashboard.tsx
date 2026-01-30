@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { ChevronDown, Check, X, Eye } from "lucide-react";
+import { ChevronDown, Check, X, Eye, Edit } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { AdminHostEditForm } from "@/components/AdminHostEditForm";
 
 interface HostListing {
   id: number;
@@ -23,6 +24,7 @@ interface HostListing {
   email: string;
   district: string;
   cuisineStyle: string;
+  title: string;
   status: "pending" | "approved" | "rejected";
   createdAt: Date;
   profilePhotoUrl: string | null;
@@ -31,7 +33,10 @@ interface HostListing {
   foodPhotoUrls: string[];
   maxGuests: number;
   pricePerPerson: number;
+  activities: string[];
   availability: Record<string, string[]>;
+  otherNotes: string | null;
+  dietaryNote: string | null;
 }
 
 export default function AdminDashboard() {
@@ -40,6 +45,7 @@ export default function AdminDashboard() {
   const [adminNotes, setAdminNotes] = useState("");
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Fetch all host listings
   const { data: listings = [], isLoading, refetch } = trpc.host.listAll.useQuery();
@@ -297,6 +303,17 @@ export default function AdminDashboard() {
                             <X className="w-4 h-4 mr-1" />
                             Reject
                           </Button>
+                          <Button
+                            onClick={() => {
+                              setSelectedListing(listing);
+                              setShowEditModal(true);
+                            }}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit Profile
+                          </Button>
                         </>
                       )}
                       {listing.status !== "pending" && (
@@ -305,11 +322,15 @@ export default function AdminDashboard() {
                             {listing.status === "approved" ? "✓ Approved" : "✗ Rejected"}
                           </Button>
                           <Button
-                            onClick={() => handleEdit(listing)}
+                            onClick={() => {
+                              setSelectedListing(listing);
+                              setShowEditModal(true);
+                            }}
                             variant="outline"
                             size="sm"
                           >
-                            Edit Status
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit Profile
                           </Button>
                         </>
                       )}
@@ -417,6 +438,25 @@ export default function AdminDashboard() {
               </>
             )}
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Host Profile Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>Edit Host Profile - {selectedListing?.hostName}</DialogTitle>
+          </DialogHeader>
+          {selectedListing && (
+            <AdminHostEditForm
+              listing={selectedListing as any}
+              onSave={() => {
+                setShowEditModal(false);
+                refetch();
+              }}
+              onCancel={() => setShowEditModal(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

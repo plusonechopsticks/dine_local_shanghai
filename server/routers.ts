@@ -12,7 +12,8 @@ import {
   createHostListing,
   getAllHostListings,
   getHostListingById,
-  updateHostListingStatus
+  updateHostListingStatus,
+  updateHostListing
 } from "./db";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { notifyOwner } from "./_core/notification";
@@ -520,6 +521,33 @@ export const appRouter = router({
 
         return { success: true, emailSent };
       }),
+
+    // Admin: Update host listing (all fields)
+    updateListing: publicProcedure
+      .input(z.object({
+        id: z.number(),
+        hostName: z.string().optional(),
+        email: z.string().email().optional(),
+        district: z.string().optional(),
+        cuisineStyle: z.string().optional(),
+        title: z.string().optional(),
+        bio: z.string().optional(),
+        menuDescription: z.string().optional(),
+        profilePhotoUrl: z.string().optional(),
+        foodPhotoUrls: z.array(z.string()).optional(),
+        maxGuests: z.number().optional(),
+        pricePerPerson: z.number().optional(),
+        activities: z.array(z.string()).optional(),
+        otherNotes: z.string().optional(),
+        dietaryNote: z.string().optional(),
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updateData } = input;
+        const success = await updateHostListing(id, updateData);
+        return { success };
+      }),
+
   }),
 });
 
