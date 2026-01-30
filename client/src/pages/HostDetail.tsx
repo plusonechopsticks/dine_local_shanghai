@@ -273,6 +273,9 @@ export default function HostDetail() {
 
             {/* Title and Host Info */}
             <div className="space-y-2">
+              {host.title && (
+                <p className="text-sm text-primary font-semibold">{host.title}</p>
+              )}
               <h1 className="text-3xl font-bold">{host.menuDescription || "Experience"}</h1>
               <p className="text-lg text-muted-foreground">
                 Hosted by <span className="text-primary font-semibold">{host.hostName}</span> in <span className="text-primary font-semibold">{host.district}</span>
