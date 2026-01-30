@@ -530,7 +530,6 @@ export const appRouter = router({
         email: z.string().email().optional(),
         district: z.string().optional(),
         cuisineStyle: z.string().optional(),
-        title: z.string().optional(),
         bio: z.string().optional(),
         menuDescription: z.string().optional(),
         profilePhotoUrl: z.string().optional(),

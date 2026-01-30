@@ -152,6 +152,17 @@ export default function HostDetail() {
 
   const daysOrder = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
   const availableDays = daysOrder.filter(day => availability[day]?.length > 0);
+  
+  // Sort availability items to always show lunch before dinner
+  const sortedAvailability = Object.entries(availability).reduce((acc, [day, meals]) => {
+    const sorted = [...(meals || [])].sort((a, b) => {
+      if (a === "lunch" && b === "dinner") return -1;
+      if (a === "dinner" && b === "lunch") return 1;
+      return 0;
+    });
+    acc[day] = sorted;
+    return acc;
+  }, {} as Record<string, string[]>);
 
   // Truncate bio for preview
   const bioPreview = host.bio && host.bio.length > 200 
@@ -273,7 +284,6 @@ export default function HostDetail() {
 
             {/* Title and Host Info */}
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold">{host.title || "Experience"}</h1>
               <p className="text-lg text-muted-foreground">
                 Hosted by <span className="text-primary font-semibold">{host.hostName}</span> in <span className="text-primary font-semibold">{host.district}</span>
               </p>
@@ -394,7 +404,7 @@ export default function HostDetail() {
                           {day.charAt(0).toUpperCase() + day.slice(1)}
                         </span>
                         <span className="text-muted-foreground">
-                          {availability[day]?.join(", ")}
+                          {sortedAvailability[day]?.join(", ")}
                         </span>
                       </div>
                     ))}

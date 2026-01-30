@@ -14,7 +14,6 @@ interface HostListing {
   email: string;
   district: string;
   cuisineStyle: string;
-  title: string;
   bio: string | null;
   menuDescription: string | null;
   profilePhotoUrl: string | null;
@@ -53,7 +52,6 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
     email: listing.email,
     district: listing.district,
     cuisineStyle: listing.cuisineStyle,
-    title: listing.title,
     bio: listing.bio || "",
     menuDescription: listing.menuDescription || "",
     profilePhotoUrl: listing.profilePhotoUrl || "",
@@ -210,23 +208,12 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
         </CardContent>
       </Card>
 
-      {/* Title & Bio */}
+      {/* Bio */}
       <Card>
         <CardHeader>
-          <CardTitle>Listing Title & Bio</CardTitle>
+          <CardTitle>Bio</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Label>Listing Title *</Label>
-            <Textarea
-              value={formData.title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
-              placeholder="Compelling headline for the listing"
-              rows={3}
-              className="mt-1"
-            />
-          </div>
-
           <div>
             <Label>Bio</Label>
             <Textarea
