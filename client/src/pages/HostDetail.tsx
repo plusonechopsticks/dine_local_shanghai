@@ -304,112 +304,96 @@ export default function HostDetail() {
             </div>
 
             {/* Content Based on Tab */}
-            <Card className="border-border/50">
-              <CardContent className="pt-6">
-                {activeTab === "experience" ? (
-                  <div className="space-y-6">
-                    {/* Key Details with Icons */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {/* Cuisine Type */}
-                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
-                        <Utensils className="h-8 w-8 text-primary mb-2" />
-                        <p className="text-sm font-semibold text-foreground">{host.cuisineStyle}</p>
-                        <p className="text-xs text-muted-foreground">Cuisine</p>
-                      </div>
-
-                      {/* Max Guests */}
-                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
-                        <Users className="h-8 w-8 text-primary mb-2" />
-                        <p className="text-sm font-semibold text-foreground">{host.maxGuests} guests</p>
-                        <p className="text-xs text-muted-foreground">Maximum</p>
-                      </div>
-
-                      {/* Duration */}
-                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
-                        <Clock className="h-8 w-8 text-primary mb-2" />
-                        <p className="text-sm font-semibold text-foreground">{host.mealDurationMinutes || 120} min</p>
-                        <p className="text-xs text-muted-foreground">Duration</p>
-                      </div>
-
-                      {/* Beverages */}
-                      <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
-                        <Wine className="h-8 w-8 text-primary mb-2" />
-                        <p className="text-sm font-semibold text-foreground">Included</p>
-                        <p className="text-xs text-muted-foreground">Beverages</p>
-                      </div>
+            {activeTab === "experience" ? (
+              <div className="space-y-6">
+                {/* Menu Section - First */}
+                <Card className="border-border/50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <ChefHat className="h-5 w-5 text-primary" />
+                      <h3 className="text-xl font-bold">Menu</h3>
                     </div>
+                    <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                      {host.menuDescription}
+                    </p>
+                  </CardContent>
+                </Card>
 
-                    {/* Experience Description */}
-                    <div className="space-y-3">
-                      <p className="text-base leading-relaxed text-foreground/90">
-                        {expandedBio ? host.bio : bioPreview}
-                      </p>
-                      {host.bio && host.bio.length > 200 && (
-                        <button
-                          onClick={() => setExpandedBio(!expandedBio)}
-                          className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
-                        >
-                          {expandedBio ? "Read less" : "Read more"}
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
+                {/* Key Details with Icons - Reduced to 2 columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Cuisine Type */}
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                    <Utensils className="h-8 w-8 text-primary mb-2" />
+                    <p className="text-sm font-semibold text-foreground">{host.cuisineStyle}</p>
+                    <p className="text-xs text-muted-foreground">Cuisine</p>
                   </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Host Profile */}
-                    <div className="flex items-start gap-4">
-                      <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
-                        {host.profilePhotoUrl ? (
-                          <img
-                            src={host.profilePhotoUrl}
-                            alt={host.hostName}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
-                            {host.hostName.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-primary">{host.hostName}</h3>
-                        <p className="text-muted-foreground">{host.district}</p>
-                      </div>
-                    </div>
 
-                    {/* Host Bio */}
-                    <div className="space-y-3">
-                      <p className="text-base leading-relaxed text-foreground/90">
-                        {expandedBio ? host.bio : bioPreview}
-                      </p>
-                      {host.bio && host.bio.length > 200 && (
-                        <button
-                          onClick={() => setExpandedBio(!expandedBio)}
-                          className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
-                        >
-                          {expandedBio ? "Read less" : "Read more"}
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
+                  {/* Max Guests */}
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                    <Users className="h-8 w-8 text-primary mb-2" />
+                    <p className="text-sm font-semibold text-foreground">{host.maxGuests} guests</p>
+                    <p className="text-xs text-muted-foreground">Maximum</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Menu Section */}
-            <Card className="border-border/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <ChefHat className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-bold">Menu</h3>
                 </div>
-                <p className="text-foreground/90 leading-relaxed">
-                  {host.menuDescription}
-                </p>
-              </CardContent>
-            </Card>
+
+                {/* Experience Description */}
+                <div className="space-y-3">
+                  <p className="text-base leading-relaxed text-foreground/90">
+                    {expandedBio ? host.bio : bioPreview}
+                  </p>
+                  {host.bio && host.bio.length > 200 && (
+                    <button
+                      onClick={() => setExpandedBio(!expandedBio)}
+                      className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
+                    >
+                      {expandedBio ? "Read less" : "Read more"}
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Host Profile */}
+                <div className="flex items-start gap-4">
+                  <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                    {host.profilePhotoUrl ? (
+                      <img
+                        src={host.profilePhotoUrl}
+                        alt={host.hostName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                        {host.hostName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-primary">{host.hostName}</h3>
+                    <p className="text-muted-foreground">{host.district}</p>
+                  </div>
+                </div>
+
+                {/* Host Bio */}
+                <div className="space-y-3">
+                  <p className="text-base leading-relaxed text-foreground/90">
+                    {expandedBio ? host.bio : bioPreview}
+                  </p>
+                  {host.bio && host.bio.length > 200 && (
+                    <button
+                      onClick={() => setExpandedBio(!expandedBio)}
+                      className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
+                    >
+                      {expandedBio ? "Read less" : "Read more"}
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+
 
             {/* Availability Section */}
             {availableDays.length > 0 && (

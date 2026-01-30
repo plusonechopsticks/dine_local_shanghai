@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import { invokeLLM } from "./_core/llm";
 import { 
   createInterestSubmission, 
   getAllInterestSubmissions,
@@ -349,6 +350,43 @@ export const appRouter = router({
         // TODO: Add role-based access control - for now allowing public access for testing
         const success = await updateHostListingStatus(input.id, input.status, input.adminNotes);
         return { success };
+      }),
+
+    // Summarize title to max 3 lines using AI
+    summarizeTitle: publicProcedure
+      .input(z.object({
+        cuisineStyle: z.string(),
+        menuDescription: z.string(),
+        activities: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const activitiesText = input.activities && input.activities.length > 0 
+            ? `\n- Activities: ${input.activities.join(", ")}`
+            : "";
+          
+          const prompt = `Create a concise, compelling title for a home dining experience with these details:\n- Cuisine: ${input.cuisineStyle}\n- Menu: ${input.menuDescription.substring(0, 200)}${activitiesText}\n\nThe title should:\n1. Be maximum 3 lines (use line breaks if needed)\n2. Be engaging and descriptive\n3. Highlight the unique experience\n4. Be suitable for a travel/dining platform\n\nRespond with ONLY the title, no additional text.`;
+
+          const response = await invokeLLM({
+            messages: [
+              {
+                role: "system",
+                content: "You are a creative copywriter for a home dining experience platform. Create compelling, concise titles.",
+              },
+              {
+                role: "user",
+                content: prompt,
+              },
+            ],
+          });
+
+          const content = response.choices[0]?.message?.content;
+          const title = typeof content === 'string' ? content.trim() : "Authentic Home Dining Experience";
+          return { title };
+        } catch (error: any) {
+          console.error("[Title Summarization] Error:", error);
+          return { title: `${input.cuisineStyle} Home Dining Experience` };
+        }
       }),
 
     // Host: Get their profile

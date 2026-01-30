@@ -206,3 +206,29 @@
   - Show price, meal type, guest count in sticky card
   - Prominent Book Now button with Share option
   - Right sidebar sticky positioning
+
+
+## Menu & Title Improvements - Completed ✅
+- [x] Restructure host detail page to show menu first in experience section
+  - Menu now appears as the first element when viewing experience
+  - Removed duration and beverages from key details display
+  - Kept only cuisine style and max guests in key details
+- [x] Implement AI-powered title summarization
+  - Added host.summarizeTitle tRPC procedure using LLM
+  - Generates compelling titles up to 3 lines maximum
+  - Uses cuisine style, menu description, and activities as context
+  - Fallback to simple title if LLM fails
+- [x] Create MenuFormatter component for structured menu input
+  - Allows hosts to organize menu into sections (Appetizers, Main Courses, etc.)
+  - Add/edit/delete menu sections and individual dishes
+  - Live preview showing formatted menu output
+  - Toggle between text editor and structured builder
+- [x] Integrate MenuFormatter into host registration Step 1
+  - Added "Use Structured Menu Builder" button to toggle between text and structured input
+  - MenuFormatter converts sections to formatted text automatically
+  - Hosts can switch back to text editor anytime
+- [x] Add AI Title Generator UI to registration form
+  - Generate Title button with Sparkles icon
+  - Shows generated title in highlighted box with "Use This Title" button
+  - Disabled until cuisine style and menu description are filled
+  - Toast notifications for success/error states

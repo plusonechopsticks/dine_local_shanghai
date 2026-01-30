@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
-import { ArrowRight, Check, Upload, X } from "lucide-react";
+import { MenuFormatter } from "@/components/MenuFormatter";
+import { ArrowRight, Check, Upload, X, Sparkles } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 
@@ -160,6 +161,9 @@ export default function HostRegister() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showMenuFormatter, setShowMenuFormatter] = useState(false);
+  const [generatedTitle, setGeneratedTitle] = useState<string | null>(null);
+  const [isGeneratingTitle, setIsGeneratingTitle] = useState(false);
 
   // Auto-save to localStorage
   useEffect(() => {
@@ -168,8 +172,32 @@ export default function HostRegister() {
     }
   }, [data]);
 
-  // tRPC mutation
+  // tRPC mutations
   const submitMutation = trpc.host.submit.useMutation();
+  const summarizeTitleMutation = trpc.host.summarizeTitle.useMutation();
+
+  // Generate AI title
+  const handleGenerateTitle = async () => {
+    if (!data.cuisineStyle || !data.menuDescription) {
+      toast.error("Please fill in cuisine style and menu description first");
+      return;
+    }
+    
+    setIsGeneratingTitle(true);
+    try {
+      const result = await summarizeTitleMutation.mutateAsync({
+        cuisineStyle: data.cuisineStyle,
+        menuDescription: data.menuDescription,
+        activities: data.activities,
+      });
+      setGeneratedTitle(result.title);
+      toast.success("Title generated!");
+    } catch (error) {
+      toast.error("Failed to generate title");
+    } finally {
+      setIsGeneratingTitle(false);
+    }
+  };
 
   // Update a single field
   const updateField = <K extends keyof RegistrationData>(key: K, value: RegistrationData[K]) => {
@@ -486,13 +514,85 @@ export default function HostRegister() {
 
                 <div>
                   <Label className="text-lg font-medium">Menu Description *</Label>
-                  <textarea
-                    placeholder="Describe the dishes you typically prepare..."
-                    value={data.menuDescription}
-                    onChange={(e) => updateField("menuDescription", e.target.value)}
-                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    rows={4}
-                  />
+                  <div className="mt-2 space-y-3">
+                    {!showMenuFormatter ? (
+                      <div className="space-y-2">
+                        <textarea
+                          placeholder="Describe the dishes you typically prepare..."
+                          value={data.menuDescription}
+                          onChange={(e) => updateField("menuDescription", e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                          rows={4}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowMenuFormatter(true)}
+                          className="w-full"
+                        >
+                          Use Structured Menu Builder
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <MenuFormatter
+                          value={[]}
+                          onChange={(sections) => {
+                            const formatted = sections
+                              .map((s) => {
+                                const items = s.items
+                                  .map((item) => `• ${item.name}${item.description ? ` - ${item.description}` : ""}`)
+                                  .join("\n");
+                                return `${s.title}\n${items}`;
+                              })
+                              .join("\n\n");
+                            updateField("menuDescription", formatted);
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowMenuFormatter(false)}
+                          className="w-full"
+                        >
+                          Back to Text Editor
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">AI Title Generator (Optional)</Label>
+                  <p className="text-sm text-gray-500 mt-1 mb-3">Generate a compelling title for your listing based on your cuisine and menu</p>
+                  <Button
+                    type="button"
+                    onClick={handleGenerateTitle}
+                    disabled={isGeneratingTitle || !data.cuisineStyle || !data.menuDescription}
+                    className="w-full bg-primary hover:bg-primary/90"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    {isGeneratingTitle ? "Generating..." : "Generate Title"}
+                  </Button>
+                  {generatedTitle && (
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm font-medium text-blue-900">Generated Title:</p>
+                      <p className="text-base text-blue-800 mt-1 whitespace-pre-wrap">{generatedTitle}</p>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          updateField("menuDescription", generatedTitle);
+                          setGeneratedTitle(null);
+                          toast.success("Title added to menu description!");
+                        }}
+                        className="mt-2 text-blue-600 hover:text-blue-700"
+                      >
+                        Use This Title
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div>
