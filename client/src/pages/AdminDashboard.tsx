@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,7 +80,13 @@ export default function AdminDashboard() {
     setShowDetailsModal(true);
   };
 
-  const confirmAction = async (status: "approved" | "rejected") => {
+  const handleEdit = async (listing: HostListing) => {
+    setSelectedListing(listing);
+    setAdminNotes("");
+    setShowDetailsModal(true);
+  };
+
+  const confirmAction = async (status: "pending" | "approved" | "rejected") => {
     if (!selectedListing) return;
 
     updateStatusMutation.mutate({
@@ -252,13 +260,13 @@ export default function AdminDashboard() {
                           {listing.foodPhotoUrls && listing.foodPhotoUrls.length > 0 && (
                             <div>
                               <p className="text-sm font-semibold text-gray-700 mb-2">Food Photos</p>
-                              <div className="grid grid-cols-3 gap-2">
-                                {listing.foodPhotoUrls.map((url: string, idx: number) => (
+                              <div className="flex gap-2 flex-wrap">
+                                {listing.foodPhotoUrls.map((url, idx) => (
                                   <img
                                     key={idx}
                                     src={url}
                                     alt={`Food ${idx + 1}`}
-                                    className="w-full h-24 object-cover rounded"
+                                    className="w-20 h-20 rounded object-cover"
                                   />
                                 ))}
                               </div>
@@ -292,9 +300,18 @@ export default function AdminDashboard() {
                         </>
                       )}
                       {listing.status !== "pending" && (
-                        <Button variant="outline" size="sm" disabled>
-                          {listing.status === "approved" ? "Approved" : "Rejected"}
-                        </Button>
+                        <>
+                          <Button variant="outline" size="sm" disabled>
+                            {listing.status === "approved" ? "✓ Approved" : "✗ Rejected"}
+                          </Button>
+                          <Button
+                            onClick={() => handleEdit(listing)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            Edit Status
+                          </Button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -312,7 +329,7 @@ export default function AdminDashboard() {
             <DialogTitle>
               {selectedListing?.status === "pending"
                 ? "Review Application"
-                : "Application Details"}
+                : `Edit Status - ${selectedListing?.hostName}`}
             </DialogTitle>
           </DialogHeader>
 
@@ -360,6 +377,42 @@ export default function AdminDashboard() {
                   disabled={updateStatusMutation.isPending}
                 >
                   Approve
+                </Button>
+              </>
+            )}
+            {selectedListing?.status === "approved" && (
+              <>
+                <Button
+                  onClick={() => confirmAction("rejected")}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  disabled={updateStatusMutation.isPending}
+                >
+                  Change to Rejected
+                </Button>
+                <Button
+                  onClick={() => confirmAction("pending")}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                  disabled={updateStatusMutation.isPending}
+                >
+                  Change to Pending
+                </Button>
+              </>
+            )}
+            {selectedListing?.status === "rejected" && (
+              <>
+                <Button
+                  onClick={() => confirmAction("approved")}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  disabled={updateStatusMutation.isPending}
+                >
+                  Change to Approved
+                </Button>
+                <Button
+                  onClick={() => confirmAction("pending")}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                  disabled={updateStatusMutation.isPending}
+                >
+                  Change to Pending
                 </Button>
               </>
             )}

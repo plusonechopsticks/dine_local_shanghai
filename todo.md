@@ -167,3 +167,13 @@
   - Changed sendHostApprovalEmail from protectedProcedure to publicProcedure
   - Admin dashboard now accessible at /admin without login
   - TODO: Add role-based access control before production deployment
+
+
+## Admin Features - In Progress
+- [x] Add ability to edit/change host approval status after initial decision
+  - Added "Edit Status" button to approved and rejected host cards
+  - Dialog shows different status change options based on current status:
+    - Approved: can change to Rejected or Pending
+    - Rejected: can change to Approved or Pending
+  - Admin can add notes when changing status
+  - Status updates immediately in the UI after confirmation
