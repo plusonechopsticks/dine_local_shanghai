@@ -232,3 +232,11 @@
   - Shows generated title in highlighted box with "Use This Title" button
   - Disabled until cuisine style and menu description are filled
   - Toast notifications for success/error states
+
+
+## Layout Restructuring - Completed ✅
+- [x] Move cuisine and guest count icons to appear before menu section
+- [x] Remove host bio section from experience tab view
+- [x] Reorder experience tab to show: key details (icons) → menu → availability
+- [x] Add title field to hostListings database schema
+- [x] Update HostDetail page to display title if it exists

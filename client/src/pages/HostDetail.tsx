@@ -306,20 +306,7 @@ export default function HostDetail() {
             {/* Content Based on Tab */}
             {activeTab === "experience" ? (
               <div className="space-y-6">
-                {/* Menu Section - First */}
-                <Card className="border-border/50">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <ChefHat className="h-5 w-5 text-primary" />
-                      <h3 className="text-xl font-bold">Menu</h3>
-                    </div>
-                    <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                      {host.menuDescription}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                {/* Key Details with Icons - Reduced to 2 columns */}
+                {/* Key Details with Icons - Moved to top */}
                 <div className="grid grid-cols-2 gap-4">
                   {/* Cuisine Type */}
                   <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
@@ -336,21 +323,18 @@ export default function HostDetail() {
                   </div>
                 </div>
 
-                {/* Experience Description */}
-                <div className="space-y-3">
-                  <p className="text-base leading-relaxed text-foreground/90">
-                    {expandedBio ? host.bio : bioPreview}
-                  </p>
-                  {host.bio && host.bio.length > 200 && (
-                    <button
-                      onClick={() => setExpandedBio(!expandedBio)}
-                      className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
-                    >
-                      {expandedBio ? "Read less" : "Read more"}
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
+                {/* Menu Section */}
+                <Card className="border-border/50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <ChefHat className="h-5 w-5 text-primary" />
+                      <h3 className="text-xl font-bold">Menu</h3>
+                    </div>
+                    <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                      {host.menuDescription}
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
             ) : (
               <div className="space-y-6">
