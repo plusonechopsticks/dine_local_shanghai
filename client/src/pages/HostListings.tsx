@@ -146,11 +146,11 @@ export default function HostListings() {
 
       <main className="container py-6 md:py-8">
         {/* Compact Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-semibold mb-2">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
             Host Families in Shanghai
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-lg">
             Experience authentic Shanghai cuisine with local families
           </p>
         </div>
@@ -328,8 +328,7 @@ function HostCard({ host }: { host: any }) {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               
-              {/* Dark Overlay Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
 
               {/* Cuisine Badge - Top Left */}
               {host.cuisineStyle && (
