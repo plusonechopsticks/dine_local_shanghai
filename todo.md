@@ -142,3 +142,10 @@
   - Fixed by adding onSubmit={(e) => { e.preventDefault(); }} to form element
   - Changed submit button from type="button" to type="submit"
   - Now properly handles tRPC mutation response and displays success page
+
+## Urgent Bug - Form Submission Still Broken
+- [x] Fix host registration form - still showing raw JSON instead of thank you page
+  - Root cause: HTML form element was causing traditional form submission even with onSubmit handler
+  - Solution: Replaced <form> with <div> to completely eliminate HTML form behavior
+  - Button now uses type="button" with onClick handler that calls e.preventDefault() and e.stopPropagation()
+  - All 18 tests passing
