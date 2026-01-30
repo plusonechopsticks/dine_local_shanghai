@@ -172,7 +172,7 @@ export default function HostDetail() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-40">
+      <div className="border-b bg-background sticky top-0 z-40">
         <div className="container flex items-center justify-between h-16">
           <button
             onClick={() => setLocation("/hosts")}
@@ -181,15 +181,9 @@ export default function HostDetail() {
             <ChevronLeft className="h-5 w-5" />
             <span className="text-sm font-medium">Back</span>
           </button>
-          <a href="/" className="flex items-center gap-2">
-            <ChopsticksLogo className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg" style={{ fontFamily: "var(--font-serif)" }}>
-              +1 Chopsticks
-            </span>
-          </a>
           <div className="w-20" />
         </div>
-      </header>
+      </div>
 
       <main className="container py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

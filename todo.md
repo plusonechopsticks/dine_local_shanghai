@@ -240,3 +240,7 @@
 - [x] Reorder experience tab to show: key details (icons) → menu → availability
 - [x] Add title field to hostListings database schema
 - [x] Update HostDetail page to display title if it exists
+
+## Current Bugs - Fixed ✅
+- [x] Fix Norika and Steven's missing first photo in listing
+- [x] Remove duplicate +1 Chopsticks header from host detail page
