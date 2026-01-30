@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -16,6 +18,7 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
+  Star,
 } from "lucide-react";
 
 const DAYS_OF_WEEK = [
@@ -148,49 +151,65 @@ export default function HostListings() {
             Host Families in Shanghai
           </h1>
           <p className="text-muted-foreground">
-            {filteredHosts?.length || 0} {filteredHosts?.length === 1 ? "home" : "homes"}
+            Experience authentic Shanghai cuisine with local families
           </p>
         </div>
 
-        {/* Filter Bar */}
-        <div className="mb-6 flex flex-wrap gap-3">
-          <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-            <SelectTrigger className="w-[140px] h-10">
-              <SelectValue placeholder="District" />
-            </SelectTrigger>
-            <SelectContent>
-              {SHANGHAI_DISTRICTS.map(district => (
-                <SelectItem key={district} value={district}>
-                  {district}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {/* Filters */}
+        <div className="flex flex-wrap gap-3 mb-6 items-end">
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground mb-1 block">
+              District
+            </Label>
+            <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+              <SelectTrigger className="w-[140px] h-10">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SHANGHAI_DISTRICTS.map(district => (
+                  <SelectItem key={district} value={district}>
+                    {district}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Select value={selectedDay} onValueChange={setSelectedDay}>
-            <SelectTrigger className="w-[140px] h-10">
-              <SelectValue placeholder="Any day" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any day</SelectItem>
-              {DAYS_OF_WEEK.map(day => (
-                <SelectItem key={day.id} value={day.id}>
-                  {day.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground mb-1 block">
+              Day
+            </Label>
+            <Select value={selectedDay} onValueChange={setSelectedDay}>
+              <SelectTrigger className="w-[120px] h-10">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Day</SelectItem>
+                {DAYS_OF_WEEK.map(day => (
+                  <SelectItem key={day.id} value={day.id}>
+                    {day.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Select value={selectedMealType} onValueChange={setSelectedMealType}>
-            <SelectTrigger className="w-[140px] h-10">
-              <SelectValue placeholder="Meal type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any meal</SelectItem>
-              <SelectItem value="lunch">Lunch</SelectItem>
-              <SelectItem value="dinner">Dinner</SelectItem>
-            </SelectContent>
-          </Select>
+          <div>
+            <Label className="text-xs font-semibold text-muted-foreground mb-1 block">
+              Meal Type
+            </Label>
+            <Select value={selectedMealType} onValueChange={setSelectedMealType}>
+              <SelectTrigger className="w-[120px] h-10">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Meal</SelectItem>
+                <SelectItem value="breakfast">Breakfast</SelectItem>
+                <SelectItem value="lunch">Lunch</SelectItem>
+                <SelectItem value="dinner">Dinner</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <Input
             type="number"
@@ -250,12 +269,11 @@ function HostCard({ host }: { host: any }) {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const foodPhotos = host.foodPhotoUrls as string[];
-  const availability = host.availability as Record<string, string[]>;
-  const availableDays = Object.keys(availability);
 
+  // Use food photos first, then profile photo as fallback
   const images = [
-    host.profilePhotoUrl,
     ...(foodPhotos || []),
+    host.profilePhotoUrl,
   ].filter(Boolean);
 
   const nextImage = (e?: React.MouseEvent) => {
@@ -295,9 +313,9 @@ function HostCard({ host }: { host: any }) {
   return (
     <Link href={`/hosts/${host.id}`}>
       <a className="group cursor-pointer block">
-        {/* Image Container */}
+        {/* Image Container with Overlay */}
         <div 
-          className="relative aspect-square rounded-xl overflow-hidden mb-3 bg-secondary"
+          className="relative aspect-square rounded-2xl overflow-hidden bg-secondary shadow-lg hover:shadow-xl transition-shadow"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -307,52 +325,79 @@ function HostCard({ host }: { host: any }) {
               <img
                 src={images[currentImageIndex]}
                 alt={host.hostName}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               
-              {/* Badge Overlay */}
+              {/* Dark Overlay Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+              {/* Cuisine Badge - Top Left */}
               {host.cuisineStyle && (
-                <Badge className="absolute top-3 left-3 bg-background/90 text-foreground border-0 shadow-md">
+                <Badge className="absolute top-4 left-4 bg-white/20 text-white border-0 backdrop-blur-sm">
                   {host.cuisineStyle}
                 </Badge>
               )}
 
-              {/* Heart Icon */}
+              {/* Heart Icon - Top Right */}
               <button
-                className="absolute top-3 right-3 p-2 rounded-full hover:bg-background/80 transition-colors"
+                className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
                 onClick={(e) => {
                   e.preventDefault();
                   // TODO: Add to favorites
                 }}
               >
-                <Heart className="h-5 w-5 stroke-2 text-foreground/80 hover:fill-primary hover:text-primary transition-colors" />
+                <Heart className="h-5 w-5 stroke-2 text-white hover:fill-white transition-colors" />
               </button>
+
+              {/* Bottom Content - Host Info & Price */}
+              <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between">
+                {/* Left: Host Avatar & Name */}
+                <div className="flex items-end gap-3 flex-1 min-w-0">
+                  {host.profilePhotoUrl && (
+                    <img
+                      src={host.profilePhotoUrl}
+                      alt={host.hostName}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-white flex-shrink-0"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-white font-semibold text-sm truncate">{host.hostName}</p>
+                    <p className="text-white/80 text-xs truncate">{host.district}</p>
+                  </div>
+                </div>
+
+                {/* Right: Price */}
+                <div className="text-right ml-2 flex-shrink-0">
+                  <p className="text-white font-bold text-lg">¥{host.pricePerPerson}</p>
+                  <p className="text-white/80 text-xs">/person</p>
+                </div>
+              </div>
 
               {/* Image Navigation */}
               {images.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/30"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-5 w-5 text-white" />
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/30"
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-5 w-5 text-white" />
                   </button>
 
                   {/* Dot Indicators */}
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-1">
                     {images.map((_, index) => (
                       <div
                         key={index}
                         className={`h-1.5 rounded-full transition-all ${
                           index === currentImageIndex
-                            ? "w-4 bg-background"
-                            : "w-1.5 bg-background/60"
+                            ? "w-4 bg-white"
+                            : "w-1.5 bg-white/60"
                         }`}
                       />
                     ))}
@@ -361,41 +406,12 @@ function HostCard({ host }: { host: any }) {
               )}
             </>
           ) : (
-            <div className="flex items-center justify-center h-full">
-              <span className="text-4xl text-muted-foreground">
+            <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/20 to-primary/10">
+              <span className="text-6xl font-bold text-primary/40">
                 {host.hostName.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
-        </div>
-
-        {/* Info Below Image */}
-        <div className="space-y-1">
-          {/* Location & Title */}
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base truncate">
-                {host.hostName}
-              </h3>
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <MapPin className="h-3 w-3 flex-shrink-0" />
-                <span className="truncate">{host.district}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Availability */}
-          <p className="text-sm text-muted-foreground">
-            {availableDays.length} {availableDays.length === 1 ? "day" : "days"} available
-          </p>
-
-          {/* Price */}
-          <div className="flex items-baseline gap-1">
-            <span className="font-semibold text-base underline decoration-2">
-              ¥{host.pricePerPerson}
-            </span>
-            <span className="text-sm text-muted-foreground">per person</span>
-          </div>
         </div>
       </a>
     </Link>
