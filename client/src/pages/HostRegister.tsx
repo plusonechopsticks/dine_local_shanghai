@@ -20,6 +20,7 @@ interface RegistrationData {
   email: string;
   district: string;
   cuisineStyle: string;
+  title: string;
   menuDescription: string;
   foodPhotoUrls: string[];
   bio: string;
@@ -39,6 +40,7 @@ const INITIAL_DATA: RegistrationData = {
   email: "",
   district: "",
   cuisineStyle: "",
+  title: "",
   menuDescription: "",
   foodPhotoUrls: [],
   bio: "",
@@ -513,6 +515,18 @@ export default function HostRegister() {
                 </div>
 
                 <div>
+                  <Label className="text-lg font-medium">Listing Title *</Label>
+                  <p className="text-sm text-gray-500 mt-1 mb-2">A compelling headline for your listing (max 3 lines)</p>
+                  <textarea
+                    placeholder="e.g., Authentic Shanghai home dining experience featuring Braised Beef Brisket with Daikon Radish"
+                    value={data.title}
+                    onChange={(e) => updateField("title", e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
                   <Label className="text-lg font-medium">Menu Description *</Label>
                   <div className="mt-2 space-y-3">
                     {!showMenuFormatter ? (
@@ -583,9 +597,9 @@ export default function HostRegister() {
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          updateField("menuDescription", generatedTitle);
+                          updateField("title", generatedTitle);
                           setGeneratedTitle(null);
-                          toast.success("Title added to menu description!");
+                          toast.success("Title added!");
                         }}
                         className="mt-2 text-blue-600 hover:text-blue-700"
                       >
