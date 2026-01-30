@@ -44,23 +44,48 @@ async function startServer(): Promise<any> {
     console.log("[OAuth] OAUTH_SERVER_URL not set — skipping OAuth routes (dev mode)");
   }
 
-  // File upload endpoint
+  // File upload endpoint - supports both multipart and JSON base64
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
   app.post("/api/upload", upload.single("file"), async (req: any, res: any) => {
     try {
-      if (!req.file) {
+      let buffer: Buffer;
+      let filename: string;
+      let mimetype: string = "image/jpeg";
+
+      // Handle multipart form data
+      if (req.file) {
+        buffer = req.file.buffer;
+        filename = req.file.originalname;
+        mimetype = req.file.mimetype;
+      }
+      // Handle JSON base64 data
+      else if (req.body.image && req.body.filename) {
+        const base64Data = req.body.image.split(",")[1] || req.body.image;
+        buffer = Buffer.from(base64Data, "base64");
+        filename = req.body.filename;
+        // Try to detect mimetype from filename
+        const ext = filename.split(".").pop()?.toLowerCase();
+        const mimetypeMap: Record<string, string> = {
+          jpg: "image/jpeg",
+          jpeg: "image/jpeg",
+          png: "image/png",
+          gif: "image/gif",
+          webp: "image/webp",
+        };
+        mimetype = mimetypeMap[ext || ""] || "image/jpeg";
+      } else {
         return res.status(400).json({ error: "No file provided" });
       }
 
-      console.log(`[Upload] Received file: ${req.file.originalname}, size: ${req.file.size} bytes`);
+      console.log(`[Upload] Received file: ${filename}, size: ${buffer.length} bytes`);
 
       // Generate unique file key
-      const ext = req.file.originalname.split(".").pop() || "jpg";
+      const ext = filename.split(".").pop() || "jpg";
       const uniqueKey = `host-images/${nanoid()}.${ext}`;
 
       // Upload to S3
       console.log(`[Upload] Uploading to storage: ${uniqueKey}`);
-      const { url } = await storagePut(uniqueKey, req.file.buffer, req.file.mimetype);
+      const { url } = await storagePut(uniqueKey, buffer, mimetype);
 
       console.log(`[Upload] Upload successful: ${url}`);
       return res.json({ url });
