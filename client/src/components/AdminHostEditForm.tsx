@@ -112,29 +112,40 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
 
     setIsUploading(true);
     try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
+      const uploadPromises = Array.from(files).map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
 
-        reader.onload = async (e) => {
-          const base64 = e.target?.result as string;
-          const response = await fetch("/api/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64, filename: file.name }),
-          });
+          reader.onload = async (e) => {
+            try {
+              const base64 = e.target?.result as string;
+              const response = await fetch("/api/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: base64, filename: file.name }),
+              });
 
-          if (!response.ok) throw new Error("Upload failed");
-          const { url } = await response.json();
+              if (!response.ok) throw new Error("Upload failed");
+              const { url } = await response.json();
+              resolve(url);
+            } catch (error) {
+              reject(error);
+            }
+          };
 
-          if (field === "profilePhotoUrl") {
-            handleInputChange("profilePhotoUrl", url);
-          } else {
-            handleInputChange("foodPhotoUrls", [...formData.foodPhotoUrls, url]);
-          }
-        };
+          reader.onerror = () => reject(new Error("File read failed"));
+          reader.readAsDataURL(file);
+        });
+      });
 
-        reader.readAsDataURL(file);
+      const uploadedUrls = await Promise.all(uploadPromises);
+
+      if (field === "profilePhotoUrl") {
+        // For profile photo, use the last uploaded URL
+        handleInputChange("profilePhotoUrl", uploadedUrls[uploadedUrls.length - 1]);
+      } else {
+        // For food photos, append all uploaded URLs
+        handleInputChange("foodPhotoUrls", [...formData.foodPhotoUrls, ...uploadedUrls]);
       }
     } catch (error) {
       toast.error("Failed to upload image");
