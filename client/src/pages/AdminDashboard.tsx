@@ -28,15 +28,17 @@ export default function AdminDashboard() {
   });
 
   const handleApprove = (listing: any) => {
+    console.log('Approving listing:', listing.id, typeof listing.id);
     approveMutation.mutate({
-      id: listing.id,
+      id: typeof listing.id === 'string' ? parseInt(listing.id) : listing.id,
       status: "approved",
     });
   };
 
   const handleReject = (listing: any) => {
+    console.log('Rejecting listing:', listing.id, typeof listing.id);
     rejectMutation.mutate({
-      id: listing.id,
+      id: typeof listing.id === 'string' ? parseInt(listing.id) : listing.id,
       status: "rejected",
     });
   };
@@ -242,25 +244,25 @@ export default function AdminDashboard() {
                             <Edit className="w-4 h-4 mr-2" />
                             Edit
                           </Button>
-                          {listing.status !== "approved" && (
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700"
-                              onClick={() => handleApprove(listing)}
-                            >
-                              <Check className="w-4 h-4 mr-2" />
-                              Approve
-                            </Button>
-                          )}
                           {listing.status === "pending" && (
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleReject(listing)}
-                            >
-                              <X className="w-4 h-4 mr-2" />
-                              Reject
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() => handleApprove(listing)}
+                              >
+                                <Check className="w-4 h-4 mr-2" />
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleReject(listing)}
+                              >
+                                <X className="w-4 h-4 mr-2" />
+                                Reject
+                              </Button>
+                            </>
                           )}
                           {listing.status === "rejected" && (
                             <Button
