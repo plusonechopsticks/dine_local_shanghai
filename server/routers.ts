@@ -13,7 +13,8 @@ import {
   getAllHostListings,
   getHostListingById,
   updateHostListingStatus,
-  updateHostListing
+  updateHostListing,
+  getAllBookings
 } from "./db";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { notifyOwner } from "./_core/notification";
@@ -43,6 +44,9 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+    listAll: publicProcedure.query(async () => {
+      return await getAllBookings();
+    }),
   messaging: router({
     // Create or get conversation
     getOrCreateConversation: publicProcedure

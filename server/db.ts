@@ -11,7 +11,9 @@ import {
   HostInterest,
   hostListings,
   InsertHostListing,
-  HostListing
+  HostListing,
+  bookings,
+  Booking
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -295,6 +297,44 @@ export async function updateHostListing(
     return true;
   } catch (error) {
     console.error("[Database] Failed to update host listing:", error);
+    throw error;
+  }
+}
+
+// Booking helpers
+export async function getAllBookings(): Promise<(Booking & { hostName?: string })[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get bookings: database not available");
+    return [];
+  }
+
+  try {
+    // Get all bookings with their related host information
+    const result = await db
+      .select({
+        id: bookings.id,
+        hostListingId: bookings.hostListingId,
+        guestName: bookings.guestName,
+        guestEmail: bookings.guestEmail,
+        guestPhone: bookings.guestPhone,
+        requestedDate: bookings.requestedDate,
+        mealType: bookings.mealType,
+        numberOfGuests: bookings.numberOfGuests,
+        specialRequests: bookings.specialRequests,
+        status: bookings.status,
+        hostNotes: bookings.hostNotes,
+        createdAt: bookings.createdAt,
+        updatedAt: bookings.updatedAt,
+        hostName: hostListings.hostName,
+      })
+      .from(bookings)
+      .leftJoin(hostListings, eq(bookings.hostListingId, hostListings.id))
+      .orderBy(desc(bookings.createdAt));
+    
+    return result as (Booking & { hostName?: string })[];
+  } catch (error) {
+    console.error("[Database] Failed to get bookings:", error);
     throw error;
   }
 }

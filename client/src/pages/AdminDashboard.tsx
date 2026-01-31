@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +38,23 @@ interface HostListing {
   dietaryNote: string | null;
 }
 
+interface Booking {
+  id: number;
+  hostListingId: number;
+  guestName: string;
+  guestEmail: string;
+  guestPhone?: string;
+  requestedDate: Date | string;
+  mealType: "lunch" | "dinner";
+  numberOfGuests: number;
+  specialRequests?: string;
+  status: "pending" | "confirmed" | "cancelled" | "rejected";
+  hostNotes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  hostName?: string;
+}
+
 export default function AdminDashboard() {
   const [selectedListing, setSelectedListing] = useState<HostListing | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -45,10 +62,41 @@ export default function AdminDashboard() {
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<"listings" | "messages">("listings");
+  const [activeTab, setActiveTab] = useState<"listings" | "messages" | "bookings">("listings");
 
   // Fetch all host listings
   const { data: listings = [], isLoading, refetch } = trpc.host.listAll.useQuery();
+
+  // Fetch all bookings
+  const { data: bookings = [], isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
+
+  // Format date for display
+  const formatDate = (date: Date | string) => {
+    const d = new Date(date);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  // Format time for display
+  const formatTime = (date: Date | string) => {
+    const d = new Date(date);
+    return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  };
+
+  // Get status badge color
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case "confirmed":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "cancelled":
+        return "bg-gray-100 text-gray-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   // Update status mutation
   const updateStatusMutation = trpc.host.updateStatus.useMutation({
@@ -98,94 +146,69 @@ export default function AdminDashboard() {
     updateStatusMutation.mutate({
       id: selectedListing.id,
       status,
-      adminNotes: adminNotes || undefined,
+      notes: adminNotes,
     });
-
-    // Send approval email if approving
-    if (status === "approved") {
-      sendHostApprovalEmailMutation.mutate({
-        hostName: selectedListing.hostName,
-        hostEmail: selectedListing.email,
-        district: selectedListing.district,
-        cuisineStyle: selectedListing.cuisineStyle,
-      });
-    }
   };
 
-  const filteredListings = (listings as HostListing[]).filter((listing: HostListing) => {
-    if (filter === "all") return true;
-    return listing.status === filter;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <p className="text-gray-600">Loading applications...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const filteredListings = filter === "all" 
+    ? listings 
+    : listings.filter((l: HostListing) => l.status === filter);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage host applications and messages</p>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="text-gray-600 mt-2">Manage host applications and messages</p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+        <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="listings">Host Applications</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsTrigger value="bookings">Bookings</TabsTrigger>
           </TabsList>
 
+          {/* Host Applications Tab */}
           <TabsContent value="listings" className="space-y-6">
-            {/* Filter Tabs */}
-            <div className="flex gap-2 mb-6">
-              {["all", "pending", "approved", "rejected"].map((status) => (
-                <Button
-                  key={status}
-                  onClick={() => setFilter(status as any)}
-                  variant={filter === status ? "default" : "outline"}
-                  className="capitalize"
-                >
-                  {status}
-                  {status !== "all" && (
-                    <span className="ml-2 px-2 py-1 bg-gray-200 rounded text-sm">
-                      {listings.filter((l: HostListing) => l.status === status).length}
-                    </span>
-                  )}
-                </Button>
-              ))}
+            <div className="flex gap-4 mb-6">
+              <Button
+                variant={filter === "all" ? "default" : "outline"}
+                onClick={() => setFilter("all")}
+              >
+                All
+              </Button>
+              <Button
+                variant={filter === "pending" ? "default" : "outline"}
+                onClick={() => setFilter("pending")}
+              >
+                Pending {filteredListings.filter((l: HostListing) => l.status === "pending").length}
+              </Button>
+              <Button
+                variant={filter === "approved" ? "default" : "outline"}
+                onClick={() => setFilter("approved")}
+              >
+                Approved {filteredListings.filter((l: HostListing) => l.status === "approved").length}
+              </Button>
+              <Button
+                variant={filter === "rejected" ? "default" : "outline"}
+                onClick={() => setFilter("rejected")}
+              >
+                Rejected {filteredListings.filter((l: HostListing) => l.status === "rejected").length}
+              </Button>
             </div>
 
-            {/* Listings Table */}
-            <div className="space-y-3">
-              {filteredListings.length === 0 ? (
-                <Card className="border-0 shadow-lg">
-                  <CardContent className="pt-8 pb-8 text-center">
-                    <p className="text-gray-600">No applications found</p>
-                  </CardContent>
+            <div className="space-y-4">
+              {isLoading ? (
+                <Card>
+                  <CardContent className="pt-6">Loading listings...</CardContent>
+                </Card>
+              ) : filteredListings.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6">No applications found</CardContent>
                 </Card>
               ) : (
-                (filteredListings as HostListing[]).map((listing: HostListing) => (
+                filteredListings.map((listing: HostListing) => (
                   <Card key={listing.id} className="border-0 shadow-lg">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between">
@@ -199,169 +222,93 @@ export default function AdminDashboard() {
                               />
                             )}
                             <div>
-                              <h3 className="text-xl font-bold text-gray-900">{listing.hostName}</h3>
+                              <h3 className="text-lg font-semibold text-gray-900">{listing.hostName}</h3>
                               <p className="text-sm text-gray-600">{listing.email}</p>
-                              <div className="flex gap-2 mt-2">
-                                <Badge variant="outline">{listing.district}</Badge>
-                                <Badge className={getStatusColor(listing.status)}>
-                                  {listing.status}
-                                </Badge>
-                              </div>
+                              <p className="text-sm text-gray-600">{listing.district}</p>
                             </div>
                           </div>
-
-                          <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <p className="text-sm text-gray-600">Cuisine Style</p>
-                              <p className="font-semibold text-gray-900">{listing.cuisineStyle}</p>
+                              <span className="font-semibold">Cuisine:</span> {listing.cuisineStyle}
                             </div>
                             <div>
-                              <p className="text-sm text-gray-600">Max Guests</p>
-                              <p className="font-semibold text-gray-900">{listing.maxGuests}</p>
+                              <span className="font-semibold">Price:</span> ¥{listing.pricePerPerson}/person
                             </div>
                             <div>
-                              <p className="text-sm text-gray-600">Price Per Person</p>
-                              <p className="font-semibold text-gray-900">¥{listing.pricePerPerson}</p>
+                              <span className="font-semibold">Max Guests:</span> {listing.maxGuests}
                             </div>
                             <div>
-                              <p className="text-sm text-gray-600">Applied</p>
-                              <p className="font-semibold text-gray-900">
-                                {new Date(listing.createdAt).toLocaleDateString()}
-                              </p>
+                              <span className="font-semibold">Status:</span>{" "}
+                              <Badge
+                                className={listing.status === "approved" ? "bg-green-100 text-green-800" : listing.status === "rejected" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}
+                              >
+                                {listing.status}
+                              </Badge>
                             </div>
                           </div>
-
-                          {/* Expandable Details */}
-                          <button
-                            onClick={() =>
-                              setExpandedId(expandedId === listing.id ? null : listing.id)
-                            }
-                            className="flex items-center gap-2 text-primary hover:underline mb-4"
-                          >
-                            <span className="text-sm font-semibold">View Full Details</span>
-                            <ChevronDown
-                              className={`w-4 h-4 transition-transform ${
-                                expandedId === listing.id ? "rotate-180" : ""
-                              }`}
-                            />
-                          </button>
-
-                          {expandedId === listing.id && (
-                            <div className="bg-gray-50 p-4 rounded-lg mb-4 space-y-4">
-                              <div>
-                                <p className="text-sm font-semibold text-gray-700 mb-1">Bio</p>
-                                <p className="text-sm text-gray-600">{listing.bio}</p>
-                              </div>
-
-                              <div>
-                                <p className="text-sm font-semibold text-gray-700 mb-1">Menu Description</p>
-                                <p className="text-sm text-gray-600">{listing.menuDescription}</p>
-                              </div>
-
-                              {listing.foodPhotoUrls && listing.foodPhotoUrls.length > 0 && (
-                                <div>
-                                  <p className="text-sm font-semibold text-gray-700 mb-2">Food Photos</p>
-                                  <div className="flex gap-2 flex-wrap">
-                                    {listing.foodPhotoUrls.map((url, idx) => (
-                                      <img
-                                        key={idx}
-                                        src={url}
-                                        alt={`Food ${idx + 1}`}
-                                        className="w-20 h-20 rounded object-cover"
-                                      />
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {listing.activities && listing.activities.length > 0 && (
-                                <div>
-                                  <p className="text-sm font-semibold text-gray-700 mb-1">Activities</p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {listing.activities.map((activity, idx) => (
-                                      <Badge key={idx} variant="secondary">
-                                        {activity}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
                         </div>
-
-                        <div className="flex flex-col gap-2 ml-4">
+                        <div className="flex gap-2">
                           <Button
-                            onClick={() => handleEdit(listing)}
-                            variant="outline"
                             size="sm"
-                            className="gap-2"
+                            variant="outline"
+                            onClick={() => {
+                              setExpandedId(expandedId === listing.id ? null : listing.id);
+                            }}
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEdit(listing)}
                           >
                             <Edit className="w-4 h-4" />
-                            Edit
                           </Button>
-                          {listing.status === "pending" && (
-                            <>
-                              <Button
-                                onClick={() => handleApprove(listing)}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                                size="sm"
-                              >
-                                <Check className="w-4 h-4 mr-1" />
-                                Approve
-                              </Button>
-                              <Button
-                                onClick={() => handleReject(listing)}
-                                variant="destructive"
-                                size="sm"
-                              >
-                                <X className="w-4 h-4 mr-1" />
-                                Reject
-                              </Button>
-                            </>
-                          )}
-                          {listing.status === "approved" && (
-                            <>
-                              <Button
-                                onClick={() => handleReject(listing)}
-                                className="bg-red-600 hover:bg-red-700 text-white"
-                                size="sm"
-                                disabled={updateStatusMutation.isPending}
-                              >
-                                Change to Rejected
-                              </Button>
-                              <Button
-                                onClick={() => handleApprove(listing)}
-                                className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                                size="sm"
-                                disabled={updateStatusMutation.isPending}
-                              >
-                                Change to Pending
-                              </Button>
-                            </>
-                          )}
-                          {listing.status === "rejected" && (
-                            <>
-                              <Button
-                                onClick={() => handleApprove(listing)}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                                size="sm"
-                                disabled={updateStatusMutation.isPending}
-                              >
-                                Change to Approved
-                              </Button>
-                              <Button
-                                onClick={() => handleReject(listing)}
-                                className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                                size="sm"
-                                disabled={updateStatusMutation.isPending}
-                              >
-                                Change to Pending
-                              </Button>
-                            </>
-                          )}
                         </div>
                       </div>
+
+                      {expandedId === listing.id && (
+                        <div className="mt-6 pt-6 border-t space-y-4">
+                          <div>
+                            <h4 className="font-semibold mb-2">Menu Description</h4>
+                            <p className="text-sm text-gray-700">{listing.menuDescription}</p>
+                          </div>
+                          {listing.dietaryNote && (
+                            <div>
+                              <h4 className="font-semibold mb-2">Dietary Notes</h4>
+                              <p className="text-sm text-gray-700">{listing.dietaryNote}</p>
+                            </div>
+                          )}
+                          {listing.otherNotes && (
+                            <div>
+                              <h4 className="font-semibold mb-2">Other Notes</h4>
+                              <p className="text-sm text-gray-700">{listing.otherNotes}</p>
+                            </div>
+                          )}
+                          <div className="flex gap-2 pt-4">
+                            {listing.status !== "approved" && (
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() => handleApprove(listing)}
+                              >
+                                <Check className="w-4 h-4 mr-2" />
+                                Approve
+                              </Button>
+                            )}
+                            {listing.status !== "rejected" && (
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleReject(listing)}
+                              >
+                                <X className="w-4 h-4 mr-2" />
+                                Reject
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))
@@ -369,134 +316,149 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
 
-          <TabsContent value="messages" className="space-y-4">
-            <div className="grid grid-cols-3 gap-6">
-              <div className="col-span-1">
-                <Card className="border-0 shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-lg">All Conversations</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 max-h-96 overflow-y-auto">
-                    <div className="text-sm text-gray-600 text-center py-8">
-                      <MessageSquare className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p>Messages feature coming soon</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="col-span-2">
-                <Card className="border-0 shadow-lg h-96 flex items-center justify-center">
-                  <CardContent className="text-center">
-                    <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">Select a conversation to view messages</p>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+          {/* Messages Tab */}
+          <TabsContent value="messages" className="space-y-6">
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Host Messages</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-gray-600">
+                  <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                  <p>Messages feature coming soon</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Bookings Tab */}
+          <TabsContent value="bookings" className="space-y-6">
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>All Bookings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {bookingsLoading ? (
+                  <div className="text-center py-8 text-gray-600">Loading bookings...</div>
+                ) : bookings.length === 0 ? (
+                  <div className="text-center py-8 text-gray-600">No bookings found</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4 font-semibold">Guest Name</th>
+                          <th className="text-left py-3 px-4 font-semibold">Email</th>
+                          <th className="text-left py-3 px-4 font-semibold">Host</th>
+                          <th className="text-left py-3 px-4 font-semibold">Date</th>
+                          <th className="text-left py-3 px-4 font-semibold">Meal Type</th>
+                          <th className="text-left py-3 px-4 font-semibold">Guests</th>
+                          <th className="text-left py-3 px-4 font-semibold">Status</th>
+                          <th className="text-left py-3 px-4 font-semibold">Created</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(bookings as Booking[]).map((booking) => (
+                          <tr key={booking.id} className="border-b hover:bg-gray-50">
+                            <td className="py-3 px-4">{booking.guestName}</td>
+                            <td className="py-3 px-4 text-gray-600">{booking.guestEmail}</td>
+                            <td className="py-3 px-4">{booking.hostName || "Unknown"}</td>
+                            <td className="py-3 px-4">{formatDate(booking.requestedDate)}</td>
+                            <td className="py-3 px-4 capitalize">{booking.mealType}</td>
+                            <td className="py-3 px-4">{booking.numberOfGuests}</td>
+                            <td className="py-3 px-4">
+                              <Badge className={getStatusBadgeColor(booking.status)}>
+                                {booking.status}
+                              </Badge>
+                            </td>
+                            <td className="py-3 px-4 text-gray-600">{formatDate(booking.createdAt)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
 
       {/* Details Modal */}
       <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedListing?.hostName}</DialogTitle>
+            <DialogTitle>
+              {selectedListing?.status === "pending"
+                ? "Review Application"
+                : selectedListing?.status === "approved"
+                ? "Edit Approved Host"
+                : "Edit Rejected Host"}
+            </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="adminNotes">Admin Notes</Label>
-              <Textarea
-                id="adminNotes"
-                placeholder="Add notes about this application..."
-                value={adminNotes}
-                onChange={(e) => setAdminNotes(e.target.value)}
-                rows={4}
-                className="mt-2"
-              />
+          {selectedListing && (
+            <div className="space-y-4">
+              {selectedListing.status === "pending" ? (
+                <>
+                  <div>
+                    <Label>Admin Notes (Optional)</Label>
+                    <Textarea
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      placeholder="Add notes about this application..."
+                      className="mt-2"
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowDetailsModal(false)}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => confirmAction("rejected")}
+                      disabled={updateStatusMutation.isPending}
+                    >
+                      Reject
+                    </Button>
+                    <Button
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => confirmAction("approved")}
+                      disabled={updateStatusMutation.isPending}
+                    >
+                      Approve
+                    </Button>
+                  </DialogFooter>
+                </>
+              ) : (
+                <>
+                  <AdminHostEditForm
+                    listing={selectedListing}
+                    onClose={() => {
+                      setShowDetailsModal(false);
+                      refetch();
+                    }}
+                  />
+                </>
+              )}
             </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              onClick={() => setShowDetailsModal(false)}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            {selectedListing?.status === "pending" && (
-              <>
-                <Button
-                  onClick={() => confirmAction("approved")}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                  disabled={updateStatusMutation.isPending}
-                >
-                  Approve
-                </Button>
-                <Button
-                  onClick={() => confirmAction("rejected")}
-                  variant="destructive"
-                  disabled={updateStatusMutation.isPending}
-                >
-                  Reject
-                </Button>
-              </>
-            )}
-            {selectedListing?.status === "approved" && (
-              <>
-                <Button
-                  onClick={() => confirmAction("rejected")}
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                  disabled={updateStatusMutation.isPending}
-                >
-                  Change to Rejected
-                </Button>
-                <Button
-                  onClick={() => confirmAction("pending")}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                  disabled={updateStatusMutation.isPending}
-                >
-                  Change to Pending
-                </Button>
-              </>
-            )}
-            {selectedListing?.status === "rejected" && (
-              <>
-                <Button
-                  onClick={() => confirmAction("approved")}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                  disabled={updateStatusMutation.isPending}
-                >
-                  Change to Approved
-                </Button>
-                <Button
-                  onClick={() => confirmAction("pending")}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                  disabled={updateStatusMutation.isPending}
-                >
-                  Change to Pending
-                </Button>
-              </>
-            )}
-          </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
 
-      {/* Edit Host Profile Modal */}
+      {/* Edit Modal */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh]">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Host Profile - {selectedListing?.hostName}</DialogTitle>
+            <DialogTitle>Edit Host Profile</DialogTitle>
           </DialogHeader>
           {selectedListing && (
             <AdminHostEditForm
-              listing={selectedListing as any}
-              onSave={() => {
+              listing={selectedListing}
+              onClose={() => {
                 setShowEditModal(false);
                 refetch();
               }}
-              onCancel={() => setShowEditModal(false)}
             />
           )}
         </DialogContent>
