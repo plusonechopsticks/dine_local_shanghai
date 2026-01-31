@@ -1,470 +1,352 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { ChevronDown, Check, X, Eye, Edit, MessageSquare, Send } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { AdminHostEditForm } from "@/components/AdminHostEditForm";
-
-interface HostListing {
-  id: number;
-  hostName: string;
-  email: string;
-  district: string;
-  cuisineStyle: string;
-  title: string;
-  status: "pending" | "approved" | "rejected";
-  createdAt: Date;
-  profilePhotoUrl: string | null;
-  bio: string | null;
-  menuDescription: string | null;
-  foodPhotoUrls: string[];
-  maxGuests: number;
-  pricePerPerson: number;
-  activities: string[];
-  availability: Record<string, string[]>;
-  otherNotes: string | null;
-  dietaryNote: string | null;
-}
-
-interface Booking {
-  id: number;
-  hostListingId: number;
-  guestName: string;
-  guestEmail: string;
-  guestPhone?: string;
-  requestedDate: Date | string;
-  mealType: "lunch" | "dinner";
-  numberOfGuests: number;
-  specialRequests?: string;
-  status: "pending" | "confirmed" | "cancelled" | "rejected";
-  hostNotes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  hostName?: string;
-}
+import { ChevronDown, Check, X, MessageSquare } from "lucide-react";
 
 export default function AdminDashboard() {
-  const [selectedListing, setSelectedListing] = useState<HostListing | null>(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [adminNotes, setAdminNotes] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<"listings" | "messages" | "bookings">("listings");
 
-  // Fetch all host listings
-  const { data: listings = [], isLoading, refetch, error: listingsError } = trpc.host.listAll.useQuery();
+  const { data: listings = [], isLoading } = trpc.host.listAll.useQuery();
+  const { data: bookings = [] } = trpc.booking.listAll.useQuery();
 
-  // Fetch all bookings
-  const { data: bookings = [], isLoading: bookingsLoading, error: bookingsError } = trpc.booking.listAll.useQuery();
-
-
-
-  // Format date for display
-  const formatDate = (date: Date | string) => {
-    const d = new Date(date);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  };
-
-  // Format time for display
-  const formatTime = (date: Date | string) => {
-    const d = new Date(date);
-    return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-  };
-
-  // Get status badge color
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "cancelled":
-        return "bg-gray-100 text-gray-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  // Update status mutation
-  const updateStatusMutation = trpc.host.updateStatus.useMutation({
+  const approveMutation = trpc.host.updateStatus.useMutation({
     onSuccess: () => {
-      toast.success("Status updated successfully");
-      refetch();
-      setShowDetailsModal(false);
-      setAdminNotes("");
-      setSelectedListing(null);
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to update status");
+      trpc.useUtils().host.listAll.invalidate();
     },
   });
 
-  // Send host approval email mutation
-  const sendHostApprovalEmailMutation = trpc.host.sendHostApprovalEmail.useMutation({
+  const rejectMutation = trpc.host.updateStatus.useMutation({
     onSuccess: () => {
-      toast.success("Approval email sent to host");
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to send email");
+      trpc.useUtils().host.listAll.invalidate();
     },
   });
 
-  const handleApprove = async (listing: HostListing) => {
-    setSelectedListing(listing);
-    setAdminNotes("");
-    setShowDetailsModal(true);
-  };
-
-  const handleReject = async (listing: HostListing) => {
-    setSelectedListing(listing);
-    setAdminNotes("");
-    setShowDetailsModal(true);
-  };
-
-  const handleEdit = async (listing: HostListing) => {
-    setSelectedListing(listing);
-    setAdminNotes("");
-    setShowDetailsModal(true);
-  };
-
-  const confirmAction = async (status: "pending" | "approved" | "rejected") => {
-    if (!selectedListing) return;
-
-    updateStatusMutation.mutate({
-      id: selectedListing.id,
-      status,
-      notes: adminNotes,
+  const handleApprove = (listing: any) => {
+    approveMutation.mutate({
+      id: listing.id,
+      status: "approved",
     });
   };
 
-  const filteredListings = filter === "all" 
-    ? listings 
-    : listings.filter((l: HostListing) => l.status === filter);
+  const handleReject = (listing: any) => {
+    rejectMutation.mutate({
+      id: listing.id,
+      status: "rejected",
+    });
+  };
+
+  const filteredListings = listings.filter((listing: any) => {
+    if (filter === "all") return true;
+    return listing.status === filter;
+  });
+
+  const pendingCount = listings.filter((l: any) => l.status === "pending").length;
+  const approvedCount = listings.filter((l: any) => l.status === "approved").length;
+  const rejectedCount = listings.filter((l: any) => l.status === "rejected").length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage host applications and messages</p>
-        </div>
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+      <p className="text-gray-600 mb-6">Manage host applications and messages</p>
 
-        <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="listings">Host Applications</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="listings" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsTrigger value="listings">Host Applications</TabsTrigger>
+          <TabsTrigger value="messages">Messages</TabsTrigger>
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+        </TabsList>
 
-          {/* Host Applications Tab */}
-          <TabsContent value="listings" className="space-y-6">
-            <div className="flex gap-4 mb-6">
-              <Button
-                variant={filter === "all" ? "default" : "outline"}
-                onClick={() => setFilter("all")}
-              >
-                All
-              </Button>
-              <Button
-                variant={filter === "pending" ? "default" : "outline"}
-                onClick={() => setFilter("pending")}
-              >
-                Pending {listings.filter((l: HostListing) => l.status === "pending").length}
-              </Button>
-              <Button
-                variant={filter === "approved" ? "default" : "outline"}
-                onClick={() => setFilter("approved")}
-              >
-                Approved {listings.filter((l: HostListing) => l.status === "approved").length}
-              </Button>
-              <Button
-                variant={filter === "rejected" ? "default" : "outline"}
-                onClick={() => setFilter("rejected")}
-              >
-                Rejected {listings.filter((l: HostListing) => l.status === "rejected").length}
-              </Button>
-            </div>
+        {/* Host Applications Tab */}
+        <TabsContent value="listings" className="space-y-6">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant={filter === "all" ? "default" : "outline"}
+              onClick={() => setFilter("all")}
+            >
+              All
+            </Button>
+            <Button
+              variant={filter === "pending" ? "default" : "outline"}
+              onClick={() => setFilter("pending")}
+            >
+              Pending {pendingCount}
+            </Button>
+            <Button
+              variant={filter === "approved" ? "default" : "outline"}
+              onClick={() => setFilter("approved")}
+            >
+              Approved {approvedCount}
+            </Button>
+            <Button
+              variant={filter === "rejected" ? "default" : "outline"}
+              onClick={() => setFilter("rejected")}
+            >
+              Rejected {rejectedCount}
+            </Button>
+          </div>
 
-            <div className="space-y-4">
-              {isLoading ? (
-                <Card>
-                  <CardContent className="pt-6">Loading listings...</CardContent>
-                </Card>
-              ) : filteredListings.length === 0 ? (
-                <Card>
-                  <CardContent className="pt-6">No applications found</CardContent>
-                </Card>
-              ) : (
-                filteredListings.map((listing: HostListing) => (
-                  <Card key={listing.id} className="border-0 shadow-lg">
-                    <CardContent className="pt-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-4 mb-4">
-                            {listing.profilePhotoUrl && (
-                              <img
-                                src={listing.profilePhotoUrl}
-                                alt={listing.hostName}
-                                className="w-16 h-16 rounded-full object-cover"
-                              />
-                            )}
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900">{listing.hostName}</h3>
-                              <p className="text-sm text-gray-600">{listing.email}</p>
-                              <p className="text-sm text-gray-600">{listing.district}</p>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <span className="font-semibold">Cuisine:</span> {listing.cuisineStyle}
-                            </div>
-                            <div>
-                              <span className="font-semibold">Price:</span> ¥{listing.pricePerPerson}/person
-                            </div>
-                            <div>
-                              <span className="font-semibold">Max Guests:</span> {listing.maxGuests}
-                            </div>
-                            <div>
-                              <span className="font-semibold">Status:</span>{" "}
-                              <Badge
-                                className={listing.status === "approved" ? "bg-green-100 text-green-800" : listing.status === "rejected" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}
-                              >
-                                {listing.status}
-                              </Badge>
-                            </div>
+          <div className="space-y-4">
+            {isLoading ? (
+              <p className="text-center py-8 text-gray-600">Loading listings...</p>
+            ) : filteredListings.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center text-gray-600">
+                  No applications found
+                </CardContent>
+              </Card>
+            ) : (
+              filteredListings.map((listing: any) => (
+                <Card key={listing.id} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-4">
+                          {listing.profilePhotoUrl && (
+                            <img
+                              src={listing.profilePhotoUrl}
+                              alt={listing.hostName}
+                              className="w-12 h-12 rounded-full object-cover"
+                            />
+                          )}
+                          <div>
+                            <h3 className="font-semibold text-lg">{listing.hostName}</h3>
+                            <p className="text-sm text-gray-600">{listing.email}</p>
+                            <p className="text-sm text-gray-600">{listing.district}</p>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setExpandedId(expandedId === listing.id ? null : listing.id);
-                            }}
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEdit(listing)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
+
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className="text-sm text-gray-600">Cuisine</p>
+                            <p className="font-medium">{listing.cuisineStyle}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Price</p>
+                            <p className="font-medium">¥{listing.pricePerPerson}/person</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Max Guests</p>
+                            <p className="font-medium">{listing.maxGuests}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Status</p>
+                            <span
+                              className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                                listing.status === "approved"
+                                  ? "bg-green-100 text-green-800"
+                                  : listing.status === "rejected"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {listing.status}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
-                      {expandedId === listing.id && (
-                        <div className="mt-6 pt-6 border-t space-y-4">
+                      <button
+                        onClick={() =>
+                          setExpandedId(expandedId === listing.id ? null : listing.id)
+                        }
+                        className="p-2 hover:bg-gray-100 rounded-lg transition"
+                      >
+                        <ChevronDown
+                          className={`w-5 h-5 transition-transform ${
+                            expandedId === listing.id ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Expanded View */}
+                    {expandedId === listing.id && (
+                      <div className="mt-6 pt-6 border-t space-y-6">
+                        {/* Host Bio */}
+                        {listing.bio && (
                           <div>
-                            <h4 className="font-semibold mb-2">Menu Description</h4>
-                            <p className="text-sm text-gray-700">{listing.menuDescription}</p>
+                            <h4 className="font-semibold mb-2">About the Host</h4>
+                            <p className="text-sm text-gray-700">{listing.bio}</p>
                           </div>
-                          {listing.dietaryNote && (
-                            <div>
-                              <h4 className="font-semibold mb-2">Dietary Notes</h4>
-                              <p className="text-sm text-gray-700">{listing.dietaryNote}</p>
+                        )}
+
+                        {/* Availability */}
+                        {listing.availability && Object.keys(listing.availability).length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-2">Availability</h4>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              {Object.entries(listing.availability).map(([day, meals]: [string, any]) => (
+                                <div key={day} className="text-gray-700">
+                                  <span className="capitalize font-medium">{day}:</span> {Array.isArray(meals) ? meals.join(", ") : meals}
+                                </div>
+                              ))}
                             </div>
-                          )}
-                          {listing.otherNotes && (
-                            <div>
-                              <h4 className="font-semibold mb-2">Other Notes</h4>
-                              <p className="text-sm text-gray-700">{listing.otherNotes}</p>
-                            </div>
-                          )}
-                          <div className="flex gap-2 pt-4">
-                            {listing.status !== "approved" && (
-                              <Button
-                                size="sm"
-                                className="bg-green-600 hover:bg-green-700"
-                                onClick={() => handleApprove(listing)}
-                              >
-                                <Check className="w-4 h-4 mr-2" />
-                                Approve
-                              </Button>
-                            )}
-                            {listing.status !== "rejected" && (
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleReject(listing)}
-                              >
-                                <X className="w-4 h-4 mr-2" />
-                                Reject
-                              </Button>
-                            )}
                           </div>
+                        )}
+
+                        {/* Menu Description */}
+                        <div>
+                          <h4 className="font-semibold mb-2">Menu Description</h4>
+                          <p className="text-sm text-gray-700 whitespace-pre-wrap">{listing.menuDescription}</p>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </TabsContent>
 
-          {/* Messages Tab */}
-          <TabsContent value="messages" className="space-y-6">
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>Host Messages</CardTitle>
-              </CardHeader>
-              <CardContent>
+                        {/* Dietary Notes */}
+                        {listing.dietaryNote && (
+                          <div>
+                            <h4 className="font-semibold mb-2">Dietary Accommodations</h4>
+                            <p className="text-sm text-gray-700">{listing.dietaryNote}</p>
+                          </div>
+                        )}
+
+                        {/* Activities */}
+                        {listing.activities && listing.activities.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-2">Activities</h4>
+                            <p className="text-sm text-gray-700">{listing.activities.join(", ")}</p>
+                          </div>
+                        )}
+
+                        {/* Other Notes */}
+                        {listing.otherNotes && (
+                          <div>
+                            <h4 className="font-semibold mb-2">Other Notes</h4>
+                            <p className="text-sm text-gray-700">{listing.otherNotes}</p>
+                          </div>
+                        )}
+
+                        {/* Food Photos */}
+                        {listing.foodPhotoUrls && listing.foodPhotoUrls.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-2">Food Photos</h4>
+                            <div className="grid grid-cols-3 gap-2">
+                              {listing.foodPhotoUrls.map((url: string, idx: number) => (
+                                <img key={idx} src={url} alt={`Food ${idx + 1}`} className="w-full h-24 object-cover rounded" />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-4 border-t">
+                          {listing.status !== "approved" && (
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700"
+                              onClick={() => handleApprove(listing)}
+                            >
+                              <Check className="w-4 h-4 mr-2" />
+                              Approve
+                            </Button>
+                          )}
+                          {listing.status === "approved" && (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleReject(listing)}
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Reject
+                            </Button>
+                          )}
+                          {listing.status === "rejected" && (
+                            <Button
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700"
+                              onClick={() => handleApprove(listing)}
+                            >
+                              <Check className="w-4 h-4 mr-2" />
+                              Approve
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Messages Tab */}
+        <TabsContent value="messages" className="space-y-6">
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle>Host Messages</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-gray-600">
+                <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <p>Messages feature coming soon</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Bookings Tab */}
+        <TabsContent value="bookings" className="space-y-6">
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle>All Bookings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {bookings.length === 0 ? (
                 <div className="text-center py-8 text-gray-600">
-                  <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p>Messages feature coming soon</p>
+                  <p>No bookings found</p>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Bookings Tab */}
-          <TabsContent value="bookings" className="space-y-6">
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>All Bookings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {bookingsLoading ? (
-                  <div className="text-center py-8 text-gray-600">Loading bookings...</div>
-                ) : bookings.length === 0 ? (
-                  <div className="text-center py-8 text-gray-600">No bookings found</div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-4 font-semibold">Guest Name</th>
-                          <th className="text-left py-3 px-4 font-semibold">Email</th>
-                          <th className="text-left py-3 px-4 font-semibold">Host</th>
-                          <th className="text-left py-3 px-4 font-semibold">Date</th>
-                          <th className="text-left py-3 px-4 font-semibold">Meal Type</th>
-                          <th className="text-left py-3 px-4 font-semibold">Guests</th>
-                          <th className="text-left py-3 px-4 font-semibold">Status</th>
-                          <th className="text-left py-3 px-4 font-semibold">Created</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(bookings as Booking[]).map((booking) => (
-                          <tr key={booking.id} className="border-b hover:bg-gray-50">
-                            <td className="py-3 px-4">{booking.guestName}</td>
-                            <td className="py-3 px-4 text-gray-600">{booking.guestEmail}</td>
-                            <td className="py-3 px-4">{booking.hostName || "Unknown"}</td>
-                            <td className="py-3 px-4">{formatDate(booking.requestedDate)}</td>
-                            <td className="py-3 px-4 capitalize">{booking.mealType}</td>
-                            <td className="py-3 px-4">{booking.numberOfGuests}</td>
-                            <td className="py-3 px-4">
-                              <Badge className={getStatusBadgeColor(booking.status)}>
-                                {booking.status}
-                              </Badge>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600">{formatDate(booking.createdAt)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Details Modal */}
-      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedListing?.status === "pending"
-                ? "Review Application"
-                : selectedListing?.status === "approved"
-                ? "Edit Approved Host"
-                : "Edit Rejected Host"}
-            </DialogTitle>
-          </DialogHeader>
-
-          {selectedListing && (
-            <div className="space-y-4">
-              {selectedListing.status === "pending" ? (
-                <>
-                  <div>
-                    <Label>Admin Notes (Optional)</Label>
-                    <Textarea
-                      value={adminNotes}
-                      onChange={(e) => setAdminNotes(e.target.value)}
-                      placeholder="Add notes about this application..."
-                      className="mt-2"
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowDetailsModal(false)}>
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => confirmAction("rejected")}
-                      disabled={updateStatusMutation.isPending}
-                    >
-                      Reject
-                    </Button>
-                    <Button
-                      className="bg-green-600 hover:bg-green-700"
-                      onClick={() => confirmAction("approved")}
-                      disabled={updateStatusMutation.isPending}
-                    >
-                      Approve
-                    </Button>
-                  </DialogFooter>
-                </>
               ) : (
-                <>
-                  <AdminHostEditForm
-                    listing={selectedListing}
-                    onClose={() => {
-                      setShowDetailsModal(false);
-                      refetch();
-                    }}
-                  />
-                </>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 px-4">Guest Name</th>
+                        <th className="text-left py-2 px-4">Email</th>
+                        <th className="text-left py-2 px-4">Host</th>
+                        <th className="text-left py-2 px-4">Date</th>
+                        <th className="text-left py-2 px-4">Meal Type</th>
+                        <th className="text-left py-2 px-4">Guests</th>
+                        <th className="text-left py-2 px-4">Status</th>
+                        <th className="text-left py-2 px-4">Created</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bookings.map((booking: any) => (
+                        <tr key={booking.id} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-4">{booking.guestName}</td>
+                          <td className="py-2 px-4">{booking.guestEmail}</td>
+                          <td className="py-2 px-4">{booking.hostName || "N/A"}</td>
+                          <td className="py-2 px-4">{new Date(booking.requestedDate).toLocaleDateString()}</td>
+                          <td className="py-2 px-4 capitalize">{booking.mealType}</td>
+                          <td className="py-2 px-4">{booking.numberOfGuests}</td>
+                          <td className="py-2 px-4">
+                            <span
+                              className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                                booking.status === "confirmed"
+                                  ? "bg-green-100 text-green-800"
+                                  : booking.status === "rejected"
+                                    ? "bg-red-100 text-red-800"
+                                    : booking.status === "cancelled"
+                                      ? "bg-gray-100 text-gray-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                              }`}
+                            >
+                              {booking.status}
+                            </span>
+                          </td>
+                          <td className="py-2 px-4">{new Date(booking.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Modal */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Host Profile</DialogTitle>
-          </DialogHeader>
-          {selectedListing && (
-            <AdminHostEditForm
-              listing={selectedListing}
-              onClose={() => {
-                setShowEditModal(false);
-                refetch();
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

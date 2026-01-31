@@ -256,7 +256,9 @@
 - [x] Filter buttons work (All, Pending, Approved, Rejected) - FIXED: changed default filter from pending to all
 - [x] Listings show correct status counts (Pending: 0, Approved: 2, Rejected: 3)
 - [x] Each listing card displays host info, cuisine, price, status
-- [x] Expanded listing view shows full menu description and action buttons
+- [x] Expanded listing view shows FULL listing details (bio, availability, menu, dietary, activities, photos)
+- [x] Action buttons are context-aware (Reject for approved, Approve for rejected/pending)
+- [x] Food photos displayed in grid format
 - [x] Bookings tab UI created and functional
 - [x] Bookings tab shows No bookings found (table pending)
 - [x] Fixed booking router structure (moved listAll inside router)
