@@ -105,14 +105,17 @@ async function startServer(): Promise<any> {
 
       // Extract the file key from the CloudFront URL
       // Format: https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/path/to/file.jpg
+      // We need to extract everything after the project ID
       const urlParts = imageUrl.split("/");
-      const keyStartIndex = urlParts.findIndex(part => part === "mkW6ExSEHJcqGWsa6M4fqn");
-      if (keyStartIndex === -1 || keyStartIndex >= urlParts.length - 1) {
+      const projectIdIndex = urlParts.findIndex(part => part.startsWith("mk") && part.length > 20);
+      if (projectIdIndex === -1 || projectIdIndex >= urlParts.length - 1) {
+        console.error(`[Image Proxy] Invalid URL format: ${imageUrl}`);
         return res.status(400).json({ error: "Invalid image URL format" });
       }
       
-      const fileKey = urlParts.slice(keyStartIndex + 1).join("/");
-      console.log(`[Image Proxy] Fetching signed URL for key: ${fileKey}`);
+      // File key is everything after the project ID
+      const fileKey = urlParts.slice(projectIdIndex + 1).join("/");
+      console.log(`[Image Proxy] Extracted file key: ${fileKey} from URL: ${imageUrl}`);
 
       // Get signed download URL from storage API
       const downloadApiUrl = new URL("v1/storage/downloadUrl", ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`);
@@ -129,10 +132,25 @@ async function startServer(): Promise<any> {
       }
 
       const { url: signedUrl } = await response.json();
-      console.log(`[Image Proxy] Redirecting to signed URL`);
+      console.log(`[Image Proxy] Got signed URL, fetching image bytes`);
       
-      // Redirect to the signed URL
-      return res.redirect(signedUrl);
+      // Fetch the actual image from the signed URL
+      const imageResponse = await fetch(signedUrl);
+      if (!imageResponse.ok) {
+        console.error(`[Image Proxy] Failed to fetch image: ${imageResponse.status} ${imageResponse.statusText}`);
+        return res.status(imageResponse.status).json({ error: "Failed to fetch image" });
+      }
+      
+      // Get the image buffer
+      const imageBuffer = await imageResponse.arrayBuffer();
+      const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
+      
+      console.log(`[Image Proxy] Serving image (${imageBuffer.byteLength} bytes, ${contentType})`);
+      
+      // Set appropriate headers and send the image
+      res.set("Content-Type", contentType);
+      res.set("Cache-Control", "public, max-age=3600");
+      return res.send(Buffer.from(imageBuffer));
     } catch (error: any) {
       console.error("[Image Proxy] Error:", error);
       return res.status(500).json({ error: error?.message || "Image proxy failed" });
