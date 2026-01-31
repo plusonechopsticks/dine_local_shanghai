@@ -101,6 +101,9 @@ export default function AdminDashboard() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
+                      {host.title && (
+                        <p className="text-sm font-semibold text-primary mb-1">{host.title}</p>
+                      )}
                       <CardTitle className="text-xl">{host.hostName}</CardTitle>
                       <CardDescription>{host.email}</CardDescription>
                     </div>

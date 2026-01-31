@@ -320,3 +320,11 @@
   - Status badge updates immediately without page refresh
   - Buttons change dynamically based on new status
   - Both Approve and Reject buttons working with instant feedback
+
+
+## Current Bug - Missing Title Display - FIXED ✅
+- [x] Title field now displaying on guest-facing host details page
+  - Shows as large prominent heading above host name
+- [x] Title field now displaying on admin dashboard
+  - Shows in burgundy text above host name on each card
+- [x] Title is being collected in host registration form and now shown everywhere
