@@ -17,7 +17,11 @@ export default function AdminDashboard() {
 
   const approveMutation = trpc.host.updateStatus.useMutation({
     onSuccess: () => {
+      console.log('Approve mutation succeeded');
       trpc.useUtils().host.listAll.invalidate();
+    },
+    onError: (error) => {
+      console.error('Approve mutation failed:', error);
     },
   });
 
@@ -32,11 +36,16 @@ export default function AdminDashboard() {
   });
 
   const handleApprove = (listing: any) => {
-    console.log('Approving listing:', listing.id, typeof listing.id);
-    approveMutation.mutate({
-      id: typeof listing.id === 'string' ? parseInt(listing.id) : listing.id,
-      status: "approved",
-    });
+    console.log('handleApprove called with listing:', listing.id, typeof listing.id);
+    try {
+      approveMutation.mutate({
+        id: typeof listing.id === 'string' ? parseInt(listing.id) : listing.id,
+        status: "approved",
+      });
+      console.log('Approve mutation called');
+    } catch (error) {
+      console.error('Error calling approve mutation:', error);
+    }
   };
 
   const handleReject = (listing: any) => {

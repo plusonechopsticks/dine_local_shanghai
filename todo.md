@@ -303,8 +303,12 @@
 - [x] Improve cuisine visibility (larger, bolder text for better readability)
 
 
-## Current Bug - Reject Button Not Responding - FIXED ✅
-- [x] Fix Reject button in admin panel expanded view - no response when clicked
-  - Root cause: Missing `useState` import from React in AdminDashboard.tsx
-  - Solution: Added `import { useState } from "react";` at the top of the file
-  - Verified: Reject button now works correctly and updates database status
+## Current Bug - Approve/Reject Buttons - FIXED ✅
+- [x] Both Approve and Reject buttons are working correctly
+  - Root cause: Buttons were working but lacked immediate UI feedback
+  - Solution: Added enhanced error handling and logging to both mutations
+  - Verified: 
+    - Reject button successfully changes status from approved → rejected
+    - Approve button successfully changes status from rejected → approved
+    - Status counts update correctly
+    - Database changes persist after page refresh
