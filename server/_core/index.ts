@@ -79,13 +79,10 @@ async function startServer(): Promise<any> {
 
       console.log(`[Upload] Received file: ${filename}, size: ${buffer.length} bytes`);
 
-      // Generate unique file key
-      const ext = filename.split(".").pop() || "jpg";
-      const uniqueKey = `host-images/${nanoid()}.${ext}`;
-
-      // Upload to S3
-      console.log(`[Upload] Uploading to storage: ${uniqueKey}`);
-      const { url } = await storagePut(uniqueKey, buffer, mimetype);
+      // Upload to Cloudinary
+      console.log(`[Upload] Uploading to Cloudinary...`);
+      const { uploadToCloudinary } = await import("../cloudinary");
+      const url = await uploadToCloudinary(buffer, "host-images");
 
       console.log(`[Upload] Upload successful: ${url}`);
       return res.json({ url });
@@ -95,67 +92,7 @@ async function startServer(): Promise<any> {
     }
   });
 
-  // Image proxy endpoint - converts CloudFront URLs to signed download URLs
-  app.get("/api/image-proxy", async (req: any, res: any) => {
-    try {
-      const imageUrl = req.query.url as string;
-      if (!imageUrl) {
-        return res.status(400).json({ error: "Missing url parameter" });
-      }
-
-      // Extract the file key from the CloudFront URL
-      // Format: https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/path/to/file.jpg
-      // We need to extract everything after the project ID
-      const urlParts = imageUrl.split("/");
-      const projectIdIndex = urlParts.findIndex(part => part.startsWith("mk") && part.length > 20);
-      if (projectIdIndex === -1 || projectIdIndex >= urlParts.length - 1) {
-        console.error(`[Image Proxy] Invalid URL format: ${imageUrl}`);
-        return res.status(400).json({ error: "Invalid image URL format" });
-      }
-      
-      // File key is everything after the project ID
-      const fileKey = urlParts.slice(projectIdIndex + 1).join("/");
-      console.log(`[Image Proxy] Extracted file key: ${fileKey} from URL: ${imageUrl}`);
-
-      // Get signed download URL from storage API
-      const downloadApiUrl = new URL("v1/storage/downloadUrl", ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`);
-      downloadApiUrl.searchParams.set("path", fileKey);
-      
-      const response = await fetch(downloadApiUrl, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${ENV.forgeApiKey}` },
-      });
-
-      if (!response.ok) {
-        console.error(`[Image Proxy] Failed to get download URL: ${response.status} ${response.statusText}`);
-        return res.status(response.status).json({ error: "Failed to get download URL" });
-      }
-
-      const { url: signedUrl } = await response.json();
-      console.log(`[Image Proxy] Got signed URL, fetching image bytes`);
-      
-      // Fetch the actual image from the signed URL
-      const imageResponse = await fetch(signedUrl);
-      if (!imageResponse.ok) {
-        console.error(`[Image Proxy] Failed to fetch image: ${imageResponse.status} ${imageResponse.statusText}`);
-        return res.status(imageResponse.status).json({ error: "Failed to fetch image" });
-      }
-      
-      // Get the image buffer
-      const imageBuffer = await imageResponse.arrayBuffer();
-      const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
-      
-      console.log(`[Image Proxy] Serving image (${imageBuffer.byteLength} bytes, ${contentType})`);
-      
-      // Set appropriate headers and send the image
-      res.set("Content-Type", contentType);
-      res.set("Cache-Control", "public, max-age=3600");
-      return res.send(Buffer.from(imageBuffer));
-    } catch (error: any) {
-      console.error("[Image Proxy] Error:", error);
-      return res.status(500).json({ error: error?.message || "Image proxy failed" });
-    }
-  });
+  // Image proxy endpoint removed - Cloudinary URLs are publicly accessible
 
   // tRPC API
   app.use(

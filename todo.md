@@ -421,3 +421,11 @@
 ## SEO Improvements
 - [x] Add meta description (50-160 characters) to homepage
 - [x] Add meta keywords for better search visibility
+
+## External Image Hosting (Cloudinary)
+- [x] Install Cloudinary SDK
+- [x] Request Cloudinary API credentials from user
+- [x] Update upload endpoint to use Cloudinary
+- [x] Remove image proxy code (no longer needed)
+- [x] Update frontend to use direct Cloudinary URLs
+- [x] Test image upload and display
