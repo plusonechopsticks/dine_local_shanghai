@@ -187,12 +187,12 @@ export default function AdminDashboard() {
                           Edit
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
+                      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
                         <DialogHeader>
                           <DialogTitle>Edit Host Application</DialogTitle>
                           <DialogDescription>Update host details</DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4">
+                        <div className="space-y-4 overflow-y-auto flex-1 pr-4">
                           <div>
                             <Label htmlFor="hostName">Name</Label>
                             <Input

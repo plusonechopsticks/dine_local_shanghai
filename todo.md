@@ -328,3 +328,11 @@
 - [x] Title field now displaying on admin dashboard
   - Shows in burgundy text above host name on each card
 - [x] Title is being collected in host registration form and now shown everywhere
+
+
+## Current Bug - Frozen Edit Dialog - FIXED ✅
+- [x] Edit dialog in admin dashboard freezes when opened
+  - [x] Cannot scroll up or down in the dialog - FIXED
+  - [x] Cannot make edits to form fields - FIXED
+  - [x] Dialog content is too large and not scrollable - FIXED
+  - Solution: Added max-h-[90vh], flex layout, and overflow-y-auto to DialogContent
