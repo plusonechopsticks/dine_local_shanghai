@@ -361,3 +361,10 @@
   - Form submission now works correctly
   - Changes save to database successfully
   - UI updates immediately after save
+
+## Current Bug - Database Not Updating - FIXED ✅
+- [x] Admin dashboard Save Changes now persists to database correctly
+  - Root cause: Missing fields in tRPC input schema
+  - Solution: Added all editable fields (title, wechatOrPhone, languages, fullAddress, mealDurationMinutes, kidsFriendly, hasPets, petDetails, householdFeatures, otherHouseholdInfo) to updateListing input schema
+  - Tested successfully: Title field update persists to database
+  - Changes now save and display correctly on host listing pages
