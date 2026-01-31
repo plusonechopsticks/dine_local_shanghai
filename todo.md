@@ -312,3 +312,11 @@
     - Approve button successfully changes status from rejected → approved
     - Status counts update correctly
     - Database changes persist after page refresh
+
+
+## Immediate UI Updates - Completed ✅
+- [x] Add immediate status updates when approve/reject buttons clicked
+  - Implemented using trpc.useUtils().invalidate() for instant refetch
+  - Status badge updates immediately without page refresh
+  - Buttons change dynamically based on new status
+  - Both Approve and Reject buttons working with instant feedback
