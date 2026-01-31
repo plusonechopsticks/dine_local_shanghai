@@ -429,3 +429,10 @@
 - [x] Remove image proxy code (no longer needed)
 - [x] Update frontend to use direct Cloudinary URLs
 - [x] Test image upload and display
+
+## Image Migration to Cloudinary
+- [x] Upload Grace Tong dumpling class images (3 photos)
+- [x] Update Grace Tong dumpling listing in database
+- [x] Upload remaining host images (Norika & Steven, Grace Tong fusion, Shanghai Ayi)
+- [x] Update all profile photos (Grace Tong, Norika & Steven, Shanghai Ayi)
+- [x] Verify all images display correctly on Find Hosts page
