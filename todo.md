@@ -244,3 +244,8 @@
 ## Current Bugs - Fixed ✅
 - [x] Fix Norika and Steven's missing first photo in listing
 - [x] Remove duplicate +1 Chopsticks header from host detail page
+
+
+## Messaging Features - Completed ✅
+- [x] Verify host messaging functionality for viewing guest messages (available in Host Dashboard)
+- [x] Add messages view to admin panel for managing all host messages (Messages tab added to Admin Dashboard)
