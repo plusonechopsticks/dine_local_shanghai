@@ -291,3 +291,13 @@
 - [x] Fix Approve/Reject buttons not responding in admin panel expanded view
 - [x] Fix duplicate Approve button showing for rejected listings
 - [x] Verify approve/reject functionality updates database and UI correctly
+
+
+## Bidirectional Status Changes - Completed ✅
+- [x] Add Reject button for approved listings
+- [x] Allow admins to change status in any direction (approved ↔ rejected ↔ pending)
+- [x] Test all status change combinations
+
+## UI Fixes - Completed ✅
+- [x] Restore missing title in host application cards (now displays in blue box)
+- [x] Improve cuisine visibility (larger, bolder text for better readability)
