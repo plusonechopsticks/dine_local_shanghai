@@ -349,3 +349,15 @@
   - Organized into logical sections (Profile, Dining, Household, Activities)
   - Missing fields show as "-" for old listings
   - Changes sync immediately
+
+
+## Current Bug - Save Changes Not Working - FIXED ✅
+- [x] Admin edit dialog save changes button now works!
+  - Root cause: Wrong tRPC procedure name (updateHost vs updateListing)
+  - Root cause: Wrong mutation payload structure (nested data object)
+  - Solution: Changed to trpc.host.updateListing.useMutation()
+  - Solution: Flattened payload from { id, data: {...} } to { id, ...data }
+  - Rewritten with simple form-based approach (no Radix Dialog)
+  - Form submission now works correctly
+  - Changes save to database successfully
+  - UI updates immediately after save
