@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS bookings (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  hostListingId INT NOT NULL,\n  guestName VARCHAR(255) NOT NULL,\n  guestEmail VARCHAR(320) NOT NULL,\n  guestPhone VARCHAR(20),\n  requestedDate DATE NOT NULL,\n  mealType ENUM('lunch', 'dinner') NOT NULL,\n  numberOfGuests INT NOT NULL DEFAULT 1,\n  specialRequests TEXT,\n  bookingStatus ENUM('pending', 'confirmed', 'cancelled', 'rejected') NOT NULL DEFAULT 'pending',\n  hostNotes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (hostListingId) REFERENCES host_listings(id)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute CREATE TABLE IF NOT EXISTS bookings (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  hostListingId INT NOT NULL,\n  guestName VARCHAR(255) NOT NULL,\n  guestEmail VARCHAR(320) NOT NULL,\n  guestPhone VARCHAR(20),\n  requestedDate DATE NOT NULL,\n  mealType ENUM('lunch', 'dinner') NOT NULL,\n  numberOfGuests INT NOT NULL DEFAULT 1,\n  specialRequests TEXT,\n  bookingStatus ENUM('pending', 'confirmed', 'cancelled', 'rejected') NOT NULL DEFAULT 'pending',\n  hostNotes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  FOREIGN KEY (hostListingId) REFERENCES host_listings(id)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 583
+}

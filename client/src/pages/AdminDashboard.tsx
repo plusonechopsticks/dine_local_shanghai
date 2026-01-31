@@ -59,7 +59,7 @@ export default function AdminDashboard() {
   const [selectedListing, setSelectedListing] = useState<HostListing | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("pending");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [activeTab, setActiveTab] = useState<"listings" | "messages" | "bookings">("listings");

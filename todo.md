@@ -253,13 +253,17 @@
 
 ## Admin Panel - Fully Functional ✅
 - [x] Admin panel displays all 5 host listings correctly
-- [x] Filter buttons work (All, Pending, Approved, Rejected)
+- [x] Filter buttons work (All, Pending, Approved, Rejected) - FIXED: changed default filter from pending to all
 - [x] Listings show correct status counts (Pending: 0, Approved: 2, Rejected: 3)
 - [x] Each listing card displays host info, cuisine, price, status
+- [x] Expanded listing view shows full menu description and action buttons
 - [x] Bookings tab UI created and functional
-- [x] Bookings tab shows "No bookings found" (table pending)
+- [x] Bookings tab shows No bookings found (table pending)
 - [x] Fixed booking router structure (moved listAll inside router)
 - [x] tRPC booking.listAll procedure working
+- [x] Fixed booking.create to save bookings to database (was only sending notifications)
+- [x] Created bookings table in database
+- [x] All filter buttons working correctly on each status
 
 ## Admin Booking Management - Completed ✅
 - [x] Add Bookings tab UI to admin panel with table structure

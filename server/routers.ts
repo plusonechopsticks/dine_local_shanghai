@@ -17,6 +17,8 @@ import {
   getAllBookings
 } from "./db";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
+import { getDb } from "./db";
+import { bookings } from "../drizzle/schema";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
@@ -37,6 +39,23 @@ export const appRouter = router({
         specialRequests: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
+        // Insert booking into database
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        await db.insert(bookings).values({
+          hostListingId: input.hostListingId,
+          guestName: input.guestName,
+          guestEmail: input.guestEmail,
+          guestPhone: input.guestPhone || null,
+          requestedDate: new Date(input.requestedDate),
+          mealType: input.mealType,
+          numberOfGuests: input.numberOfGuests,
+          specialRequests: input.specialRequests || null,
+          status: "pending",
+        });
+
+        // Send notification to owner
         await notifyOwner({
           title: `New Booking Request from ${input.guestName}`,
           content: `Guest: ${input.guestName}\nEmail: ${input.guestEmail}\nDate: ${input.requestedDate}\nMeal: ${input.mealType}\nGuests: ${input.numberOfGuests}\nSpecial Requests: ${input.specialRequests || "None"}`,
