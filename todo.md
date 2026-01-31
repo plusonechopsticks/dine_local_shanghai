@@ -436,3 +436,9 @@
 - [x] Upload remaining host images (Norika & Steven, Grace Tong fusion, Shanghai Ayi)
 - [x] Update all profile photos (Grace Tong, Norika & Steven, Shanghai Ayi)
 - [x] Verify all images display correctly on Find Hosts page
+
+## Current Bug - Booking Date Not Recorded - FIXED ✅
+- [x] Guest can select date from calendar in booking flow
+- [x] Selected date is being saved to database correctly
+- [x] Admin dashboard now shows formatted dates for all bookings
+- [x] Fixed: Changed booking.bookingDate to booking.requestedDate in AdminDashboard.tsx

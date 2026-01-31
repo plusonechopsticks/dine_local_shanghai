@@ -496,7 +496,7 @@ export default function AdminDashboard() {
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div><span className="font-medium">Host:</span> {booking.hostName || 'Unknown'}</div>
-                      <div><span className="font-medium">Date:</span> {booking.bookingDate}</div>
+                      <div><span className="font-medium">Date:</span> {booking.requestedDate ? new Date(booking.requestedDate).toLocaleDateString() : 'Not specified'}</div>
                       <div><span className="font-medium">Meal:</span> {booking.mealType}</div>
                       <div><span className="font-medium">Guests:</span> {booking.numberOfGuests}</div>
                       <div><span className="font-medium">Status:</span> {booking.status}</div>
