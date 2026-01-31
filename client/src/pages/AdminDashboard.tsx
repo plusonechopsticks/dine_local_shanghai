@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getProxiedImageUrl } from "@/lib/imageUtils";
 
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
@@ -196,7 +197,7 @@ export default function AdminDashboard() {
                       <Label htmlFor="profilePhotoUrl">Profile Photo URL</Label>
                       <Input id="profilePhotoUrl" name="profilePhotoUrl" defaultValue={editingHost.profilePhotoUrl || ''} />
                       {editingHost.profilePhotoUrl && (
-                        <img src={editingHost.profilePhotoUrl} alt="Profile" className="mt-2 h-32 w-32 object-cover rounded" />
+                        <img src={getProxiedImageUrl(editingHost.profilePhotoUrl)} alt="Profile" className="mt-2 h-32 w-32 object-cover rounded" />
                       )}
                     </div>
                   </div>
@@ -258,7 +259,7 @@ export default function AdminDashboard() {
                       {editingHost.foodPhotoUrls && editingHost.foodPhotoUrls.length > 0 && (
                         <div className="mt-2 grid grid-cols-3 gap-2">
                           {editingHost.foodPhotoUrls.map((url, idx) => (
-                            <img key={idx} src={url} alt={`Food ${idx + 1}`} className="h-24 w-full object-cover rounded" />
+                            <img key={idx} src={getProxiedImageUrl(url)} alt={`Food ${idx + 1}`} className="h-24 w-full object-cover rounded" />
                           ))}
                         </div>
                       )}
@@ -413,7 +414,7 @@ export default function AdminDashboard() {
                           {host.profilePhotoUrl && (
                             <div className="col-span-2">
                               <span className="font-medium">Profile Photo:</span>
-                              <img src={host.profilePhotoUrl} alt="Profile" className="mt-2 h-32 w-32 object-cover rounded" />
+                              <img src={getProxiedImageUrl(host.profilePhotoUrl)} alt="Profile" className="mt-2 h-32 w-32 object-cover rounded" />
                             </div>
                           )}
                         </div>
@@ -437,7 +438,7 @@ export default function AdminDashboard() {
                               <span className="font-medium">Food Photos:</span>
                               <div className="mt-2 grid grid-cols-3 gap-2">
                                 {host.foodPhotoUrls.map((url, idx) => (
-                                  <img key={idx} src={url} alt={`Food ${idx + 1}`} className="h-24 w-full object-cover rounded" />
+                                  <img key={idx} src={getProxiedImageUrl(url)} alt={`Food ${idx + 1}`} className="h-24 w-full object-cover rounded" />
                                 ))}
                               </div>
                             </div>

@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, hostName, profilePhotoUrl, foodPhotoUrls FROM host_listings WHERE hostName = 'Ayi' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, profilePhotoUrl, foodPhotoUrls FROM host_listings WHERE hostName = 'Ayi' LIMIT 1;",
+  "rows": [
+    {
+      "id": "150001",
+      "hostName": "Ayi ",
+      "profilePhotoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/-kALhpjgVN8P4xncf4egB.jpg",
+      "foodPhotoUrls": "[\"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/-T1G0Flys__KJLl7oAUD6.jpg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/vaQDaJB18DWr1QLdgx0pF.jpg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/0po28NuyfLG18ecFDbsQ6.jpg\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tprofilePhotoUrl\tfoodPhotoUrls\n150001\tAyi \thttps://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/-kALhpjgVN8P4xncf4egB.jpg\t[\"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/-T1G0Flys__KJLl7oAUD6.jpg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/vaQDaJB18DWr1QLdgx0pF.jpg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/0po28NuyfLG18ecFDbsQ6.jpg\"]\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

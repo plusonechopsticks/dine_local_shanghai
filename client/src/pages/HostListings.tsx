@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
+import { getProxiedImageUrl } from "@/lib/imageUtils";
 import {
   MapPin,
   Filter,
@@ -243,7 +244,7 @@ function HostCard({ host }: { host: any }) {
   const images = [
     ...(foodPhotos || []),
     host.profilePhotoUrl,
-  ].filter(Boolean);
+  ].filter(Boolean).map(url => getProxiedImageUrl(url));
 
   const nextImage = (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -323,7 +324,7 @@ function HostCard({ host }: { host: any }) {
                 <div className="flex items-end gap-3 flex-1 min-w-0">
                   {host.profilePhotoUrl && (
                     <img
-                      src={host.profilePhotoUrl}
+                      src={getProxiedImageUrl(host.profilePhotoUrl)}
                       alt={host.hostName}
                       className="w-12 h-12 rounded-full object-cover border-2 border-white flex-shrink-0"
                     />

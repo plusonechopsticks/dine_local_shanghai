@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { trpc } from "@/lib/trpc";
+import { getProxiedImageUrl } from "@/lib/imageUtils";
 import {
   MapPin,
   Clock,
@@ -119,11 +120,11 @@ export default function HostDetail() {
   const foodPhotos = host.foodPhotoUrls as string[];
   const activities = (host.activities as string[]) || [];
   const availability = host.availability as Record<string, string[]>;
-
+  
   const images = [
     host.profilePhotoUrl,
     ...(foodPhotos || []),
-  ].filter((img): img is string => !!img);
+  ].filter(Boolean).map(url => getProxiedImageUrl(url));
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -350,7 +351,7 @@ export default function HostDetail() {
                   <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
                     {host.profilePhotoUrl ? (
                       <img
-                        src={host.profilePhotoUrl}
+                        src={getProxiedImageUrl(host.profilePhotoUrl)}
                         alt={host.hostName}
                         className="w-full h-full object-cover"
                       />

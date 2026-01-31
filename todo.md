@@ -399,3 +399,21 @@
   * Timestamps: Created, Updated
 - [ ] Photo management: add/delete profile and food photos (Edit form needs photo upload UI)
 - [ ] Status change confirmation (confirm dialog might be blocking - needs testing)
+
+
+## Current Bug - Broken Images on Guest Listings - IN PROGRESS
+- [x] Photos showing as broken image icons (question marks) on Find Hosts page
+- [x] Investigated: CloudFront URLs returning 403 Forbidden
+- [x] Root cause: S3 bucket configured to block public access
+- [ ] Implement proxy endpoint to serve images with authentication (workaround)
+- [ ] Update frontend to use proxy URLs instead of direct CloudFront URLs
+- [ ] Submit support request to Manus for S3 bucket public access configuration
+
+## Image Display Fix - Completed ✅
+- [x] Fix broken image display (403 Forbidden errors on CloudFront URLs)
+  - Root cause: CloudFront URLs not publicly accessible without proper authentication
+  - Solution: Implemented image proxy endpoint at /api/image-proxy/:path
+  - Added getProxiedImageUrl() helper function in client/src/lib/imageUtils.ts
+  - Updated all pages to use proxy: HostListings.tsx, HostDetail.tsx, AdminDashboard.tsx
+  - All images now display correctly on dev server
+  - Verified on: host listings page, host detail page, admin dashboard

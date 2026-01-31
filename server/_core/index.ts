@@ -95,6 +95,50 @@ async function startServer(): Promise<any> {
     }
   });
 
+  // Image proxy endpoint - converts CloudFront URLs to signed download URLs
+  app.get("/api/image-proxy", async (req: any, res: any) => {
+    try {
+      const imageUrl = req.query.url as string;
+      if (!imageUrl) {
+        return res.status(400).json({ error: "Missing url parameter" });
+      }
+
+      // Extract the file key from the CloudFront URL
+      // Format: https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/path/to/file.jpg
+      const urlParts = imageUrl.split("/");
+      const keyStartIndex = urlParts.findIndex(part => part === "mkW6ExSEHJcqGWsa6M4fqn");
+      if (keyStartIndex === -1 || keyStartIndex >= urlParts.length - 1) {
+        return res.status(400).json({ error: "Invalid image URL format" });
+      }
+      
+      const fileKey = urlParts.slice(keyStartIndex + 1).join("/");
+      console.log(`[Image Proxy] Fetching signed URL for key: ${fileKey}`);
+
+      // Get signed download URL from storage API
+      const downloadApiUrl = new URL("v1/storage/downloadUrl", ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`);
+      downloadApiUrl.searchParams.set("path", fileKey);
+      
+      const response = await fetch(downloadApiUrl, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${ENV.forgeApiKey}` },
+      });
+
+      if (!response.ok) {
+        console.error(`[Image Proxy] Failed to get download URL: ${response.status} ${response.statusText}`);
+        return res.status(response.status).json({ error: "Failed to get download URL" });
+      }
+
+      const { url: signedUrl } = await response.json();
+      console.log(`[Image Proxy] Redirecting to signed URL`);
+      
+      // Redirect to the signed URL
+      return res.redirect(signedUrl);
+    } catch (error: any) {
+      console.error("[Image Proxy] Error:", error);
+      return res.status(500).json({ error: error?.message || "Image proxy failed" });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
