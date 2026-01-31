@@ -301,3 +301,10 @@
 ## UI Fixes - Completed ✅
 - [x] Restore missing title in host application cards (now displays in blue box)
 - [x] Improve cuisine visibility (larger, bolder text for better readability)
+
+
+## Current Bug - Reject Button Not Responding - FIXED ✅
+- [x] Fix Reject button in admin panel expanded view - no response when clicked
+  - Root cause: Missing `useState` import from React in AdminDashboard.tsx
+  - Solution: Added `import { useState } from "react";` at the top of the file
+  - Verified: Reject button now works correctly and updates database status

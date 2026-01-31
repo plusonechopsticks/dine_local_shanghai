@@ -23,7 +23,11 @@ export default function AdminDashboard() {
 
   const rejectMutation = trpc.host.updateStatus.useMutation({
     onSuccess: () => {
+      console.log('Reject mutation succeeded');
       trpc.useUtils().host.listAll.invalidate();
+    },
+    onError: (error) => {
+      console.error('Reject mutation failed:', error);
     },
   });
 
@@ -36,11 +40,16 @@ export default function AdminDashboard() {
   };
 
   const handleReject = (listing: any) => {
-    console.log('Rejecting listing:', listing.id, typeof listing.id);
-    rejectMutation.mutate({
-      id: typeof listing.id === 'string' ? parseInt(listing.id) : listing.id,
-      status: "rejected",
-    });
+    console.log('handleReject called with listing:', listing.id, typeof listing.id);
+    try {
+      rejectMutation.mutate({
+        id: typeof listing.id === 'string' ? parseInt(listing.id) : listing.id,
+        status: "rejected",
+      });
+      console.log('Reject mutation called');
+    } catch (error) {
+      console.error('Error calling reject mutation:', error);
+    }
   };
 
   const filteredListings = listings.filter((listing: any) => {
