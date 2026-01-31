@@ -43,10 +43,11 @@ export const appRouter = router({
         });
         return { success: true };
       }),
-  }),
+
     listAll: publicProcedure.query(async () => {
       return await getAllBookings();
     }),
+  }),
   messaging: router({
     // Create or get conversation
     getOrCreateConversation: publicProcedure

@@ -239,17 +239,21 @@ export async function getAllHostListings(status?: "pending" | "approved" | "reje
   }
 
   try {
+    let result: HostListing[];
     if (status) {
-      return await db
+      result = await db
         .select()
         .from(hostListings)
         .where(eq(hostListings.status, status))
         .orderBy(desc(hostListings.createdAt));
+    } else {
+      result = await db
+        .select()
+        .from(hostListings)
+        .orderBy(desc(hostListings.createdAt));
     }
-    return await db
-      .select()
-      .from(hostListings)
-      .orderBy(desc(hostListings.createdAt));
+    console.log(`[Database] getAllHostListings: Found ${result.length} listings`);
+    return result;
   } catch (error) {
     console.error("[Database] Failed to get host listings:", error);
     throw error;

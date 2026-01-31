@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,10 +65,12 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"listings" | "messages" | "bookings">("listings");
 
   // Fetch all host listings
-  const { data: listings = [], isLoading, refetch } = trpc.host.listAll.useQuery();
+  const { data: listings = [], isLoading, refetch, error: listingsError } = trpc.host.listAll.useQuery();
 
   // Fetch all bookings
-  const { data: bookings = [], isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
+  const { data: bookings = [], isLoading: bookingsLoading, error: bookingsError } = trpc.booking.listAll.useQuery();
+
+
 
   // Format date for display
   const formatDate = (date: Date | string) => {
@@ -182,19 +184,19 @@ export default function AdminDashboard() {
                 variant={filter === "pending" ? "default" : "outline"}
                 onClick={() => setFilter("pending")}
               >
-                Pending {filteredListings.filter((l: HostListing) => l.status === "pending").length}
+                Pending {listings.filter((l: HostListing) => l.status === "pending").length}
               </Button>
               <Button
                 variant={filter === "approved" ? "default" : "outline"}
                 onClick={() => setFilter("approved")}
               >
-                Approved {filteredListings.filter((l: HostListing) => l.status === "approved").length}
+                Approved {listings.filter((l: HostListing) => l.status === "approved").length}
               </Button>
               <Button
                 variant={filter === "rejected" ? "default" : "outline"}
                 onClick={() => setFilter("rejected")}
               >
-                Rejected {filteredListings.filter((l: HostListing) => l.status === "rejected").length}
+                Rejected {listings.filter((l: HostListing) => l.status === "rejected").length}
               </Button>
             </div>
 
