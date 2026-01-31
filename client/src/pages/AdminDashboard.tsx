@@ -3,11 +3,14 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronDown, Check, X, MessageSquare } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ChevronDown, Check, X, MessageSquare, Edit } from "lucide-react";
+import { AdminHostEditForm } from "@/components/AdminHostEditForm";
 
 export default function AdminDashboard() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [editingListing, setEditingListing] = useState<any | null>(null);
 
   const { data: listings = [], isLoading } = trpc.host.listAll.useQuery();
   const { data: bookings = [] } = trpc.booking.listAll.useQuery();
@@ -230,7 +233,15 @@ export default function AdminDashboard() {
                         )}
 
                         {/* Action Buttons */}
-                        <div className="flex gap-2 pt-4 border-t">
+                        <div className="flex gap-2 pt-4 border-t flex-wrap">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingListing(listing)}
+                          >
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit
+                          </Button>
                           {listing.status !== "approved" && (
                             <Button
                               size="sm"
@@ -241,7 +252,7 @@ export default function AdminDashboard() {
                               Approve
                             </Button>
                           )}
-                          {listing.status === "approved" && (
+                          {listing.status === "pending" && (
                             <Button
                               size="sm"
                               variant="destructive"
@@ -347,6 +358,25 @@ export default function AdminDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Modal */}
+      <Dialog open={!!editingListing} onOpenChange={(open) => !open && setEditingListing(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Host Listing</DialogTitle>
+          </DialogHeader>
+          {editingListing && (
+            <AdminHostEditForm
+              listing={editingListing}
+              onSave={() => {
+                setEditingListing(null);
+                trpc.useUtils().host.listAll.invalidate();
+              }}
+              onCancel={() => setEditingListing(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
