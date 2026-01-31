@@ -368,3 +368,34 @@
   - Solution: Added all editable fields (title, wechatOrPhone, languages, fullAddress, mealDurationMinutes, kidsFriendly, hasPets, petDetails, householdFeatures, otherHouseholdInfo) to updateListing input schema
   - Tested successfully: Title field update persists to database
   - Changes now save and display correctly on host listing pages
+
+## New Admin Dashboard Features
+- [ ] Add expandable/collapsible host cards to show all host information
+  - Display all fields in organized sections
+  - Collapsed by default to save space
+  - Click to expand and see full details
+- [ ] Add photo management for profile and food photos
+  - Allow admin to delete existing photos
+  - Allow admin to upload new photos
+  - Show photo previews in edit form
+- [ ] Add application status workflow (pending/approved/rejected)
+  - Add status field to database schema
+  - Add approve/reject buttons for each host
+  - Allow admin to switch status between pending/approved/rejected
+  - Filter hosts by status
+
+
+## New Admin Dashboard Features - COMPLETED ✅
+- [x] Display all host info in expandable cards (collapsed by default)
+- [x] Status filter buttons: All, Pending, Approved, Rejected
+- [x] Status badges on each host card
+- [x] Approve/Reject buttons based on current status
+- [x] Expandable cards showing all fields:
+  * Host Profile: WeChat/Phone, Languages, Bio, Profile Photo
+  * Dining Details: Title, District, Address, Cuisine, Price, Guests, Duration, Menu, Dietary Notes
+  * Food Photos: Grid display
+  * Household Info: Kids Friendly, Has Pets, Features
+  * Activities & Notes
+  * Timestamps: Created, Updated
+- [ ] Photo management: add/delete profile and food photos (Edit form needs photo upload UI)
+- [ ] Status change confirmation (confirm dialog might be blocking - needs testing)
