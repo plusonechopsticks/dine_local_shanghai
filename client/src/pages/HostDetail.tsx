@@ -1,5 +1,5 @@
 import { useParams, useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -74,6 +74,16 @@ export default function HostDetail() {
     { id: hostId || 0 },
     { enabled: !!hostId }
   );
+
+  // Track view count
+  const incrementViewMutation = trpc.host.incrementView.useMutation();
+  
+  // Increment view count when page loads
+  useEffect(() => {
+    if (hostId && host) {
+      incrementViewMutation.mutate({ id: hostId });
+    }
+  }, [hostId, host]);
 
   // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({

@@ -18,7 +18,8 @@ import {
 } from "./db";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
-import { bookings } from "../drizzle/schema";
+import { bookings, hostListings } from "../drizzle/schema";
+import { sql, eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
@@ -339,6 +340,21 @@ export const appRouter = router({
           return null;
         }
         return listing;
+      }),
+
+    // Increment view count for a listing
+    incrementView: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { success: false };
+        
+        await db
+          .update(hostListings)
+          .set({ viewCount: sql`viewCount + 1` })
+          .where(eq(hostListings.id, input.id));
+        
+        return { success: true };
       }),
 
     // Update host availability

@@ -96,6 +96,9 @@ export const hostListings = mysqlTable("host_listings", {
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
   adminNotes: text("adminNotes"),
   
+  // Analytics
+  viewCount: int("viewCount").notNull().default(0),
+  
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

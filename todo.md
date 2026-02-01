@@ -442,3 +442,19 @@
 - [x] Selected date is being saved to database correctly
 - [x] Admin dashboard now shows formatted dates for all bookings
 - [x] Fixed: Changed booking.bookingDate to booking.requestedDate in AdminDashboard.tsx
+
+## View Counter Feature
+- [ ] Add viewCount column to host_listings table in schema
+- [ ] Push database migration with pnpm db:push
+- [ ] Create backend procedure to increment view count
+- [ ] Update HostDetail page to track views when listing is opened
+- [ ] Display view count on listing cards and detail page
+- [ ] Test view counter increments correctly
+
+
+## View Counter Feature - COMPLETED ✅
+- [x] Add viewCount column to host_listings schema
+- [x] Create backend procedure to increment view count (trpc.host.incrementView)
+- [x] Display view count on listing cards with eye icon
+- [x] Track views when users visit listing detail page
+- [x] Test view counter increments correctly (verified: 0 → 1)

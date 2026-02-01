@@ -20,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  Eye,
 } from "lucide-react";
 
 const DAYS_OF_WEEK = [
@@ -305,6 +306,14 @@ function HostCard({ host }: { host: any }) {
                 <Badge className="absolute top-4 left-4 bg-white/20 text-white border-0 backdrop-blur-sm">
                   {host.cuisineStyle}
                 </Badge>
+              )}
+              
+              {/* View Count - Top Left Below Cuisine */}
+              {host.viewCount !== undefined && (
+                <div className="absolute top-14 left-4 flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 text-white border-0 backdrop-blur-sm text-xs">
+                  <Eye className="h-3 w-3" />
+                  <span>{host.viewCount}</span>
+                </div>
               )}
 
               {/* Heart Icon - Top Right */}
