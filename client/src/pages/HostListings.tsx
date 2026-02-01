@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,13 +63,22 @@ export default function HostListings() {
   const [minGuests, setMinGuests] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  const { data: hosts, isLoading } = trpc.host.listApproved.useQuery();
+  const { data: listings, isLoading, refetch } = trpc.host.listAll.useQuery();
+
+  // Auto-refresh view counts every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   // Filter logic
   const filteredHosts = useMemo(() => {
-    if (!hosts) return [];
+    if (!listings) return [];
 
-    return hosts.filter(host => {
+    return listings.filter(host => {
       // District filter
       if (selectedDistrict !== "All Districts" && host.district !== selectedDistrict) {
         return false;
@@ -96,7 +105,7 @@ export default function HostListings() {
 
       return true;
     });
-  }, [hosts, selectedDistrict, selectedDay, selectedMealType, minGuests, maxPrice]);
+  }, [listings, selectedDistrict, selectedDay, selectedMealType, minGuests, maxPrice]);
 
   const clearFilters = () => {
     setSelectedDistrict("All Districts");

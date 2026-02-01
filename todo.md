@@ -458,3 +458,9 @@
 - [x] Display view count on listing cards with eye icon
 - [x] Track views when users visit listing detail page
 - [x] Test view counter increments correctly (verified: 0 → 1)
+
+## Auto-Refresh View Counts - COMPLETED ✅
+- [x] Add useEffect with setInterval to HostListings page
+- [x] Refetch listing data every 30 seconds
+- [x] Clean up interval on component unmount
+- [x] Test auto-refresh updates view counts without manual page reload (verified: Shanghai Ayi 0 → 1)
