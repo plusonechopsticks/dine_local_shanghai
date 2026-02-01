@@ -464,3 +464,10 @@
 - [x] Refetch listing data every 30 seconds
 - [x] Clean up interval on component unmount
 - [x] Test auto-refresh updates view counts without manual page reload (verified: Shanghai Ayi 0 → 1)
+
+
+## BUG - Rejected Host Applications Showing Publicly - FIXED ✅
+- [x] Rejected host applications were visible on Find Hosts page
+- [x] Only approved hosts are now displayed to public
+- [x] Fixed backend query to filter by "approved" status
+- [x] Tested: Only 4 approved listings now show (Shanghai Ayi, Grace Tong x2, Norika & Steven)

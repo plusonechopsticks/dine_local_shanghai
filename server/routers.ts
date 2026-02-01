@@ -374,10 +374,10 @@ export const appRouter = router({
       return getAllHostListings("approved");
     }),
 
-    // Admin: List all host listings
+    // Public: List all approved host listings
     listAll: publicProcedure.query(async () => {
-      // TODO: Add role-based access control - for now allowing public access for testing
-      return getAllHostListings();
+      // Only show approved listings to public
+      return getAllHostListings("approved");
     }),
 
     // Admin: Update listing status
