@@ -471,3 +471,18 @@
 - [x] Only approved hosts are now displayed to public
 - [x] Fixed backend query to filter by "approved" status
 - [x] Tested: Only 4 approved listings now show (Shanghai Ayi, Grace Tong x2, Norika & Steven)
+
+
+## Limited-Time Offer Discount Feature
+- [x] Design front-end UI for discount display on listing cards
+- [x] Add "Limited Time Offer" badge component
+- [x] Show original price struck through (e.g., ~~¥500~~)
+- [x] Display new discounted price prominently (e.g., ¥400)
+- [x] Show discount percentage (e.g., "20% OFF")
+- [x] Add discount fields to database schema (discountPercentage column)
+- [x] Create admin panel UI to set/edit discount percentage per host
+- [x] Update backend tRPC procedures to handle discount data
+- [x] Calculate and return discounted prices in API responses
+- [x] Test discount display on listing cards
+- [x] Test admin panel discount controls
+- [x] Verify discount calculations are accurate

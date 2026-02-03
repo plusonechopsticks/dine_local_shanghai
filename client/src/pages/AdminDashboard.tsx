@@ -58,6 +58,7 @@ export default function AdminDashboard() {
       menuDescription: formData.get('menuDescription') as string || undefined,
       dietaryNote: formData.get('dietaryNote') as string || undefined,
       pricePerPerson: parseInt(formData.get('pricePerPerson') as string) || undefined,
+      discountPercentage: parseInt(formData.get('discountPercentage') as string) || 0,
       maxGuests: parseInt(formData.get('maxGuests') as string) || undefined,
       mealDurationMinutes: parseInt(formData.get('mealDurationMinutes') as string) || undefined,
       kidsFriendly: formData.get('kidsFriendly') === 'on',
@@ -246,6 +247,24 @@ export default function AdminDashboard() {
                         <Label htmlFor="maxGuests">Max Guests</Label>
                         <Input id="maxGuests" name="maxGuests" type="number" defaultValue={editingHost.maxGuests} />
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="discountPercentage">Discount Percentage (0-100)</Label>
+                      <Input 
+                        id="discountPercentage" 
+                        name="discountPercentage" 
+                        type="number" 
+                        min="0" 
+                        max="100" 
+                        defaultValue={editingHost.discountPercentage || 0} 
+                        placeholder="Enter discount % (e.g., 25 for 25% off)"
+                      />
+                      {editingHost.discountPercentage > 0 && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Discounted price: ¥{Math.round(editingHost.pricePerPerson * (1 - editingHost.discountPercentage / 100))}
+                        </p>
+                      )}
                     </div>
 
                     <div>

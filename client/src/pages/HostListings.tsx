@@ -21,6 +21,7 @@ import {
   ChevronRight,
   Star,
   Eye,
+  Tag,
 } from "lucide-react";
 
 const DAYS_OF_WEEK = [
@@ -310,16 +311,30 @@ function HostCard({ host }: { host: any }) {
               
 
 
-              {/* Cuisine Badge - Top Left */}
+              {/* Limited Time Offer Badge - Top Left */}
+              {host.discountPercentage && host.discountPercentage > 0 && (
+                <Badge className="absolute top-4 left-4 bg-red-500 text-white border-0 shadow-lg flex items-center gap-1 px-3 py-1">
+                  <Tag className="h-3 w-3" />
+                  Limited Time Offer
+                </Badge>
+              )}
+              
+              {/* Cuisine Badge - Top Left (below discount if present) */}
               {host.cuisineStyle && (
-                <Badge className="absolute top-4 left-4 bg-white/20 text-white border-0 backdrop-blur-sm">
+                <Badge className={`absolute left-4 bg-white/20 text-white border-0 backdrop-blur-sm ${
+                  host.discountPercentage && host.discountPercentage > 0 ? 'top-14' : 'top-4'
+                }`}>
                   {host.cuisineStyle}
                 </Badge>
               )}
               
               {/* View Count - Top Left Below Cuisine */}
               {host.viewCount !== undefined && (
-                <div className="absolute top-14 left-4 flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 text-white border-0 backdrop-blur-sm text-xs">
+                <div className={`absolute left-4 flex items-center gap-1 px-2 py-1 rounded-full bg-white/20 text-white border-0 backdrop-blur-sm text-xs ${
+                  host.discountPercentage && host.discountPercentage > 0 
+                    ? (host.cuisineStyle ? 'top-24' : 'top-14')
+                    : (host.cuisineStyle ? 'top-14' : 'top-4')
+                }`}>
                   <Eye className="h-3 w-3" />
                   <span>{host.viewCount}</span>
                 </div>
@@ -355,8 +370,23 @@ function HostCard({ host }: { host: any }) {
 
                 {/* Right: Price */}
                 <div className="text-right ml-2 flex-shrink-0">
-                  <p className="text-white font-bold text-lg">¥{host.pricePerPerson}</p>
-                  <p className="text-white/80 text-xs">/person</p>
+                  {host.discountPercentage && host.discountPercentage > 0 ? (
+                    <>
+                      <div className="flex items-center gap-2 justify-end">
+                        <p className="text-white/70 line-through text-sm">¥{host.pricePerPerson}</p>
+                        <Badge className="bg-red-500 text-white border-0 text-xs px-1.5 py-0">
+                          -{host.discountPercentage}%
+                        </Badge>
+                      </div>
+                      <p className="text-white font-bold text-xl">¥{Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))}</p>
+                      <p className="text-white/80 text-xs">/person</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-white font-bold text-lg">¥{host.pricePerPerson}</p>
+                      <p className="text-white/80 text-xs">/person</p>
+                    </>
+                  )}
                 </div>
               </div>
 
