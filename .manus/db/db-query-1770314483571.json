@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, hostName, title, pricePerPerson, discountPercentage FROM host_listings WHERE hostName LIKE '%Grace%' AND discountPercentage > 0;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, title, pricePerPerson, discountPercentage FROM host_listings WHERE hostName LIKE '%Grace%' AND discountPercentage > 0;",
+  "rows": [
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "title": "Authentic \"Shanghai home\" dining experience featuring Braised Beef Brisket with Daikon Radish",
+      "pricePerPerson": "200",
+      "discountPercentage": "25"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\ttitle\tpricePerPerson\tdiscountPercentage\n90002\tGrace Tong\tAuthentic \"Shanghai home\" dining experience featuring Braised Beef Brisket with Daikon Radish\t200\t25\n",
+  "stderr": "",
+  "execution_time_ms": 383
+}

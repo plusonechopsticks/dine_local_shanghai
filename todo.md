@@ -500,3 +500,4 @@
 
 ## Bug Fixes
 - [x] Fix Share button on host detail page - not copying link to clipboard
+- [x] Add discount display to host detail page pricing section

@@ -427,9 +427,29 @@ export default function HostDetail() {
             <Card className="border-border/50 sticky top-24">
               <CardContent className="pt-6 space-y-4">
                 {/* Price */}
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-primary">¥{host.pricePerPerson}</span>
-                  <span className="text-muted-foreground">/person</span>
+                <div className="space-y-2">
+                  {host.discountPercentage && host.discountPercentage > 0 ? (
+                    <>
+                      <Badge className="bg-red-600 hover:bg-red-700 text-white mb-2">
+                        Limited Time Offer
+                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg text-muted-foreground line-through">¥{host.pricePerPerson}</span>
+                        <Badge variant="destructive" className="text-xs">-{host.discountPercentage}%</Badge>
+                      </div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-bold text-primary">
+                          ¥{Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))}
+                        </span>
+                        <span className="text-muted-foreground">/person</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-bold text-primary">¥{host.pricePerPerson}</span>
+                      <span className="text-muted-foreground">/person</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Quick Info */}
