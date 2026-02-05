@@ -496,3 +496,7 @@
 - [x] Verify listing display on Find Hosts page
 - [x] Verify detail page display
 - [x] Ready for publishing
+
+
+## Bug Fixes
+- [x] Fix Share button on host detail page - not copying link to clipboard

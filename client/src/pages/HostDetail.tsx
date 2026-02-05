@@ -456,7 +456,14 @@ export default function HostDetail() {
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => toast.success("Link copied to clipboard!")}
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(window.location.href);
+                      toast.success("Link copied to clipboard!");
+                    } catch (err) {
+                      toast.error("Failed to copy link");
+                    }
+                  }}
                 >
                   <Share2 className="h-4 w-4 mr-2" />
                   Share
