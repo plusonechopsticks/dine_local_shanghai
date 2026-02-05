@@ -486,3 +486,13 @@
 - [x] Test discount display on listing cards
 - [x] Test admin panel discount controls
 - [x] Verify discount calculations are accurate
+
+
+## Host Chuan 川 Registration
+- [x] Extract host information from PDF
+- [x] Upload profile photo to S3
+- [x] Upload food photos to S3
+- [x] Insert host listing into database
+- [x] Verify listing display on Find Hosts page
+- [x] Verify detail page display
+- [x] Ready for publishing
