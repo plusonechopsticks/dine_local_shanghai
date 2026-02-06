@@ -85,6 +85,56 @@ export default function HostDetail() {
     }
   }, [hostId, host]);
 
+  // Update meta tags for social sharing
+  useEffect(() => {
+    if (!host) return;
+
+    const title = host.title || `${host.cuisineStyle} with ${host.hostName} in ${host.district}`;
+    const description = host.menuDescription?.substring(0, 200) || `Experience authentic ${host.cuisineStyle} cuisine with ${host.hostName} in ${host.district}, Shanghai. Book a home dining experience for up to ${host.maxGuests} guests.`;
+    const imageUrl = getProxiedImageUrl(host.profilePhotoUrl || (host.foodPhotoUrls as string[])?.[0] || '');
+    const url = window.location.href;
+    const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
+      ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
+      : host.pricePerPerson;
+
+    // Update document title
+    document.title = `${title} - ¥${discountedPrice}/person | +1 Chopsticks`;
+
+    // Helper function to update or create meta tag
+    const updateMetaTag = (property: string, content: string, isProperty = true) => {
+      const attribute = isProperty ? 'property' : 'name';
+      let element = document.querySelector(`meta[${attribute}="${property}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attribute, property);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // Open Graph tags
+    updateMetaTag('og:title', title);
+    updateMetaTag('og:description', description);
+    updateMetaTag('og:image', imageUrl);
+    updateMetaTag('og:url', url);
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:site_name', '+1 Chopsticks - Shanghai Home Dining');
+
+    // Twitter Card tags
+    updateMetaTag('twitter:card', 'summary_large_image', false);
+    updateMetaTag('twitter:title', title, false);
+    updateMetaTag('twitter:description', description, false);
+    updateMetaTag('twitter:image', imageUrl, false);
+
+    // Standard meta tags
+    updateMetaTag('description', description, false);
+
+    // Cleanup function to reset title on unmount
+    return () => {
+      document.title = 'Dine at Local Family Homes - Shanghai';
+    };
+  }, [host]);
+
   // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({
     onSuccess: () => {

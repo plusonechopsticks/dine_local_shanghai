@@ -98,8 +98,8 @@ function HeroSection() {
 
           {/* Subheading */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-            Experience genuine hospitality by sharing dinner with local families in Shanghai.
-            Not a restaurant—a real family dinner where they simply add an extra pair of chopsticks for you.
+            Experience authentic Shanghai cuisine and genuine Chinese hospitality by sharing home-cooked meals with local families.
+            Perfect for travelers seeking cultural immersion beyond restaurants—join a real family dinner where they simply add an extra pair of chopsticks for you.
           </p>
 
           {/* CTA buttons */}
