@@ -509,3 +509,5 @@
 - [x] Optimize homepage with Shanghai travel keywords
 - [x] Improve meta descriptions across all pages
 - [ ] Add structured data (JSON-LD) for rich snippets (optional advanced feature)
+- [x] Add og:image to homepage for Facebook thumbnail preview
+- [x] Verify og:image works on listing pages
