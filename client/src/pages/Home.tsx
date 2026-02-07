@@ -557,19 +557,35 @@ function Footer() {
   return (
     <footer className="py-12 border-t border-border/50 bg-secondary/20">
       <div className="container">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <ChopsticksLogo className="h-5 w-5 text-primary" />
-            <span className="font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
-              +1 Chopsticks
-            </span>
+        <div className="flex flex-col items-center gap-8">
+          {/* GetYourGuide Widget */}
+          <div className="flex justify-center">
+            <a href="https://www.getyourguide.com/-s714273" target="_blank" rel="noopener noreferrer">
+              <img 
+                src="https://gyg.me/kUtga42u" 
+                width="160" 
+                height="auto" 
+                style={{ border: "1px solid #c6c8d0" }} 
+                alt="GetYourGuide | +1 Chopsticks" 
+              />
+            </a>
           </div>
-          <p className="text-sm text-muted-foreground text-center">
-            Let's make travel more meaningful, one dinner table at a time. 🥢
-          </p>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} +1 Chopsticks. All rights reserved.
-          </p>
+
+          {/* Footer Content */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 w-full">
+            <div className="flex items-center gap-2">
+              <ChopsticksLogo className="h-5 w-5 text-primary" />
+              <span className="font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
+                +1 Chopsticks
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground text-center">
+              Let's make travel more meaningful, one dinner table at a time. 🥢
+            </p>
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} +1 Chopsticks. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
