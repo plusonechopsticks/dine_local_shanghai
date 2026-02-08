@@ -515,3 +515,4 @@
 - [x] Add traveler email signup box below hero section
 - [x] Enhance email signup box styling with better visibility and food emojis
 - [x] Change email signup button text from "Join Waitlist" to "Send"
+- [x] Update "About the Pilot Program" section to "About Us" with founders' photo and story

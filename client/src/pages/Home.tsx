@@ -430,39 +430,57 @@ function AboutSection() {
   return (
     <section id="about" className="py-20 md:py-28 bg-secondary/30">
       <div className="container">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-6"
-            style={{ fontFamily: "var(--font-serif)" }}
-          >
-            About the Pilot Program
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-            We're launching a pilot program in Shanghai in the coming months. We're looking for
-            5-10 welcoming families who love cooking and meeting international guests, and
-            travelers who want to experience authentic Chinese hospitality.
-          </p>
-
-          <div className="grid sm:grid-cols-3 gap-6 mt-12">
-            <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="text-3xl font-bold text-primary mb-2">5-10</div>
-              <div className="text-sm text-muted-foreground">Pilot Host Families</div>
-            </div>
-            <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="text-3xl font-bold text-primary mb-2">2026</div>
-              <div className="text-sm text-muted-foreground">Launch Year</div>
-            </div>
-            <div className="p-6 rounded-xl bg-card border border-border/50">
-              <div className="text-3xl font-bold text-primary mb-2">Shanghai</div>
-              <div className="text-sm text-muted-foreground">Pilot Location</div>
-            </div>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2
+              className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              About Us
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Our Story
+            </p>
           </div>
 
-          <p className="text-muted-foreground mt-12 leading-relaxed">
-            Yes, there are challenges around safety and language barriers, but imagine the stories
-            and connections this could create! We're carefully vetting all host families and
-            providing translation support to ensure a safe and memorable experience for everyone.
-          </p>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Photo */}
+            <div className="order-2 md:order-1">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg">
+                <img
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/FSqBhlYCCWYusVdM.PNG"
+                  alt="Founders sharing a meal"
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+
+            {/* Story */}
+            <div className="order-1 md:order-2">
+              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+                <p>
+                  We're a group of passionate travel enthusiasts. Our founder has backpacked through 60+ countries across seven continents.
+                </p>
+                <p>
+                  During our travels, the most memorable moments weren't at famous landmarks or tourist hotspots—they were when locals warmly invited us into their homes to share a simple, home-cooked meal.
+                </p>
+                <p>
+                  That warmth and breaking down of barriers is the experience we want to recreate in China.
+                </p>
+                <p>
+                  We hope that foreign friends coming to China won't just see the tourist attractions or eat at chain restaurants, but can truly walk into a Shanghainese home and experience authentic Chinese hospitality.
+                </p>
+                <div className="pt-4">
+                  <a href="/host-register">
+                    <Button size="lg" className="gap-2">
+                      Join as a Host
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
