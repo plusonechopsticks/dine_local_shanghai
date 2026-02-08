@@ -70,6 +70,55 @@ function Navigation() {
   );
 }
 
+function TravelerEmailSignup() {
+  const [email, setEmail] = useState("");
+
+  const submitMutation = trpc.interest.submit.useMutation({
+    onSuccess: () => {
+      toast.success("Thanks! We'll keep you updated.");
+      setEmail("");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Something went wrong. Please try again.");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast.error("Please enter your email.");
+      return;
+    }
+    submitMutation.mutate({
+      name: "Traveler",
+      email: email.trim(),
+      interestType: "traveler",
+      message: undefined,
+    });
+  };
+
+  return (
+    <div className="mt-12 max-w-lg mx-auto">
+      <p className="text-sm text-muted-foreground text-center mb-4">
+        Coming to China this year? Leave your email to stay updated on new hosts. No spam, just updates.
+      </p>
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <Input
+          type="email"
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="flex-1 bg-background"
+        />
+        <Button type="submit" disabled={submitMutation.isPending}>
+          {submitMutation.isPending ? "..." : "Join"}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
 function HeroSection() {
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
@@ -117,7 +166,8 @@ function HeroSection() {
             </a>
           </div>
 
-
+          {/* Email signup box */}
+          <TravelerEmailSignup />
         </div>
       </div>
     </section>
