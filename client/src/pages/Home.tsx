@@ -120,7 +120,7 @@ function TravelerEmailSignup() {
               className="flex-1 bg-background border-border"
             />
             <Button type="submit" disabled={submitMutation.isPending} className="px-6">
-              {submitMutation.isPending ? "..." : "Join Waitlist"}
+              {submitMutation.isPending ? "..." : "Send"}
             </Button>
           </form>
         </CardContent>
