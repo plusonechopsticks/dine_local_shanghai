@@ -98,23 +98,33 @@ function TravelerEmailSignup() {
   };
 
   return (
-    <div className="mt-12 max-w-lg mx-auto">
-      <p className="text-sm text-muted-foreground text-center mb-4">
-        Coming to China this year? Leave your email to stay updated on new hosts. No spam, just updates.
-      </p>
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <Input
-          type="email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="flex-1 bg-background"
-        />
-        <Button type="submit" disabled={submitMutation.isPending}>
-          {submitMutation.isPending ? "..." : "Join"}
-        </Button>
-      </form>
+    <div className="mt-12 max-w-xl mx-auto">
+      <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20 shadow-md">
+        <CardContent className="p-6">
+          <div className="text-center mb-4">
+            <div className="text-2xl mb-2">🍜 🥟 🍚</div>
+            <p className="text-base font-medium text-foreground mb-1">
+              Coming to China this year?
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Get updates on new hosts. No spam, just delicious updates.
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <Input
+              type="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="flex-1 bg-background border-border"
+            />
+            <Button type="submit" disabled={submitMutation.isPending} className="px-6">
+              {submitMutation.isPending ? "..." : "Join Waitlist"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

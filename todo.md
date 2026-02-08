@@ -513,3 +513,4 @@
 - [x] Verify og:image works on listing pages
 - [x] Add GetYourGuide widget to homepage
 - [x] Add traveler email signup box below hero section
+- [x] Enhance email signup box styling with better visibility and food emojis
