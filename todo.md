@@ -517,3 +517,6 @@
 - [x] Change email signup button text from "Join Waitlist" to "Send"
 - [x] Update "About the Pilot Program" section to "About Us" with founders' photo and story
 - [x] Remove "Join the Waitlist" contact form section from homepage
+- [x] Find and check Echo Ren's host application status in database
+- [x] Find Echo Ren (echoren881@gmail.com) application in database
+- [x] Fix admin dashboard to show Echo Ren's pending application

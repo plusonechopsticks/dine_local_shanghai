@@ -374,10 +374,10 @@ export const appRouter = router({
       return getAllHostListings("approved");
     }),
 
-    // Public: List all approved host listings
+    // Admin: List all host listings (all statuses)
     listAll: publicProcedure.query(async () => {
-      // Only show approved listings to public
-      return getAllHostListings("approved");
+      // Return all listings for admin dashboard
+      return getAllHostListings();
     }),
 
     // Admin: Update listing status
