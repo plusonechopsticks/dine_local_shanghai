@@ -79,7 +79,8 @@ export default function HostListings() {
   const filteredHosts = useMemo(() => {
     if (!listings) return [];
 
-    return listings.filter(host => {
+    // First filter, then sort by displayOrder (lower = higher priority)
+    const filtered = listings.filter(host => {
       // District filter
       if (selectedDistrict !== "All Districts" && host.district !== selectedDistrict) {
         return false;
@@ -105,6 +106,14 @@ export default function HostListings() {
       }
 
       return true;
+    });
+
+    // Sort by displayOrder (lower number = higher priority), then by creation date
+    return filtered.sort((a, b) => {
+      if (a.displayOrder !== b.displayOrder) {
+        return a.displayOrder - b.displayOrder;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }, [listings, selectedDistrict, selectedDay, selectedMealType, minGuests, maxPrice]);
 

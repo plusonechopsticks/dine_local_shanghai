@@ -521,3 +521,9 @@
 - [x] Find Echo Ren (echoren881@gmail.com) application in database
 - [x] Fix admin dashboard to show Echo Ren's pending application
 - [x] Fix Find Hosts page to only show approved listings (hide rejected/pending)
+
+## Platform Fee Disclosure & Host Ordering
+- [x] Add 30% platform fee disclosure message under price field in host registration form
+- [x] Add displayOrder field to host_listings database schema
+- [x] Add manual ordering controls in admin dashboard (up/down arrows or input field)
+- [x] Update Find Hosts page to sort listings by displayOrder

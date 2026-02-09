@@ -41,6 +41,16 @@ export default function AdminDashboard() {
     },
   });
 
+  const updateDisplayOrderMutation = trpc.host.updateDisplayOrder.useMutation({
+    onSuccess: () => {
+      utils.host.listAll.invalidate();
+      utils.host.listApproved.invalidate();
+    },
+    onError: (error) => {
+      alert(`Error updating display order: ${error.message}`);
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -59,6 +69,7 @@ export default function AdminDashboard() {
       dietaryNote: formData.get('dietaryNote') as string || undefined,
       pricePerPerson: parseInt(formData.get('pricePerPerson') as string) || undefined,
       discountPercentage: parseInt(formData.get('discountPercentage') as string) || 0,
+      displayOrder: parseInt(formData.get('displayOrder') as string) || 0,
       maxGuests: parseInt(formData.get('maxGuests') as string) || undefined,
       mealDurationMinutes: parseInt(formData.get('mealDurationMinutes') as string) || undefined,
       kidsFriendly: formData.get('kidsFriendly') === 'on',
@@ -265,6 +276,21 @@ export default function AdminDashboard() {
                           Discounted price: ¥{Math.round(editingHost.pricePerPerson * (1 - editingHost.discountPercentage / 100))}
                         </p>
                       )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="displayOrder">Display Order (lower number = higher priority)</Label>
+                      <Input 
+                        id="displayOrder" 
+                        name="displayOrder" 
+                        type="number" 
+                        min="0" 
+                        defaultValue={editingHost.displayOrder || 0} 
+                        placeholder="0 = default order"
+                      />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Set to 1, 2, 3, etc. to control order on Find Hosts page. Lower numbers appear first.
+                      </p>
                     </div>
 
                     <div>

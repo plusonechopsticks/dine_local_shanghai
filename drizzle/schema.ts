@@ -102,6 +102,9 @@ export const hostListings = mysqlTable("host_listings", {
   // Promotions
   discountPercentage: int("discountPercentage").notNull().default(0), // 0-100, e.g., 25 for 25% off
   
+  // Display Order (lower number = higher priority, 0 = default)
+  displayOrder: int("displayOrder").notNull().default(0),
+  
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

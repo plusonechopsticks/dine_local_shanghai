@@ -579,6 +579,7 @@ export const appRouter = router({
         dietaryNote: z.string().optional(),
         pricePerPerson: z.number().optional(),
         discountPercentage: z.number().min(0).max(100).optional(),
+        displayOrder: z.number().min(0).optional(),
         maxGuests: z.number().optional(),
         mealDurationMinutes: z.number().optional(),
         kidsFriendly: z.boolean().optional(),

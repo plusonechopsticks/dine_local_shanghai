@@ -772,6 +772,9 @@ export default function HostRegister() {
                     className="mt-2 h-12 w-32"
                   />
                   <p className="text-sm text-gray-500 mt-1">Recommended: ¥120-200 per person</p>
+                  <p className="text-sm text-amber-700 mt-2 bg-amber-50 p-3 rounded-md border border-amber-200">
+                    ℹ️ +1 Chopsticks collects 30% of proceeds for platform operations and marketing promotions.
+                  </p>
                 </div>
 
                 <div>
