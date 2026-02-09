@@ -64,7 +64,7 @@ export default function HostListings() {
   const [minGuests, setMinGuests] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  const { data: listings, isLoading, refetch } = trpc.host.listAll.useQuery();
+  const { data: listings, isLoading, refetch } = trpc.host.listApproved.useQuery();
 
   // Auto-refresh view counts every 30 seconds
   useEffect(() => {

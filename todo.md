@@ -520,3 +520,4 @@
 - [x] Find and check Echo Ren's host application status in database
 - [x] Find Echo Ren (echoren881@gmail.com) application in database
 - [x] Fix admin dashboard to show Echo Ren's pending application
+- [x] Fix Find Hosts page to only show approved listings (hide rejected/pending)
