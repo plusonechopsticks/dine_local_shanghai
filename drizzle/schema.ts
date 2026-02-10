@@ -196,3 +196,35 @@ export const messages = mysqlTable("messages", {
 
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = typeof messages.$inferInsert;
+
+/**
+ * Payments - Stripe payment records for bookings
+ */
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Booking reference
+  bookingId: int("bookingId").notNull().references(() => bookings.id),
+  
+  // Stripe details
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }).notNull().unique(),
+  stripeClientSecret: varchar("stripeClientSecret", { length: 500 }).notNull(),
+  
+  // Payment info
+  amountInCents: int("amountInCents").notNull(),
+  currency: varchar("currency", { length: 3 }).default("cny").notNull(),
+  
+  // Status
+  status: mysqlEnum("paymentStatus", ["pending", "succeeded", "failed", "cancelled"]).default("pending").notNull(),
+  
+  // Metadata
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
+  guestEmail: varchar("guestEmail", { length: 320 }).notNull(),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = typeof payments.$inferInsert;

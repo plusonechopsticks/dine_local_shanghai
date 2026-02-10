@@ -527,3 +527,21 @@
 - [x] Add displayOrder field to host_listings database schema
 - [x] Add manual ordering controls in admin dashboard (up/down arrows or input field)
 - [x] Update Find Hosts page to sort listings by displayOrder
+- [x] Fix display order field visibility in admin dashboard edit form (field is visible and working)
+
+
+## Stripe Payment Integration
+- [ ] Add Stripe API keys to environment variables
+- [ ] Install Stripe dependencies (stripe, @stripe/react-stripe-js)
+- [x] Create payments table in database
+- [x] Add Stripe payment intent backend endpoints
+- [ ] Add payment button to booking confirmation page
+- [ ] Create Stripe checkout modal/form
+- [ ] Test payment flow with test card
+
+## Stripe Payment Integration - In Progress
+- [x] Add Stripe API keys to environment
+- [x] Create payments table in database
+- [x] Add Stripe payment intent backend endpoints
+- [x] Add payment button and Stripe checkout modal to booking confirmation
+- [ ] Test Stripe payment flow end-to-end

@@ -24,6 +24,11 @@ import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
 import { nanoid } from "nanoid";
+import Stripe from "stripe";
+import { ENV } from "./_core/env";
+const stripe = new Stripe(ENV.stripeSecretKey, {
+  apiVersion: "2026-01-28.clover" as any,
+});
 
 export const appRouter = router({
   system: systemRouter,
@@ -599,6 +604,72 @@ export const appRouter = router({
         return { success };
       }),
 
+  }),
+
+  payment: router({
+    // Create payment intent for booking
+    createPaymentIntent: publicProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        hostListingId: z.number(),
+        guestEmail: z.string().email(),
+        amountInCents: z.number().min(1), // Amount in cents
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const paymentIntent = await stripe.paymentIntents.create({
+            amount: input.amountInCents,
+            currency: "cny",
+            metadata: {
+              bookingId: input.bookingId.toString(),
+              hostListingId: input.hostListingId.toString(),
+              guestEmail: input.guestEmail,
+            },
+          });
+
+          // Store payment record in database
+          const db = await getDb();
+          if (!db) throw new Error("Database connection failed");
+
+          const { payments } = await import("../drizzle/schema");
+          await db.insert(payments).values({
+            bookingId: input.bookingId,
+            stripePaymentIntentId: paymentIntent.id,
+            stripeClientSecret: paymentIntent.client_secret || "",
+            amountInCents: input.amountInCents,
+            currency: "cny",
+            status: "pending",
+            hostListingId: input.hostListingId,
+            guestEmail: input.guestEmail,
+          });
+
+          return {
+            clientSecret: paymentIntent.client_secret,
+            paymentIntentId: paymentIntent.id,
+          };
+        } catch (error: any) {
+          console.error("[Stripe] Payment intent creation failed:", error);
+          throw new Error("Failed to create payment intent");
+        }
+      }),
+
+    // Confirm payment status
+    confirmPayment: publicProcedure
+      .input(z.object({
+        paymentIntentId: z.string(),
+      }))
+      .query(async ({ input }) => {
+        try {
+          const paymentIntent = await stripe.paymentIntents.retrieve(input.paymentIntentId);
+          return {
+            status: paymentIntent.status,
+            succeeded: paymentIntent.status === "succeeded",
+          };
+        } catch (error: any) {
+          console.error("[Stripe] Payment confirmation failed:", error);
+          throw new Error("Failed to confirm payment");
+        }
+      }),
   }),
 });
 
