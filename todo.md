@@ -632,4 +632,5 @@
 - [x] Design email template for payment confirmation
 - [x] Get user approval on email content and design
 - [x] Implement email sending in webhook handler
+- [x] Validate Gmail credentials with test
 - [ ] Test email delivery with real payment
