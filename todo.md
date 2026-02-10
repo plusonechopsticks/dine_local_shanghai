@@ -601,3 +601,8 @@
 - [x] Traveler Interest tab displays all interest submissions
 - [x] Payment Successful tab displays bookings with paymentStatus='paid'
 - [x] Update webhook handler to set payment fields on successful payment (checkout.session.completed)
+
+## Booking Flow & Homepage Updates
+- [x] Create new booking confirmation screen after booking submission
+- [x] Add payment button with prompt: "Proceed to pay and secure your home dining table today. Free cancellation 7 days in advance."
+- [x] Remove empty space between header and first content on homepage

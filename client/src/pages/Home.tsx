@@ -130,7 +130,7 @@ function TravelerEmailSignup() {
 
 function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+    <section className="relative pt-20 pb-20 md:pt-24 md:pb-32 overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />

@@ -139,11 +139,27 @@ export default function HostDetail() {
 
   const createBookingMutation = trpc.booking.create.useMutation({
     onSuccess: (data) => {
-      setBookingSuccess(true);
-      setCreatedBookingId(data.id);
-      toast.success("Booking request submitted successfully!", {
-        description: "Please proceed to payment to confirm your booking.",
+      if (!host) return;
+      
+      // Calculate total amount
+      const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
+        ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
+        : host.pricePerPerson;
+      const totalAmount = discountedPrice * parseInt(bookingData.numberOfGuests);
+      
+      // Redirect to confirmation page with booking details
+      const params = new URLSearchParams({
+        bookingId: data.id.toString(),
+        guestName: bookingData.guestName,
+        guestEmail: bookingData.guestEmail,
+        requestedDate: bookingData.requestedDate,
+        mealType: bookingData.mealType,
+        numberOfGuests: bookingData.numberOfGuests,
+        hostName: host.hostName,
+        amount: totalAmount.toString(),
       });
+      
+      window.location.href = `/booking-confirmation?${params.toString()}`;
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to submit booking request");
