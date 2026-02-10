@@ -32,7 +32,7 @@ interface HostProfile {
   menuDescription: string | null;
   maxGuests: number;
   pricePerPerson: number;
-  availability: Record<string, string[]>;
+  availability: Record<string, ("lunch" | "dinner")[]>;
   foodPhotoUrls: string[];
   status: "pending" | "approved" | "rejected";
 }
@@ -148,7 +148,7 @@ export default function HostDashboard() {
   }
 
   const handleEditProfile = () => {
-    setEditData(profile);
+    setEditData(profile as Partial<HostProfile>);
     setIsEditingProfile(true);
   };
 
