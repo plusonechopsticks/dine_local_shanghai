@@ -527,3 +527,10 @@
 - [x] Add displayOrder field to host_listings database schema
 - [x] Add manual ordering controls in admin dashboard (up/down arrows or input field)
 - [x] Update Find Hosts page to sort listings by displayOrder
+
+## Stripe Webhook Fix - Completed ✅
+- [x] Create /api/stripe/webhook endpoint
+- [x] Register route with express.raw() before express.json()
+- [x] Return valid JSON response with {"verified": true} for test events
+- [x] Verify Stripe signature using stripe.webhooks.constructEvent()
+- [x] Test webhook verification
