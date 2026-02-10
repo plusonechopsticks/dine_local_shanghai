@@ -26,9 +26,21 @@ import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejecti
 import { nanoid } from "nanoid";
 import Stripe from "stripe";
 import { ENV } from "./_core/env";
-const stripe = new Stripe(ENV.stripeSecretKey, {
-  apiVersion: "2026-01-28.clover" as any,
-});
+
+// Initialize Stripe with fallback for missing key
+let stripe: Stripe | null = null;
+if (ENV.stripeSecretKey) {
+  try {
+    stripe = new Stripe(ENV.stripeSecretKey, {
+      apiVersion: "2026-01-28.clover" as any,
+    });
+  } catch (error) {
+    console.warn("[Stripe] Failed to initialize Stripe:", error);
+    stripe = null;
+  }
+} else {
+  console.warn("[Stripe] STRIPE_SECRET_KEY not configured");
+}
 
 export const appRouter = router({
   system: systemRouter,
@@ -616,6 +628,9 @@ export const appRouter = router({
         amountInCents: z.number().min(1), // Amount in cents
       }))
       .mutation(async ({ input }) => {
+        if (!stripe) {
+          throw new Error("Stripe is not configured");
+        }
         try {
           const paymentIntent = await stripe.paymentIntents.create({
             amount: input.amountInCents,
@@ -659,6 +674,9 @@ export const appRouter = router({
         paymentIntentId: z.string(),
       }))
       .query(async ({ input }) => {
+        if (!stripe) {
+          throw new Error("Stripe is not configured");
+        }
         try {
           const paymentIntent = await stripe.paymentIntents.retrieve(input.paymentIntentId);
           return {
