@@ -152,7 +152,7 @@ export default function BookingConfirmation() {
           variant="outline"
           onClick={() => {
             if (bookingDetails.hostListingId) {
-              setLocation(`/host/${bookingDetails.hostListingId}`);
+              setLocation(`/hosts/${bookingDetails.hostListingId}`);
             } else {
               toast.error("Unable to return to booking form");
             }

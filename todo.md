@@ -657,3 +657,8 @@
 - [x] Restore booking form data from localStorage when returning to host detail page
 - [x] Clear cached data after successful payment
 - [ ] Test form data persistence across navigation
+
+## Bug Fix - Back to Booking Form 404 (Persistent)
+- [x] Debug why hostListingId is not working in navigation
+- [x] Check URL parameters being passed
+- [x] Fix navigation to properly return to host detail page (route mismatch: /host/ vs /hosts/)
