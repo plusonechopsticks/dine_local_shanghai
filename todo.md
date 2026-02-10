@@ -627,3 +627,9 @@
 - [x] Find CNY 10 booking for "test host" and update to paid status
 - [x] Investigate why webhook didn't update this specific booking (metadata.bookingId may have been missing)
 - [x] Verify webhook configuration for future payments (webhook is active and working)
+
+## Payment Confirmation Email
+- [x] Design email template for payment confirmation
+- [x] Get user approval on email content and design
+- [x] Implement email sending in webhook handler
+- [ ] Test email delivery with real payment

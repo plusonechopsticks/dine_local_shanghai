@@ -235,3 +235,27 @@ export async function sendGuestRejectionEmail(
     return false;
   }
 }
+
+/**
+ * Generic email sending function
+ */
+export async function sendEmail(options: {
+  to: string;
+  subject: string;
+  html: string;
+  from?: string;
+}) {
+  try {
+    await transporter.sendMail({
+      from: options.from || process.env.EMAIL_USER || "noreply@dineatlocal.com",
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+    console.log(`[Email] Email sent to ${options.to}`);
+    return true;
+  } catch (error) {
+    console.error("[Email] Failed to send email:", error);
+    throw error;
+  }
+}

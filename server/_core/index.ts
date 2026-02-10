@@ -100,6 +100,51 @@ async function startServer(): Promise<any> {
                 .where(eq(bookings.id, parseInt(session.metadata.bookingId)));
               
               console.log(`[Webhook] Updated booking ${session.metadata.bookingId} to paid status`);
+              
+              // Send confirmation email to guest
+              try {
+                const { generateBookingConfirmationEmail } = await import("../email-templates");
+                const { sendEmail } = await import("../email");
+                
+                // Fetch the updated booking with host details
+                const { hostListings } = await import("../../drizzle/schema");
+                const bookingResult = await db
+                  .select()
+                  .from(bookings)
+                  .leftJoin(hostListings, eq(bookings.hostListingId, hostListings.id))
+                  .where(eq(bookings.id, parseInt(session.metadata.bookingId)))
+                  .limit(1);
+                
+                const bookingWithHost = bookingResult[0] ? {
+                  ...bookingResult[0].bookings,
+                  hostListing: bookingResult[0].host_listings,
+                } : null;
+                
+                if (bookingWithHost && bookingWithHost.hostListing) {
+                  const emailHtml = generateBookingConfirmationEmail({
+                    guestName: bookingWithHost.guestName,
+                    bookingId: bookingWithHost.id,
+                    hostName: bookingWithHost.hostListing.hostName,
+                    requestedDate: bookingWithHost.requestedDate.toISOString(),
+                    mealType: bookingWithHost.mealType,
+                    numberOfGuests: bookingWithHost.numberOfGuests,
+                    totalAmount: bookingWithHost.totalAmount!,
+                    paymentDate: bookingWithHost.paymentDate!,
+                    stripeSessionId: bookingWithHost.stripeSessionId!,
+                  });
+                  
+                  await sendEmail({
+                    to: bookingWithHost.guestEmail,
+                    subject: "Your +1 Chopsticks Dining Experience is Confirmed! 🥢",
+                    html: emailHtml,
+                  });
+                  
+                  console.log(`[Webhook] Sent confirmation email to ${bookingWithHost.guestEmail}`);
+                }
+              } catch (emailError: any) {
+                console.error("[Webhook] Error sending confirmation email:", emailError);
+                // Don't fail the webhook if email fails
+              }
             }
           } catch (updateError: any) {
             console.error("[Webhook] Error updating booking:", updateError);
