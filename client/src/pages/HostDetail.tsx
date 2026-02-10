@@ -695,6 +695,9 @@ export default function HostDetail() {
             bookingId={bookingId}
             hostListingId={hostId}
             guestEmail={bookingData.guestEmail}
+            guestName={bookingData.guestName}
+            hostName={host.hostName}
+            mealDate={bookingData.requestedDate}
             amount={Math.round(
               (host.discountPercentage && host.discountPercentage > 0
                 ? host.pricePerPerson * (1 - host.discountPercentage / 100)
@@ -714,6 +717,9 @@ function PaymentModal({
   bookingId,
   hostListingId,
   guestEmail,
+  guestName,
+  hostName,
+  mealDate,
   amount,
 }: {
   isOpen: boolean;
@@ -721,49 +727,39 @@ function PaymentModal({
   bookingId: number | null;
   hostListingId: number | null;
   guestEmail: string;
+  guestName: string;
+  hostName: string;
+  mealDate: string;
   amount: number;
 }) {
-  const stripe = useStripe();
-  const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
-  const createPaymentIntentMutation = trpc.payment.createPaymentIntent.useMutation();
+  const createCheckoutSessionMutation = trpc.payment.createCheckoutSession.useMutation();
 
-  const handlePayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!stripe || !elements || !bookingId || !hostListingId) return;
+  const handlePayment = async () => {
+    if (!bookingId || !hostListingId) return;
 
     setIsProcessing(true);
 
     try {
-      // Create payment intent
-      const result = await createPaymentIntentMutation.mutateAsync({
+      // Create Stripe Checkout session
+      const result = await createCheckoutSessionMutation.mutateAsync({
         bookingId,
         hostListingId,
         guestEmail,
+        guestName,
+        hostName,
+        mealDate,
         amountInCents: amount,
       });
-      const clientSecret = result?.clientSecret as string;
-      if (!clientSecret) throw new Error("Failed to create payment intent");
 
-      // Confirm payment
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) throw new Error("Card element not found");
-
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-        },
-      });
-
-      if (error) {
-        toast.error(error.message || "Payment failed");
-      } else if (paymentIntent?.status === "succeeded") {
-        toast.success("Payment successful! Your booking is confirmed.");
-        onClose();
+      if (result?.checkoutUrl) {
+        // Redirect to Stripe Checkout
+        window.location.href = result.checkoutUrl;
+      } else {
+        throw new Error("Failed to create checkout session");
       }
     } catch (error: any) {
-      toast.error(error.message || "Payment processing failed");
-    } finally {
+      toast.error(error.message || "Failed to initiate payment");
       setIsProcessing(false);
     }
   };
@@ -774,28 +770,7 @@ function PaymentModal({
         <DialogHeader>
           <DialogTitle>Complete Payment</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handlePayment} className="space-y-6">
-          <div>
-            <Label>Card Details</Label>
-            <div className="border rounded-lg p-4 bg-background">
-              <CardElement
-                options={{
-                  style: {
-                    base: {
-                      fontSize: "16px",
-                      color: "#424770",
-                      "::placeholder": {
-                        color: "#aab7c4",
-                      },
-                    },
-                    invalid: {
-                      color: "#9e2146",
-                    },
-                  },
-                }}
-              />
-            </div>
-          </div>
+        <div className="space-y-6">
           <div className="bg-secondary p-4 rounded-lg">
             <div className="flex justify-between text-sm">
               <span>Amount to pay:</span>
@@ -803,18 +778,19 @@ function PaymentModal({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={onClose} disabled={isProcessing}>
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button
-              type="submit"
-              disabled={isProcessing || !stripe}
+              type="button"
+              onClick={handlePayment}
+              disabled={isProcessing}
               className="bg-primary hover:bg-primary/90"
             >
-              {isProcessing ? "Processing..." : "Pay Now"}
+              {isProcessing ? "Redirecting..." : "Pay Now"}
             </Button>
           </DialogFooter>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

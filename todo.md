@@ -545,3 +545,11 @@
 - [x] Add Stripe payment intent backend endpoints
 - [x] Add payment button and Stripe checkout modal to booking confirmation
 - [ ] Test Stripe payment flow end-to-end
+
+## Payment Flow Fix - Completed ✅
+- [x] Fix "Pay Now" button not responding when clicked
+- [x] Change payment flow to redirect to Stripe Checkout page instead of embedded form
+- [x] Update backend to create Stripe Checkout session
+- [x] Update frontend to redirect to Stripe after booking confirmation
+- [x] Create booking success page for Stripe redirect
+- [ ] Test complete payment flow on live site

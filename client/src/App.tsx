@@ -12,6 +12,7 @@ import HostDetail from "./pages/HostDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import HostDashboard from "./pages/HostDashboard";
 import GuestDashboard from "./pages/GuestDashboard";
+import { BookingSuccess } from "./pages/BookingSuccess";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -21,6 +22,7 @@ function Router() {
       <Route path={"/host-register"} component={HostRegister} />
       <Route path={"/hosts"} component={HostListings} />
       <Route path={"/hosts/:id"} component={HostDetail} />
+      <Route path={"/booking-success"} component={BookingSuccess} />
       <Route path={"/host-dashboard"} component={HostDashboard} />
       <Route path={"/guest-dashboard"} component={GuestDashboard} />
       <Route path={"/admin"} component={AdminDashboard} />

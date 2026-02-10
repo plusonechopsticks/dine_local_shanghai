@@ -619,22 +619,42 @@ export const appRouter = router({
   }),
 
   payment: router({
-    // Create payment intent for booking
-    createPaymentIntent: publicProcedure
+    // Create Stripe Checkout session for booking
+    createCheckoutSession: publicProcedure
       .input(z.object({
         bookingId: z.number(),
         hostListingId: z.number(),
         guestEmail: z.string().email(),
-        amountInCents: z.number().min(1), // Amount in cents
+        guestName: z.string(),
+        amountInCents: z.number().min(1),
+        hostName: z.string(),
+        mealDate: z.string(),
       }))
       .mutation(async ({ input }) => {
         if (!stripe) {
           throw new Error("Stripe is not configured");
         }
         try {
-          const paymentIntent = await stripe.paymentIntents.create({
-            amount: input.amountInCents,
-            currency: "cny",
+          // Create Stripe Checkout session
+          const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [
+              {
+                price_data: {
+                  currency: "cny",
+                  product_data: {
+                    name: `Meal with ${input.hostName}`,
+                    description: `Dining experience on ${input.mealDate}`,
+                  },
+                  unit_amount: input.amountInCents,
+                },
+                quantity: 1,
+              },
+            ],
+            mode: "payment",
+            success_url: `${ENV.isProduction ? 'https://plus1chopsticks.manus.space' : 'http://localhost:3000'}/booking-success?session_id={CHECKOUT_SESSION_ID}&booking_id=${input.bookingId}`,
+            cancel_url: `${ENV.isProduction ? 'https://plus1chopsticks.manus.space' : 'http://localhost:3000'}/hosts/${input.hostListingId}`,
+            customer_email: input.guestEmail,
             metadata: {
               bookingId: input.bookingId.toString(),
               hostListingId: input.hostListingId.toString(),
@@ -649,8 +669,8 @@ export const appRouter = router({
           const { payments } = await import("../drizzle/schema");
           await db.insert(payments).values({
             bookingId: input.bookingId,
-            stripePaymentIntentId: paymentIntent.id,
-            stripeClientSecret: paymentIntent.client_secret || "",
+            stripePaymentIntentId: session.id,
+            stripeClientSecret: session.url || "",
             amountInCents: input.amountInCents,
             currency: "cny",
             status: "pending",
@@ -659,8 +679,8 @@ export const appRouter = router({
           });
 
           return {
-            clientSecret: paymentIntent.client_secret,
-            paymentIntentId: paymentIntent.id,
+            sessionId: session.id,
+            checkoutUrl: session.url,
           };
         } catch (error: any) {
           console.error("[Stripe] Payment intent creation failed:", error);
