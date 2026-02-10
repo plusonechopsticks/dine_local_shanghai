@@ -560,3 +560,9 @@
 - [ ] Fix Stripe secret key not being loaded from environment
 - [ ] Verify STRIPE_SECRET_KEY vs Stripe_secretkey naming
 - [ ] Test payment flow after fixing secret key loading
+
+## Production Stripe Secret Fix - Ready for Testing
+- [x] Change env.ts to use STRIPE_SECRET_KEY (system-provided variable)
+- [x] Discovered Stripe keys should be configured in Settings → Payment, not Settings → Secrets
+- [ ] User needs to configure Stripe keys in Management UI → Settings → Payment
+- [ ] Test payment flow on production after republishing
