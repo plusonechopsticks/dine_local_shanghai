@@ -23,7 +23,7 @@ export default function BookingConfirmation() {
     const hostName = params.get("hostName");
     const amount = params.get("amount");
     const dietaryRestrictions = params.get("dietaryRestrictions") || "";
-    const hostListingId = params.get("hostListingId");
+    const hostListingId = params.get("hostListingId") ? parseInt(params.get("hostListingId")!) : null;
 
     if (id) {
       setBookingId(parseInt(id));
@@ -36,7 +36,7 @@ export default function BookingConfirmation() {
         hostName,
         amount: parseFloat(amount || "0"),
         dietaryRestrictions,
-        hostListingId,
+        hostListingId: hostListingId,
       });
     } else {
       setLocation("/");
@@ -150,7 +150,13 @@ export default function BookingConfirmation() {
       <div className="flex gap-3">
         <Button
           variant="outline"
-          onClick={() => bookingDetails.hostListingId && setLocation(`/host/${bookingDetails.hostListingId}`)}
+          onClick={() => {
+            if (bookingDetails.hostListingId) {
+              setLocation(`/host/${bookingDetails.hostListingId}`);
+            } else {
+              toast.error("Unable to return to booking form");
+            }
+          }}
           className="flex-1"
         >
           Back to Booking Form
