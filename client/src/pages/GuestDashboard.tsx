@@ -17,9 +17,11 @@ import {
 
 interface Booking {
   id: number;
-  hostName: string;
-  hostEmail: string;
-  requestedDate: string;
+  hostListingId: number;
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string | null;
+  requestedDate: Date;
   mealType: "lunch" | "dinner";
   numberOfGuests: number;
   specialRequests: string | null;
@@ -34,10 +36,10 @@ export default function GuestDashboard() {
   const [messages, setMessages] = useState<any[]>([]);
 
   // Fetch guest bookings
-  const { data: bookings, isLoading: bookingsLoading } = trpc.booking.getGuestBookings.useQuery(
-    { guestEmail: user?.email || "" },
-    { enabled: !!user?.email }
-  );
+  const { data: allBookings, isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
+  
+  // Filter bookings for current guest
+  const bookings = allBookings?.filter(b => b.guestEmail === user?.email) || [];
 
   // Fetch conversations for guest
   const { data: conversations, isLoading: conversationsLoading, refetch: refetchConversations } = trpc.messaging.getGuestConversations.useQuery(
@@ -143,7 +145,7 @@ export default function GuestDashboard() {
             </TabsTrigger>
             <TabsTrigger value="messages">
               Messages
-              {conversations?.length > 0 && (
+              {conversations && conversations.length > 0 && (
                 <Badge className="ml-2 bg-blue-600">{conversations.length}</Badge>
               )}
             </TabsTrigger>
@@ -172,7 +174,7 @@ export default function GuestDashboard() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900 mb-4">
-                          {booking.hostName}
+                          Host #{booking.hostListingId}
                         </h3>
                         <div className="grid grid-cols-2 gap-4 mb-4">
                           <div className="flex items-center gap-2">

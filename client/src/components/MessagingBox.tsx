@@ -29,14 +29,16 @@ export default function MessagingBox({
 
   // Fetch messages
   const { data: fetchedMessages } = trpc.messaging.getMessages.useQuery(
-    { conversationId },
-    {
-      onSuccess: (data) => {
-        setMessages(data);
-        setIsLoadingMessages(false);
-      },
-    }
+    { conversationId }
   );
+
+  // Update messages when data changes
+  useEffect(() => {
+    if (fetchedMessages) {
+      setMessages(fetchedMessages);
+      setIsLoadingMessages(false);
+    }
+  }, [fetchedMessages]);
 
   // Send message mutation
   const sendMessageMutation = trpc.messaging.sendMessage.useMutation({

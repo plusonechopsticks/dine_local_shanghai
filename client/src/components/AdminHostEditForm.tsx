@@ -21,7 +21,7 @@ interface HostListing {
   maxGuests: number;
   pricePerPerson: number;
   activities: string[];
-  availability: Record<string, string[]>;
+  availability: Record<string, ("lunch" | "dinner")[]>;
   otherNotes: string | null;
   dietaryNote: string | null;
 }
@@ -100,9 +100,9 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
         availability: {
           ...prev.availability,
           [day]: isChecked
-            ? [...dayMeals, meal]
+            ? [...dayMeals, meal as "lunch" | "dinner"]
             : dayMeals.filter((m) => m !== meal),
-        },
+        } as Record<string, ("lunch" | "dinner")[]>,
       };
     });
   };

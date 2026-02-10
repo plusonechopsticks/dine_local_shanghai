@@ -56,6 +56,12 @@ export default function HostDashboard() {
   const [messages, setMessages] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Fetch host profile
+  const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = trpc.host.getProfile.useQuery(
+    { userId: String(user?.id || "") },
+    { enabled: !!user?.id }
+  );
+
   // Fetch conversations for host
   const { data: conversations, isLoading: conversationsLoading, refetch: refetchConversations } = trpc.messaging.getHostConversations.useQuery(
     { hostListingId: profile?.id || 0 },
@@ -107,12 +113,6 @@ export default function HostDashboard() {
       toast.error(error.message || "Failed to send message");
     },
   });
-
-  // Fetch host profile
-  const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = trpc.host.getProfile.useQuery(
-    { userId: String(user?.id || "") },
-    { enabled: !!user?.id }
-  );
 
   // Fetch bookings
   const { data: bookings = [], isLoading: bookingsLoading, refetch: refetchBookings } = trpc.host.getBookings.useQuery(
