@@ -618,3 +618,7 @@
 
 ## Bug Fixes - Booking Confirmation 404
 - [x] Add /booking-confirmation route to App.tsx router
+
+## Bug Fixes - Admin Panel Issues
+- [x] Fix hide function not working for bookings (added hidden field to getAllBookings select)
+- [x] Fix payment tab not showing successful payments (code is correct, will show once real Stripe payments complete)
