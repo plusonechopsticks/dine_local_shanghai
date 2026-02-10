@@ -157,6 +157,8 @@ export default function HostDetail() {
         numberOfGuests: bookingData.numberOfGuests,
         hostName: host.hostName,
         amount: totalAmount.toString(),
+        dietaryRestrictions: bookingData.specialRequests || "",
+        hostListingId: host.id.toString(),
       });
       
       window.location.href = `/booking-confirmation?${params.toString()}`;

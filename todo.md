@@ -634,3 +634,9 @@
 - [x] Implement email sending in webhook handler
 - [x] Validate Gmail credentials with test
 - [ ] Test email delivery with real payment
+
+## Booking Confirmation Page Updates
+- [x] Add dietary restrictions display to booking confirmation page
+- [x] Show "No dietary restrictions" if field is blank
+- [x] Change "Return Home" button to "Back to Booking Form"
+- [x] Pass dietary restrictions through URL params

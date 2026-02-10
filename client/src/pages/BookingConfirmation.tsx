@@ -22,6 +22,8 @@ export default function BookingConfirmation() {
     const numberOfGuests = params.get("numberOfGuests");
     const hostName = params.get("hostName");
     const amount = params.get("amount");
+    const dietaryRestrictions = params.get("dietaryRestrictions") || "";
+    const hostListingId = params.get("hostListingId");
 
     if (id) {
       setBookingId(parseInt(id));
@@ -33,6 +35,8 @@ export default function BookingConfirmation() {
         numberOfGuests,
         hostName,
         amount: parseFloat(amount || "0"),
+        dietaryRestrictions,
+        hostListingId,
       });
     } else {
       setLocation("/");
@@ -113,6 +117,16 @@ export default function BookingConfirmation() {
             </div>
           </div>
 
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
+            <div>
+              <p className="font-medium">Dietary Restrictions</p>
+              <p className="text-sm text-muted-foreground">
+                {bookingDetails.dietaryRestrictions || "No dietary restrictions"}
+              </p>
+            </div>
+          </div>
+
           <div className="border-t pt-4 mt-4">
             <div className="flex justify-between items-center text-lg font-semibold">
               <span>Total Amount</span>
@@ -136,10 +150,10 @@ export default function BookingConfirmation() {
       <div className="flex gap-3">
         <Button
           variant="outline"
-          onClick={() => setLocation("/")}
+          onClick={() => bookingDetails.hostListingId && setLocation(`/host/${bookingDetails.hostListingId}`)}
           className="flex-1"
         >
-          Return Home
+          Back to Booking Form
         </Button>
         <Button
           onClick={handlePayment}
