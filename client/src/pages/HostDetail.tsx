@@ -1,3 +1,4 @@
+import { useParams, useLocation } from "wouter";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,9 +39,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { useParams, useLocation } from "wouter";
 
 const ACTIVITY_LABELS: Record<string, string> = {
   "cooking-class": "Cooking Class",
@@ -61,15 +59,7 @@ export default function HostDetail() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [expandedBio, setExpandedBio] = useState(false);
   const [activeTab, setActiveTab] = useState<"experience" | "host">("experience");
-  const [bookingData, setBookingData] = useState<{
-    guestName: string;
-    guestEmail: string;
-    guestPhone: string;
-    requestedDate: string;
-    mealType: "dinner" | "lunch";
-    numberOfGuests: string;
-    specialRequests: string;
-  }>({
+  const [bookingData, setBookingData] = useState({
     guestName: "",
     guestEmail: "",
     guestPhone: "",
@@ -78,17 +68,6 @@ export default function HostDetail() {
     numberOfGuests: "1",
     specialRequests: "",
   });
-  const [showPayment, setShowPayment] = useState(false);
-  const [bookingId, setBookingId] = useState<number | null>(null);
-  const [stripePromise, setStripePromise] = useState<any>(null);
-
-  // Initialize Stripe
-  useEffect(() => {
-    const pk = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-    if (pk) {
-      setStripePromise(loadStripe(pk));
-    }
-  }, []);
 
   const hostId = params?.id ? parseInt(params.id) : null;
   const { data: host, isLoading, isError } = trpc.host.get.useQuery(
@@ -112,42 +91,64 @@ export default function HostDetail() {
 
     const title = host.title || `${host.cuisineStyle} with ${host.hostName} in ${host.district}`;
     const description = host.menuDescription?.substring(0, 200) || `Experience authentic ${host.cuisineStyle} cuisine with ${host.hostName} in ${host.district}, Shanghai. Book a home dining experience for up to ${host.maxGuests} guests.`;
-    const imageUrl = host.profilePhotoUrl || (host.foodPhotoUrls as string[])?.[0] 
-      ? getProxiedImageUrl(host.profilePhotoUrl || (host.foodPhotoUrls as string[])?.[0] || '')
-      : '';
+    const imageUrl = getProxiedImageUrl(host.profilePhotoUrl || (host.foodPhotoUrls as string[])?.[0] || '');
     const url = window.location.href;
     const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
       ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
       : host.pricePerPerson;
 
     // Update document title
-    document.title = title;
+    document.title = `${title} - ¥${discountedPrice}/person | +1 Chopsticks`;
 
-    // Update meta tags
-    const updateMetaTag = (name: string, content: string) => {
-      let tag = document.querySelector(`meta[property="${name}"]`) || document.querySelector(`meta[name="${name}"]`);
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute(name.includes('og:') ? 'property' : 'name', name);
-        document.head.appendChild(tag);
+    // Helper function to update or create meta tag
+    const updateMetaTag = (property: string, content: string, isProperty = true) => {
+      const attribute = isProperty ? 'property' : 'name';
+      let element = document.querySelector(`meta[${attribute}="${property}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attribute, property);
+        document.head.appendChild(element);
       }
-      tag.setAttribute('content', content);
+      element.setAttribute('content', content);
     };
 
+    // Open Graph tags
     updateMetaTag('og:title', title);
     updateMetaTag('og:description', description);
-    if (imageUrl) updateMetaTag('og:image', imageUrl);
+    updateMetaTag('og:image', imageUrl);
     updateMetaTag('og:url', url);
-    updateMetaTag('description', description);
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:site_name', '+1 Chopsticks - Shanghai Home Dining');
+
+    // Twitter Card tags
+    updateMetaTag('twitter:card', 'summary_large_image', false);
+    updateMetaTag('twitter:title', title, false);
+    updateMetaTag('twitter:description', description, false);
+    updateMetaTag('twitter:image', imageUrl, false);
+
+    // Standard meta tags
+    updateMetaTag('description', description, false);
+
+    // Cleanup function to reset title on unmount
+    return () => {
+      document.title = 'Dine at Local Family Homes - Shanghai';
+    };
   }, [host]);
 
   // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({
-    onSuccess: (data: any) => {
-      toast.success("Booking confirmed! Proceed to payment.");
-      setBookingId(data.id);
-      setShowPayment(true);
+    onSuccess: () => {
+      toast.success("Booking request submitted! The host will respond soon.");
       setIsBookingOpen(false);
+      setBookingData({
+        guestName: "",
+        guestEmail: "",
+        guestPhone: "",
+        requestedDate: "",
+        mealType: "dinner",
+        numberOfGuests: "1",
+        specialRequests: "",
+      });
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to submit booking request");
@@ -214,15 +215,15 @@ export default function HostDetail() {
   const availableDays = daysOrder.filter(day => availability[day]?.length > 0);
   
   // Sort availability items to always show lunch before dinner
-  const sortedAvailability = Object.entries(availability).reduce((acc: any, [day, meals]) => {
-    const sorted = [...(meals || [])].sort((a: any, b: any) => {
+  const sortedAvailability = Object.entries(availability).reduce((acc, [day, meals]) => {
+    const sorted = [...(meals || [])].sort((a, b) => {
       if (a === "lunch" && b === "dinner") return -1;
       if (a === "dinner" && b === "lunch") return 1;
       return 0;
     });
     acc[day] = sorted;
     return acc;
-  }, {} as any);
+  }, {} as Record<string, string[]>);
 
   // Truncate bio for preview
   const bioPreview = host.bio && host.bio.length > 200 
@@ -347,12 +348,12 @@ export default function HostDetail() {
             </div>
 
             {/* Experience/Host Toggle */}
-            <div className="flex gap-2 border-b">
+            <div className="flex gap-2 bg-muted p-1 rounded-full w-fit">
               <button
                 onClick={() => setActiveTab("experience")}
-                className={`pb-4 px-2 font-medium transition-colors ${
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
                   activeTab === "experience"
-                    ? "border-b-2 border-primary text-primary"
+                    ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -360,9 +361,9 @@ export default function HostDetail() {
               </button>
               <button
                 onClick={() => setActiveTab("host")}
-                className={`pb-4 px-2 font-medium transition-colors ${
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
                   activeTab === "host"
-                    ? "border-b-2 border-primary text-primary"
+                    ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -370,219 +371,173 @@ export default function HostDetail() {
               </button>
             </div>
 
-            {/* Content Tabs */}
-            {activeTab === "experience" && (
+            {/* Content Based on Tab */}
+            {activeTab === "experience" ? (
               <div className="space-y-6">
-                {/* Menu */}
-                {host.menuDescription && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                        <Utensils className="h-5 w-5" />
-                        Menu
-                      </h3>
-                      <p className="text-muted-foreground whitespace-pre-wrap">{host.menuDescription}</p>
-                    </CardContent>
-                  </Card>
-                )}
+                {/* Key Details with Icons - Moved to top */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Cuisine Type */}
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                    <Utensils className="h-8 w-8 text-primary mb-2" />
+                    <p className="text-sm font-semibold text-foreground">{host.cuisineStyle}</p>
+                    <p className="text-xs text-muted-foreground">Cuisine</p>
+                  </div>
 
-                {/* Dietary Notes */}
-                {host.dietaryNote && (
-                  <Card className="border-amber-200 bg-amber-50">
-                    <CardContent className="pt-6">
-                      <div className="flex gap-3">
-                        <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <h4 className="font-semibold text-amber-900 mb-1">Dietary Information</h4>
-                          <p className="text-sm text-amber-800">{host.dietaryNote}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                  {/* Max Guests */}
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                    <Users className="h-8 w-8 text-primary mb-2" />
+                    <p className="text-sm font-semibold text-foreground">{host.maxGuests} guests</p>
+                    <p className="text-xs text-muted-foreground">Maximum</p>
+                  </div>
+                </div>
 
-                {/* Activities */}
-                {activities.length > 0 && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="font-semibold text-lg mb-3">Activities</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {activities.map((activity) => (
-                          <Badge key={activity} variant="secondary">
-                            {ACTIVITY_LABELS[activity] || activity}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Household Features */}
-                {host.householdFeatures && host.householdFeatures.length > 0 && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="font-semibold text-lg mb-3">Household Features</h3>
-                      <ul className="space-y-2">
-                        {host.householdFeatures.map((feature, idx) => (
-                          <li key={idx} className="flex items-start gap-2">
-                            <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                            <span className="text-muted-foreground">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
-
-            {activeTab === "host" && (
-              <div className="space-y-6">
-                {/* Host Bio */}
-                <Card>
+                {/* Menu Section */}
+                <Card className="border-border/50">
                   <CardContent className="pt-6">
-                    <h3 className="font-semibold text-lg mb-3">About {host.hostName}</h3>
-                    <p className="text-muted-foreground whitespace-pre-wrap">
-                      {expandedBio ? host.bio : bioPreview}
+                    <div className="flex items-center gap-2 mb-4">
+                      <ChefHat className="h-5 w-5 text-primary" />
+                      <h3 className="text-xl font-bold">Menu</h3>
+                    </div>
+                    <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                      {host.menuDescription}
                     </p>
-                    {host.bio && host.bio.length > 200 && (
-                      <button
-                        onClick={() => setExpandedBio(!expandedBio)}
-                        className="mt-3 text-primary hover:underline text-sm font-medium"
-                      >
-                        {expandedBio ? "Show less" : "Show more"}
-                      </button>
-                    )}
                   </CardContent>
                 </Card>
-
-                {/* Languages */}
-                {host.languages && host.languages.length > 0 && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="font-semibold text-lg mb-3">Languages</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {host.languages.map((lang) => (
-                          <Badge key={lang} variant="secondary">
-                            {lang}
-                          </Badge>
-                        ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Host Profile */}
+                <div className="flex items-start gap-4">
+                  <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                    {host.profilePhotoUrl ? (
+                      <img
+                        src={getProxiedImageUrl(host.profilePhotoUrl)}
+                        alt={host.hostName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                        {host.hostName.charAt(0).toUpperCase()}
                       </div>
-                    </CardContent>
-                  </Card>
-                )}
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-primary">{host.hostName}</h3>
+                    <p className="text-muted-foreground">{host.district}</p>
+                  </div>
+                </div>
 
-                {/* Pets */}
-                {host.hasPets && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="font-semibold text-lg mb-3">Pets</h3>
-                      <p className="text-muted-foreground">{host.petDetails || "Pets present in household"}</p>
-                    </CardContent>
-                  </Card>
-                )}
+                {/* Host Bio */}
+                <div className="space-y-3">
+                  <p className="text-base leading-relaxed text-foreground/90">
+                    {expandedBio ? host.bio : bioPreview}
+                  </p>
+                  {host.bio && host.bio.length > 200 && (
+                    <button
+                      onClick={() => setExpandedBio(!expandedBio)}
+                      className="text-primary font-semibold hover:opacity-80 transition-opacity flex items-center gap-1"
+                    >
+                      {expandedBio ? "Read less" : "Read more"}
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             )}
-          </div>
 
-          {/* Right: Booking Card */}
-          <div className="space-y-4">
-            <Card className="sticky top-24">
-              <CardContent className="pt-6 space-y-4">
-                {/* Price Section */}
-                <div className="space-y-2">
-                  <div className="flex items-baseline gap-2">
-                    {host.discountPercentage && host.discountPercentage > 0 ? (
-                      <>
-                        <span className="text-sm text-muted-foreground line-through">
-                          ¥{host.pricePerPerson}
-                        </span>
-                        <Badge variant="destructive" className="text-xs">
-                          -{host.discountPercentage}%
-                        </Badge>
-                      </>
-                    ) : null}
-                  </div>
-                  <div className="text-3xl font-bold text-primary">
-                    ¥{host.discountPercentage && host.discountPercentage > 0
-                      ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
-                      : host.pricePerPerson}
-                    <span className="text-sm font-normal text-muted-foreground">/person</span>
-                  </div>
-                </div>
 
-                {/* Info Grid */}
-                <div className="grid grid-cols-2 gap-3 py-4 border-y">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Duration</p>
-                    <p className="font-semibold flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {host.mealDurationMinutes || 120} min
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Max Guests</p>
-                    <p className="font-semibold flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {host.maxGuests}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Meal Type</p>
-                    <p className="font-semibold flex items-center gap-1">
-                      <Wine className="h-4 w-4" />
-                      Lunch & Dinner
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Location</p>
-                    <p className="font-semibold flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {host.district}
-                    </p>
-                  </div>
-                </div>
 
-                {/* Availability */}
-                <div>
-                  <p className="text-sm font-semibold mb-2 flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    Availability
-                  </p>
-                  <div className="space-y-1 text-sm">
+            {/* Availability Section */}
+            {availableDays.length > 0 && (
+              <Card className="border-border/50">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <h3 className="text-xl font-bold">Availability</h3>
+                  </div>
+                  <div className="space-y-2">
                     {availableDays.map((day) => (
-                      <div key={day} className="flex justify-between text-muted-foreground">
-                        <span className="capitalize">{day}</span>
-                        <span className="text-foreground">
+                      <div key={day} className="flex items-center justify-between">
+                        <span className="capitalize font-medium text-foreground">
+                          {day.charAt(0).toUpperCase() + day.slice(1)}
+                        </span>
+                        <span className="text-muted-foreground">
                           {sortedAvailability[day]?.join(", ")}
                         </span>
                       </div>
                     ))}
                   </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Right: Booking Card */}
+          <div className="lg:col-span-1">
+            <Card className="border-border/50 sticky top-24">
+              <CardContent className="pt-6 space-y-4">
+                {/* Price */}
+                <div className="space-y-2">
+                  {host.discountPercentage && host.discountPercentage > 0 ? (
+                    <>
+                      <Badge className="bg-red-600 hover:bg-red-700 text-white mb-2">
+                        Limited Time Offer
+                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg text-muted-foreground line-through">¥{host.pricePerPerson}</span>
+                        <Badge variant="destructive" className="text-xs">-{host.discountPercentage}%</Badge>
+                      </div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-bold text-primary">
+                          ¥{Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))}
+                        </span>
+                        <span className="text-muted-foreground">/person</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-bold text-primary">¥{host.pricePerPerson}</span>
+                      <span className="text-muted-foreground">/person</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Buttons */}
-                <div className="space-y-2 pt-4">
-                  <Button
-                    onClick={() => setIsBookingOpen(true)}
-                    className="w-full bg-primary hover:bg-primary/90"
-                  >
-                    Book Now
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      const url = window.location.href;
-                      navigator.clipboard.writeText(url).then(() => {
-                        toast.success("Link copied to clipboard!");
-                      });
-                    }}
-                  >
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Share
-                  </Button>
+                {/* Quick Info */}
+                <div className="space-y-3 py-4 border-y border-border/50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Meal Type</span>
+                    <span className="font-semibold">Dinner</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Max Guests</span>
+                    <span className="font-semibold">{host.maxGuests}</span>
+                  </div>
                 </div>
+
+                {/* Book Button */}
+                <Button
+                  onClick={() => setIsBookingOpen(true)}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-lg"
+                >
+                  Book Now
+                </Button>
+
+                {/* Share Button */}
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(window.location.href);
+                      toast.success("Link copied to clipboard!");
+                    } catch (err) {
+                      toast.error("Failed to copy link");
+                    }
+                  }}
+                >
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -595,11 +550,13 @@ export default function HostDetail() {
           <DialogHeader>
             <DialogTitle>Request a Booking</DialogTitle>
           </DialogHeader>
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="guestName">Your Name *</Label>
               <Input
                 id="guestName"
+                placeholder="Enter your name"
                 value={bookingData.guestName}
                 onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
               />
@@ -610,6 +567,7 @@ export default function HostDetail() {
               <Input
                 id="guestEmail"
                 type="email"
+                placeholder="your@email.com"
                 value={bookingData.guestEmail}
                 onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
               />
@@ -619,7 +577,7 @@ export default function HostDetail() {
               <Label htmlFor="guestPhone">Phone (Optional)</Label>
               <Input
                 id="guestPhone"
-                type="tel"
+                placeholder="Your phone number"
                 value={bookingData.guestPhone}
                 onChange={(e) => setBookingData({ ...bookingData, guestPhone: e.target.value })}
               />
@@ -637,8 +595,8 @@ export default function HostDetail() {
 
             <div>
               <Label htmlFor="mealType">Meal Type</Label>
-              <Select value={bookingData.mealType} onValueChange={(value: any) => setBookingData({ ...bookingData, mealType: value as "lunch" | "dinner" })}>
-                <SelectTrigger>
+              <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
+                <SelectTrigger id="mealType">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -680,129 +638,11 @@ export default function HostDetail() {
               disabled={createBookingMutation.isPending}
               className="bg-primary hover:bg-primary/90"
             >
-              {createBookingMutation.isPending ? "Submitting..." : "Confirm Booking"}
+              {createBookingMutation.isPending ? "Submitting..." : "Submit Request"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Payment Modal */}
-      {stripePromise && (
-        <Elements stripe={stripePromise}>
-          <PaymentModal
-            isOpen={showPayment}
-            onClose={() => setShowPayment(false)}
-            bookingId={bookingId}
-            hostListingId={hostId}
-            guestEmail={bookingData.guestEmail}
-            guestName={bookingData.guestName}
-            hostName={host.hostName}
-            mealDate={bookingData.requestedDate}
-            amount={Math.round(
-              (host.discountPercentage && host.discountPercentage > 0
-                ? host.pricePerPerson * (1 - host.discountPercentage / 100)
-                : host.pricePerPerson) * parseInt(bookingData.numberOfGuests) * 100
-            )}
-          />
-        </Elements>
-      )}
     </div>
-  );
-}
-
-// Payment Modal Component
-function PaymentModal({
-  isOpen,
-  onClose,
-  bookingId,
-  hostListingId,
-  guestEmail,
-  guestName,
-  hostName,
-  mealDate,
-  amount,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  bookingId: number | null;
-  hostListingId: number | null;
-  guestEmail: string;
-  guestName: string;
-  hostName: string;
-  mealDate: string;
-  amount: number;
-}) {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const createCheckoutSessionMutation = trpc.payment.createCheckoutSession.useMutation();
-
-  const handlePayment = async () => {
-    console.log("[Payment] handlePayment called", { bookingId, hostListingId });
-    
-    if (!bookingId || !hostListingId) {
-      console.error("[Payment] Missing bookingId or hostListingId");
-      toast.error("Booking information is missing. Please try again.");
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      console.log("[Payment] Creating checkout session...");
-      // Create Stripe Checkout session
-      const result = await createCheckoutSessionMutation.mutateAsync({
-        bookingId,
-        hostListingId,
-        guestEmail,
-        guestName,
-        hostName,
-        mealDate,
-        amountInCents: amount,
-      });
-
-      console.log("[Payment] Checkout session result:", result);
-
-      if (result?.checkoutUrl) {
-        console.log("[Payment] Redirecting to:", result.checkoutUrl);
-        // Redirect to Stripe Checkout
-        window.location.href = result.checkoutUrl;
-      } else {
-        throw new Error("Failed to create checkout session - no URL returned");
-      }
-    } catch (error: any) {
-      console.error("[Payment] Error:", error);
-      toast.error(error.message || "Failed to initiate payment. Please try again.");
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Complete Payment</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-6">
-          <div className="bg-secondary p-4 rounded-lg">
-            <div className="flex justify-between text-sm">
-              <span>Amount to pay:</span>
-              <span className="font-semibold">¥{(amount / 100).toFixed(2)}</span>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={handlePayment}
-              disabled={isProcessing}
-              className="bg-primary hover:bg-primary/90"
-            >
-              {isProcessing ? "Redirecting..." : "Pay Now"}
-            </Button>
-          </DialogFooter>
-        </div>
-      </DialogContent>
-    </Dialog>
   );
 }

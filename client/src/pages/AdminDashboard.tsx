@@ -41,7 +41,15 @@ export default function AdminDashboard() {
     },
   });
 
-  // Display order is updated via updateListing mutation
+  const updateDisplayOrderMutation = trpc.host.updateDisplayOrder.useMutation({
+    onSuccess: () => {
+      utils.host.listAll.invalidate();
+      utils.host.listApproved.invalidate();
+    },
+    onError: (error) => {
+      alert(`Error updating display order: ${error.message}`);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

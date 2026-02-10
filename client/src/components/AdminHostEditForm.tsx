@@ -21,7 +21,7 @@ interface HostListing {
   maxGuests: number;
   pricePerPerson: number;
   activities: string[];
-  availability: Record<string, ("lunch" | "dinner")[]>;
+  availability: Record<string, string[]>;
   otherNotes: string | null;
   dietaryNote: string | null;
 }
@@ -77,7 +77,7 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
   });
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -92,8 +92,8 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
     }));
   };
 
-  const handleAvailabilityChange = (day: string, meal: "lunch" | "dinner", isChecked: boolean) => {
-    setFormData((prev: any) => {
+  const handleAvailabilityChange = (day: string, meal: string, isChecked: boolean) => {
+    setFormData((prev) => {
       const dayMeals = prev.availability[day] || [];
       return {
         ...prev,
@@ -101,7 +101,7 @@ export function AdminHostEditForm({ listing, onSave, onCancel }: AdminHostEditFo
           ...prev.availability,
           [day]: isChecked
             ? [...dayMeals, meal]
-            : dayMeals.filter((m: string) => m !== meal),
+            : dayMeals.filter((m) => m !== meal),
         },
       };
     });

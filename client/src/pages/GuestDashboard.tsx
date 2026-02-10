@@ -34,12 +34,13 @@ export default function GuestDashboard() {
   const [messages, setMessages] = useState<any[]>([]);
 
   // Fetch guest bookings
-  // TODO: Implement getGuestBookings endpoint
-  const bookings: any[] = [];
-  const bookingsLoading = false;
+  const { data: bookings, isLoading: bookingsLoading } = trpc.booking.getGuestBookings.useQuery(
+    { guestEmail: user?.email || "" },
+    { enabled: !!user?.email }
+  );
 
   // Fetch conversations for guest
-  const { data: conversations = [], isLoading: conversationsLoading, refetch: refetchConversations } = trpc.messaging.getGuestConversations.useQuery(
+  const { data: conversations, isLoading: conversationsLoading, refetch: refetchConversations } = trpc.messaging.getGuestConversations.useQuery(
     { guestEmail: user?.email || "" },
     { enabled: !!user?.email }
   );

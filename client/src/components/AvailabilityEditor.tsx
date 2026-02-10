@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const MEAL_TYPES: ("lunch" | "dinner")[] = ["lunch", "dinner"];
+const MEAL_TYPES = ["lunch", "dinner"];
 
 interface AvailabilityEditorProps {
   currentAvailability?: Record<string, string[]>;
@@ -20,15 +20,15 @@ export default function AvailabilityEditor({
   hostId,
   onSave,
 }: AvailabilityEditorProps) {
-  const [availability, setAvailability] = useState<Record<string, ("lunch" | "dinner")[]>>((currentAvailability || {}) as Record<string, ("lunch" | "dinner")[]>);
+  const [availability, setAvailability] = useState<Record<string, string[]>>(currentAvailability);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    setAvailability((currentAvailability || {}) as Record<string, ("lunch" | "dinner")[]>);
+    setAvailability(currentAvailability);
   }, [currentAvailability]);
 
-  const handleToggleMeal = (day: string, meal: "lunch" | "dinner") => {
+  const handleToggleMeal = (day: string, meal: string) => {
     setAvailability((prev) => {
       const dayAvailability = prev[day] || [];
       const newDayAvailability = dayAvailability.includes(meal)
@@ -73,7 +73,7 @@ export default function AvailabilityEditor({
   };
 
   const handleCancel = () => {
-    setAvailability((currentAvailability || {}) as Record<string, ("lunch" | "dinner")[]>);
+    setAvailability(currentAvailability);
     setIsEditing(false);
   };
 
@@ -121,7 +121,7 @@ export default function AvailabilityEditor({
             <div key={day} className="space-y-2">
               <h3 className="font-semibold text-sm">{day}</h3>
               <div className="flex gap-4 ml-4">
-                {MEAL_TYPES.map((meal: "lunch" | "dinner") => (
+                {MEAL_TYPES.map((meal) => (
                   <div key={meal} className="flex items-center space-x-2">
                     <Checkbox
                       id={`${day}-${meal}`}

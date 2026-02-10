@@ -24,24 +24,6 @@ import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
 import { nanoid } from "nanoid";
-import Stripe from "stripe";
-import { ENV } from "./_core/env";
-
-// Initialize Stripe with fallback for missing key
-let stripe: Stripe | null = null;
-console.log("[Stripe Debug] ENV.stripeSecretKey:", ENV.stripeSecretKey ? "Found (length: " + ENV.stripeSecretKey.length + ")" : "Not found");
-if (ENV.stripeSecretKey) {
-  try {
-    stripe = new Stripe(ENV.stripeSecretKey, {
-      apiVersion: "2026-01-28.clover" as any,
-    });
-  } catch (error) {
-    console.warn("[Stripe] Failed to initialize Stripe:", error);
-    stripe = null;
-  }
-} else {
-  console.warn("[Stripe] STRIPE_SECRET_KEY not configured");
-}
 
 export const appRouter = router({
   system: systemRouter,
@@ -617,98 +599,6 @@ export const appRouter = router({
         return { success };
       }),
 
-  }),
-
-  payment: router({
-    // Create Stripe Checkout session for booking
-    createCheckoutSession: publicProcedure
-      .input(z.object({
-        bookingId: z.number(),
-        hostListingId: z.number(),
-        guestEmail: z.string().email(),
-        guestName: z.string(),
-        amountInCents: z.number().min(1),
-        hostName: z.string(),
-        mealDate: z.string(),
-      }))
-      .mutation(async ({ input }) => {
-        if (!stripe) {
-          throw new Error("Stripe is not configured");
-        }
-        try {
-          // Create Stripe Checkout session
-          const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            line_items: [
-              {
-                price_data: {
-                  currency: "cny",
-                  product_data: {
-                    name: `Meal with ${input.hostName}`,
-                    description: `Dining experience on ${input.mealDate}`,
-                  },
-                  unit_amount: input.amountInCents,
-                },
-                quantity: 1,
-              },
-            ],
-            mode: "payment",
-            success_url: `${ENV.isProduction ? 'https://plus1chopsticks.manus.space' : 'http://localhost:3000'}/booking-success?session_id={CHECKOUT_SESSION_ID}&booking_id=${input.bookingId}`,
-            cancel_url: `${ENV.isProduction ? 'https://plus1chopsticks.manus.space' : 'http://localhost:3000'}/hosts/${input.hostListingId}`,
-            customer_email: input.guestEmail,
-            metadata: {
-              bookingId: input.bookingId.toString(),
-              hostListingId: input.hostListingId.toString(),
-              guestEmail: input.guestEmail,
-            },
-          });
-
-          // Store payment record in database
-          const db = await getDb();
-          if (!db) throw new Error("Database connection failed");
-
-          const { payments } = await import("../drizzle/schema");
-          await db.insert(payments).values({
-            bookingId: input.bookingId,
-            stripePaymentIntentId: session.id,
-            stripeClientSecret: session.url || "",
-            amountInCents: input.amountInCents,
-            currency: "cny",
-            status: "pending",
-            hostListingId: input.hostListingId,
-            guestEmail: input.guestEmail,
-          });
-
-          return {
-            sessionId: session.id,
-            checkoutUrl: session.url,
-          };
-        } catch (error: any) {
-          console.error("[Stripe] Payment intent creation failed:", error);
-          throw new Error("Failed to create payment intent");
-        }
-      }),
-
-    // Confirm payment status
-    confirmPayment: publicProcedure
-      .input(z.object({
-        paymentIntentId: z.string(),
-      }))
-      .query(async ({ input }) => {
-        if (!stripe) {
-          throw new Error("Stripe is not configured");
-        }
-        try {
-          const paymentIntent = await stripe.paymentIntents.retrieve(input.paymentIntentId);
-          return {
-            status: paymentIntent.status,
-            succeeded: paymentIntent.status === "succeeded",
-          };
-        } catch (error: any) {
-          console.error("[Stripe] Payment confirmation failed:", error);
-          throw new Error("Failed to confirm payment");
-        }
-      }),
   }),
 });
 
