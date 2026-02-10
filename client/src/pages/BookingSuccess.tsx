@@ -13,6 +13,15 @@ export default function BookingSuccess() {
   useEffect(() => {
     // Update page title
     document.title = "Payment Successful - +1 Chopsticks";
+    
+    // Clear all booking caches since payment is complete
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith('booking_cache_')) {
+        localStorage.removeItem(key);
+        console.log(`[Booking Cache] Cleared cache: ${key}`);
+      }
+    });
   }, []);
 
   return (

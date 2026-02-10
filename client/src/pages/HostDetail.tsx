@@ -76,6 +76,25 @@ export default function HostDetail() {
     { id: hostId || 0 },
     { enabled: !!hostId }
   );
+  
+  // Restore booking data from localStorage on page load
+  useEffect(() => {
+    if (!hostId) return;
+    
+    const cacheKey = `booking_cache_${hostId}`;
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (cached) {
+      try {
+        const cachedData = JSON.parse(cached);
+        setBookingData(cachedData);
+        console.log('[Booking Cache] Restored booking data from localStorage');
+      } catch (error) {
+        console.error('[Booking Cache] Failed to parse cached data:', error);
+        localStorage.removeItem(cacheKey);
+      }
+    }
+  }, [hostId]);
 
   // Track view count
   const incrementViewMutation = trpc.host.incrementView.useMutation();
@@ -140,6 +159,11 @@ export default function HostDetail() {
   const createBookingMutation = trpc.booking.create.useMutation({
     onSuccess: (data) => {
       if (!host) return;
+      
+      // Save booking data to localStorage for recovery
+      const cacheKey = `booking_cache_${host.id}`;
+      localStorage.setItem(cacheKey, JSON.stringify(bookingData));
+      console.log('[Booking Cache] Saved booking data to localStorage');
       
       // Calculate total amount
       const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
