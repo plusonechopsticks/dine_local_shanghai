@@ -622,3 +622,8 @@
 ## Bug Fixes - Admin Panel Issues
 - [x] Fix hide function not working for bookings (added hidden field to getAllBookings select)
 - [x] Fix payment tab not showing successful payments (code is correct, will show once real Stripe payments complete)
+
+## Payment Record Fix
+- [x] Find CNY 10 booking for "test host" and update to paid status
+- [x] Investigate why webhook didn't update this specific booking (metadata.bookingId may have been missing)
+- [x] Verify webhook configuration for future payments (webhook is active and working)
