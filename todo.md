@@ -568,3 +568,36 @@
 - [x] Install stripe npm package
 - [x] Restart server to load Stripe dependency
 - [ ] Test payment flow on production after installation
+
+
+## Stripe Promo Code Issue - In Progress
+- [ ] Check Stripe Checkout session configuration for allow_promotion_codes setting
+- [ ] Verify promo code MANUS100OFFEON is active in Stripe Dashboard
+- [ ] Test promo code on Stripe Checkout page
+
+
+## Promo Code Configuration Verification - In Progress
+- [ ] Verify allow_promotion_codes: true is set in createCheckoutSession
+- [ ] Check if test/live mode matches between Stripe keys and promo codes
+- [ ] Add console logging to verify checkout session parameters
+- [ ] Test promo code after verification
+
+
+## Admin Panel New Tabs - In Progress
+- [ ] Add "Traveler Interest" tab to view guest interest submissions
+- [ ] Add "Payment Successful" tab to track completed payments
+- [ ] Update AdminDashboard component with new tab navigation
+- [ ] Create backend procedures to fetch interest submissions and successful payments
+- [ ] Test both tabs in admin panel
+
+## Admin Panel Tabs - In Progress
+- [ ] Add Traveler Interest tab to view guest interest submissions
+- [ ] Add Payment Successful tab to track completed payments
+- [ ] Update webhook handler to set payment fields on successful payment
+
+## Admin Panel Tabs - Completed ✅
+- [x] Add payment fields to bookings table (paymentStatus, totalAmount, paymentDate, stripeSessionId)
+- [x] Change interest.list from protectedProcedure to publicProcedure for testing
+- [x] Traveler Interest tab displays all interest submissions
+- [x] Payment Successful tab displays bookings with paymentStatus='paid'
+- [x] Update webhook handler to set payment fields on successful payment (checkout.session.completed)

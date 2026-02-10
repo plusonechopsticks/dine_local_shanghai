@@ -81,7 +81,29 @@ async function startServer(): Promise<any> {
         case "checkout.session.completed":
           const session = event.data.object;
           console.log("[Webhook] Checkout session completed:", session.id);
-          // TODO: Update booking status to confirmed
+          
+          // Update booking payment status
+          try {
+            const { getDb } = await import("../db");
+            const { bookings } = await import("../../drizzle/schema");
+            const { eq } = await import("drizzle-orm");
+            
+            const db = await getDb();
+            if (db && session.metadata?.bookingId) {
+              await db.update(bookings)
+                .set({
+                  paymentStatus: "paid",
+                  totalAmount: (session.amount_total! / 100).toString(),
+                  paymentDate: new Date(),
+                  stripeSessionId: session.id,
+                })
+                .where(eq(bookings.id, parseInt(session.metadata.bookingId)));
+              
+              console.log(`[Webhook] Updated booking ${session.metadata.bookingId} to paid status`);
+            }
+          } catch (updateError: any) {
+            console.error("[Webhook] Error updating booking:", updateError);
+          }
           break;
           
         case "payment_intent.succeeded":

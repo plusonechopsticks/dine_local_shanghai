@@ -14,6 +14,8 @@ import { getProxiedImageUrl } from "@/lib/imageUtils";
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
   const { data: bookings = [], isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
+  const { data: interestSubmissions = [], isLoading: interestLoading } = trpc.interest.list.useQuery();
+  const { data: successfulPayments = [], isLoading: paymentsLoading } = trpc.booking.listAll.useQuery();
   const utils = trpc.useUtils();
 
   const [expandedHostId, setExpandedHostId] = useState<number | null>(null);
@@ -127,6 +129,8 @@ export default function AdminDashboard() {
         <TabsList>
           <TabsTrigger value="applications">Host Applications</TabsTrigger>
           <TabsTrigger value="bookings">Guest Bookings</TabsTrigger>
+          <TabsTrigger value="interest">Traveler Interest</TabsTrigger>
+          <TabsTrigger value="payments">Payment Successful</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -550,6 +554,90 @@ export default function AdminDashboard() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="interest" className="space-y-4">
+          {interestLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="space-y-4">
+              {interestSubmissions.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-center text-muted-foreground">No traveler interest submissions yet</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                interestSubmissions.map((submission: any) => (
+                  <Card key={submission.id}>
+                    <CardHeader>
+                      <CardTitle>{submission.name}</CardTitle>
+                      <CardDescription>{submission.email}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm">
+                        {submission.phone && (
+                          <div><span className="font-medium">Phone:</span> {submission.phone}</div>
+                        )}
+                        {submission.wechat && (
+                          <div><span className="font-medium">WeChat:</span> {submission.wechat}</div>
+                        )}
+                        {submission.message && (
+                          <div><span className="font-medium">Message:</span> {submission.message}</div>
+                        )}
+                        <div><span className="font-medium">Submitted:</span> {new Date(submission.createdAt).toLocaleString()}</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="payments" className="space-y-4">
+          {paymentsLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="space-y-4">
+              {successfulPayments.filter((b: any) => b.paymentStatus === 'paid').length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-center text-muted-foreground">No successful payments yet</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                successfulPayments
+                  .filter((booking: any) => booking.paymentStatus === 'paid')
+                  .map((booking: any) => (
+                    <Card key={booking.id}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <span>Booking #{booking.id}</span>
+                          <Badge variant="default" className="bg-green-600">Paid</Badge>
+                        </CardTitle>
+                        <CardDescription>
+                          {booking.guestName} • {booking.guestEmail}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div><span className="font-medium">Host:</span> {booking.hostName || 'Unknown'}</div>
+                          <div><span className="font-medium">Date:</span> {booking.requestedDate ? new Date(booking.requestedDate).toLocaleDateString() : 'Not specified'}</div>
+                          <div><span className="font-medium">Meal:</span> {booking.mealType}</div>
+                          <div><span className="font-medium">Guests:</span> {booking.numberOfGuests}</div>
+                          <div><span className="font-medium">Amount:</span> ¥{booking.totalAmount || 'N/A'}</div>
+                          <div><span className="font-medium">Payment Date:</span> {booking.paymentDate ? new Date(booking.paymentDate).toLocaleString() : 'N/A'}</div>
+                          {booking.specialRequests && (
+                            <div className="col-span-2"><span className="font-medium">Special Requests:</span> {booking.specialRequests}</div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+              )}
             </div>
           )}
         </TabsContent>

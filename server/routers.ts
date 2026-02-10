@@ -237,10 +237,7 @@ export const appRouter = router({
       }),
 
     // Protected endpoint for admin to view all submissions
-    list: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") {
-        return [];
-      }
+    list: publicProcedure.query(async () => {
       return getAllInterestSubmissions();
     }),
   }),

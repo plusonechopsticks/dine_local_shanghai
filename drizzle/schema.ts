@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json, date } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json, date, decimal } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -134,6 +134,12 @@ export const bookings = mysqlTable("bookings", {
   // Status
   status: mysqlEnum("bookingStatus", ["pending", "confirmed", "cancelled", "rejected"]).default("pending").notNull(),
   hostNotes: text("hostNotes"), // Host's response/notes
+  
+  // Payment
+  paymentStatus: mysqlEnum("paymentStatus", ["pending", "paid", "refunded"]).default("pending"),
+  totalAmount: decimal("totalAmount", { precision: 10, scale: 2 }),
+  paymentDate: timestamp("paymentDate"),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }),
   
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
