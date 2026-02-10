@@ -96,7 +96,7 @@ export const appRouter = router({
         const totalAmount = discountedPrice * input.numberOfGuests;
         
         // Generate payment link (booking confirmation page)
-        const baseUrl = process.env.VITE_FRONTEND_FORGE_API_URL?.replace('/api', '') || 'https://dinelocalsh-mkw6exse.manus.space';
+        const baseUrl = process.env.VITE_WEBSITE_URL || 'https://plus1chopsticks.manus.space';
         const paymentLink = `${baseUrl}/booking-confirmation?bookingId=${bookingId}&guestName=${encodeURIComponent(input.guestName)}&guestEmail=${encodeURIComponent(input.guestEmail)}&requestedDate=${encodeURIComponent(input.requestedDate)}&mealType=${input.mealType}&numberOfGuests=${input.numberOfGuests}&hostName=${encodeURIComponent(host.hostName)}&amount=${totalAmount}&dietaryRestrictions=${encodeURIComponent(input.specialRequests || "")}&hostListingId=${host.id}`;
         
         // Send payment reminder email

@@ -662,3 +662,7 @@
 - [x] Debug why hostListingId is not working in navigation
 - [x] Check URL parameters being passed
 - [x] Fix navigation to properly return to host detail page (route mismatch: /host/ vs /hosts/)
+
+## Bug Fix - Email Payment Link Domain
+- [x] Fix email payment link using wrong domain (forge.manus.ai instead of plus1chopsticks.manus.space)
+- [x] Update email template to use dynamic website URL from environment (VITE_WEBSITE_URL)
