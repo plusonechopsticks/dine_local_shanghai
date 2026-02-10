@@ -189,3 +189,188 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
 </html>
   `.trim();
 }
+
+interface PaymentReminderData {
+  guestName: string;
+  bookingId: number;
+  hostName: string;
+  requestedDate: string;
+  mealType: string;
+  numberOfGuests: number;
+  totalAmount: string;
+  paymentLink: string;
+}
+
+export function generatePaymentReminderEmail(data: PaymentReminderData): string {
+  const formattedDate = new Date(data.requestedDate).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Booking - +1 Chopsticks</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #7c2d12; padding: 30px 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">+1 Chopsticks</h1>
+              <p style="margin: 8px 0 0 0; color: #fef3c7; font-size: 18px;">加一雙筷子</p>
+            </td>
+          </tr>
+
+          <!-- Pending Icon -->
+          <tr>
+            <td style="padding: 40px 40px 20px 40px; text-align: center;">
+              <div style="width: 64px; height: 64px; margin: 0 auto; background-color: #fef3c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+                <span style="font-size: 32px; color: #ca8a04;">⏳</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Main Content -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Complete Your Booking Payment</h2>
+              <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
+                Hi ${data.guestName}, you're almost there! Your booking request has been submitted, but we haven't received your payment yet.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Important Note -->
+          <tr>
+            <td style="padding: 0 40px 24px 40px;">
+              <div style="background-color: #eff6ff; border-left: 4px solid: #2563eb; padding: 16px; border-radius: 4px;">
+                <p style="margin: 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
+                  <strong>Note:</strong> If you've already completed your payment and received a confirmation email, please disregard this message. This is an automated reminder for pending bookings.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Booking Details -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <div style="background-color: #fef3c7; border-left: 4px solid #7c2d12; padding: 20px; border-radius: 4px;">
+                <h3 style="margin: 0 0 16px 0; color: #7c2d12; font-size: 18px; font-weight: 600;">Your Booking Details #${data.bookingId}</h3>
+                
+                <table width="100%" cellpadding="8" cellspacing="0">
+                  <tr>
+                    <td style="color: #78716c; font-size: 14px; font-weight: 600; width: 40%;">Host:</td>
+                    <td style="color: #1f2937; font-size: 14px;">${data.hostName}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Date:</td>
+                    <td style="color: #1f2937; font-size: 14px;">${formattedDate}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Meal:</td>
+                    <td style="color: #1f2937; font-size: 14px;">${data.mealType}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Guests:</td>
+                    <td style="color: #1f2937; font-size: 14px;">${data.numberOfGuests} ${data.numberOfGuests === 1 ? 'guest' : 'guests'}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Total Amount:</td>
+                    <td style="color: #7c2d12; font-size: 16px; font-weight: 600;">¥${data.totalAmount}</td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Payment Button -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px; text-align: center;">
+              <a href="${data.paymentLink}" style="display: inline-block; background-color: #7c2d12; color: #ffffff; text-decoration: none; padding: 16px 48px; border-radius: 6px; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
+                Complete Payment Now
+              </a>
+              <p style="margin: 16px 0 0 0; color: #6b7280; font-size: 14px;">
+                Click the button above to securely complete your payment via Stripe
+              </p>
+            </td>
+          </tr>
+
+          <!-- Benefits Reminder -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="50%" style="padding-right: 8px;">
+                    <div style="background-color: #f0fdf4; padding: 16px; border-radius: 4px; text-align: center;">
+                      <p style="margin: 0; color: #16a34a; font-size: 20px;">🏠</p>
+                      <p style="margin: 8px 0 0 0; color: #166534; font-size: 14px; font-weight: 600;">Authentic Experience</p>
+                      <p style="margin: 4px 0 0 0; color: #15803d; font-size: 12px;">Real Shanghai home cooking</p>
+                    </div>
+                  </td>
+                  <td width="50%" style="padding-left: 8px;">
+                    <div style="background-color: #eff6ff; padding: 16px; border-radius: 4px; text-align: center;">
+                      <p style="margin: 0; color: #2563eb; font-size: 20px;">📅</p>
+                      <p style="margin: 8px 0 0 0; color: #1e40af; font-size: 14px; font-weight: 600;">Free Cancellation</p>
+                      <p style="margin: 4px 0 0 0; color: #1d4ed8; font-size: 12px;">Up to 7 days before</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- What Happens After Payment -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px; font-weight: 600;">After You Complete Payment:</h3>
+              <ul style="margin: 0; padding-left: 20px; color: #6b7280; font-size: 14px; line-height: 1.8;">
+                <li>You'll receive an immediate confirmation email with all booking details</li>
+                <li>Your host will contact you within 24-48 hours to finalize arrangements</li>
+                <li>Your spot at the table will be secured</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- Closing -->
+          <tr>
+            <td style="padding: 0 40px 40px 40px; text-align: center;">
+              <p style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: 600;">
+                We're excited to welcome you to an authentic Shanghai dining experience!
+              </p>
+              <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                Warm regards,<br>
+                The +1 Chopsticks Team
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0 0 8px 0; color: #9ca3af; font-size: 12px;">
+                Questions? Contact us at <a href="mailto:plusonechopsticks@gmail.com" style="color: #7c2d12; text-decoration: none;">plusonechopsticks@gmail.com</a>
+              </p>
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experience
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}

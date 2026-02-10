@@ -22,7 +22,8 @@ import { bookings, hostListings } from "../drizzle/schema";
 import { sql, eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
-import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail } from "./email";
+import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail, sendEmail } from "./email";
+import { generatePaymentReminderEmail } from "./email-templates";
 import { nanoid } from "nanoid";
 
 export const appRouter = router({
@@ -83,6 +84,46 @@ export const appRouter = router({
           title: `New Booking Request from ${input.guestName}`,
           content: `Guest: ${input.guestName}\nEmail: ${input.guestEmail}\nDate: ${input.requestedDate}\nMeal: ${input.mealType}\nGuests: ${input.numberOfGuests}\nSpecial Requests: ${input.specialRequests || "None"}`,
         });
+        
+        // Get host details for email
+        const host = await getHostListingById(input.hostListingId);
+        if (!host) throw new Error("Host listing not found");
+        
+        // Calculate total amount
+        const discountedPrice = host.discountPercentage
+          ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
+          : host.pricePerPerson;
+        const totalAmount = discountedPrice * input.numberOfGuests;
+        
+        // Generate payment link (booking confirmation page)
+        const baseUrl = process.env.VITE_FRONTEND_FORGE_API_URL?.replace('/api', '') || 'https://dinelocalsh-mkw6exse.manus.space';
+        const paymentLink = `${baseUrl}/booking-confirmation?bookingId=${bookingId}&guestName=${encodeURIComponent(input.guestName)}&guestEmail=${encodeURIComponent(input.guestEmail)}&requestedDate=${encodeURIComponent(input.requestedDate)}&mealType=${input.mealType}&numberOfGuests=${input.numberOfGuests}&hostName=${encodeURIComponent(host.hostName)}&amount=${totalAmount}&dietaryRestrictions=${encodeURIComponent(input.specialRequests || "")}&hostListingId=${host.id}`;
+        
+        // Send payment reminder email
+        try {
+          const emailHtml = generatePaymentReminderEmail({
+            guestName: input.guestName,
+            bookingId: Number(bookingId),
+            hostName: host.hostName,
+            requestedDate: input.requestedDate,
+            mealType: input.mealType,
+            numberOfGuests: input.numberOfGuests,
+            totalAmount: totalAmount.toFixed(2),
+            paymentLink,
+          });
+          
+          await sendEmail({
+            to: input.guestEmail,
+            subject: "Complete Your Booking Payment - +1 Chopsticks",
+            html: emailHtml,
+          });
+          
+          console.log(`[Booking] Payment reminder email sent to ${input.guestEmail}`);
+        } catch (error) {
+          console.error('[Booking] Failed to send payment reminder email:', error);
+          // Don't fail the booking if email fails
+        }
+        
         return { success: true, id: bookingId };
       }),
 
