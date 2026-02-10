@@ -28,6 +28,7 @@ export const interestSubmissions = mysqlTable("interest_submissions", {
   email: varchar("email", { length: 320 }).notNull(),
   interestType: mysqlEnum("interestType", ["traveler", "host"]).notNull(),
   message: text("message"),
+  hidden: boolean("hidden").default(false), // Hide test submissions from admin view
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -134,6 +135,7 @@ export const bookings = mysqlTable("bookings", {
   // Status
   status: mysqlEnum("bookingStatus", ["pending", "confirmed", "cancelled", "rejected"]).default("pending").notNull(),
   hostNotes: text("hostNotes"), // Host's response/notes
+  hidden: boolean("hidden").default(false), // Hide test bookings from admin view
   
   // Payment
   paymentStatus: mysqlEnum("paymentStatus", ["pending", "paid", "refunded"]).default("pending"),

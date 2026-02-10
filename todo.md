@@ -606,3 +606,15 @@
 - [x] Create new booking confirmation screen after booking submission
 - [x] Add payment button with prompt: "Proceed to pay and secure your home dining table today. Free cancellation 7 days in advance."
 - [x] Remove empty space between header and first content on homepage
+
+## Admin Panel - Hide Test Data
+- [x] Add hidden field to bookings table schema
+- [x] Add hidden field to interest_submissions table schema
+- [x] Create backend procedure to toggle hidden status for bookings
+- [x] Create backend procedure to toggle hidden status for interest submissions
+- [x] Add Hide button to each booking in admin panel
+- [x] Add Hide button to each traveler interest entry in admin panel
+- [x] Filter out hidden entries by default (with option to show all)
+
+## Bug Fixes - Booking Confirmation 404
+- [x] Add /booking-confirmation route to App.tsx router

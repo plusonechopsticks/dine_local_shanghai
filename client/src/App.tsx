@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import HostDashboard from "./pages/HostDashboard";
 import GuestDashboard from "./pages/GuestDashboard";
 import BookingSuccess from "./pages/BookingSuccess";
+import BookingConfirmation from "./pages/BookingConfirmation";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -25,8 +26,9 @@ function Router() {
       <Route path={"/host-dashboard"} component={HostDashboard} />
       <Route path={"/guest-dashboard"} component={GuestDashboard} />
       <Route path={"/admin"} component={AdminDashboard} />
-      <Route path={"/booking-success"} component={BookingSuccess} />
-      <Route path={"/404"} component={NotFound} />
+      <Route path="/booking-success" component={BookingSuccess} />
+      <Route path="/booking-confirmation" component={BookingConfirmation} />
+      <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

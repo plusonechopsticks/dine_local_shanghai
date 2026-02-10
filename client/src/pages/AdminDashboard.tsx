@@ -21,6 +21,8 @@ export default function AdminDashboard() {
   const [expandedHostId, setExpandedHostId] = useState<number | null>(null);
   const [editingHostId, setEditingHostId] = useState<number | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [showHiddenBookings, setShowHiddenBookings] = useState(false);
+  const [showHiddenInterest, setShowHiddenInterest] = useState(false);
 
   const updateHostMutation = trpc.host.updateListing.useMutation({
     onSuccess: () => {
@@ -40,6 +42,18 @@ export default function AdminDashboard() {
     },
     onError: (error) => {
       alert(`Error: ${error.message}`);
+    },
+  });
+
+  const toggleBookingHidden = trpc.booking.toggleHidden.useMutation({
+    onSuccess: () => {
+      utils.booking.listAll.invalidate();
+    },
+  });
+
+  const toggleInterestHidden = trpc.interest.toggleHidden.useMutation({
+    onSuccess: () => {
+      utils.interest.list.invalidate();
     },
   });
 
@@ -534,7 +548,18 @@ export default function AdminDashboard() {
             <p>Loading...</p>
           ) : (
             <div className="space-y-4">
-              {bookings.map((booking) => (
+              <div className="flex items-center gap-2 mb-4">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={showHiddenBookings}
+                    onChange={(e) => setShowHiddenBookings(e.target.checked)}
+                    className="rounded"
+                  />
+                  Show hidden bookings
+                </label>
+              </div>
+              {bookings.filter(b => showHiddenBookings || !b.hidden).map((booking) => (
                 <Card key={booking.id}>
                   <CardHeader>
                     <CardTitle>Booking #{booking.id}</CardTitle>
@@ -543,7 +568,7 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                       <div><span className="font-medium">Host:</span> {booking.hostName || 'Unknown'}</div>
                       <div><span className="font-medium">Date:</span> {booking.requestedDate ? new Date(booking.requestedDate).toLocaleDateString() : 'Not specified'}</div>
                       <div><span className="font-medium">Meal:</span> {booking.mealType}</div>
@@ -551,6 +576,14 @@ export default function AdminDashboard() {
                       <div><span className="font-medium">Status:</span> {booking.status}</div>
                       <div className="col-span-2"><span className="font-medium">Special Requests:</span> {booking.specialRequests || 'None'}</div>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleBookingHidden.mutate({ id: booking.id, hidden: !booking.hidden })}
+                      disabled={toggleBookingHidden.isPending}
+                    >
+                      {booking.hidden ? 'Unhide' : 'Hide'}
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -563,14 +596,25 @@ export default function AdminDashboard() {
             <p>Loading...</p>
           ) : (
             <div className="space-y-4">
-              {interestSubmissions.length === 0 ? (
+              <div className="flex items-center gap-2 mb-4">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={showHiddenInterest}
+                    onChange={(e) => setShowHiddenInterest(e.target.checked)}
+                    className="rounded"
+                  />
+                  Show hidden submissions
+                </label>
+              </div>
+              {interestSubmissions.filter((s: any) => showHiddenInterest || !s.hidden).length === 0 ? (
                 <Card>
                   <CardContent className="pt-6">
                     <p className="text-center text-muted-foreground">No traveler interest submissions yet</p>
                   </CardContent>
                 </Card>
               ) : (
-                interestSubmissions.map((submission: any) => (
+                interestSubmissions.filter((s: any) => showHiddenInterest || !s.hidden).map((submission: any) => (
                   <Card key={submission.id}>
                     <CardHeader>
                       <CardTitle>{submission.name}</CardTitle>
@@ -589,6 +633,15 @@ export default function AdminDashboard() {
                         )}
                         <div><span className="font-medium">Submitted:</span> {new Date(submission.createdAt).toLocaleString()}</div>
                       </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleInterestHidden.mutate({ id: submission.id, hidden: !submission.hidden })}
+                        disabled={toggleInterestHidden.isPending}
+                        className="mt-4"
+                      >
+                        {submission.hidden ? 'Unhide' : 'Hide'}
+                      </Button>
                     </CardContent>
                   </Card>
                 ))

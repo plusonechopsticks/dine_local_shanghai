@@ -89,6 +89,22 @@ export const appRouter = router({
     listAll: publicProcedure.query(async () => {
       return await getAllBookings();
     }),
+
+    toggleHidden: publicProcedure
+      .input(z.object({
+        id: z.number(),
+        hidden: z.boolean(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        await db.update(bookings)
+          .set({ hidden: input.hidden })
+          .where(eq(bookings.id, input.id));
+        
+        return { success: true };
+      }),
   }),
   messaging: router({
     // Create or get conversation
@@ -240,6 +256,24 @@ export const appRouter = router({
     list: publicProcedure.query(async () => {
       return getAllInterestSubmissions();
     }),
+
+    toggleHidden: publicProcedure
+      .input(z.object({
+        id: z.number(),
+        hidden: z.boolean(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        const { interestSubmissions } = await import("../drizzle/schema");
+        
+        await db.update(interestSubmissions)
+          .set({ hidden: input.hidden })
+          .where(eq(interestSubmissions.id, input.id));
+        
+        return { success: true };
+      }),
   }),
 
   // Image upload endpoint
