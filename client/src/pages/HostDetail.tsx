@@ -736,11 +736,18 @@ function PaymentModal({
   const createCheckoutSessionMutation = trpc.payment.createCheckoutSession.useMutation();
 
   const handlePayment = async () => {
-    if (!bookingId || !hostListingId) return;
+    console.log("[Payment] handlePayment called", { bookingId, hostListingId });
+    
+    if (!bookingId || !hostListingId) {
+      console.error("[Payment] Missing bookingId or hostListingId");
+      toast.error("Booking information is missing. Please try again.");
+      return;
+    }
 
     setIsProcessing(true);
 
     try {
+      console.log("[Payment] Creating checkout session...");
       // Create Stripe Checkout session
       const result = await createCheckoutSessionMutation.mutateAsync({
         bookingId,
@@ -752,14 +759,18 @@ function PaymentModal({
         amountInCents: amount,
       });
 
+      console.log("[Payment] Checkout session result:", result);
+
       if (result?.checkoutUrl) {
+        console.log("[Payment] Redirecting to:", result.checkoutUrl);
         // Redirect to Stripe Checkout
         window.location.href = result.checkoutUrl;
       } else {
-        throw new Error("Failed to create checkout session");
+        throw new Error("Failed to create checkout session - no URL returned");
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to initiate payment");
+      console.error("[Payment] Error:", error);
+      toast.error(error.message || "Failed to initiate payment. Please try again.");
       setIsProcessing(false);
     }
   };

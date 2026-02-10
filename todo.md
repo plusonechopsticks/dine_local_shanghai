@@ -546,10 +546,17 @@
 - [x] Add payment button and Stripe checkout modal to booking confirmation
 - [ ] Test Stripe payment flow end-to-end
 
-## Payment Flow Fix - Completed ✅
+## Payment Flow Fix - Debugging
 - [x] Fix "Pay Now" button not responding when clicked
 - [x] Change payment flow to redirect to Stripe Checkout page instead of embedded form
 - [x] Update backend to create Stripe Checkout session
 - [x] Update frontend to redirect to Stripe after booking confirmation
 - [x] Create booking success page for Stripe redirect
+- [x] Fix Stripe secret key environment variable loading
+- [ ] Debug why Pay Now button doesn't trigger on production
 - [ ] Test complete payment flow on live site
+
+## Stripe Secret Key Configuration Issue
+- [ ] Fix Stripe secret key not being loaded from environment
+- [ ] Verify STRIPE_SECRET_KEY vs Stripe_secretkey naming
+- [ ] Test payment flow after fixing secret key loading

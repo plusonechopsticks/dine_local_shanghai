@@ -29,6 +29,7 @@ import { ENV } from "./_core/env";
 
 // Initialize Stripe with fallback for missing key
 let stripe: Stripe | null = null;
+console.log("[Stripe Debug] ENV.stripeSecretKey:", ENV.stripeSecretKey ? "Found (length: " + ENV.stripeSecretKey.length + ")" : "Not found");
 if (ENV.stripeSecretKey) {
   try {
     stripe = new Stripe(ENV.stripeSecretKey, {
