@@ -534,3 +534,10 @@
 - [x] Return valid JSON response with {"verified": true} for test events
 - [x] Verify Stripe signature using stripe.webhooks.constructEvent()
 - [x] Test webhook verification
+
+## Payment Button After Booking - Completed ✅
+- [x] Create createCheckoutSession procedure in backend
+- [x] Add payment button to booking confirmation UI
+- [x] Redirect to Stripe Checkout on button click
+- [x] Create success/cancel pages for payment redirect
+- [ ] Test complete payment flow

@@ -44,7 +44,7 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         
-        await db.insert(bookings).values({
+        const result = await db.insert(bookings).values({
           hostListingId: input.hostListingId,
           guestName: input.guestName,
           guestEmail: input.guestEmail,
@@ -55,13 +55,15 @@ export const appRouter = router({
           specialRequests: input.specialRequests || null,
           status: "pending",
         });
+        
+        const bookingId = Number((result as any).insertId);
 
         // Send notification to owner
         await notifyOwner({
           title: `New Booking Request from ${input.guestName}`,
           content: `Guest: ${input.guestName}\nEmail: ${input.guestEmail}\nDate: ${input.requestedDate}\nMeal: ${input.mealType}\nGuests: ${input.numberOfGuests}\nSpecial Requests: ${input.specialRequests || "None"}`,
         });
-        return { success: true };
+        return { success: true, id: bookingId };
       }),
 
     listAll: publicProcedure.query(async () => {
@@ -599,6 +601,65 @@ export const appRouter = router({
         return { success };
       }),
 
+  }),
+  
+  payment: router({
+    createCheckoutSession: publicProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        amount: z.number(),
+        hostName: z.string(),
+        guestEmail: z.string().email(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        try {
+          // Import Stripe dynamically
+          const Stripe = (await import("stripe")).default;
+          const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.Stripe_secretkey;
+          
+          if (!stripeSecretKey) {
+            throw new Error("Stripe is not configured on the server");
+          }
+          
+          const stripe = new Stripe(stripeSecretKey, {
+            apiVersion: "2026-01-28.clover" as any,
+          });
+          
+          // Get the origin from request headers for redirect URLs
+          const origin = ctx.req.headers.origin || `https://${ctx.req.headers.host}`;
+          
+          // Create Stripe Checkout session
+          const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [
+              {
+                price_data: {
+                  currency: "cny",
+                  product_data: {
+                    name: `Meal with ${input.hostName}`,
+                    description: `Booking #${input.bookingId}`,
+                  },
+                  unit_amount: Math.round(input.amount * 100), // Convert to cents
+                },
+                quantity: 1,
+              },
+            ],
+            mode: "payment",
+            success_url: `${origin}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/`,
+            customer_email: input.guestEmail,
+            metadata: {
+              bookingId: input.bookingId.toString(),
+            },
+            allow_promotion_codes: true,
+          });
+          
+          return { url: session.url };
+        } catch (error: any) {
+          console.error("[Payment] Error creating checkout session:", error);
+          throw new Error(error.message || "Failed to create payment session");
+        }
+      }),
   }),
 });
 

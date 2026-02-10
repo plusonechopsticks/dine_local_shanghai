@@ -68,6 +68,8 @@ export default function HostDetail() {
     numberOfGuests: "1",
     specialRequests: "",
   });
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
 
   const hostId = params?.id ? parseInt(params.id) : null;
   const { data: host, isLoading, isError } = trpc.host.get.useQuery(
@@ -135,26 +137,47 @@ export default function HostDetail() {
     };
   }, [host]);
 
-  // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({
-    onSuccess: () => {
-      toast.success("Booking request submitted! The host will respond soon.");
-      setIsBookingOpen(false);
-      setBookingData({
-        guestName: "",
-        guestEmail: "",
-        guestPhone: "",
-        requestedDate: "",
-        mealType: "dinner",
-        numberOfGuests: "1",
-        specialRequests: "",
+    onSuccess: (data) => {
+      setBookingSuccess(true);
+      setCreatedBookingId(data.id);
+      toast.success("Booking request submitted successfully!", {
+        description: "Please proceed to payment to confirm your booking.",
       });
     },
     onError: (error: any) => {
       toast.error(error.message || "Failed to submit booking request");
     },
   });
-
+  
+  const createCheckoutSessionMutation = trpc.payment.createCheckoutSession.useMutation({
+    onSuccess: (data) => {
+      if (data.url) {
+        toast.success("Redirecting to payment...");
+        window.location.href = data.url;
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to create payment session");
+    },
+  });
+  
+  const handlePayment = () => {
+    if (!createdBookingId || !host) return;
+    
+    const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
+      ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
+      : host.pricePerPerson;
+    const totalAmount = discountedPrice * parseInt(bookingData.numberOfGuests);
+    
+    createCheckoutSessionMutation.mutate({
+      bookingId: createdBookingId,
+      amount: totalAmount,
+      hostName: host.hostName,
+      guestEmail: bookingData.guestEmail,
+    });
+  };
+  
   const handleSubmitBooking = () => {
     if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.requestedDate) {
       toast.error("Please fill in all required fields");
@@ -630,16 +653,49 @@ export default function HostDetail() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsBookingOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmitBooking}
-              disabled={createBookingMutation.isPending}
-              className="bg-primary hover:bg-primary/90"
-            >
-              {createBookingMutation.isPending ? "Submitting..." : "Submit Request"}
-            </Button>
+            {!bookingSuccess ? (
+              <>
+                <Button variant="outline" onClick={() => setIsBookingOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSubmitBooking}
+                  disabled={createBookingMutation.isPending}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {createBookingMutation.isPending ? "Submitting..." : "Submit Request"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsBookingOpen(false);
+                    setBookingSuccess(false);
+                    setCreatedBookingId(null);
+                    setBookingData({
+                      guestName: "",
+                      guestEmail: "",
+                      guestPhone: "",
+                      requestedDate: "",
+                      mealType: "dinner",
+                      numberOfGuests: "1",
+                      specialRequests: "",
+                    });
+                  }}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={handlePayment}
+                  disabled={createCheckoutSessionMutation.isPending}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {createCheckoutSessionMutation.isPending ? "Redirecting..." : "Pay Now"}
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
