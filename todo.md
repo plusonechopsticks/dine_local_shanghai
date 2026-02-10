@@ -541,3 +541,24 @@
 - [x] Redirect to Stripe Checkout on button click
 - [x] Create success/cancel pages for payment redirect
 - [ ] Test complete payment flow
+
+## Pay Now Button Not Responding - In Progress
+- [ ] Test booking flow to reproduce the issue
+- [ ] Check browser console for JavaScript errors
+- [ ] Verify Stripe secret key is loaded on server
+- [ ] Add error handling and loading states
+- [ ] Test complete payment flow end-to-end
+
+
+## Stripe Payment Integration - Completed ✅
+- [x] Create Stripe webhook endpoint at /api/stripe/webhook
+- [x] Register webhook route with express.raw() before express.json()
+- [x] Return valid JSON response with {"verified": true} for test events
+- [x] Verify Stripe signature using stripe.webhooks.constructEvent()
+- [x] Create createCheckoutSession procedure in backend
+- [x] Add payment button to booking confirmation UI
+- [x] Redirect to Stripe Checkout on button click
+- [x] Create success/cancel pages for payment redirect
+- [x] Fix booking.create to return proper booking ID using LAST_INSERT_ID()
+- [x] Test complete payment flow - booking → Pay Now → Stripe Checkout
+- [x] Verified Stripe Checkout page loads with correct booking details

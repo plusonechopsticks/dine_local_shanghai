@@ -163,12 +163,25 @@ export default function HostDetail() {
   });
   
   const handlePayment = () => {
-    if (!createdBookingId || !host) return;
+    console.log('[Payment] handlePayment called', { createdBookingId, host: !!host });
+    
+    if (!createdBookingId || !host) {
+      console.error('[Payment] Missing required data:', { createdBookingId, host: !!host });
+      toast.error('Unable to process payment. Please try booking again.');
+      return;
+    }
     
     const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
       ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
       : host.pricePerPerson;
     const totalAmount = discountedPrice * parseInt(bookingData.numberOfGuests);
+    
+    console.log('[Payment] Creating checkout session', {
+      bookingId: createdBookingId,
+      amount: totalAmount,
+      hostName: host.hostName,
+      guestEmail: bookingData.guestEmail,
+    });
     
     createCheckoutSessionMutation.mutate({
       bookingId: createdBookingId,

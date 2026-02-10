@@ -44,7 +44,7 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         
-        const result = await db.insert(bookings).values({
+        await db.insert(bookings).values({
           hostListingId: input.hostListingId,
           guestName: input.guestName,
           guestEmail: input.guestEmail,
@@ -56,7 +56,27 @@ export const appRouter = router({
           status: "pending",
         });
         
-        const bookingId = Number((result as any).insertId);
+        // Get the last inserted ID
+        const lastIdResult = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+        console.log('[Booking Create] Raw result:', JSON.stringify(lastIdResult));
+        
+        // Extract ID from result - structure varies by driver
+        let bookingId;
+        if (Array.isArray(lastIdResult) && lastIdResult.length > 0) {
+          const firstRow: any = lastIdResult[0];
+          if (Array.isArray(firstRow) && firstRow.length > 0) {
+            bookingId = firstRow[0]?.id || firstRow[0]?.['LAST_INSERT_ID()'];
+          } else {
+            bookingId = firstRow?.id || firstRow?.['LAST_INSERT_ID()'];
+          }
+        }
+        
+        console.log('[Booking Create] Extracted booking ID:', bookingId, 'type:', typeof bookingId);
+        
+        if (!bookingId || isNaN(Number(bookingId))) {
+          console.error('[Booking Create] Invalid booking ID:', bookingId);
+          throw new Error('Failed to create booking: Invalid ID returned');
+        }
 
         // Send notification to owner
         await notifyOwner({
