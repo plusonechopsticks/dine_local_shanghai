@@ -774,16 +774,12 @@ export const appRouter = router({
         return result[0] || null;
       }),
     
-    update: protectedProcedure
+    update: publicProcedure
       .input(z.object({
         content: z.string(),
         isActive: z.boolean(),
       }))
-      .mutation(async ({ input, ctx }) => {
-        // Only admin can update announcements
-        if (ctx.user.role !== "admin") {
-          throw new Error("Unauthorized: Admin access required");
-        }
+      .mutation(async ({ input }) => {
         
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");

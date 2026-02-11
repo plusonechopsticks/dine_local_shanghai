@@ -681,4 +681,8 @@
 - [x] Create admin panel section for editing announcements
 - [x] Display announcement banner on Find Hosts page
 - [x] Add visibility toggle for announcements
-- [ ] Test announcement editing and display
+- [x] Test announcement editing and display
+
+## Remove Admin Authentication
+- [x] Change announcement.update from protectedProcedure to publicProcedure
+- [ ] Test announcement editing without login
