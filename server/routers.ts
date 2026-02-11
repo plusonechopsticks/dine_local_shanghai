@@ -811,6 +811,167 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  /**
+   * Live Chat Support Router
+   */
+  chat: router({
+    // Create or get existing chat session
+    getOrCreateSession: publicProcedure
+      .input(z.object({
+        sessionId: z.string().optional(),
+        visitorName: z.string().optional(),
+        visitorEmail: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { createChatSession, getChatSessionBySessionId } = await import("./db");
+        const { nanoid } = await import("nanoid");
+        
+        // If sessionId provided, try to get existing session
+        if (input.sessionId) {
+          const existing = await getChatSessionBySessionId(input.sessionId);
+          if (existing) {
+            return { session: existing };
+          }
+        }
+        
+        // Create new session
+        const sessionId = nanoid();
+        const session = await createChatSession({
+          sessionId,
+          visitorName: input.visitorName || null,
+          visitorEmail: input.visitorEmail || null,
+          status: "active",
+          adminTookOver: false,
+        });
+        
+        return { session };
+      }),
+    
+    // Send message and get AI response
+    sendMessage: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        content: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const { getChatSessionBySessionId, createChatMessage, getChatMessages, updateChatSessionStatus } = await import("./db");
+        const { CHAT_KNOWLEDGE_BASE, SYSTEM_PROMPT } = await import("./chat-knowledge-base");
+        
+        // Get session
+        const session = await getChatSessionBySessionId(input.sessionId);
+        if (!session) throw new Error("Chat session not found");
+        
+        // Save visitor message
+        await createChatMessage({
+          sessionId: session.id,
+          senderType: "visitor",
+          content: input.content,
+        });
+        
+        // Get conversation history
+        const messages = await getChatMessages(session.id);
+        
+        // Build conversation for LLM
+        const conversationMessages = [
+          { role: "system" as const, content: SYSTEM_PROMPT + "\n\nKnowledge Base:\n" + CHAT_KNOWLEDGE_BASE },
+          ...messages.slice(-10).map(msg => ({ // Last 10 messages for context
+            role: msg.senderType === "visitor" ? "user" as const : "assistant" as const,
+            content: msg.content,
+          })),
+        ];
+        
+        // Get AI response
+        const aiResponse = await invokeLLM({
+          messages: conversationMessages,
+        });
+        
+        const rawContent = aiResponse.choices[0]?.message?.content;
+        const aiContent = typeof rawContent === 'string' ? rawContent : "I apologize, but I'm having trouble responding right now. Please try again or contact our team at plusonechopsticks@gmail.com.";
+        
+        // Check if AI is requesting human help
+        const needsHuman = aiContent.toLowerCase().includes("connect you with our team") || 
+                          aiContent.toLowerCase().includes("admin will respond");
+        
+        if (needsHuman && session.status === "active") {
+          await updateChatSessionStatus(input.sessionId, "needs_human");
+        }
+        
+        // Save AI message
+        const aiMessage = await createChatMessage({
+          sessionId: session.id,
+          senderType: "ai",
+          content: aiContent,
+        });
+        
+        return { message: aiMessage };
+      }),
+    
+    // Admin: Get all chat sessions
+    getAllSessions: publicProcedure
+      .query(async () => {
+        const { getAllChatSessions } = await import("./db");
+        const sessions = await getAllChatSessions();
+        return { sessions };
+      }),
+    
+    // Admin: Get messages for a session
+    getSessionMessages: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const { getChatSessionBySessionId, getChatMessages } = await import("./db");
+        
+        const session = await getChatSessionBySessionId(input.sessionId);
+        if (!session) throw new Error("Chat session not found");
+        
+        const messages = await getChatMessages(session.id);
+        return { messages };
+      }),
+    
+    // Admin: Send admin message
+    sendAdminMessage: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        content: z.string().min(1),
+        adminName: z.string().default("Admin"),
+      }))
+      .mutation(async ({ input }) => {
+        const { getChatSessionBySessionId, createChatMessage, updateChatSessionStatus } = await import("./db");
+        
+        const session = await getChatSessionBySessionId(input.sessionId);
+        if (!session) throw new Error("Chat session not found");
+        
+        // Mark as admin took over
+        if (!session.adminTookOver) {
+          await updateChatSessionStatus(input.sessionId, session.status, true);
+        }
+        
+        // Save admin message
+        const message = await createChatMessage({
+          sessionId: session.id,
+          senderType: "admin",
+          content: input.content,
+          adminName: input.adminName,
+        });
+        
+        return { message };
+      }),
+    
+    // Admin: Update session status
+    updateSessionStatus: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        status: z.enum(["active", "needs_human", "resolved"]),
+      }))
+      .mutation(async ({ input }) => {
+        const { updateChatSessionStatus } = await import("./db");
+        
+        await updateChatSessionStatus(input.sessionId, input.status);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

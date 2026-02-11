@@ -11,6 +11,7 @@ import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { getProxiedImageUrl } from "@/lib/imageUtils";
 import { AnnouncementEditor } from "@/components/AnnouncementEditor";
+import { LiveChatAdmin } from "@/components/LiveChatAdmin";
 
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
@@ -147,6 +148,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="interest">Traveler Interest</TabsTrigger>
           <TabsTrigger value="payments">Payment Successful</TabsTrigger>
           <TabsTrigger value="announcement">Announcement</TabsTrigger>
+          <TabsTrigger value="livechat">Live Chat</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -699,6 +701,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="announcement" className="space-y-4">
           <AnnouncementEditor />
+        </TabsContent>
+
+        <TabsContent value="livechat" className="space-y-4">
+          <LiveChatAdmin />
         </TabsContent>
       </Tabs>
     </div>

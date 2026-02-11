@@ -14,6 +14,7 @@ import HostDashboard from "./pages/HostDashboard";
 import GuestDashboard from "./pages/GuestDashboard";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookingConfirmation from "./pages/BookingConfirmation";
+import { ChatWidget } from "./components/ChatWidget";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -51,6 +52,7 @@ function App() {
           <Navbar />
           <Toaster />
           <Router />
+          <ChatWidget />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

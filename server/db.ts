@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -13,7 +13,13 @@ import {
   InsertHostListing,
   HostListing,
   bookings,
-  Booking
+  Booking,
+  chatSessions,
+  chatMessages,
+  ChatSession,
+  InsertChatSession,
+  ChatMessage,
+  InsertChatMessage
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -346,4 +352,89 @@ export async function getAllBookings(): Promise<(Booking & { hostName?: string }
     console.error("[Database] Failed to get bookings:", error);
     throw error;
   }
+}
+
+/**
+ * Chat Support Functions
+ */
+
+export async function createChatSession(session: InsertChatSession): Promise<ChatSession> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  await db.insert(chatSessions).values(session);
+  
+  // Get the created session
+  const result = await db.select().from(chatSessions).where(eq(chatSessions.sessionId, session.sessionId));
+  return result[0];
+}
+
+export async function getChatSessionBySessionId(sessionId: string): Promise<ChatSession | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  const result = await db.select().from(chatSessions).where(eq(chatSessions.sessionId, sessionId));
+  return result[0] || null;
+}
+
+export async function getAllChatSessions(): Promise<ChatSession[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  const result = await db.select().from(chatSessions).orderBy(desc(chatSessions.lastMessageAt));
+  return result;
+}
+
+export async function updateChatSessionStatus(sessionId: string, status: "active" | "needs_human" | "resolved", adminTookOver?: boolean): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  const updateData: any = { status };
+  if (adminTookOver !== undefined) {
+    updateData.adminTookOver = adminTookOver;
+    if (adminTookOver) {
+      updateData.adminTookOverAt = new Date();
+    }
+  }
+  
+  await db.update(chatSessions)
+    .set(updateData)
+    .where(eq(chatSessions.sessionId, sessionId));
+}
+
+export async function createChatMessage(message: InsertChatMessage): Promise<ChatMessage> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  await db.insert(chatMessages).values(message);
+  
+  // Update session's lastMessageAt
+  await db.update(chatSessions)
+    .set({ lastMessageAt: new Date() })
+    .where(eq(chatSessions.id, message.sessionId));
+  
+  // Get the created message
+  const result = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+  let messageId;
+  if (Array.isArray(result) && result.length > 0) {
+    const firstRow: any = result[0];
+    if (Array.isArray(firstRow) && firstRow.length > 0) {
+      messageId = firstRow[0]?.id || firstRow[0]?.['LAST_INSERT_ID()'];
+    } else {
+      messageId = firstRow?.id || firstRow?.['LAST_INSERT_ID()'];
+    }
+  }
+  
+  const messages = await db.select().from(chatMessages).where(eq(chatMessages.id, messageId));
+  return messages[0];
+}
+
+export async function getChatMessages(sessionId: number): Promise<ChatMessage[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  const result = await db.select().from(chatMessages)
+    .where(eq(chatMessages.sessionId, sessionId))
+    .orderBy(chatMessages.createdAt);
+  return result;
 }

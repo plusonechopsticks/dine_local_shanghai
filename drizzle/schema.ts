@@ -219,3 +219,56 @@ export const announcements = mysqlTable("announcements", {
 
 export type Announcement = typeof announcements.$inferSelect;
 export type InsertAnnouncement = typeof announcements.$inferInsert;
+
+/**
+ * Chat sessions - visitor support conversations
+ * Tracks each unique chat session with AI and admin support
+ */
+export const chatSessions = mysqlTable("chat_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Visitor info (optional - can be anonymous)
+  visitorName: varchar("visitorName", { length: 255 }),
+  visitorEmail: varchar("visitorEmail", { length: 320 }),
+  
+  // Session metadata
+  sessionId: varchar("sessionId", { length: 100 }).notNull().unique(), // UUID for tracking
+  status: mysqlEnum("status", ["active", "needs_human", "resolved"]).default("active").notNull(),
+  
+  // Admin takeover
+  adminTookOver: boolean("adminTookOver").default(false).notNull(),
+  adminTookOverAt: timestamp("adminTookOverAt"),
+  
+  // Last activity
+  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatSession = typeof chatSessions.$inferSelect;
+export type InsertChatSession = typeof chatSessions.$inferInsert;
+
+/**
+ * Chat messages - individual messages in a chat session
+ */
+export const chatMessages = mysqlTable("chat_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Session reference
+  sessionId: int("sessionId").notNull().references(() => chatSessions.id, { onDelete: "cascade" }),
+  
+  // Message details
+  senderType: mysqlEnum("senderType", ["visitor", "ai", "admin"]).notNull(),
+  content: text("content").notNull(),
+  
+  // Admin info (if sender is admin)
+  adminName: varchar("adminName", { length: 255 }),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ChatMessage = typeof chatMessages.$inferSelect;
+export type InsertChatMessage = typeof chatMessages.$inferInsert;
