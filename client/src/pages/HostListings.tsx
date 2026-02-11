@@ -140,7 +140,7 @@ export default function HostListings() {
         {/* Announcement Banner */}
         {announcement && announcement.isActive && (
           <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
-            <p className="text-amber-900 dark:text-amber-100 text-center font-medium">
+            <p className="text-amber-900 dark:text-amber-100 text-center font-medium whitespace-pre-line">
               {announcement.content}
             </p>
           </div>

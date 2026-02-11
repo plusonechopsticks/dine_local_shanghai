@@ -685,4 +685,9 @@
 
 ## Remove Admin Authentication
 - [x] Change announcement.update from protectedProcedure to publicProcedure
-- [ ] Test announcement editing without login
+- [x] Test announcement editing without login
+
+
+## Preserve Line Breaks in Announcements
+- [x] Update announcement display to preserve line spacing and breaks
+- [ ] Test multi-line announcements
