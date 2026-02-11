@@ -674,3 +674,11 @@
 - [x] Implement automated email sending to host after payment success
 - [x] Send manual email for existing paid booking (annnwooo@hotmail.com)
 - [x] Test host email delivery
+
+## Announcement Banner Feature
+- [x] Create announcements table in database schema
+- [x] Add backend procedures for getting/updating announcements
+- [x] Create admin panel section for editing announcements
+- [x] Display announcement banner on Find Hosts page
+- [x] Add visibility toggle for announcements
+- [ ] Test announcement editing and display

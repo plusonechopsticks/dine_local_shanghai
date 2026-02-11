@@ -753,6 +753,68 @@ export const appRouter = router({
         }
       }),
   }),
+  
+  announcement: router({
+    get: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        const { announcements } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        
+        // Get the most recent active announcement
+        const result = await db
+          .select()
+          .from(announcements)
+          .where(eq(announcements.isActive, true))
+          .orderBy(sql`${announcements.updatedAt} DESC`)
+          .limit(1);
+        
+        return result[0] || null;
+      }),
+    
+    update: protectedProcedure
+      .input(z.object({
+        content: z.string(),
+        isActive: z.boolean(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Only admin can update announcements
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized: Admin access required");
+        }
+        
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        const { announcements } = await import("../drizzle/schema");
+        const { sql } = await import("drizzle-orm");
+        
+        // Check if announcement exists
+        const existing = await db.select().from(announcements).limit(1);
+        
+        if (existing.length > 0) {
+          // Update existing announcement
+          await db
+            .update(announcements)
+            .set({
+              content: input.content,
+              isActive: input.isActive,
+              updatedAt: new Date(),
+            })
+            .where(sql`id = ${existing[0].id}`);
+        } else {
+          // Create new announcement
+          await db.insert(announcements).values({
+            content: input.content,
+            isActive: input.isActive,
+          });
+        }
+        
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getProxiedImageUrl } from "@/lib/imageUtils";
+import { AnnouncementEditor } from "@/components/AnnouncementEditor";
 
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
@@ -145,6 +146,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="bookings">Guest Bookings</TabsTrigger>
           <TabsTrigger value="interest">Traveler Interest</TabsTrigger>
           <TabsTrigger value="payments">Payment Successful</TabsTrigger>
+          <TabsTrigger value="announcement">Announcement</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -693,6 +695,10 @@ export default function AdminDashboard() {
               )}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="announcement" className="space-y-4">
+          <AnnouncementEditor />
         </TabsContent>
       </Tabs>
     </div>
