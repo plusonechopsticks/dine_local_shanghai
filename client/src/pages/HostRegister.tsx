@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ interface RegistrationData {
   profilePhotoUrl: string;
   activities: string[];
   availability: Record<string, ("lunch" | "dinner")[]>;
+  availabilityComments: string;
   maxGuests: number;
   pricePerPerson: number;
   otherNotes: string;
@@ -47,6 +49,7 @@ const INITIAL_DATA: RegistrationData = {
   profilePhotoUrl: "",
   activities: [],
   availability: {},
+  availabilityComments: "",
   maxGuests: 4,
   pricePerPerson: 150,
   otherNotes: "",
@@ -270,6 +273,7 @@ export default function HostRegister() {
         profilePhotoUrl: data.profilePhotoUrl,
         activities: data.activities,
         availability: data.availability,
+        availabilityComments: data.availabilityComments || undefined,
         maxGuests: data.maxGuests,
         pricePerPerson: data.pricePerPerson,
         otherNotes: data.otherNotes || undefined,
@@ -754,6 +758,17 @@ export default function HostRegister() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">Unavailable Dates</Label>
+                  <p className="text-sm text-gray-500 mb-2">Please indicate the dates that you might not be available (e.g., during CNY, out of town for travel, have work commitments, etc.)</p>
+                  <Textarea
+                    value={data.availabilityComments}
+                    onChange={(e) => updateField("availabilityComments", e.target.value)}
+                    placeholder="Example: Unavailable Feb 10-20 (Chinese New Year), March 15-20 (business trip), every first Monday of the month (team meeting)"
+                    className="min-h-[120px]"
+                  />
                 </div>
               </div>
             )}

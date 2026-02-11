@@ -382,6 +382,7 @@ export const appRouter = router({
           (obj) => Object.keys(obj).length > 0,
           "Please select at least one day/meal"
         ),
+        availabilityComments: z.string().optional(),
         
         // Step 4: Pricing & Notes
         pricePerPerson: z.number().min(1).default(150),
@@ -400,6 +401,7 @@ export const appRouter = router({
           wechatOrPhone: "", // Can be collected in host dashboard later
           district: input.district,
           availability: input.availability as Record<string, string[]>,
+          availabilityComments: input.availabilityComments || null,
           maxGuests: input.maxGuests,
           cuisineStyle: input.cuisineStyle,
           menuDescription: input.menuDescription,
@@ -449,6 +451,21 @@ export const appRouter = router({
           .where(eq(hostListings.id, input.id));
         
         return { success: true };
+      }),
+
+    // Get blocked dates for a host (parsed from availability comments)
+    getBlockedDates: publicProcedure
+      .input(z.object({ hostId: z.number() }))
+      .query(async ({ input }) => {
+        const { getBlockedDatesForHost } = await import("./calendar-blocker");
+        const listing = await getHostListingById(input.hostId);
+        
+        if (!listing) {
+          return { blockedRanges: [] };
+        }
+        
+        const blockedRanges = await getBlockedDatesForHost(listing.availabilityComments);
+        return { blockedRanges };
       }),
 
     // Update host availability

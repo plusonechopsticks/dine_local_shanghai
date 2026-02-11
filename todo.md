@@ -706,3 +706,12 @@
 - [x] Implement admin message sending capability
 - [x] Add chat status management (active/needs-human/resolved)
 - [x] Test complete chat flow (visitor → AI → admin takeover)
+
+
+## Host Registration - Availability Comments
+- [x] Add availabilityComments field to database schema
+- [x] Update host registration form to include comments text box
+- [x] Add prompt text about unavailable dates (CNY, travel, work)
+- [ ] Update admin dashboard to display availability comments
+- [x] Implement calendar blocking based on unavailable dates text
+- [x] Test form submission with availability comments and calendar blocking

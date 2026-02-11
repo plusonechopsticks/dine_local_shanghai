@@ -77,6 +77,12 @@ export default function HostDetail() {
     { enabled: !!hostId }
   );
   
+  // Get blocked dates from availability comments
+  const { data: blockedDatesData } = trpc.host.getBlockedDates.useQuery(
+    { hostId: hostId || 0 },
+    { enabled: !!hostId }
+  );
+  
   // Restore booking data from localStorage on page load
   useEffect(() => {
     if (!hostId) return;
@@ -666,9 +672,31 @@ export default function HostDetail() {
               <Input
                 id="requestedDate"
                 type="date"
+                min={new Date().toISOString().split('T')[0]}
                 value={bookingData.requestedDate}
-                onChange={(e) => setBookingData({ ...bookingData, requestedDate: e.target.value })}
+                onChange={(e) => {
+                  const selectedDate = e.target.value;
+                  // Check if date is blocked
+                  const isBlocked = blockedDatesData?.blockedRanges.some(range => {
+                    const checkDate = new Date(selectedDate);
+                    const startDate = new Date(range.startDate);
+                    const endDate = new Date(range.endDate);
+                    return checkDate >= startDate && checkDate <= endDate;
+                  });
+                  
+                  if (isBlocked) {
+                    toast.error("This date is not available. Please choose another date.");
+                    return;
+                  }
+                  
+                  setBookingData({ ...bookingData, requestedDate: selectedDate });
+                }}
               />
+              {blockedDatesData?.blockedRanges && blockedDatesData.blockedRanges.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Note: Some dates may be unavailable due to host's schedule
+                </p>
+              )}
             </div>
 
             <div>

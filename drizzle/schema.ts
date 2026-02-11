@@ -74,6 +74,7 @@ export const hostListings = mysqlTable("host_listings", {
   // Availability - stored as JSON for flexibility
   // e.g., { "monday": ["lunch", "dinner"], "saturday": ["dinner"] }
   availability: json("availability").$type<Record<string, string[]>>().notNull(),
+  availabilityComments: text("availabilityComments"), // Host notes about unavailable dates (CNY, travel, etc.)
   
   // Dining Details
   maxGuests: int("maxGuests").notNull().default(2),
