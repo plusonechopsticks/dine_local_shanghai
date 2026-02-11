@@ -666,3 +666,11 @@
 ## Bug Fix - Email Payment Link Domain
 - [x] Fix email payment link using wrong domain (forge.manus.ai instead of plus1chopsticks.manus.space)
 - [x] Update email template to use dynamic website URL from environment (VITE_WEBSITE_URL)
+
+## Host Notification Email System
+- [x] Check latest paid booking details
+- [x] Design host notification email with booking details and dietary restrictions
+- [x] Include guest communication template in host email
+- [x] Implement automated email sending to host after payment success
+- [x] Send manual email for existing paid booking (annnwooo@hotmail.com)
+- [x] Test host email delivery

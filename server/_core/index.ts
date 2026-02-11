@@ -140,6 +140,38 @@ async function startServer(): Promise<any> {
                   });
                   
                   console.log(`[Webhook] Sent confirmation email to ${bookingWithHost.guestEmail}`);
+                  
+                  // Send notification email to host
+                  try {
+                    const { generateHostNotificationEmail } = await import("../email-templates");
+                    const totalAmount = parseFloat(bookingWithHost.totalAmount!);
+                    const hostEarnings = totalAmount * 0.7; // 70% to host
+                    
+                    const hostEmailHtml = generateHostNotificationEmail({
+                      bookingId: bookingWithHost.id,
+                      guestName: bookingWithHost.guestName,
+                      guestEmail: bookingWithHost.guestEmail,
+                      guestPhone: bookingWithHost.guestPhone,
+                      requestedDate: bookingWithHost.requestedDate.toISOString(),
+                      mealType: bookingWithHost.mealType,
+                      numberOfGuests: bookingWithHost.numberOfGuests,
+                      totalAmount: totalAmount,
+                      dietaryRestrictions: bookingWithHost.specialRequests,
+                      hostName: bookingWithHost.hostListing.hostName,
+                      hostEarnings: hostEarnings,
+                    });
+                    
+                    await sendEmail({
+                      to: bookingWithHost.hostListing.email,
+                      subject: `🎉 New Confirmed Booking - ${new Date(bookingWithHost.requestedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} ${bookingWithHost.mealType.charAt(0).toUpperCase() + bookingWithHost.mealType.slice(1)}`,
+                      html: hostEmailHtml,
+                    });
+                    
+                    console.log(`[Webhook] Sent host notification email to ${bookingWithHost.hostListing.email}`);
+                  } catch (hostEmailError: any) {
+                    console.error("[Webhook] Error sending host notification email:", hostEmailError);
+                    // Don't fail the webhook if host email fails
+                  }
                 }
               } catch (emailError: any) {
                 console.error("[Webhook] Error sending confirmation email:", emailError);
