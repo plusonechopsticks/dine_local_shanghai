@@ -495,7 +495,7 @@ export default function HostDetail() {
             ) : (
               <div className="space-y-6">
                 {/* Host Header Card */}
-                  <Card className="border-border/50 -mt-4">
+                  <Card className="border-border/50">
                     <CardContent className="pt-6">
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
