@@ -729,3 +729,9 @@
 ## Curate Ayi's Profile from Existing Bio
 - [x] Extract specific details from "About Me" to populate new profile fields
 - [x] Update database with curated content
+
+
+## Profile Section Fixes
+- [x] Update Ayi's overseas experience to be honest about local focus
+- [x] Remove empty space before profile header
+- [x] Standardize font sizes to smaller one

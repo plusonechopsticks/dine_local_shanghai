@@ -495,32 +495,32 @@ export default function HostDetail() {
             ) : (
               <div className="space-y-6">
                 {/* Host Header Card */}
-                <Card className="border-border/50">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
-                        {host.profilePhotoUrl ? (
-                          <img
-                            src={getProxiedImageUrl(host.profilePhotoUrl)}
-                            alt={host.hostName}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
-                            {host.hostName.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                  <Card className="border-border/50 -mt-4">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                          {host.profilePhotoUrl ? (
+                            <img
+                              src={getProxiedImageUrl(host.profilePhotoUrl)}
+                              alt={host.hostName}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-muted-foreground">
+                              {host.hostName.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-primary">{host.hostName}</h3>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                            <MapPin className="h-4 w-4" />
+                            {host.district}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-primary">{host.hostName}</h3>
-                        <p className="text-muted-foreground flex items-center gap-1 mt-1">
-                          <MapPin className="h-4 w-4" />
-                          {host.district}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
                 {/* Profile Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -531,7 +531,7 @@ export default function HostDetail() {
                         <div className="flex items-start gap-3">
                           <MessageCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
-                            <h4 className="font-semibold mb-2">Languages I Speak</h4>
+                            <h4 className="text-sm font-semibold mb-2">Languages I Speak</h4>
                             <div className="flex flex-wrap gap-2">
                               {host.languages.map((lang, idx) => (
                                 <Badge key={idx} variant="secondary">{lang}</Badge>
@@ -550,7 +550,7 @@ export default function HostDetail() {
                         <div className="flex items-start gap-3">
                           <Globe className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
-                            <h4 className="font-semibold mb-2">Overseas Experience</h4>
+                            <h4 className="text-sm font-semibold mb-2">Overseas Experience</h4>
                             <p className="text-sm text-foreground/80 leading-relaxed">
                               {host.overseasExperience}
                             </p>
@@ -567,7 +567,7 @@ export default function HostDetail() {
                         <div className="flex items-start gap-3">
                           <Sparkles className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
-                            <h4 className="font-semibold mb-2">Fun Facts About Me</h4>
+                            <h4 className="text-sm font-semibold mb-2">Fun Facts About Me</h4>
                             <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                               {host.funFacts}
                             </p>
@@ -584,7 +584,7 @@ export default function HostDetail() {
                         <div className="flex items-start gap-3">
                           <BookOpen className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
-                            <h4 className="font-semibold mb-2">My Cultural Passions</h4>
+                            <h4 className="text-sm font-semibold mb-2">My Cultural Passions</h4>
                             <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                               {host.culturalPassions}
                             </p>
@@ -602,8 +602,8 @@ export default function HostDetail() {
                       <div className="flex items-start gap-3">
                         <Heart className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
-                          <h4 className="font-semibold mb-3">Why I Want to Host</h4>
-                          <p className="text-base text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                          <h4 className="text-sm font-semibold mb-3">Why I Want to Host</h4>
+                          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                             {host.whyHost}
                           </p>
                         </div>
@@ -615,8 +615,8 @@ export default function HostDetail() {
                 {/* Bio - Full Width */}
                 <Card className="border-border/50">
                   <CardContent className="pt-6">
-                    <h4 className="font-semibold mb-3">About Me</h4>
-                    <p className="text-base text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                    <h4 className="text-sm font-semibold mb-3">About Me</h4>
+                    <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                       {host.bio}
                     </p>
                   </CardContent>
