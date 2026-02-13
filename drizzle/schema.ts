@@ -63,6 +63,12 @@ export const hostListings = mysqlTable("host_listings", {
   bio: text("bio").notNull(),
   activities: json("activities").$type<string[]>().default([] as any).notNull(), // e.g., ["cooking-class", "park-visit", "shopping"]
   
+  // Human-Centered Profile Fields
+  overseasExperience: text("overseasExperience"), // Where they've lived/traveled abroad
+  funFacts: text("funFacts"), // Personality quirks and interesting facts
+  whyHost: text("whyHost"), // Their motivation for hosting
+  culturalPassions: text("culturalPassions"), // What they love about Chinese culture beyond food
+  
   // Contact
   email: varchar("email", { length: 320 }).notNull(),
   wechatOrPhone: varchar("wechatOrPhone", { length: 100 }).notNull(),

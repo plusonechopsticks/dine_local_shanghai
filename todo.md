@@ -715,3 +715,12 @@
 - [ ] Update admin dashboard to display availability comments
 - [x] Implement calendar blocking based on unavailable dates text
 - [x] Test form submission with availability comments and calendar blocking
+
+
+## Host Profile Revamp - Human-Centered Design
+- [x] Add new database fields (overseas_experience, languages, fun_facts, why_host, cultural_passions)
+- [x] Redesign host detail page to show profile section before menu details
+- [x] Create card-based layout inspired by dating/friend-making apps
+- [ ] Update host registration form with new profile questions
+- [x] Update Ayi's profile with new fields
+- [ ] Test and refine the new design
