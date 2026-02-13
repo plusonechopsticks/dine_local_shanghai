@@ -724,3 +724,8 @@
 - [ ] Update host registration form with new profile questions
 - [x] Update Ayi's profile with new fields
 - [ ] Test and refine the new design
+
+
+## Curate Ayi's Profile from Existing Bio
+- [x] Extract specific details from "About Me" to populate new profile fields
+- [x] Update database with curated content
