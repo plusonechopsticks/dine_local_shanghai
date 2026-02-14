@@ -767,3 +767,8 @@
 ## Update Grace Tong's Dumpling Class Listing
 - [x] Find Grace Tong's dumpling class listing in database
 - [x] Update with comprehensive profile fields
+
+
+## Add Availability to Admin Panel
+- [x] Add availability field display to admin edit form
+- [x] Enable editing of availability schedules

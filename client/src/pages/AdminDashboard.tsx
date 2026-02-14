@@ -94,6 +94,15 @@ export default function AdminDashboard() {
       discountPercentage: parseInt(formData.get('discountPercentage') as string) || 0,
       displayOrder: parseInt(formData.get('displayOrder') as string) || 0,
       maxGuests: parseInt(formData.get('maxGuests') as string) || undefined,
+      availability: (() => {
+        try {
+          const availStr = formData.get('availability') as string;
+          return availStr ? JSON.parse(availStr) : undefined;
+        } catch {
+          return undefined;
+        }
+      })(),
+      availabilityComments: formData.get('availabilityComments') as string || undefined,
       mealDurationMinutes: parseInt(formData.get('mealDurationMinutes') as string) || undefined,
       kidsFriendly: formData.get('kidsFriendly') === 'on',
       hasPets: formData.get('hasPets') === 'on',
@@ -310,6 +319,35 @@ export default function AdminDashboard() {
                         <Label htmlFor="maxGuests">Max Guests</Label>
                         <Input id="maxGuests" name="maxGuests" type="number" defaultValue={editingHost.maxGuests} />
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="availability">Availability (JSON format)</Label>
+                      <Textarea 
+                        id="availability" 
+                        name="availability" 
+                        rows={6} 
+                        defaultValue={editingHost.availability ? JSON.stringify(editingHost.availability, null, 2) : ''} 
+                        placeholder='{"Monday": ["lunch", "dinner"], "Tuesday": ["dinner"]}'
+                        className="font-mono text-sm"
+                      />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Format: Day of week → meal times array. Valid meals: breakfast, lunch, dinner
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="availabilityComments">Availability Comments</Label>
+                      <Textarea 
+                        id="availabilityComments" 
+                        name="availabilityComments" 
+                        rows={3} 
+                        defaultValue={editingHost.availabilityComments || ''} 
+                        placeholder="e.g., Unavailable Feb 10-20 (CNY), March 15-20 (business trip)"
+                      />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Natural language description of unavailable dates
+                      </p>
                     </div>
 
                     <div>
