@@ -1,0 +1,64 @@
+{
+  "query": "SELECT id, hostName, cuisineStyle, status FROM host_listings;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, cuisineStyle, status FROM host_listings;",
+  "rows": [
+    {
+      "id": "1",
+      "hostName": "Norika and Steven",
+      "cuisineStyle": "Home style cooking",
+      "status": "approved"
+    },
+    {
+      "id": "30001",
+      "hostName": "Li Wei",
+      "cuisineStyle": "Shanghainese (本帮菜)",
+      "status": "rejected"
+    },
+    {
+      "id": "60001",
+      "hostName": "Test Host",
+      "cuisineStyle": "Shanghai Home Cooking",
+      "status": "rejected"
+    },
+    {
+      "id": "90001",
+      "hostName": "G",
+      "cuisineStyle": "C",
+      "status": "rejected"
+    },
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "cuisineStyle": "Chinese and Western Fusion",
+      "status": "approved"
+    },
+    {
+      "id": "120001",
+      "hostName": "Grace Tong",
+      "cuisineStyle": "Dumpling class and tasting",
+      "status": "approved"
+    },
+    {
+      "id": "150001",
+      "hostName": "Jiading Ayi ",
+      "cuisineStyle": "Local Shanghaiese style",
+      "status": "approved"
+    },
+    {
+      "id": "180001",
+      "hostName": "Chuan 川",
+      "cuisineStyle": "Guangxi-Guangdong-Southeast Asian Fusion",
+      "status": "approved"
+    },
+    {
+      "id": "210001",
+      "hostName": "Echo Ren",
+      "cuisineStyle": "Shanghai home cooking ",
+      "status": "approved"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tcuisineStyle\tstatus\n1\tNorika and Steven\tHome style cooking\tapproved\n30001\tLi Wei\tShanghainese (本帮菜)\trejected\n60001\tTest Host\tShanghai Home Cooking\trejected\n90001\tG\tC\trejected\n90002\tGrace Tong\tChinese and Western Fusion\tapproved\n120001\tGrace Tong\tDumpling class and tasting\tapproved\n150001\tJiading Ayi \tLocal Shanghaiese style\tapproved\n180001\tChuan 川\tGuangxi-Guangdong-Southeast Asian Fusion\tapproved\n210001\tEcho Ren\tShanghai home cooking \tapproved\n",
+  "stderr": "",
+  "execution_time_ms": 169
+}

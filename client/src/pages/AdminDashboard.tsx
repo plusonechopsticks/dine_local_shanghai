@@ -79,6 +79,11 @@ export default function AdminDashboard() {
       wechatOrPhone: formData.get('wechatOrPhone') as string || undefined,
       languages: (formData.get('languages') as string)?.split(',').map(l => l.trim()).filter(Boolean) || [],
       bio: formData.get('bio') as string || undefined,
+      overseasExperience: formData.get('overseasExperience') as string || undefined,
+      funFacts: formData.get('funFacts') as string || undefined,
+      whyHost: formData.get('whyHost') as string || undefined,
+      culturalPassions: formData.get('culturalPassions') as string || undefined,
+      otherPassions: formData.get('otherPassions') as string || undefined,
       title: formData.get('title') as string || undefined,
       district: formData.get('district') as string || undefined,
       fullAddress: formData.get('fullAddress') as string || undefined,
@@ -225,6 +230,31 @@ export default function AdminDashboard() {
                     <div>
                       <Label htmlFor="bio">Bio</Label>
                       <Textarea id="bio" name="bio" rows={4} defaultValue={editingHost.bio || ''} />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="overseasExperience">Overseas Experience</Label>
+                      <Textarea id="overseasExperience" name="overseasExperience" rows={2} defaultValue={editingHost.overseasExperience || ''} placeholder="Where have they lived/traveled abroad?" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="funFacts">Fun Facts About Me</Label>
+                      <Textarea id="funFacts" name="funFacts" rows={2} defaultValue={editingHost.funFacts || ''} placeholder="Interesting personal details" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="whyHost">Why I Want to Host</Label>
+                      <Textarea id="whyHost" name="whyHost" rows={3} defaultValue={editingHost.whyHost || ''} placeholder="Their motivation for hosting" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="culturalPassions">My Cultural Passions</Label>
+                      <Textarea id="culturalPassions" name="culturalPassions" rows={2} defaultValue={editingHost.culturalPassions || ''} placeholder="Cultural interests beyond food" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="otherPassions">Besides Food, What I'm Passionate About</Label>
+                      <Textarea id="otherPassions" name="otherPassions" rows={2} defaultValue={editingHost.otherPassions || ''} placeholder="Non-food interests and hobbies" />
                     </div>
 
                     <div>

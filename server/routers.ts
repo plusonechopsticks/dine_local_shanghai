@@ -374,6 +374,11 @@ export const appRouter = router({
         
         // Step 2: Self Intro & Selfie
         bio: z.string().min(20, "Please write at least 20 characters about yourself"),
+        overseasExperience: z.string().optional(),
+        funFacts: z.string().optional(),
+        whyHost: z.string().optional(),
+        culturalPassions: z.string().optional(),
+        otherPassions: z.string().optional(),
         profilePhotoUrl: z.string().url(),
         activities: z.array(z.string()).optional(),
         
@@ -397,6 +402,11 @@ export const appRouter = router({
           profilePhotoUrl: input.profilePhotoUrl,
           languages: ["Mandarin"], // Default for now; can be collected later
           bio: input.bio,
+          overseasExperience: input.overseasExperience || null,
+          funFacts: input.funFacts || null,
+          whyHost: input.whyHost || null,
+          culturalPassions: input.culturalPassions || null,
+          otherPassions: input.otherPassions || null,
           email: input.email,
           wechatOrPhone: "", // Can be collected in host dashboard later
           district: input.district,
@@ -682,6 +692,11 @@ export const appRouter = router({
         wechatOrPhone: z.string().optional(),
         languages: z.array(z.string()).optional(),
         bio: z.string().optional(),
+        overseasExperience: z.string().optional(),
+        funFacts: z.string().optional(),
+        whyHost: z.string().optional(),
+        culturalPassions: z.string().optional(),
+        otherPassions: z.string().optional(),
         title: z.string().optional(),
         district: z.string().optional(),
         fullAddress: z.string().optional(),

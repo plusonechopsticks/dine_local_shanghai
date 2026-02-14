@@ -754,3 +754,11 @@
 - [x] Get profiles for all approved hosts (Grace Tong, Echo Ren)
 - [x] Curate profile fields for each host from their About Me
 - [x] Update database with curated content for all hosts
+
+
+## Comprehensive Profile Structure Updates
+- [x] Find and update Chuan, Norika & Steven, Grace dumpling class profiles
+- [x] Reorder tabs: Host tab first, Experience tab second
+- [x] Update admin edit form with all six profile fields
+- [x] Update host registration form with new profile fields
+- [x] Test all changes

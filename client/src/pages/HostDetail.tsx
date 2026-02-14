@@ -437,17 +437,7 @@ export default function HostDetail() {
             </div>
 
             {/* Experience/Host Toggle */}
-            <div className="flex gap-2 bg-muted p-1 rounded-full w-fit">
-              <button
-                onClick={() => setActiveTab("experience")}
-                className={`px-6 py-2 rounded-full font-semibold transition-all ${
-                  activeTab === "experience"
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                The Experience
-              </button>
+               <div className="flex gap-2 justify-center mb-6">
               <button
                 onClick={() => setActiveTab("host")}
                 className={`px-6 py-2 rounded-full font-semibold transition-all ${
@@ -457,6 +447,16 @@ export default function HostDetail() {
                 }`}
               >
                 The Host
+              </button>
+              <button
+                onClick={() => setActiveTab("experience")}
+                className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                  activeTab === "experience"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                The Experience
               </button>
             </div>
 

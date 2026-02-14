@@ -25,6 +25,11 @@ interface RegistrationData {
   menuDescription: string;
   foodPhotoUrls: string[];
   bio: string;
+  overseasExperience: string;
+  funFacts: string;
+  whyHost: string;
+  culturalPassions: string;
+  otherPassions: string;
   profilePhotoUrl: string;
   activities: string[];
   availability: Record<string, ("lunch" | "dinner")[]>;
@@ -46,6 +51,11 @@ const INITIAL_DATA: RegistrationData = {
   menuDescription: "",
   foodPhotoUrls: [],
   bio: "",
+  overseasExperience: "",
+  funFacts: "",
+  whyHost: "",
+  culturalPassions: "",
+  otherPassions: "",
   profilePhotoUrl: "",
   activities: [],
   availability: {},
@@ -270,6 +280,11 @@ export default function HostRegister() {
         foodPhotoUrls: data.foodPhotoUrls,
         dietaryNote: data.dietaryNote || undefined,
         bio: data.bio,
+        overseasExperience: data.overseasExperience || undefined,
+        funFacts: data.funFacts || undefined,
+        whyHost: data.whyHost || undefined,
+        culturalPassions: data.culturalPassions || undefined,
+        otherPassions: data.otherPassions || undefined,
         profilePhotoUrl: data.profilePhotoUrl,
         activities: data.activities,
         availability: data.availability,
@@ -681,6 +696,61 @@ export default function HostRegister() {
                     onChange={(e) => updateField("bio", e.target.value)}
                     className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     rows={5}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">Overseas Experience</Label>
+                  <textarea
+                    placeholder="Where have you lived or traveled abroad? (Optional)"
+                    value={data.overseasExperience}
+                    onChange={(e) => updateField("overseasExperience", e.target.value)}
+                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">Fun Facts About Me</Label>
+                  <textarea
+                    placeholder="Share interesting personal details (Optional)"
+                    value={data.funFacts}
+                    onChange={(e) => updateField("funFacts", e.target.value)}
+                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">Why I Want to Host</Label>
+                  <textarea
+                    placeholder="What motivates you to share your home and food with guests? (Optional)"
+                    value={data.whyHost}
+                    onChange={(e) => updateField("whyHost", e.target.value)}
+                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">My Cultural Passions</Label>
+                  <textarea
+                    placeholder="What aspects of Chinese culture are you passionate about? (Optional)"
+                    value={data.culturalPassions}
+                    onChange={(e) => updateField("culturalPassions", e.target.value)}
+                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-lg font-medium">Besides Food, What I'm Passionate About</Label>
+                  <textarea
+                    placeholder="Your interests and hobbies beyond cooking (Optional)"
+                    value={data.otherPassions}
+                    onChange={(e) => updateField("otherPassions", e.target.value)}
+                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    rows={2}
                   />
                 </div>
 
