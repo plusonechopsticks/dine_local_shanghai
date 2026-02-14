@@ -95,12 +95,23 @@ export default function AdminDashboard() {
       displayOrder: parseInt(formData.get('displayOrder') as string) || 0,
       maxGuests: parseInt(formData.get('maxGuests') as string) || undefined,
       availability: (() => {
-        try {
-          const availStr = formData.get('availability') as string;
-          return availStr ? JSON.parse(availStr) : undefined;
-        } catch {
-          return undefined;
-        }
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const meals: ('breakfast' | 'lunch' | 'dinner')[] = ['breakfast', 'lunch', 'dinner'];
+        const availability: Record<string, ('breakfast' | 'lunch' | 'dinner')[]> = {};
+        
+        days.forEach(day => {
+          const dayMeals: ('breakfast' | 'lunch' | 'dinner')[] = [];
+          meals.forEach(meal => {
+            if (formData.get(`avail_${day}_${meal}`) === 'on') {
+              dayMeals.push(meal);
+            }
+          });
+          if (dayMeals.length > 0) {
+            availability[day] = dayMeals;
+          }
+        });
+        
+        return Object.keys(availability).length > 0 ? availability : undefined;
       })(),
       availabilityComments: formData.get('availabilityComments') as string || undefined,
       mealDurationMinutes: parseInt(formData.get('mealDurationMinutes') as string) || undefined,
@@ -322,17 +333,29 @@ export default function AdminDashboard() {
                     </div>
 
                     <div>
-                      <Label htmlFor="availability">Availability (JSON format)</Label>
-                      <Textarea 
-                        id="availability" 
-                        name="availability" 
-                        rows={6} 
-                        defaultValue={editingHost.availability ? JSON.stringify(editingHost.availability, null, 2) : ''} 
-                        placeholder='{"Monday": ["lunch", "dinner"], "Tuesday": ["dinner"]}'
-                        className="font-mono text-sm"
-                      />
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Format: Day of week → meal times array. Valid meals: breakfast, lunch, dinner
+                      <Label>Availability Schedule</Label>
+                      <div className="border rounded-lg p-4 space-y-3">
+                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                          <div key={day} className="flex items-center gap-4">
+                            <div className="w-24 font-medium text-sm">{day}</div>
+                            <div className="flex gap-4">
+                              {['breakfast', 'lunch', 'dinner'].map(meal => (
+                                <label key={meal} className="flex items-center gap-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    name={`avail_${day}_${meal}`}
+                                    defaultChecked={editingHost.availability?.[day]?.includes(meal)}
+                                    className="h-4 w-4"
+                                  />
+                                  <span className="text-sm capitalize">{meal}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Check the meals when the host is available
                       </p>
                     </div>
 
