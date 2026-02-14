@@ -762,3 +762,8 @@
 - [x] Update admin edit form with all six profile fields
 - [x] Update host registration form with new profile fields
 - [x] Test all changes
+
+
+## Update Grace Tong's Dumpling Class Listing
+- [x] Find Grace Tong's dumpling class listing in database
+- [x] Update with comprehensive profile fields
