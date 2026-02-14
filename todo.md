@@ -735,3 +735,9 @@
 - [x] Update Ayi's overseas experience to be honest about local focus
 - [x] Remove empty space before profile header
 - [x] Standardize font sizes to smaller one
+
+
+## Curate All Host Profiles
+- [x] Get all host profiles from database
+- [x] Extract and curate profile fields from About Me for each host
+- [x] Update database with curated content for all hosts

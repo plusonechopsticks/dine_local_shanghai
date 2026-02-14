@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE host_listings SET \noverseasExperience = 'I''m a true Shanghai local - my expertise comes from cooking for my family every day and hosting relatives during holidays, not from traveling abroad.',\nfunFacts = 'This would be my first time hosting international guests! I cook for my family every day and love sharing typical Chinese home-style food.',\nwhyHost = 'I''d love to open my home and share a real family-style Chinese meal with international guests, along with everyday stories about life in Shanghai.',\nculturalPassions = 'I''m passionate about simple, comforting home-style Chinese cooking - the kind meant to be shared with family and friends around the table.'\nWHERE id = 210001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings SET \noverseasExperience = 'I''m a true Shanghai local - my expertise comes from cooking for my family every day and hosting relatives during holidays, not from traveling abroad.',\nfunFacts = 'This would be my first time hosting international guests! I cook for my family every day and love sharing typical Chinese home-style food.',\nwhyHost = 'I''d love to open my home and share a real family-style Chinese meal with international guests, along with everyday stories about life in Shanghai.',\nculturalPassions = 'I''m passionate about simple, comforting home-style Chinese cooking - the kind meant to be shared with family and friends around the table.'\nWHERE id = 210001;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 66
+}
