@@ -805,7 +805,7 @@ export default function HostDetail() {
                   }
                   
                   // Check if the day of week matches host's availability
-                  if (host?.availability) {
+                  if (host?.availability && Object.keys(host.availability).length > 0) {
                     const dayOfWeek = checkDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                     const isAvailable = Object.keys(host.availability).includes(dayOfWeek);
                     
@@ -821,7 +821,7 @@ export default function HostDetail() {
                   setBookingData({ ...bookingData, requestedDate: selectedDate });
                 }}
               />
-              {host?.availability && (
+              {host?.availability && Object.keys(host.availability).length > 0 && (
                 <p className="text-xs text-muted-foreground mt-1">
                   Available days: {Object.keys(host.availability)
                     .map(day => day.charAt(0).toUpperCase() + day.slice(1))
