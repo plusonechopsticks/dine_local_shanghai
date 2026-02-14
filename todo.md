@@ -778,3 +778,9 @@
 - [x] Debug why second edit cannot be saved
 - [x] Fix form state management after first save
 - [x] Test multiple consecutive edits
+
+
+## Debug Availability Display Issue
+- [x] Check Grace's availability data in database
+- [x] Find where "5 days" is displayed
+- [x] Fix availability by updating database to Saturday and Sunday only
