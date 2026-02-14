@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                 <CardDescription>Update host information</CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form key={editingHostId} onSubmit={handleSubmit} className="space-y-6">
                   {/* Host Profile */}
                   <div className="space-y-4">
                     <h3 className="font-semibold text-lg">Host Profile</h3>
