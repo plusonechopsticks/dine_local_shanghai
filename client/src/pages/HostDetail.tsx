@@ -789,9 +789,11 @@ export default function HostDetail() {
                 value={bookingData.requestedDate}
                 onChange={(e) => {
                   const selectedDate = e.target.value;
-                  // Check if date is blocked
+                  const checkDate = new Date(selectedDate);
+                  console.log('[Booking] Date selected:', selectedDate, 'Day:', checkDate.toLocaleDateString('en-US', { weekday: 'long' }));
+                  
+                  // Check if date is blocked by availability comments
                   const isBlocked = blockedDatesData?.blockedRanges.some(range => {
-                    const checkDate = new Date(selectedDate);
                     const startDate = new Date(range.startDate);
                     const endDate = new Date(range.endDate);
                     return checkDate >= startDate && checkDate <= endDate;
@@ -802,12 +804,33 @@ export default function HostDetail() {
                     return;
                   }
                   
+                  // Check if the day of week matches host's availability
+                  if (host?.availability) {
+                    const dayOfWeek = checkDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                    const isAvailable = Object.keys(host.availability).includes(dayOfWeek);
+                    
+                    if (!isAvailable) {
+                      const availableDays = Object.keys(host.availability)
+                        .map(day => day.charAt(0).toUpperCase() + day.slice(1))
+                        .join(', ');
+                      toast.error(`Host is only available on: ${availableDays}`);
+                      return;
+                    }
+                  }
+                  
                   setBookingData({ ...bookingData, requestedDate: selectedDate });
                 }}
               />
+              {host?.availability && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Available days: {Object.keys(host.availability)
+                    .map(day => day.charAt(0).toUpperCase() + day.slice(1))
+                    .join(', ')}
+                </p>
+              )}
               {blockedDatesData?.blockedRanges && blockedDatesData.blockedRanges.length > 0 && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  Note: Some dates may be unavailable due to host's schedule
+                  Note: Some specific dates may be unavailable due to host's schedule
                 </p>
               )}
             </div>

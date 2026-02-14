@@ -791,3 +791,12 @@
 - [x] Check JSON formatting in database save
 - [x] Verify frontend reads availability correctly
 - [x] Test complete flow: admin edit → save → frontend display
+
+
+## Sync Booking Calendar with Host Availability
+- [x] Find the booking form component with calendar
+- [x] Get host availability data in booking form
+- [x] Implement day disabling logic based on availability
+- [x] Add validation and error messages for unavailable days
+- [x] Add helper text showing available days
+- [ ] Manual testing required: Try booking on weekday vs weekend
