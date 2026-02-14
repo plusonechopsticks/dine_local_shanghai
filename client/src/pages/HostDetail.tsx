@@ -597,7 +597,7 @@ export default function HostDetail() {
 
                 {/* Why Host - Full Width */}
                 {host.whyHost && (
-                  <Card className="border-border/50">
+                  <Card className="border-border/50 mt-6">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <Heart className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
@@ -613,7 +613,7 @@ export default function HostDetail() {
                 )}
 
                 {/* Bio - Full Width */}
-                <Card className="border-border/50">
+                <Card className="border-border/50 mt-6">
                   <CardContent className="p-4">
                     <h4 className="text-sm font-semibold mb-3">About Me</h4>
                     <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
