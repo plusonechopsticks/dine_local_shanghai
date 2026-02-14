@@ -717,7 +717,7 @@ export const appRouter = router({
         otherNotes: z.string().optional(),
         profilePhotoUrl: z.string().optional(),
         foodPhotoUrls: z.array(z.string()).optional(),
-        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).optional(),
+        availability: z.record(z.string(), z.array(z.enum(["breakfast", "lunch", "dinner"]))).optional(),
       }))
       .mutation(async ({ input }) => {
         const { id, ...updateData } = input;

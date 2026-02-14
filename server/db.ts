@@ -300,10 +300,12 @@ export async function updateHostListing(
   }
 
   try {
+    console.log(`[Database] Updating host listing ${id} with data:`, JSON.stringify(data, null, 2));
     await db
       .update(hostListings)
       .set(data)
       .where(eq(hostListings.id, id));
+    console.log(`[Database] Successfully updated host listing ${id}`);
     return true;
   } catch (error) {
     console.error("[Database] Failed to update host listing:", error);

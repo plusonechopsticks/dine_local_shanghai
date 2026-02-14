@@ -73,6 +73,24 @@ export default function AdminDashboard() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    // Parse and validate availability JSON
+    let availability: Record<string, ('lunch' | 'dinner' | 'breakfast')[]> | undefined = undefined;
+    const availStr = formData.get('availability') as string;
+    
+    if (availStr && availStr.trim()) {
+      try {
+        availability = JSON.parse(availStr);
+        // Validate structure
+        if (typeof availability !== 'object' || availability === null) {
+          alert('Availability must be a JSON object');
+          return;
+        }
+      } catch (error) {
+        alert('Invalid JSON format in availability field. Please check your syntax.');
+        return;
+      }
+    }
+    
     const data = {
       hostName: formData.get('hostName') as string,
       email: formData.get('email') as string,
@@ -94,14 +112,7 @@ export default function AdminDashboard() {
       discountPercentage: parseInt(formData.get('discountPercentage') as string) || 0,
       displayOrder: parseInt(formData.get('displayOrder') as string) || 0,
       maxGuests: parseInt(formData.get('maxGuests') as string) || undefined,
-      availability: (() => {
-        try {
-          const availStr = formData.get('availability') as string;
-          return availStr ? JSON.parse(availStr) : undefined;
-        } catch {
-          return undefined;
-        }
-      })(),
+      availability,
       availabilityComments: formData.get('availabilityComments') as string || undefined,
       mealDurationMinutes: parseInt(formData.get('mealDurationMinutes') as string) || undefined,
       kidsFriendly: formData.get('kidsFriendly') === 'on',
@@ -116,6 +127,7 @@ export default function AdminDashboard() {
     };
 
     if (editingHostId) {
+      console.log('Updating host with data:', data);
       updateHostMutation.mutate({ id: editingHostId, ...data });
     }
   };
