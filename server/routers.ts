@@ -383,7 +383,7 @@ export const appRouter = router({
         activities: z.array(z.string()).optional(),
         
         // Step 3: Availability
-        availability: z.record(z.string(), z.array(z.enum(["breakfast", "lunch", "dinner"]))).refine(
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).refine(
           (obj) => Object.keys(obj).length > 0,
           "Please select at least one day/meal"
         ),
@@ -482,7 +482,7 @@ export const appRouter = router({
     updateAvailability: protectedProcedure
       .input(z.object({
         hostId: z.number(),
-        availability: z.record(z.string(), z.array(z.enum(["breakfast", "lunch", "dinner"]))),
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))),
       }))
       .mutation(async ({ input, ctx }) => {
         // In a real app, verify user owns this listing
@@ -717,7 +717,7 @@ export const appRouter = router({
         otherNotes: z.string().optional(),
         profilePhotoUrl: z.string().optional(),
         foodPhotoUrls: z.array(z.string()).optional(),
-        availability: z.record(z.string(), z.array(z.enum(["breakfast", "lunch", "dinner"]))).optional(),
+        availability: z.record(z.string(), z.array(z.enum(["lunch", "dinner"]))).optional(),
       }))
       .mutation(async ({ input }) => {
         const { id, ...updateData } = input;

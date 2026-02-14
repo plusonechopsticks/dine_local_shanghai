@@ -772,9 +772,3 @@
 ## Add Availability to Admin Panel
 - [x] Add availability field display to admin edit form
 - [x] Enable editing of availability schedules
-
-
-## Fix Admin Panel Save and Simplify Availability Editing
-- [x] Debug why second edit can't be saved
-- [x] Replace JSON textarea with checkbox grid for availability
-- [x] Test multiple save operations
