@@ -68,6 +68,7 @@ export const hostListings = mysqlTable("host_listings", {
   funFacts: text("funFacts"), // Personality quirks and interesting facts
   whyHost: text("whyHost"), // Their motivation for hosting
   culturalPassions: text("culturalPassions"), // What they love about Chinese culture beyond food
+  otherPassions: text("otherPassions"), // Non-food passions and interests (from activities, otherNotes)
   
   // Contact
   email: varchar("email", { length: 320 }).notNull(),

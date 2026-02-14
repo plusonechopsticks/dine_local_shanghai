@@ -24,6 +24,7 @@ import {
   MessageCircle,
   Sparkles,
   BookOpen,
+  Compass,
 } from "lucide-react";
 import {
   Dialog,
@@ -605,6 +606,23 @@ export default function HostDetail() {
                           <h4 className="text-sm font-semibold mb-3">Why I Want to Host</h4>
                           <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                             {host.whyHost}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Other Passions - Full Width */}
+                {host.otherPassions && (
+                  <Card className="border-border/50 mt-6">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <Compass className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h4 className="text-sm font-semibold mb-3">Besides Food, What I'm Passionate About</h4>
+                          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                            {host.otherPassions}
                           </p>
                         </div>
                       </div>

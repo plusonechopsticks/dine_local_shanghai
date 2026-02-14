@@ -741,3 +741,10 @@
 - [x] Get all host profiles from database
 - [x] Extract and curate profile fields from About Me for each host
 - [x] Update database with curated content for all hosts
+
+
+## Add Non-Food Passions Profile Card
+- [x] Get Ayi's activities and other notes from database
+- [x] Add new profile field to schema
+- [x] Add new profile card to UI
+- [x] Populate Ayi's non-food passions
