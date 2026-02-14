@@ -748,3 +748,9 @@
 - [x] Add new profile field to schema
 - [x] Add new profile card to UI
 - [x] Populate Ayi's non-food passions
+
+
+## Update Remaining Host Profiles to Match Ayi's Structure
+- [x] Get profiles for all approved hosts (Grace Tong, Echo Ren)
+- [x] Curate profile fields for each host from their About Me
+- [x] Update database with curated content for all hosts
