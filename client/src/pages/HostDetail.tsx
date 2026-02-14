@@ -496,7 +496,7 @@ export default function HostDetail() {
               <div className="flex flex-col">
                 {/* Host Header Card */}
                   <Card className="border-border/50 rounded-none">
-                    <CardContent className="pt-6">
+                    <CardContent className="p-4">
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
                           {host.profilePhotoUrl ? (
@@ -527,7 +527,7 @@ export default function HostDetail() {
                   {/* Languages */}
                   {host.languages && host.languages.length > 0 && (
                     <Card className="border-border/50">
-                      <CardContent className="pt-6">
+                      <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           <MessageCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
@@ -546,7 +546,7 @@ export default function HostDetail() {
                   {/* Overseas Experience */}
                   {host.overseasExperience && (
                     <Card className="border-border/50">
-                      <CardContent className="pt-6">
+                      <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           <Globe className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
@@ -563,7 +563,7 @@ export default function HostDetail() {
                   {/* Fun Facts */}
                   {host.funFacts && (
                     <Card className="border-border/50">
-                      <CardContent className="pt-6">
+                      <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           <Sparkles className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
@@ -580,7 +580,7 @@ export default function HostDetail() {
                   {/* Cultural Passions */}
                   {host.culturalPassions && (
                     <Card className="border-border/50">
-                      <CardContent className="pt-6">
+                      <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           <BookOpen className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                           <div className="flex-1">
@@ -598,7 +598,7 @@ export default function HostDetail() {
                 {/* Why Host - Full Width */}
                 {host.whyHost && (
                   <Card className="border-border/50">
-                    <CardContent className="pt-6">
+                    <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <Heart className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
@@ -614,7 +614,7 @@ export default function HostDetail() {
 
                 {/* Bio - Full Width */}
                 <Card className="border-border/50">
-                  <CardContent className="pt-6">
+                  <CardContent className="p-4">
                     <h4 className="text-sm font-semibold mb-3">About Me</h4>
                     <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                       {host.bio}
