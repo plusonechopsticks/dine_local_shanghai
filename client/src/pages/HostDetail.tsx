@@ -493,9 +493,9 @@ export default function HostDetail() {
                 </Card>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="flex flex-col">
                 {/* Host Header Card */}
-                  <Card className="border-border/50">
+                  <Card className="border-border/50 rounded-none">
                     <CardContent className="pt-6">
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-muted">
@@ -523,7 +523,7 @@ export default function HostDetail() {
                   </Card>
 
                 {/* Profile Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   {/* Languages */}
                   {host.languages && host.languages.length > 0 && (
                     <Card className="border-border/50">
