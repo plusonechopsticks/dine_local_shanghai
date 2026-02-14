@@ -778,9 +778,3 @@
 - [x] Debug why second edit can't be saved
 - [x] Replace JSON textarea with checkbox grid for availability
 - [x] Test multiple save operations
-
-
-## Fix Availability Grid Sync Issue
-- [x] Debug why checkbox grid shows empty
-- [x] Fix data loading from database to checkbox grid
-- [x] Test with existing host data

@@ -142,19 +142,6 @@ export default function AdminDashboard() {
     : listings.filter(h => h.status === statusFilter);
 
   const editingHost = listings.find(h => h.id === editingHostId);
-  
-  // Parse availability if it's a string
-  const getAvailability = (host: typeof editingHost) => {
-    if (!host?.availability) return {};
-    if (typeof host.availability === 'string') {
-      try {
-        return JSON.parse(host.availability);
-      } catch {
-        return {};
-      }
-    }
-    return host.availability;
-  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -357,7 +344,7 @@ export default function AdminDashboard() {
                                   <input
                                     type="checkbox"
                                     name={`avail_${day}_${meal}`}
-                                    defaultChecked={getAvailability(editingHost)?.[day]?.includes(meal)}
+                                    defaultChecked={editingHost.availability?.[day]?.includes(meal)}
                                     className="h-4 w-4"
                                   />
                                   <span className="text-sm capitalize">{meal}</span>
