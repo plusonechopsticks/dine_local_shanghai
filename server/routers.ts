@@ -877,6 +877,14 @@ export const appRouter = router({
           adminTookOver: false,
         });
         
+        // Create welcome message so session appears in admin panel
+        const { createChatMessage } = await import("./db");
+        await createChatMessage({
+          sessionId: session.id,
+          senderType: "ai",
+          content: "Hello! I'm here to help you learn about +1 Chopsticks and answer any questions about booking authentic home dining experiences in Shanghai. How can I assist you today?",
+        });
+        
         return { session };
       }),
     

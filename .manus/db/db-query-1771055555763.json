@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, createdAt, updatedAt FROM chat_sessions ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, createdAt, updatedAt FROM chat_sessions ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "30001",
+      "createdAt": "2026-02-14 03:18:09",
+      "updatedAt": "2026-02-14 03:18:09"
+    },
+    {
+      "id": "3",
+      "createdAt": "2026-02-11 23:46:23",
+      "updatedAt": "2026-02-11 23:46:23"
+    },
+    {
+      "id": "2",
+      "createdAt": "2026-02-11 23:04:58",
+      "updatedAt": "2026-02-11 23:05:25"
+    },
+    {
+      "id": "1",
+      "createdAt": "2026-02-11 23:02:45",
+      "updatedAt": "2026-02-11 23:04:16"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcreatedAt\tupdatedAt\n30001\t2026-02-14 03:18:09\t2026-02-14 03:18:09\n3\t2026-02-11 23:46:23\t2026-02-11 23:46:23\n2\t2026-02-11 23:04:58\t2026-02-11 23:05:25\n1\t2026-02-11 23:02:45\t2026-02-11 23:04:16\n",
+  "stderr": "",
+  "execution_time_ms": 500
+}
