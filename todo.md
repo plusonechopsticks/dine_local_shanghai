@@ -885,3 +885,10 @@
 - [x] Fix availability comments field to be editable in admin panel
 - [x] Update Sookie's availability: only after May 15, second half of each month
 - [x] Verify changes work in admin panel
+
+
+## Update Sookie's Availability Schedule
+- [x] Change to dinner-only (remove lunch)
+- [x] Remove Monday and Tuesday availability
+- [x] Keep Wednesday through Sunday for dinner
+- [x] Verify changes in admin panel and host profile
