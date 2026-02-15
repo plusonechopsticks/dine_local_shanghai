@@ -831,3 +831,31 @@
 - [x] Display specific cancellation deadline on booking confirmation page
 - [ ] Future: Add to booking confirmation emails
 - [ ] Future: Implement cancellation request flow for guests
+
+
+## Newsletter System Implementation
+- [x] Create Mailchimp-style responsive email template
+- [x] Design 4-section layout (founder letter, fun fact, featured host, help needed)
+- [x] Test email delivery with real content
+- [x] Redesign template in Morning Brew style (card-based, minimal, blue headers)
+- [ ] Build newsletter composer in admin panel
+- [ ] Add featured host selector (dropdown of approved hosts)
+- [ ] Implement batch email sending to all subscribers
+- [ ] Add unsubscribe link and flow
+
+
+## Sookie Host Profile Creation
+- [x] Upload all food photos to S3
+- [x] Create Sookie host profile with title "Soul Food So Good"
+- [x] Set availability to Monday-Sunday starting May 1, 2026
+- [x] Add comprehensive bio and profile fields
+- [x] Verify profile displays correctly on frontend
+- [ ] Note: Host profile photo still needed (placeholder for now)
+
+
+## Newsletter Template Fixes
+- [x] Fix mobile header alignment (date and nav links breaking)
+- [x] Fix format loss when forwarding (plain text instead of HTML)
+- [x] Use table-based layout instead of flexbox for email compatibility
+- [x] Ensure all styles are inline for forwarding support)
+- [x] Test updated template on mobile and forwarding

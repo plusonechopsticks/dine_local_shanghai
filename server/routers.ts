@@ -24,6 +24,7 @@ import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail, sendEmail } from "./email";
 import { generatePaymentReminderEmail } from "./email-templates";
+import { generateNewsletterHtml } from "./newsletter-template";
 import { nanoid } from "nanoid";
 
 export const appRouter = router({
@@ -1010,6 +1011,78 @@ export const appRouter = router({
         
         await updateChatSessionStatus(input.sessionId, input.status);
         return { success: true };
+      }),
+  }),
+  
+  // Newsletter router
+  newsletter: router({
+    // Send newsletter to test email or all subscribers
+    send: publicProcedure
+      .input(z.object({
+        founderNote: z.string().min(1),
+        funFact: z.string().min(1),
+        featuredHostId: z.number(),
+        testEmail: z.string().email().optional(), // If provided, only send to this email
+      }))
+      .mutation(async ({ input }) => {
+        // Get featured host details
+        const host = await getHostListingById(input.featuredHostId);
+        if (!host) throw new Error("Featured host not found");
+        
+        // Generate email HTML
+        const htmlContent = generateNewsletterHtml({
+          founderNote: input.founderNote,
+          funFact: input.funFact,
+          featuredHost: {
+            name: host.hostName,
+            title: host.title || `${host.cuisineStyle} Experience`,
+            cuisineStyle: host.cuisineStyle,
+            district: host.district,
+            pricePerPerson: host.pricePerPerson,
+            profilePhotoUrl: host.profilePhotoUrl || undefined,
+            foodPhotoUrls: host.foodPhotoUrls as string[],
+            bio: host.bio,
+            hostId: host.id,
+          },
+        });
+        
+        if (input.testEmail) {
+          // Send test email
+          await sendEmail({
+            to: input.testEmail,
+            subject: "🥢 Your monthly dose of Shanghai home dining stories",
+            html: htmlContent,
+          });
+          
+          return { success: true, message: `Test email sent to ${input.testEmail}` };
+        } else {
+          // Get all subscribers from travelerInterests table
+          const db = await getDb();
+          if (!db) throw new Error("Database connection failed");
+          
+          const { interestSubmissions } = await import("../drizzle/schema");
+          const subscribers = await db.select().from(interestSubmissions).where(sql`interestType = 'traveler'`);
+          
+          // Send individual emails to each subscriber
+          let successCount = 0;
+          for (const subscriber of subscribers) {
+            try {
+              await sendEmail({
+                to: subscriber.email,
+                subject: "🥢 Your monthly dose of Shanghai home dining stories",
+                html: htmlContent,
+              });
+              successCount++;
+            } catch (error) {
+              console.error(`Failed to send newsletter to ${subscriber.email}:`, error);
+            }
+          }
+          
+          return { 
+            success: true, 
+            message: `Newsletter sent to ${successCount}/${subscribers.length} subscribers` 
+          };
+        }
       }),
   }),
 });
