@@ -816,3 +816,18 @@
 - [x] Identify why last two sessions weren't recorded (welcome message not saved)
 - [x] Fix the bug by saving welcome message to database on session creation
 - [x] Test session recording - confirmed working
+
+
+## Strengthen Host Vetting Process
+- [ ] Design multi-stage vetting workflow (application → review → interview → approval)
+- [ ] Add verification checklist for admin reviewers
+- [ ] Implement host status tracking (pending → under review → approved/rejected)
+- [ ] Add notes/comments field for admin to document vetting decisions
+- [ ] Create email notifications for host status changes
+
+## Emphasize 7-Day Free Cancellation Policy
+- [x] Add prominent cancellation policy badge on booking form (above Confirm button)
+- [x] Show policy on host detail pages (in booking info section)
+- [x] Display specific cancellation deadline on booking confirmation page
+- [ ] Future: Add to booking confirmation emails
+- [ ] Future: Implement cancellation request flow for guests

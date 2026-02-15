@@ -136,13 +136,27 @@ export default function BookingConfirmation() {
         </CardContent>
       </Card>
 
+      {/* Cancellation Policy with Deadline */}
+      <Card className="mb-6 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/50">
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-3 mb-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-green-800 dark:text-green-200 mb-1">
+                Free Cancellation Policy
+              </p>
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Cancel for free before {new Date(new Date(bookingDetails.requestedDate).getTime() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 11:59 PM for a full refund.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="mb-6 border-primary/20 bg-primary/5">
         <CardContent className="pt-6">
           <p className="text-center text-lg font-medium mb-2">
             Proceed to pay and secure your home dining table today
-          </p>
-          <p className="text-center text-sm text-muted-foreground">
-            Free cancellation 7 days in advance
           </p>
         </CardContent>
       </Card>

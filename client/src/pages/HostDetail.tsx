@@ -719,6 +719,21 @@ export default function HostDetail() {
                   Book Now
                 </Button>
 
+                {/* Cancellation Policy */}
+                <div className="flex items-start gap-2 p-3 bg-green-50 dark:bg-green-950/50 rounded-lg">
+                  <svg className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-semibold text-green-800 dark:text-green-200">
+                      Free cancellation
+                    </p>
+                    <p className="text-xs text-green-700 dark:text-green-300">
+                      Cancel up to 7 days before for a full refund
+                    </p>
+                  </div>
+                </div>
+
                 {/* Share Button */}
                 <Button
                   variant="outline"
@@ -869,6 +884,16 @@ export default function HostDetail() {
                 onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
               />
             </div>
+          </div>
+
+          {/* Cancellation Policy Badge */}
+          <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+            <svg className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+              Free cancellation up to 7 days before your experience
+            </p>
           </div>
 
           <DialogFooter>
