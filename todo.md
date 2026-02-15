@@ -879,3 +879,9 @@
 - [x] Update email to 1171646523@qq.com
 - [x] Update price to ¥380/person
 - [x] Verify all updates display correctly
+
+
+## Fix Availability Comments in Admin Panel
+- [x] Fix availability comments field to be editable in admin panel
+- [x] Update Sookie's availability: only after May 15, second half of each month
+- [x] Verify changes work in admin panel
