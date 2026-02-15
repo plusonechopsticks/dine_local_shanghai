@@ -1,7 +1,7 @@
 /**
  * Newsletter Email Template - Morning Brew Style
- * Uses table-based layout for maximum email client compatibility
- * All styles inline for forwarding support
+ * Uses table-based layout for email client compatibility and forwarding support
+ * Matches the visual design from the preferred template
  */
 
 interface NewsletterContent {
@@ -37,31 +37,36 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>+1 Chopsticks Newsletter</title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
+  </style>
+  <![endif]-->
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0a0a0a; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
   
-  <!-- Wrapper table for email client compatibility -->
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+  <!-- Outer wrapper -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a;">
     <tr>
-      <td style="padding: 20px 0;">
+      <td align="center" style="padding: 20px 10px;">
         
         <!-- Main container -->
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; max-width: 600px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; background-color: #1a1a1a; border-radius: 12px;">
           
-          <!-- Header -->
+          <!-- Header with date and nav links -->
           <tr>
-            <td style="padding: 24px 32px; background-color: #ffffff; border-bottom: 1px solid #e5e5e5;">
+            <td style="padding: 24px 32px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
-                  <td style="text-align: left; vertical-align: middle;">
-                    <span style="font-size: 14px; color: #666666;">${today}</span>
+                  <!-- Date on left -->
+                  <td style="width: 40%; vertical-align: middle;">
+                    <p style="margin: 0; font-size: 15px; color: #9ca3af; font-weight: 400; line-height: 1.5;">${today}</p>
                   </td>
-                  <td style="text-align: right; vertical-align: middle;">
-                    <a href="${baseUrl}" style="font-size: 13px; color: #666666; text-decoration: none; margin: 0 8px;">View Online</a>
-                    <span style="color: #e5e5e5;">|</span>
-                    <a href="${baseUrl}" style="font-size: 13px; color: #666666; text-decoration: none; margin: 0 8px;">Sign Up</a>
-                    <span style="color: #e5e5e5;">|</span>
-                    <a href="${baseUrl}/hosts" style="font-size: 13px; color: #666666; text-decoration: none; margin: 0 8px;">Browse Hosts</a>
+                  <!-- Nav links on right -->
+                  <td style="width: 60%; vertical-align: middle; text-align: right;">
+                    <a href="${baseUrl}" style="font-size: 15px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">View Online</a>
+                    <a href="${baseUrl}" style="font-size: 15px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Sign Up</a>
+                    <a href="${baseUrl}/hosts" style="font-size: 15px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Browse Hosts</a>
                   </td>
                 </tr>
               </table>
@@ -70,28 +75,21 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
           
           <!-- Logo & Tagline -->
           <tr>
-            <td style="padding: 40px 32px 32px; text-align: center;">
-              <h1 style="margin: 0 0 8px 0; font-size: 36px; font-weight: 700; color: #1a1a1a;">+1 Chopsticks</h1>
-              <p style="margin: 0; font-size: 15px; color: #666666;">Authentic home dining experiences in Shanghai</p>
-            </td>
-          </tr>
-          
-          <!-- Greeting -->
-          <tr>
-            <td style="padding: 0 32px 32px;">
-              <p style="margin: 0; font-size: 16px; color: #1a1a1a; line-height: 1.5;"><strong>Good morning.</strong></p>
+            <td style="padding: 32px 32px 24px;">
+              <h1 style="margin: 0 0 8px 0; font-size: 42px; font-weight: 700; color: #ffffff; line-height: 1.2;">+1 Chopsticks</h1>
+              <p style="margin: 0; font-size: 16px; color: #9ca3af; line-height: 1.5;">Authentic home dining experiences in Shanghai</p>
             </td>
           </tr>
           
           <!-- FOUNDER'S NOTE Section -->
           <tr>
             <td style="padding: 0 32px 32px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid #e5e5e5; border-radius: 8px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #262626; border-radius: 8px;">
                 <tr>
                   <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase;">FOUNDER'S NOTE</p>
-                    <div style="font-size: 15px; color: #1a1a1a; line-height: 1.6;">
-                      ${content.founderNote.split('\n\n').map(para => `<p style="margin: 0 0 12px 0;">${para}</p>`).join('')}
+                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">FOUNDER'S NOTE</p>
+                    <div style="font-size: 16px; color: #e5e7eb; line-height: 1.7;">
+                      ${content.founderNote.split('\n\n').map(para => `<p style="margin: 0 0 16px 0; color: #e5e7eb;">${para}</p>`).join('')}
                     </div>
                   </td>
                 </tr>
@@ -102,12 +100,12 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
           <!-- CULTURE Section -->
           <tr>
             <td style="padding: 0 32px 32px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid #e5e5e5; border-radius: 8px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #262626; border-radius: 8px;">
                 <tr>
                   <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase;">CULTURE</p>
-                    <div style="font-size: 15px; color: #1a1a1a; line-height: 1.6;">
-                      ${content.funFact.split('\n\n').map(para => `<p style="margin: 0 0 12px 0;">${para}</p>`).join('')}
+                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">CULTURE</p>
+                    <div style="font-size: 16px; color: #e5e7eb; line-height: 1.7;">
+                      ${content.funFact.split('\n\n').map(para => `<p style="margin: 0 0 16px 0; color: #e5e7eb;">${para}</p>`).join('')}
                     </div>
                   </td>
                 </tr>
@@ -118,35 +116,35 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
           <!-- FEATURED HOST Section -->
           <tr>
             <td style="padding: 0 32px 32px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border: 1px solid #e5e5e5; border-radius: 8px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #262626; border-radius: 8px;">
                 <tr>
                   <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase;">FEATURED HOST</p>
+                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">FEATURED HOST</p>
                     
                     <!-- Host Photo -->
                     ${content.featuredHost.foodPhotoUrls[0] ? `
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 16px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
                       <tr>
                         <td>
-                          <img src="${content.featuredHost.foodPhotoUrls[0]}" alt="${content.featuredHost.name}'s food" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
+                          <img src="${content.featuredHost.foodPhotoUrls[0]}" alt="${content.featuredHost.name}'s food" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; display: block;" />
                         </td>
                       </tr>
                     </table>
                     ` : ''}
                     
                     <!-- Host Info -->
-                    <h3 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 700; color: #1a1a1a;">${content.featuredHost.title}</h3>
-                    <p style="margin: 0 0 12px 0; font-size: 14px; color: #666666;">
-                      <strong>${content.featuredHost.name}</strong> · ${content.featuredHost.district} · ¥${content.featuredHost.pricePerPerson}/person
+                    <h3 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #ffffff; line-height: 1.3;">${content.featuredHost.title}</h3>
+                    <p style="margin: 0 0 12px 0; font-size: 15px; color: #9ca3af; line-height: 1.5;">
+                      <strong style="color: #e5e7eb;">${content.featuredHost.name}</strong> · ${content.featuredHost.district} · ¥${content.featuredHost.pricePerPerson}/person
                     </p>
-                    <p style="margin: 0 0 12px 0; font-size: 13px; color: #2563eb; font-weight: 600;">${content.featuredHost.cuisineStyle}</p>
-                    <p style="margin: 0 0 16px 0; font-size: 15px; color: #1a1a1a; line-height: 1.6;">${content.featuredHost.bio.substring(0, 200)}...</p>
+                    <p style="margin: 0 0 12px 0; font-size: 14px; color: #818cf8; font-weight: 600;">${content.featuredHost.cuisineStyle}</p>
+                    <p style="margin: 0 0 20px 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">${content.featuredHost.bio.substring(0, 200)}...</p>
                     
                     <!-- CTA Button -->
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                       <tr>
-                        <td style="border-radius: 6px; background-color: #1a1a1a;">
-                          <a href="${baseUrl}/hosts/${content.featuredHost.hostId}" style="display: inline-block; padding: 12px 24px; font-size: 15px; font-weight: 600; color: #ffffff; text-decoration: none;">View Profile</a>
+                        <td style="border-radius: 6px; background-color: #818cf8;">
+                          <a href="${baseUrl}/hosts/${content.featuredHost.hostId}" style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 6px;">View Profile</a>
                         </td>
                       </tr>
                     </table>
@@ -159,15 +157,15 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
           <!-- HELP US GROW Section -->
           <tr>
             <td style="padding: 0 32px 32px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #eff6ff; border-radius: 8px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #1e293b; border-radius: 8px;">
                 <tr>
                   <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #2563eb; letter-spacing: 0.5px; text-transform: uppercase;">HELP US GROW</p>
-                    <p style="margin: 0 0 12px 0; font-size: 15px; color: #1a1a1a; line-height: 1.6;">
+                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">HELP US GROW</p>
+                    <p style="margin: 0 0 12px 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">
                       Know someone who'd love authentic home dining in Shanghai? Forward this email to them!
                     </p>
-                    <p style="margin: 0; font-size: 15px; color: #1a1a1a; line-height: 1.6;">
-                      Or if you're a local who loves cooking and hosting, <a href="${baseUrl}/host-register" style="color: #2563eb; text-decoration: underline;">become a host</a>.
+                    <p style="margin: 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">
+                      Or if you're a local who loves cooking and hosting, <a href="${baseUrl}/host-register" style="color: #818cf8; text-decoration: underline;">become a host</a>.
                     </p>
                   </td>
                 </tr>
@@ -177,14 +175,14 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
           
           <!-- Footer -->
           <tr>
-            <td style="padding: 32px; background-color: #f9f9f9; border-top: 1px solid #e5e5e5; text-align: center;">
-              <p style="margin: 0 0 8px 0; font-size: 13px; color: #666666;">
-                <a href="${baseUrl}" style="color: #666666; text-decoration: none; margin: 0 8px;">Home</a> ·
-                <a href="${baseUrl}/hosts" style="color: #666666; text-decoration: none; margin: 0 8px;">Browse Hosts</a> ·
-                <a href="${baseUrl}/host-register" style="color: #666666; text-decoration: none; margin: 0 8px;">Become a Host</a>
+            <td style="padding: 24px 32px 32px; text-align: center;">
+              <p style="margin: 0 0 12px 0; font-size: 14px; color: #6b7280; line-height: 1.5;">
+                <a href="${baseUrl}" style="color: #6b7280; text-decoration: none; margin: 0 8px;">Home</a> ·
+                <a href="${baseUrl}/hosts" style="color: #6b7280; text-decoration: none; margin: 0 8px;">Browse Hosts</a> ·
+                <a href="${baseUrl}/host-register" style="color: #6b7280; text-decoration: none; margin: 0 8px;">Become a Host</a>
               </p>
-              <p style="margin: 8px 0 0 0; font-size: 12px; color: #999999;">
-                <a href="${baseUrl}/unsubscribe" style="color: #999999; text-decoration: underline;">Unsubscribe</a>
+              <p style="margin: 0; font-size: 13px; color: #4b5563;">
+                <a href="${baseUrl}/unsubscribe" style="color: #4b5563; text-decoration: underline;">Unsubscribe</a>
               </p>
             </td>
           </tr>

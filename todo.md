@@ -859,3 +859,14 @@
 - [x] Use table-based layout instead of flexbox for email compatibility
 - [x] Ensure all styles are inline for forwarding support)
 - [x] Test updated template on mobile and forwarding
+
+
+## Upload Sookie Photos to Cloudinary
+- [x] Upload all 12 food photos to Cloudinary
+- [x] Update Sookie's profile with Cloudinary URLs
+- [x] Verify photos display correctly
+
+
+## Newsletter Template Header Fix
+- [x] Fix mobile header alignment in original template
+- [x] Send test email to verify fix
