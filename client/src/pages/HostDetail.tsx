@@ -832,7 +832,9 @@ export default function HostDetail() {
                   // Check if the day of week matches host's availability
                   if (host?.availability && Object.keys(host.availability).length > 0) {
                     const dayOfWeek = checkDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-                    const isAvailable = Object.keys(host.availability).includes(dayOfWeek);
+                    // Normalize availability keys to lowercase for comparison
+                    const normalizedAvailability = Object.keys(host.availability).map(k => k.toLowerCase());
+                    const isAvailable = normalizedAvailability.includes(dayOfWeek);
                     
                     if (!isAvailable) {
                       const availableDays = Object.keys(host.availability)

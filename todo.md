@@ -892,3 +892,10 @@
 - [x] Fix availability host card display on Sookie's profile
 - [x] Verify booking calendar allows date selection
 - [x] Test booking flow end-to-end
+
+
+## Fix Booking Calendar Date Validation
+- [x] Find where "Host is only available on" warning is generated
+- [x] Fix date validation to use normalized lowercase day names
+- [x] Test with Wednesday-Sunday dates (should work)
+- [x] Test with Monday-Tuesday dates (should show warning)
