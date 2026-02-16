@@ -910,8 +910,12 @@
 
 ## Update Newsletter Template
 - [x] Upload CNY decoration photo to Cloudinary
-- [ ] Update founder's note with new content
+- [x] Update founder's note with new content
 - [ ] Condense second section (CNY recommendations) with one-liners + tips
 - [ ] Add CNY photo to second section
 - [ ] Feature Chuan in third section (host spotlight)
 - [ ] Send test newsletter to verify formatting
+
+- [x] Make newsletter mobile-friendly with improved font sizes
+- [x] Update founder's note with new content
+- [x] Add Chuan's profile picture to featured host section

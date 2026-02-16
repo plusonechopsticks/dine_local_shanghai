@@ -71,13 +71,13 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                 <tr>
                   <!-- Date on left -->
                   <td style="width: 40%; vertical-align: middle;">
-                    <p style="margin: 0; font-size: 15px; color: #9ca3af; font-weight: 400; line-height: 1.5;">${today}</p>
+                    <p style="margin: 0; font-size: 13px; color: #9ca3af; font-weight: 400; line-height: 1.5;">${today}</p>
                   </td>
                   <!-- Nav links on right -->
                   <td style="width: 60%; vertical-align: middle; text-align: right;">
-                    <a href="${baseUrl}" style="font-size: 15px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">View Online</a>
-                    <a href="${baseUrl}" style="font-size: 15px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Sign Up</a>
-                    <a href="${baseUrl}/hosts" style="font-size: 15px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Browse Hosts</a>
+                    <a href="${baseUrl}" style="font-size: 13px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">View Online</a>
+                    <a href="${baseUrl}" style="font-size: 13px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Sign Up</a>
+                    <a href="${baseUrl}/hosts" style="font-size: 13px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Browse Hosts</a>
                   </td>
                 </tr>
               </table>
@@ -88,7 +88,7 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
           <tr>
             <td style="padding: 32px 32px 24px;">
               <h1 style="margin: 0 0 8px 0; font-size: 42px; font-weight: 700; color: #ffffff; line-height: 1.2;">+1 Chopsticks</h1>
-              <p style="margin: 0; font-size: 16px; color: #9ca3af; line-height: 1.5;">Authentic home dining experiences in Shanghai</p>
+              <p style="margin: 0; font-size: 14px; color: #9ca3af; line-height: 1.5;">Authentic home dining experiences in Shanghai</p>
             </td>
           </tr>
           
@@ -99,8 +99,8 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                 <tr>
                   <td style="padding: 24px;">
                     <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">FOUNDER'S NOTE</p>
-                    <div style="font-size: 16px; color: #e5e7eb; line-height: 1.7;">
-                      ${content.founderNote.split('\n\n').map(para => `<p style="margin: 0 0 16px 0; color: #e5e7eb;">${para}</p>`).join('')}
+                    <div style="font-size: 15px; color: #e5e7eb; line-height: 1.65;">
+                      ${content.founderNote.split('\n\n').map(para => `<p style="margin: 0 0 14px 0; color: #e5e7eb;">${para}</p>`).join('')}
                     </div>
                   </td>
                 </tr>
@@ -128,7 +128,7 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                     ` : ''}
                     
                     <!-- Intro -->
-                    <p style="margin: 0 0 20px 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">${content.cnyRecommendations.intro}</p>
+                    <p style="margin: 0 0 20px 0; font-size: 15px; color: #e5e7eb; line-height: 1.65;">${content.cnyRecommendations.intro}</p>
                     
                     <!-- Places List -->
                     ${content.cnyRecommendations.places.map((place, index) => `
@@ -136,7 +136,7 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                         <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700; color: #ffffff; line-height: 1.3;">
                           ${index + 1}. ${place.name} ${place.chineseName}
                         </p>
-                        <p style="margin: 0 0 8px 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">
+                        <p style="margin: 0 0 8px 0; font-size: 15px; color: #e5e7eb; line-height: 1.65;">
                           ${place.description}
                         </p>
                         <p style="margin: 0; font-size: 15px; color: #818cf8; line-height: 1.6;">
@@ -159,7 +159,18 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                   <td style="padding: 24px;">
                     <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">FEATURED HOST</p>
                     
-                    <!-- Host Photo -->
+                    <!-- Host Profile Photo -->
+                    ${content.featuredHost.profilePhotoUrl ? `
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                      <tr>
+                        <td align="center">
+                          <img src="${content.featuredHost.profilePhotoUrl}" alt="${content.featuredHost.name}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto;" />
+                        </td>
+                      </tr>
+                    </table>
+                    ` : ''}
+                    
+                    <!-- Food Photo -->
                     ${content.featuredHost.foodPhotoUrls[0] ? `
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
                       <tr>
@@ -176,7 +187,7 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                       <strong style="color: #e5e7eb;">${content.featuredHost.name}</strong> · ${content.featuredHost.district} · ¥${content.featuredHost.pricePerPerson}/person
                     </p>
                     <p style="margin: 0 0 12px 0; font-size: 14px; color: #818cf8; font-weight: 600;">${content.featuredHost.cuisineStyle}</p>
-                    <p style="margin: 0 0 16px 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">${content.featuredHost.bio}</p>
+                    <p style="margin: 0 0 16px 0; font-size: 15px; color: #e5e7eb; line-height: 1.65;">${content.featuredHost.bio}</p>
                     
                     <!-- Signature Dishes -->
                     ${content.featuredHost.signatureDishes.length > 0 ? `
@@ -207,10 +218,10 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                 <tr>
                   <td style="padding: 24px;">
                     <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">HELP US GROW</p>
-                    <p style="margin: 0 0 12px 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">
+                    <p style="margin: 0 0 12px 0; font-size: 15px; color: #e5e7eb; line-height: 1.65;">
                       Know someone who'd love authentic home dining in Shanghai? Forward this email to them!
                     </p>
-                    <p style="margin: 0; font-size: 16px; color: #e5e7eb; line-height: 1.7;">
+                    <p style="margin: 0; font-size: 15px; color: #e5e7eb; line-height: 1.65;">
                       Or if you're a local who loves cooking and hosting, <a href="${baseUrl}/host-register" style="color: #818cf8; text-decoration: underline;">become a host</a>.
                     </p>
                   </td>

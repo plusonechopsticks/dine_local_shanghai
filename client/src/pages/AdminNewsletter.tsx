@@ -26,21 +26,29 @@ export default function AdminNewsletter() {
   const handleSendTest = () => {
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `Gong Hei Fat Choy! 🧧
+      founderNote: `Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
-As we celebrate the Year of the Snake, I'm thrilled to share three exciting milestones with you:
+Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try. We managed to achieve three important milestones:
 
-**1. Our First Host is Live!** Meet Sookie, a culinary artist who's opening her home in Putuo District. Her "Soul Food So Good" experience brings together Cantonese, Chaoshan, and Western fusion flavors in a cozy setting with her adorable dog as your dining companion.
+1. We created a MVP that allows hosts to list and guest to book
+2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
+3. We have received 2 paid orders
 
-**2. Growing Community:** We now have 47 travelers and 12 aspiring hosts who've joined our waitlist. Your enthusiasm fuels our mission to create authentic cultural exchanges through home dining.
+Which means…the whole project is no longer just an idea or prototype. It's getting real where we have to ensure we deliver.
 
-**3. Platform Launch:** Our booking system is now live! You can browse host profiles, check availability, and reserve your spot at the table—all in a few clicks.
+Speaking of which, I'll end my founder's note in this inaugural newsletter with the bold vision we want to achieve through +1 chopsticks:
 
-**Our Vision:** +1 Chopsticks isn't just about food—it's about breaking down walls between "tourist" and "local." Every meal is a conversation, every recipe tells a story, and every host becomes a bridge to understanding Shanghai beyond the guidebooks.
+Authentic connections between local hosts and foreign guests in China.
 
-This CNY, as families gather around tables across China, we're building a community where travelers can experience that same warmth. Not as observers, but as welcomed guests.
+It might be a little cliche, but lots of memorable travel stories come from people, and we would like to make it happen more and more for the influx of foreign guests. We would like to become one of the highlights in your trips, and proudly engage you with the rich Chinese culture in a local experience found nowhere else!
 
-Ready to pull up a chair?`,
+So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!
+
+Cheers,
+Steven
+Founder & CEO, +1 Chopsticks.
+
+P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's some hidden fun activities in Shanghai for the month. So this one I'll talk about what to expect in Shanghai during Chinese New Year.`,
       cnyIntro: "Chinese New Year in Shanghai is magical—but the best experiences aren't in tourist guides. Here are three hidden gems where locals actually celebrate:",
       cnyPlaces: [
         {
@@ -75,21 +83,29 @@ Ready to pull up a chair?`,
     }
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `Gong Hei Fat Choy! 🧧
+      founderNote: `Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
-As we celebrate the Year of the Snake, I'm thrilled to share three exciting milestones with you:
+Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try. We managed to achieve three important milestones:
 
-**1. Our First Host is Live!** Meet Sookie, a culinary artist who's opening her home in Putuo District. Her "Soul Food So Good" experience brings together Cantonese, Chaoshan, and Western fusion flavors in a cozy setting with her adorable dog as your dining companion.
+1. We created a MVP that allows hosts to list and guest to book
+2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
+3. We have received 2 paid orders
 
-**2. Growing Community:** We now have 47 travelers and 12 aspiring hosts who've joined our waitlist. Your enthusiasm fuels our mission to create authentic cultural exchanges through home dining.
+Which means…the whole project is no longer just an idea or prototype. It's getting real where we have to ensure we deliver.
 
-**3. Platform Launch:** Our booking system is now live! You can browse host profiles, check availability, and reserve your spot at the table—all in a few clicks.
+Speaking of which, I'll end my founder's note in this inaugural newsletter with the bold vision we want to achieve through +1 chopsticks:
 
-**Our Vision:** +1 Chopsticks isn't just about food—it's about breaking down walls between "tourist" and "local." Every meal is a conversation, every recipe tells a story, and every host becomes a bridge to understanding Shanghai beyond the guidebooks.
+Authentic connections between local hosts and foreign guests in China.
 
-This CNY, as families gather around tables across China, we're building a community where travelers can experience that same warmth. Not as observers, but as welcomed guests.
+It might be a little cliche, but lots of memorable travel stories come from people, and we would like to make it happen more and more for the influx of foreign guests. We would like to become one of the highlights in your trips, and proudly engage you with the rich Chinese culture in a local experience found nowhere else!
 
-Ready to pull up a chair?`,
+So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!
+
+Cheers,
+Steven
+Founder & CEO, +1 Chopsticks.
+
+P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's some hidden fun activities in Shanghai for the month. So this one I'll talk about what to expect in Shanghai during Chinese New Year.`,
       cnyIntro: "Chinese New Year in Shanghai is magical—but the best experiences aren't in tourist guides. Here are three hidden gems where locals actually celebrate:",
       cnyPlaces: [
         {
