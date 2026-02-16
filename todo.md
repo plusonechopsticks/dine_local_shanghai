@@ -906,3 +906,12 @@
 - [x] Check database for Wednesday spelling in availability JSON - Spelling is correct
 - [x] Fix validation logic to properly match Wednesday - Fixed timezone parsing
 - [x] Test all days (Mon-Sun) to verify correct behavior
+
+
+## Update Newsletter Template
+- [x] Upload CNY decoration photo to Cloudinary
+- [ ] Update founder's note with new content
+- [ ] Condense second section (CNY recommendations) with one-liners + tips
+- [ ] Add CNY photo to second section
+- [ ] Feature Chuan in third section (host spotlight)
+- [ ] Send test newsletter to verify formatting

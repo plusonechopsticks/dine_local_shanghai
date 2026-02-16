@@ -1020,7 +1020,15 @@ export const appRouter = router({
     send: publicProcedure
       .input(z.object({
         founderNote: z.string().min(1),
-        funFact: z.string().min(1),
+        cnyIntro: z.string().min(1),
+        cnyPlaces: z.array(z.object({
+          name: z.string(),
+          chineseName: z.string(),
+          description: z.string(),
+          tip: z.string(),
+          dates: z.string().optional(),
+        })),
+        cnyPhotoUrl: z.string().url(),
         featuredHostId: z.number(),
         testEmail: z.string().email().optional(), // If provided, only send to this email
       }))
@@ -1029,10 +1037,25 @@ export const appRouter = router({
         const host = await getHostListingById(input.featuredHostId);
         if (!host) throw new Error("Featured host not found");
         
+        // Parse signature dishes from menuDescription
+        const signatureDishes: string[] = [];
+        if (host.menuDescription) {
+          const menuLines = host.menuDescription.split('\n');
+          for (const line of menuLines) {
+            if (line.trim().startsWith('-')) {
+              signatureDishes.push(line.trim().substring(1).trim());
+            }
+          }
+        }
+        
         // Generate email HTML
         const htmlContent = generateNewsletterHtml({
           founderNote: input.founderNote,
-          funFact: input.funFact,
+          cnyRecommendations: {
+            intro: input.cnyIntro,
+            places: input.cnyPlaces,
+            photoUrl: input.cnyPhotoUrl,
+          },
           featuredHost: {
             name: host.hostName,
             title: host.title || `${host.cuisineStyle} Experience`,
@@ -1042,6 +1065,7 @@ export const appRouter = router({
             profilePhotoUrl: host.profilePhotoUrl || undefined,
             foodPhotoUrls: host.foodPhotoUrls as string[],
             bio: host.bio,
+            signatureDishes: signatureDishes.slice(0, 4), // Take first 4 dishes
             hostId: host.id,
           },
         });
