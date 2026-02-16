@@ -885,3 +885,10 @@
 - [x] Fix availability comments field to be editable in admin panel
 - [x] Update Sookie's availability: only after May 15, second half of each month
 - [x] Verify changes work in admin panel
+
+
+## Fix Availability Issues
+- [x] Remove AI-based availability comments parsing that blocks all dates
+- [x] Fix availability host card display on Sookie's profile
+- [x] Verify booking calendar allows date selection
+- [x] Test booking flow end-to-end

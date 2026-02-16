@@ -82,11 +82,7 @@ export default function HostDetail() {
     { enabled: !!hostId }
   );
   
-  // Get blocked dates from availability comments
-  const { data: blockedDatesData } = trpc.host.getBlockedDates.useQuery(
-    { hostId: hostId || 0 },
-    { enabled: !!hostId }
-  );
+  // Blocked dates feature removed - availability now controlled by day-of-week only
   
   // Restore booking data from localStorage on page load
   useEffect(() => {
@@ -268,7 +264,25 @@ export default function HostDetail() {
 
   const foodPhotos = host.foodPhotoUrls as string[];
   const activities = (host.activities as string[]) || [];
-  const availability = host.availability as Record<string, string[]>;
+  // Parse availability - handle both object and string cases
+  let availability: Record<string, string[]> = {};
+  try {
+    let rawAvailability: any = {};
+    if (typeof host.availability === 'string') {
+      rawAvailability = JSON.parse(host.availability);
+    } else if (host.availability && typeof host.availability === 'object') {
+      rawAvailability = host.availability;
+    }
+    
+    // Normalize keys to lowercase (API returns capitalized day names)
+    availability = Object.entries(rawAvailability).reduce((acc, [day, meals]) => {
+      acc[day.toLowerCase()] = meals as string[];
+      return acc;
+    }, {} as Record<string, string[]>);
+  } catch (e) {
+    console.error('[Availability] Failed to parse availability:', e, host.availability);
+    availability = {};
+  }
   
   const images = [
     host.profilePhotoUrl,
@@ -807,12 +821,8 @@ export default function HostDetail() {
                   const checkDate = new Date(selectedDate);
                   console.log('[Booking] Date selected:', selectedDate, 'Day:', checkDate.toLocaleDateString('en-US', { weekday: 'long' }));
                   
-                  // Check if date is blocked by availability comments
-                  const isBlocked = blockedDatesData?.blockedRanges.some(range => {
-                    const startDate = new Date(range.startDate);
-                    const endDate = new Date(range.endDate);
-                    return checkDate >= startDate && checkDate <= endDate;
-                  });
+                  // Date blocking by availability comments removed
+                  const isBlocked = false;
                   
                   if (isBlocked) {
                     toast.error("This date is not available. Please choose another date.");
@@ -843,11 +853,7 @@ export default function HostDetail() {
                     .join(', ')}
                 </p>
               )}
-              {blockedDatesData?.blockedRanges && blockedDatesData.blockedRanges.length > 0 && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Note: Some specific dates may be unavailable due to host's schedule
-                </p>
-              )}
+
             </div>
 
             <div>
