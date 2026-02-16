@@ -899,3 +899,10 @@
 - [x] Fix date validation to use normalized lowercase day names
 - [x] Test with Wednesday-Sunday dates (should work)
 - [x] Test with Monday-Tuesday dates (should show warning)
+
+
+## Fix Wednesday Date Validation Bug
+- [x] Debug why Wednesday dates show availability error - Found timezone conversion bug
+- [x] Check database for Wednesday spelling in availability JSON - Spelling is correct
+- [x] Fix validation logic to properly match Wednesday - Fixed timezone parsing
+- [x] Test all days (Mon-Sun) to verify correct behavior

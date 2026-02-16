@@ -818,7 +818,9 @@ export default function HostDetail() {
                 value={bookingData.requestedDate}
                 onChange={(e) => {
                   const selectedDate = e.target.value;
-                  const checkDate = new Date(selectedDate);
+                  // Parse date in local timezone to avoid UTC conversion issues
+                  const [year, month, day] = selectedDate.split('-').map(Number);
+                  const checkDate = new Date(year, month - 1, day);
                   console.log('[Booking] Date selected:', selectedDate, 'Day:', checkDate.toLocaleDateString('en-US', { weekday: 'long' }));
                   
                   // Date blocking by availability comments removed
@@ -834,7 +836,10 @@ export default function HostDetail() {
                     const dayOfWeek = checkDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                     // Normalize availability keys to lowercase for comparison
                     const normalizedAvailability = Object.keys(host.availability).map(k => k.toLowerCase());
+                    console.log('[Debug] Selected day:', dayOfWeek);
+                    console.log('[Debug] Normalized availability:', normalizedAvailability);
                     const isAvailable = normalizedAvailability.includes(dayOfWeek);
+                    console.log('[Debug] Is available?', isAvailable);
                     
                     if (!isAvailable) {
                       const availableDays = Object.keys(host.availability)
