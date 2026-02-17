@@ -1028,6 +1028,7 @@ export const appRouter = router({
           tip: z.string(),
           dates: z.string().optional(),
         })),
+        cnyPs: z.string().optional(),
         cnyPhotoUrl: z.string().url(),
         featuredHostId: z.number(),
         testEmail: z.string().email().optional(), // If provided, only send to this email
@@ -1054,6 +1055,7 @@ export const appRouter = router({
           cnyRecommendations: {
             intro: input.cnyIntro,
             places: input.cnyPlaces,
+            ps: input.cnyPs,
             photoUrl: input.cnyPhotoUrl,
           },
           featuredHost: {

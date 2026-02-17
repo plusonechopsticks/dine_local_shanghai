@@ -15,6 +15,7 @@ interface NewsletterContent {
       tip: string;
       dates?: string;
     }>;
+    ps?: string;
     photoUrl: string;
   };
   featuredHost: {
@@ -124,6 +125,8 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                         ${place.dates ? `<p style="margin: 8px 0 0 0; font-size: 14px; color: #9ca3af; font-style: italic;">${place.dates}</p>` : ''}
                       </div>
                     `).join('')}
+                    
+                    ${content.cnyRecommendations.ps ? `<p style="margin: 24px 0 0 0; font-size: 14px; color: #9ca3af; font-style: italic;">${content.cnyRecommendations.ps}</p>` : ''}
                   </td>
                 </tr>
               </table>
@@ -149,24 +152,14 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                     </table>
                     ` : ''}
                     
-                    <!-- Food Photo -->
-                    ${content.featuredHost.foodPhotoUrls[0] ? `
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
-                      <tr>
-                        <td>
-                          <img src="${content.featuredHost.foodPhotoUrls[0]}" alt="${content.featuredHost.name}'s food" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; display: block;" />
-                        </td>
-                      </tr>
-                    </table>
-                    ` : ''}
-                    
                     <!-- Host Info -->
-                    <h3 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #ffffff; line-height: 1.3;">${content.featuredHost.title}</h3>
-                    <p style="margin: 0 0 12px 0; font-size: 15px; color: #9ca3af; line-height: 1.5;">
-                      <strong style="color: #e5e7eb;">${content.featuredHost.name}</strong> · ${content.featuredHost.district} · ¥${content.featuredHost.pricePerPerson}/person
-                    </p>
+                    <h3 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #ffffff; line-height: 1.3;">${content.featuredHost.name}</h3>
                     <p style="margin: 0 0 12px 0; font-size: 14px; color: #818cf8; font-weight: 600;">${content.featuredHost.cuisineStyle}</p>
-                    <p style="margin: 0 0 16px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">${content.featuredHost.bio}</p>
+                    <p style="margin: 0 0 12px 0; font-size: 15px; color: #9ca3af; line-height: 1.5;">
+                      ${content.featuredHost.district} · ¥${content.featuredHost.pricePerPerson}/person
+                    </p>
+                    <p style="margin: 0 0 16px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">${content.featuredHost.bio.split('Her philosophy')[0].trim()}</p>
+                    ${content.featuredHost.bio.includes('Her philosophy') ? `<p style="margin: 0 0 16px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">Her philosophy${content.featuredHost.bio.split('Her philosophy')[1]}</p>` : ''}
                     
                     <!-- Signature Dishes -->
                     ${content.featuredHost.signatureDishes.length > 0 ? `

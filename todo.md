@@ -931,3 +931,12 @@
 - [x] Remove header section (date and navigation links)
 - [x] Make +1 Chopsticks logo smaller to fit on one line
 - [x] Add elegant em dash byline styling to founder's note
+
+- [x] Revert byline to "From Steven, Founder and CEO" (remove em dash)
+- [x] Update founder's note with new milestones structure
+- [x] Update CNY section opening text
+- [x] Fix pinyin: 蟠龙新天地 and add dashes (Wu-Kang, Pan-Long-Xin-Tian-Di)
+- [x] Add P.S. about pinyin dashes to CNY section
+- [x] Remove cuisine title from featured host section
+- [x] Make "Her philosophy" a new paragraph
+- [x] Remove food photo from featured host, keep only profile pic

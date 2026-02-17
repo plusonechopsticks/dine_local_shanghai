@@ -26,28 +26,24 @@ export default function AdminNewsletter() {
   const handleSendTest = () => {
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `— Steven, Founder and CEO
+      founderNote: `From Steven, Founder and CEO
 
 Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
-Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
-
-We managed to achieve three important milestones:
+I'm excited to share the following milestones achieved in three weeks' time:
 
 1. We created a MVP that allows hosts to list and guest to book
+
 2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
-3. We have received 2 paid orders
 
-Which means…the whole project is no longer just an idea or prototype. It's getting real where we have to ensure we deliver.
+3. We have received 2 paid orders!!!
 
-Speaking of which, I'll end my founder's note in this inaugural newsletter with the bold vision we want to achieve through +1 chopsticks:
+The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
 
-Authentic connections between local hosts and foreign guests in China.
+So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts.
 
-It might be a little cliche, but lots of memorable travel stories come from people, and we would like to make it happen more and more for the influx of foreign guests. We would like to become one of the highlights in your trips, and proudly engage you with the rich Chinese culture in a local experience found nowhere else!
-
-So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!`,
-      cnyIntro: "After browsing tons of Reddit posts on r/Chinatravel, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY. In fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nTo beat the crowds (it's almost impossible to avoid the crowds): here are some insider tips from us:",
+I'll keep you engaged every month on where we are :)`,
+      cnyIntro: "Lots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY.\n\nIn fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nHere are a few suggested spots (hidden gems other than Yu-Yuan) if you happen to be in Shanghai during CNY",
       cnyPlaces: [
         {
           name: "Jade Buddha Temple",
@@ -57,17 +53,18 @@ So +1 chopsticks fans, we will appreciate very much if you forward the newslette
         },
         {
           name: "Pan-Long-Xin-Tian-Di",
-          chineseName: "踠龙新天地",
+          chineseName: "蟠龙新天地",
           description: "Go to Pan-Long-Xin-Tian-Di instead of Yu-Yuan for the lantern and water bridge landscape",
           tip: "Visit after sunset when the lanterns are lit for the best photo opportunities",
         },
         {
-          name: "Wu Kang Road",
+          name: "Wu-Kang Road",
           chineseName: "武康路",
-          description: "Consider a city walk in Wu Kang Road for how young hipsters in Shanghai blend CNY with latest fashion trends",
+          description: "Consider a city walk in Wu-Kang Road for how young hipsters in Shanghai blend CNY with latest fashion trends",
           tip: "Weekday mornings are best to see locals and avoid tourist crowds",
         }
       ],
+      cnyPs: "P.S. I've added dash in between pinyin so it's easier to read for non Chinese speakers! (So we write Wu-Kang Road instead Wu Kang Road)",
       cnyPhotoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gAkOAquOIzeDHTmX.PNG",
       featuredHostId: 180001, // Chuan's ID
       testEmail: testEmail,
@@ -80,28 +77,24 @@ So +1 chopsticks fans, we will appreciate very much if you forward the newslette
     }
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `— Steven, Founder and CEO
+      founderNote: `From Steven, Founder and CEO
 
 Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
-Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
-
-We managed to achieve three important milestones:
+I'm excited to share the following milestones achieved in three weeks' time:
 
 1. We created a MVP that allows hosts to list and guest to book
+
 2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
-3. We have received 2 paid orders
 
-Which means…the whole project is no longer just an idea or prototype. It's getting real where we have to ensure we deliver.
+3. We have received 2 paid orders!!!
 
-Speaking of which, I'll end my founder's note in this inaugural newsletter with the bold vision we want to achieve through +1 chopsticks:
+The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
 
-Authentic connections between local hosts and foreign guests in China.
+So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts.
 
-It might be a little cliche, but lots of memorable travel stories come from people, and we would like to make it happen more and more for the influx of foreign guests. We would like to become one of the highlights in your trips, and proudly engage you with the rich Chinese culture in a local experience found nowhere else!
-
-So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!`,
-      cnyIntro: "After browsing tons of Reddit posts on r/Chinatravel, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY. In fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nTo beat the crowds (it's almost impossible to avoid the crowds): here are some insider tips from us:",
+I'll keep you engaged every month on where we are :)`,
+      cnyIntro: "Lots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY.\n\nIn fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nHere are a few suggested spots (hidden gems other than Yu-Yuan) if you happen to be in Shanghai during CNY",
       cnyPlaces: [
         {
           name: "Jade Buddha Temple",
@@ -111,17 +104,18 @@ So +1 chopsticks fans, we will appreciate very much if you forward the newslette
         },
         {
           name: "Pan-Long-Xin-Tian-Di",
-          chineseName: "踠龙新天地",
+          chineseName: "蟠龙新天地",
           description: "Go to Pan-Long-Xin-Tian-Di instead of Yu-Yuan for the lantern and water bridge landscape",
           tip: "Visit after sunset when the lanterns are lit for the best photo opportunities",
         },
         {
-          name: "Wu Kang Road",
+          name: "Wu-Kang Road",
           chineseName: "武康路",
-          description: "Consider a city walk in Wu Kang Road for how young hipsters in Shanghai blend CNY with latest fashion trends",
+          description: "Consider a city walk in Wu-Kang Road for how young hipsters in Shanghai blend CNY with latest fashion trends",
           tip: "Weekday mornings are best to see locals and avoid tourist crowds",
         }
       ],
+      cnyPs: "P.S. I've added dash in between pinyin so it's easier to read for non Chinese speakers! (So we write Wu-Kang Road instead Wu Kang Road)",
       cnyPhotoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gAkOAquOIzeDHTmX.PNG",
       featuredHostId: 180001, // Chuan's ID
       // No testEmail - sends to all
