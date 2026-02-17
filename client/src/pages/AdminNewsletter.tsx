@@ -26,7 +26,7 @@ export default function AdminNewsletter() {
   const handleSendTest = () => {
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `From Steven, Founder and CEO
+      founderNote: `— Steven, Founder and CEO
 
 Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
@@ -80,7 +80,7 @@ So +1 chopsticks fans, we will appreciate very much if you forward the newslette
     }
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `From Steven, Founder and CEO
+      founderNote: `— Steven, Founder and CEO
 
 Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 

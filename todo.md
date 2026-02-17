@@ -927,3 +927,7 @@
 - [x] Update subtitle to 'Authentic home dining experiences in China'
 
 - [x] Simplify founder's note formatting and remove closing signature
+
+- [x] Remove header section (date and navigation links)
+- [x] Make +1 Chopsticks logo smaller to fit on one line
+- [x] Add elegant em dash byline styling to founder's note

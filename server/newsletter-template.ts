@@ -63,30 +63,10 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
         
         <!-- Main container -  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 680px; margin: 0 auto; background-color: #111827;">adius: 12px;">
           
-          <!-- Header with date and nav links -->
-          <tr>
-            <td style="padding: 24px 32px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                <tr>
-                  <!-- Date on left -->
-                  <td style="width: 40%; vertical-align: middle;">
-                    <p style="margin: 0; font-size: 13px; color: #9ca3af; font-weight: 400; line-height: 1.5;">${today}</p>
-                  </td>
-                  <!-- Nav links on right -->
-                  <td style="width: 60%; vertical-align: middle; text-align: right;">
-                    <a href="${baseUrl}" style="font-size: 13px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">View Online</a>
-                    <a href="${baseUrl}" style="font-size: 13px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Sign Up</a>
-                    <a href="${baseUrl}/hosts" style="font-size: 13px; color: #9ca3af; text-decoration: none; margin-left: 16px; display: inline-block;">Browse Hosts</a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          
           <!-- Logo & Tagline -->
           <tr>
-            <td style="padding: 32px 32px 24px;">
-              <h1 style="margin: 0 0 8px 0; font-size: 42px; font-weight: 700; color: #ffffff; line-height: 1.2;">🥢 +1 Chopsticks</h1>
+            <td style="padding: 40px 32px 32px;">
+              <h1 style="margin: 0 0 8px 0; font-size: 32px; font-weight: 700; color: #ffffff; line-height: 1.2;">🥢 +1 Chopsticks</h1>
               <p style="margin: 0; font-size: 14px; color: #9ca3af; line-height: 1.5;">Authentic home dining experiences in China</p>
             </td>
           </tr>
