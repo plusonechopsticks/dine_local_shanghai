@@ -62,7 +62,8 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
     <tr>
       <td align="center" style="padding: 20px 10px;">
         
-        <!-- Main container -  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 680px; margin: 0 auto; background-color: #111827;">adius: 12px;">
+        <!-- Main container -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 680px; margin: 0 auto; background-color: #111827; border-radius: 12px;">
           
           <!-- Logo & Tagline -->
           <tr>
@@ -82,51 +83,6 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                     <div style="font-size: 14px; color: #e5e7eb; line-height: 1.65;">
                       ${content.founderNote.split('\n\n').map(para => `<p style="margin: 0 0 14px 0; color: #e5e7eb;">${para}</p>`).join('')}
                     </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          
-          <!-- CNY RECOMMENDATIONS Section -->
-          <tr>
-            <td style="padding: 0 32px 32px;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #262626; border-radius: 8px;">
-                <tr>
-                  <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">SHANGHAI CNY GUIDE</p>
-                    
-                    <!-- CNY Photo -->
-                    ${content.cnyRecommendations.photoUrl ? `
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
-                      <tr>
-                        <td>
-                          <img src="${content.cnyRecommendations.photoUrl}" alt="CNY Decorations" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; display: block;" />
-                        </td>
-                      </tr>
-                    </table>
-                    ` : ''}
-                    
-                    <!-- Intro -->
-                    <p style="margin: 0 0 20px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">${content.cnyRecommendations.intro}</p>
-                    
-                    <!-- Places List -->
-                    ${content.cnyRecommendations.places.map((place, index) => `
-                      <div style="margin-bottom: ${index < content.cnyRecommendations.places.length - 1 ? '24px' : '0'};">
-                        <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700; color: #ffffff; line-height: 1.3;">
-                          ${index + 1}. ${place.name} ${place.chineseName}
-                        </p>
-                        <p style="margin: 0 0 8px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">
-                          ${place.description}
-                        </p>
-                        <p style="margin: 0; font-size: 14px; color: #818cf8; line-height: 1.6;">
-                          <strong>🥢 +1 Chopsticks tip:</strong> ${place.tip}
-                        </p>
-                        ${place.dates ? `<p style="margin: 8px 0 0 0; font-size: 14px; color: #9ca3af; font-style: italic;">${place.dates}</p>` : ''}
-                      </div>
-                    `).join('')}
-                    
-                    ${content.cnyRecommendations.ps ? `<p style="margin: 24px 0 0 0; font-size: 14px; color: #9ca3af; font-style: italic;">${content.cnyRecommendations.ps}</p>` : ''}
                   </td>
                 </tr>
               </table>
@@ -177,6 +133,53 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                         </td>
                       </tr>
                     </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- CNY RECOMMENDATIONS Section -->
+          <tr>
+            <td style="padding: 0 32px 32px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #262626; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">WHAT TO DO IN SHANGHAI DURING CNY</p>
+                    
+                    <!-- CNY Photo -->
+                    ${content.cnyRecommendations.photoUrl ? `
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                      <tr>
+                        <td>
+                          <img src="${content.cnyRecommendations.photoUrl}" alt="CNY Decorations" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; display: block;" />
+                        </td>
+                      </tr>
+                    </table>
+                    ` : ''}
+                    
+                    <!-- Intro (split into paragraphs) -->
+                    <div style="margin-bottom: 20px;">
+                      ${content.cnyRecommendations.intro.split('\n\n').map(para => `<p style="margin: 0 0 14px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">${para}</p>`).join('')}
+                    </div>
+                    
+                    <!-- Places List -->
+                    ${content.cnyRecommendations.places.map((place, index) => `
+                      <div style="margin-bottom: ${index < content.cnyRecommendations.places.length - 1 ? '24px' : '0'};">
+                        <p style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700; color: #ffffff; line-height: 1.3;">
+                          ${index + 1}. ${place.name} ${place.chineseName}
+                        </p>
+                        <p style="margin: 0 0 8px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">
+                          ${place.description}
+                        </p>
+                        <p style="margin: 0; font-size: 14px; color: #818cf8; line-height: 1.6;">
+                          <strong>🥢 +1 Chopsticks tip:</strong> ${place.tip}
+                        </p>
+                        ${place.dates ? `<p style="margin: 8px 0 0 0; font-size: 14px; color: #9ca3af; font-style: italic;">${place.dates}</p>` : ''}
+                      </div>
+                    `).join('')}
+                    
+                    ${content.cnyRecommendations.ps ? `<p style="margin: 24px 0 0 0; font-size: 14px; color: #9ca3af; font-style: italic;">${content.cnyRecommendations.ps}</p>` : ''}
                   </td>
                 </tr>
               </table>

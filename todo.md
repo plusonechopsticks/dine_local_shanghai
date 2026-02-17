@@ -947,3 +947,8 @@
 
 - [x] Fix grammar: "allows host to list and guest to book" → "allows hosts to list and guests to book"
 - [x] Restructure CNY section intro with Reddit r/travelchina reference (4 paragraphs)
+
+- [x] Investigate and fix actual grammar issue in milestone #1
+- [x] Add website link line to founder's note: "Oh yes, here is our site: https://plus1chopsticks.manus.space"
+- [x] Move Featured Host section before CNY section
+- [x] Ensure CNY intro matches provided 4-paragraph format before recommendations

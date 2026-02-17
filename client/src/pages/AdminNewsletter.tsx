@@ -30,7 +30,7 @@ export default function AdminNewsletter() {
 
 I'm excited to share the following milestones achieved in three weeks' time:
 
-1. We created a MVP that allows hosts to list and guest to book
+1. We created a MVP that allows hosts to list and guests to book
 
 2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
 
@@ -48,7 +48,9 @@ On the product side, thanks to AI (manus specifically), I can build something qu
 
 I hope to continue this project for a while and see how far we can achieve!
 
-So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts!`,
+So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts!
+
+Oh yes, here is our site: https://plus1chopsticks.manus.space`,
       cnyIntro: "After browsing tons of Reddit posts on r/travelchina, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY.\n\nIn fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nHere are a few suggested spots (hidden gems other than Yu-Yuan) if you happen to be in Shanghai during CNY:",
       cnyPlaces: [
         {
@@ -105,7 +107,9 @@ On the product side, thanks to AI (manus specifically), I can build something qu
 
 I hope to continue this project for a while and see how far we can achieve!
 
-So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts!`,
+So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts!
+
+Oh yes, here is our site: https://plus1chopsticks.manus.space`,
       cnyIntro: "After browsing tons of Reddit posts on r/travelchina, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY.\n\nIn fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nHere are a few suggested spots (hidden gems other than Yu-Yuan) if you happen to be in Shanghai during CNY:",
       cnyPlaces: [
         {
