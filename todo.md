@@ -944,3 +944,6 @@
 - [x] Change first section title from "FOUNDER'S NOTE" to "From Steven, Founder and CEO"
 - [x] Expand founder's note with demand/supply/product side insights
 - [x] Update CNY section intro paragraph
+
+- [x] Fix grammar: "allows host to list and guest to book" → "allows hosts to list and guests to book"
+- [x] Restructure CNY section intro with Reddit r/travelchina reference (4 paragraphs)
