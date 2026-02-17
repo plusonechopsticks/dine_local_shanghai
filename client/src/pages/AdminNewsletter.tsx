@@ -26,9 +26,7 @@ export default function AdminNewsletter() {
   const handleSendTest = () => {
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `From Steven, Founder and CEO
-
-Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
+      founderNote: `Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
 I'm excited to share the following milestones achieved in three weeks' time:
 
@@ -38,11 +36,19 @@ I'm excited to share the following milestones achieved in three weeks' time:
 
 3. We have received 2 paid orders!!!
 
-The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
+On the demand side, the early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
 
-So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts.
+Surprisingly, the best responses I received so far are on Reddit (I have also tried Facebook and TripAdvisor, but not yet on X, Instagram, or TikTok)
 
-I'll keep you engaged every month on where we are :)`,
+Reddit is where I got the first two orders from, and out of coincidence ended up meeting a new friend in Los Angeles who's also thinking about doing something in inbound Chinese tourism!
+
+On the supply side, while its not easy to recruit hosts as we need to tick a lot of boxes (home, language, cooking, openness etc), I'm happy to have exceeded my original goal (6 hosts so far vs 3-5). This gives us a good number to test the market.
+
+On the product side, thanks to AI (manus specifically), I can build something quickly in less than a week's time. The debugging still takes lots of time and patience, but at least it's working!
+
+I hope to continue this project for a while and see how far we can achieve!
+
+So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts!`,
       cnyIntro: "Lots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY.\n\nIn fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nHere are a few suggested spots (hidden gems other than Yu-Yuan) if you happen to be in Shanghai during CNY",
       cnyPlaces: [
         {
@@ -77,9 +83,7 @@ I'll keep you engaged every month on where we are :)`,
     }
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `From Steven, Founder and CEO
-
-Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
+      founderNote: `Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
 
 I'm excited to share the following milestones achieved in three weeks' time:
 
@@ -89,11 +93,19 @@ I'm excited to share the following milestones achieved in three weeks' time:
 
 3. We have received 2 paid orders!!!
 
-The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
+On the demand side, the early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
 
-So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts.
+Surprisingly, the best responses I received so far are on Reddit (I have also tried Facebook and TripAdvisor, but not yet on X, Instagram, or TikTok)
 
-I'll keep you engaged every month on where we are :)`,
+Reddit is where I got the first two orders from, and out of coincidence ended up meeting a new friend in Los Angeles who's also thinking about doing something in inbound Chinese tourism!
+
+On the supply side, while its not easy to recruit hosts as we need to tick a lot of boxes (home, language, cooking, openness etc), I'm happy to have exceeded my original goal (6 hosts so far vs 3-5). This gives us a good number to test the market.
+
+On the product side, thanks to AI (manus specifically), I can build something quickly in less than a week's time. The debugging still takes lots of time and patience, but at least it's working!
+
+I hope to continue this project for a while and see how far we can achieve!
+
+So +1 chopsticks fans, I will appreciate very much if you forward the newsletter to whoever might be coming to China, or recommend us more hosts!`,
       cnyIntro: "Lots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY.\n\nIn fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nHere are a few suggested spots (hidden gems other than Yu-Yuan) if you happen to be in Shanghai during CNY",
       cnyPlaces: [
         {

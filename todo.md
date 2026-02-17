@@ -940,3 +940,7 @@
 - [x] Remove cuisine title from featured host section
 - [x] Make "Her philosophy" a new paragraph
 - [x] Remove food photo from featured host, keep only profile pic
+
+- [x] Change first section title from "FOUNDER'S NOTE" to "From Steven, Founder and CEO"
+- [x] Expand founder's note with demand/supply/product side insights
+- [x] Update CNY section intro paragraph

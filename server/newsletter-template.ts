@@ -78,7 +78,7 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #262626; border-radius: 8px;">
                 <tr>
                   <td style="padding: 24px;">
-                    <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">FOUNDER'S NOTE</p>
+                    <p style="margin: 0 0 16px 0; font-size: 14px; font-weight: 600; color: #818cf8;">From Steven, Founder and CEO</p>
                     <div style="font-size: 14px; color: #e5e7eb; line-height: 1.65;">
                       ${content.founderNote.split('\n\n').map(para => `<p style="margin: 0 0 14px 0; color: #e5e7eb;">${para}</p>`).join('')}
                     </div>
