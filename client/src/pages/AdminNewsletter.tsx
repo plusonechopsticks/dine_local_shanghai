@@ -49,26 +49,25 @@ Steven
 Founder & CEO, +1 Chopsticks.
 
 P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's some hidden fun activities in Shanghai for the month. So this one I'll talk about what to expect in Shanghai during Chinese New Year.`,
-      cnyIntro: "Chinese New Year in Shanghai is magical—but the best experiences aren't in tourist guides. Here are three hidden gems where locals actually celebrate:",
+      cnyIntro: "After browsing tons of Reddit posts on r/Chinatravel, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY. In fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nTo beat the crowds (it's almost impossible to avoid the crowds): here are some insider tips from us:",
       cnyPlaces: [
         {
-          name: "Pan Long Xin Tian Di",
-          chineseName: "蟠龙新天地",
-          description: "A revitalized industrial complex transformed into a vibrant cultural hub with traditional performances and modern art installations.",
-          tip: "Visit after sunset when the red lanterns light up the courtyards. The fusion of old factory architecture with CNY decorations creates stunning photo opportunities.",
-          dates: "Festivities run through February 28th"
+          name: "Jade Buddha Temple",
+          chineseName: "玉佛寺",
+          description: "Try Jade Buddha Temple for some Zen-ness with the temple bells",
+          tip: "Visit early morning for peaceful meditation and avoid the afternoon crowds",
         },
         {
-          name: "Wu Kong Road",
+          name: "Pan-Long-Xin-Tian-Di",
+          chineseName: "踠龙新天地",
+          description: "Go to Pan-Long-Xin-Tian-Di instead of Yu-Yuan for the lantern and water bridge landscape",
+          tip: "Visit after sunset when the lanterns are lit for the best photo opportunities",
+        },
+        {
+          name: "Wu Kang Road",
           chineseName: "武康路",
-          description: "This tree-lined French Concession street becomes a living museum during CNY, with local families hanging traditional decorations from historic villas.",
-          tip: "Go on a weekday morning to avoid crowds. Stop by the small tea shops where elderly residents gather—they're often happy to share CNY stories with curious visitors.",
-        },
-        {
-          name: "Yu Yuan Garden",
-          chineseName: "豫园",
-          description: "Yes, it's touristy, but the CNY temple fair here is the real deal. Local families come for specific vendors that have been operating for generations.",
-          tip: "Skip the main entrance crowds. Enter through the east gate near Fuyou Road, where you'll find family-run stalls selling traditional snacks that most tourists miss.",
+          description: "Consider a city walk in Wu Kang Road for how young hipsters in Shanghai blend CNY with latest fashion trends",
+          tip: "Weekday mornings are best to see locals and avoid tourist crowds",
         }
       ],
       cnyPhotoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gAkOAquOIzeDHTmX.PNG",
@@ -106,26 +105,25 @@ Steven
 Founder & CEO, +1 Chopsticks.
 
 P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's some hidden fun activities in Shanghai for the month. So this one I'll talk about what to expect in Shanghai during Chinese New Year.`,
-      cnyIntro: "Chinese New Year in Shanghai is magical—but the best experiences aren't in tourist guides. Here are three hidden gems where locals actually celebrate:",
+      cnyIntro: "After browsing tons of Reddit posts on r/Chinatravel, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY. In fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nTo beat the crowds (it's almost impossible to avoid the crowds): here are some insider tips from us:",
       cnyPlaces: [
         {
-          name: "Pan Long Xin Tian Di",
-          chineseName: "蟠龙新天地",
-          description: "A revitalized industrial complex transformed into a vibrant cultural hub with traditional performances and modern art installations.",
-          tip: "Visit after sunset when the red lanterns light up the courtyards. The fusion of old factory architecture with CNY decorations creates stunning photo opportunities.",
-          dates: "Festivities run through February 28th"
+          name: "Jade Buddha Temple",
+          chineseName: "玉佛寺",
+          description: "Try Jade Buddha Temple for some Zen-ness with the temple bells",
+          tip: "Visit early morning for peaceful meditation and avoid the afternoon crowds",
         },
         {
-          name: "Wu Kong Road",
+          name: "Pan-Long-Xin-Tian-Di",
+          chineseName: "踠龙新天地",
+          description: "Go to Pan-Long-Xin-Tian-Di instead of Yu-Yuan for the lantern and water bridge landscape",
+          tip: "Visit after sunset when the lanterns are lit for the best photo opportunities",
+        },
+        {
+          name: "Wu Kang Road",
           chineseName: "武康路",
-          description: "This tree-lined French Concession street becomes a living museum during CNY, with local families hanging traditional decorations from historic villas.",
-          tip: "Go on a weekday morning to avoid crowds. Stop by the small tea shops where elderly residents gather—they're often happy to share CNY stories with curious visitors.",
-        },
-        {
-          name: "Yu Yuan Garden",
-          chineseName: "豫园",
-          description: "Yes, it's touristy, but the CNY temple fair here is the real deal. Local families come for specific vendors that have been operating for generations.",
-          tip: "Skip the main entrance crowds. Enter through the east gate near Fuyou Road, where you'll find family-run stalls selling traditional snacks that most tourists miss.",
+          description: "Consider a city walk in Wu Kang Road for how young hipsters in Shanghai blend CNY with latest fashion trends",
+          tip: "Weekday mornings are best to see locals and avoid tourist crowds",
         }
       ],
       cnyPhotoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gAkOAquOIzeDHTmX.PNG",

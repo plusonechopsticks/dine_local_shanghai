@@ -919,3 +919,9 @@
 - [x] Make newsletter mobile-friendly with improved font sizes
 - [x] Update founder's note with new content
 - [x] Add Chuan's profile picture to featured host section
+
+- [x] Widen newsletter card and decrease font size to 14px
+- [x] Update CNY section with Reddit-inspired content
+- [x] Use full profile photo from Cloudinary (not circular)
+- [x] Add emoji to +1 Chopsticks branding
+- [x] Update subtitle to 'Authentic home dining experiences in China'
