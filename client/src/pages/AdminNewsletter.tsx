@@ -26,9 +26,13 @@ export default function AdminNewsletter() {
   const handleSendTest = () => {
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
+      founderNote: `From Steven, Founder and CEO
 
-Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try. We managed to achieve three important milestones:
+Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
+
+Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
+
+We managed to achieve three important milestones:
 
 1. We created a MVP that allows hosts to list and guest to book
 2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
@@ -42,13 +46,7 @@ Authentic connections between local hosts and foreign guests in China.
 
 It might be a little cliche, but lots of memorable travel stories come from people, and we would like to make it happen more and more for the influx of foreign guests. We would like to become one of the highlights in your trips, and proudly engage you with the rich Chinese culture in a local experience found nowhere else!
 
-So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!
-
-Cheers,
-Steven
-Founder & CEO, +1 Chopsticks.
-
-P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's some hidden fun activities in Shanghai for the month. So this one I'll talk about what to expect in Shanghai during Chinese New Year.`,
+So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!`,
       cnyIntro: "After browsing tons of Reddit posts on r/Chinatravel, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY. In fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nTo beat the crowds (it's almost impossible to avoid the crowds): here are some insider tips from us:",
       cnyPlaces: [
         {
@@ -82,9 +80,13 @@ P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's
     }
     setSending(true);
     sendNewsletterMutation.mutate({
-      founderNote: `Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
+      founderNote: `From Steven, Founder and CEO
 
-Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try. We managed to achieve three important milestones:
+Gong Hei Fat Choy! Welcome to the inaugural newsletter of +1 Chopsticks!
+
+Thanks to AI, the project came into reality in less than a month's time. The early signals are encouraging: I receive messages every day that travelers love this idea and would like to give it a try.
+
+We managed to achieve three important milestones:
 
 1. We created a MVP that allows hosts to list and guest to book
 2. We have 6 pilot hosts that are up and running, and one of them is from outside my network!
@@ -98,13 +100,7 @@ Authentic connections between local hosts and foreign guests in China.
 
 It might be a little cliche, but lots of memorable travel stories come from people, and we would like to make it happen more and more for the influx of foreign guests. We would like to become one of the highlights in your trips, and proudly engage you with the rich Chinese culture in a local experience found nowhere else!
 
-So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!
-
-Cheers,
-Steven
-Founder & CEO, +1 Chopsticks.
-
-P.S. The newsletter doesn't stop here. To make it useful, I'll be sharing what's some hidden fun activities in Shanghai for the month. So this one I'll talk about what to expect in Shanghai during Chinese New Year.`,
+So +1 chopsticks fans, we will appreciate very much if you forward the newsletter to whoever might be brave to try home dining, or host it if you are in China!`,
       cnyIntro: "After browsing tons of Reddit posts on r/Chinatravel, the burning questions for travelers in Shanghai during CNY are: Are businesses going to be open? Will Shanghai feel dead or lively?\n\nLots of local mom and pop are going to be closed, yet major tourist sights (Yu Garden, the Bund areas, big museums, observation towers) generally stay open through CNY. In fact, some of them have extended hours or festive programs (like the metro will run longer!), so Shanghai will feel more lively than dead because of the local tourists.\n\nTo beat the crowds (it's almost impossible to avoid the crowds): here are some insider tips from us:",
       cnyPlaces: [
         {

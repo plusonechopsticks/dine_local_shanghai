@@ -925,3 +925,5 @@
 - [x] Use full profile photo from Cloudinary (not circular)
 - [x] Add emoji to +1 Chopsticks branding
 - [x] Update subtitle to 'Authentic home dining experiences in China'
+
+- [x] Simplify founder's note formatting and remove closing signature
