@@ -952,3 +952,5 @@
 - [x] Add website link line to founder's note: "Oh yes, here is our site: https://plus1chopsticks.manus.space"
 - [x] Move Featured Host section before CNY section
 - [x] Ensure CNY intro matches provided 4-paragraph format before recommendations
+
+- [x] Update social sharing thumbnail (OG image) to dinner party photo

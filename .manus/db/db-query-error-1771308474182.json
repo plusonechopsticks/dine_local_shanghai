@@ -1,0 +1,8 @@
+{
+  "query": "SELECT u.name, u.email FROM users u WHERE u.role = 'host' OR u.id IN (SELECT user_id FROM host_listings);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT u.name, u.email FROM users u WHERE u.role = 'host' OR u.id IN (SELECT user_id FROM host_listings);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'user_id' in 'field list'"
+  ]
+}
