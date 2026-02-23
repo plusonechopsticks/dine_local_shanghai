@@ -270,10 +270,10 @@ function HostCard({ host }: { host: any }) {
   const [touchEnd, setTouchEnd] = useState(0);
   const foodPhotos = host.foodPhotoUrls as string[];
 
-  // Use food photos first, then profile photo as fallback
+  // Use profile photo as the main thumbnail, with food photos as additional carousel images
   const images = [
-    ...(foodPhotos || []),
     host.profilePhotoUrl,
+    ...(foodPhotos || []),
   ].filter(Boolean).map(url => getProxiedImageUrl(url));
 
   const nextImage = (e?: React.MouseEvent) => {

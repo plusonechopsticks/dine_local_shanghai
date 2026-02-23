@@ -954,3 +954,12 @@
 - [x] Ensure CNY intro matches provided 4-paragraph format before recommendations
 
 - [x] Update social sharing thumbnail (OG image) to dinner party photo
+
+- [x] Create customer-facing partnership package PDF (4 pages)
+- [x] Create agency-only incentive sheet PDF
+- [x] Fix Ayi and Grace image loading in partnership PDF
+- [x] Tighten paragraph spacing in partnership PDF
+- [x] Update agency incentive sheet pricing example to 250 CNY/person and 500 CNY/dinner
+- [x] Update Ayi and Grace profile photos with actual Cloudinary URLs from database
+- [x] Fix blurry OG image preview when sharing host profile links
+- [x] Update Browse Hosts page to show profile pictures as card thumbnails instead of food photos

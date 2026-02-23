@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { trpc } from "@/lib/trpc";
-import { getProxiedImageUrl } from "@/lib/imageUtils";
+import { getProxiedImageUrl, getOGImageUrl } from "@/lib/imageUtils";
 import {
   MapPin,
   Clock,
@@ -119,7 +119,7 @@ export default function HostDetail() {
 
     const title = host.title || `${host.cuisineStyle} with ${host.hostName} in ${host.district}`;
     const description = host.menuDescription?.substring(0, 200) || `Experience authentic ${host.cuisineStyle} cuisine with ${host.hostName} in ${host.district}, Shanghai. Book a home dining experience for up to ${host.maxGuests} guests.`;
-    const imageUrl = getProxiedImageUrl(host.profilePhotoUrl || (host.foodPhotoUrls as string[])?.[0] || '');
+    const imageUrl = getOGImageUrl(host.profilePhotoUrl || (host.foodPhotoUrls as string[])?.[0] || '');
     const url = window.location.href;
     const discountedPrice = host.discountPercentage && host.discountPercentage > 0 
       ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
