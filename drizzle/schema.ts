@@ -280,3 +280,28 @@ export const chatMessages = mysqlTable("chat_messages", {
 
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type InsertChatMessage = typeof chatMessages.$inferInsert;
+
+/**
+ * Page views - track daily traffic for analytics
+ * Records page views for key pages and host profiles
+ */
+export const pageViews = mysqlTable("page_views", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Page information
+  pageType: mysqlEnum("pageType", ["home", "browse_hosts", "become_host", "host_detail"]).notNull(),
+  hostListingId: int("hostListingId").references(() => hostListings.id, { onDelete: "cascade" }), // Only for host_detail pages
+  
+  // Date (stored as DATE for grouping by day)
+  viewDate: date("viewDate").notNull(),
+  
+  // View count for that day
+  viewCount: int("viewCount").notNull().default(1),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PageView = typeof pageViews.$inferSelect;
+export type InsertPageView = typeof pageViews.$inferInsert;

@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `page_views` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `pageType` varchar(50) NOT NULL,\n  `hostListingId` int,\n  `viewDate` date NOT NULL,\n  `viewCount` int NOT NULL DEFAULT 1,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  UNIQUE KEY `unique_page_view` (`pageType`, `hostListingId`, `viewDate`),\n  INDEX `idx_pageType` (`pageType`),\n  INDEX `idx_viewDate` (`viewDate`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute CREATE TABLE IF NOT EXISTS `page_views` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `pageType` varchar(50) NOT NULL,\n  `hostListingId` int,\n  `viewDate` date NOT NULL,\n  `viewCount` int NOT NULL DEFAULT 1,\n  `createdAt` timestamp DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  UNIQUE KEY `unique_page_view` (`pageType`, `hostListingId`, `viewDate`),\n  INDEX `idx_pageType` (`pageType`),\n  INDEX `idx_viewDate` (`viewDate`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 538
+}

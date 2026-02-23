@@ -963,3 +963,29 @@
 - [x] Update Ayi and Grace profile photos with actual Cloudinary URLs from database
 - [x] Fix blurry OG image preview when sharing host profile links
 - [x] Update Browse Hosts page to show profile pictures as card thumbnails instead of food photos
+- [ ] Add Analytics tab to admin dashboard to track daily traffic
+  - [ ] Create pageViews database table to store daily traffic data
+  - [ ] Implement page view tracking for home, browse hosts, become host pages
+  - [ ] Implement page view tracking for individual host profile pages
+  - [ ] Create Analytics tab UI with charts showing traffic trends
+  - [ ] Display daily traffic data for each page/host
+  - [ ] Add date range filtering for traffic analysis
+
+## Analytics Dashboard - Completed ✅
+- [x] Create pageViews database table to track daily traffic
+- [x] Add page tracking to Home page (home page type)
+- [x] Add page tracking to HostListings/Browse Hosts page (browse_hosts page type)
+- [x] Add page tracking to HostRegister/Become Host page (become_host page type)
+- [x] Add page tracking to host detail pages (host_detail page type with hostListingId)
+- [x] Create tRPC procedures for analytics:
+  - [x] trackPageView mutation to record page views
+  - [x] getAnalytics query to fetch daily traffic data
+- [x] Create AdminAnalyticsTab component with:
+  - [x] Date range selector (7, 14, 30, 90 days)
+  - [x] Summary cards (Total Page Views, Host Profile Views, Avg Daily Views)
+  - [x] Line chart showing daily traffic by page type
+  - [x] Host profile traffic bar chart (top 10 hosts)
+  - [x] Daily breakdown table with all page types
+- [x] Add Analytics tab to admin dashboard
+- [x] Create and run analytics tests (6 tests passing)
+- [x] Verify page tracking works on all key pages

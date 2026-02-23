@@ -19,7 +19,10 @@ import {
   ChatSession,
   InsertChatSession,
   ChatMessage,
-  InsertChatMessage
+  InsertChatMessage,
+  pageViews,
+  PageView,
+  InsertPageView
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -439,4 +442,95 @@ export async function getChatMessages(sessionId: number): Promise<ChatMessage[]>
     .where(eq(chatMessages.sessionId, sessionId))
     .orderBy(chatMessages.createdAt);
   return result;
+}
+
+// Page view analytics helpers
+export async function trackPageView(pageType: "home" | "browse_hosts" | "become_host" | "host_detail", hostListingId?: number): Promise<void> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot track page view: database not available");
+    return;
+  }
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check if a record exists for today
+    const existing = await db
+      .select()
+      .from(pageViews)
+      .where(
+        sql`${pageViews.pageType} = ${pageType} AND DATE(${pageViews.viewDate}) = DATE(${today}) ${hostListingId ? sql`AND ${pageViews.hostListingId} = ${hostListingId}` : sql`AND ${pageViews.hostListingId} IS NULL`}`
+      )
+      .limit(1);
+    
+    if (existing.length > 0) {
+      // Increment existing record
+      await db
+        .update(pageViews)
+        .set({ viewCount: sql`${pageViews.viewCount} + 1` })
+        .where(eq(pageViews.id, existing[0].id));
+    } else {
+      // Create new record
+      await db.insert(pageViews).values({
+        pageType,
+        hostListingId: hostListingId || null,
+        viewDate: today,
+        viewCount: 1,
+      });
+    }
+  } catch (error) {
+    console.error("[Database] Failed to track page view:", error);
+  }
+}
+
+export async function getPageViewsAnalytics(days: number = 30): Promise<PageView[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get page views: database not available");
+    return [];
+  }
+
+  try {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const result = await db
+      .select()
+      .from(pageViews)
+      .where(sql`${pageViews.viewDate} >= ${startDate}`)
+      .orderBy(desc(pageViews.viewDate));
+    
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get page views analytics:", error);
+    return [];
+  }
+}
+
+export async function getPageViewsByType(pageType: "home" | "browse_hosts" | "become_host" | "host_detail", days: number = 30): Promise<PageView[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get page views: database not available");
+    return [];
+  }
+
+  try {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const result = await db
+      .select()
+      .from(pageViews)
+      .where(sql`${pageViews.pageType} = ${pageType} AND ${pageViews.viewDate} >= ${startDate}`)
+      .orderBy(desc(pageViews.viewDate));
+    
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get page views by type:", error);
+    return [];
+  }
 }

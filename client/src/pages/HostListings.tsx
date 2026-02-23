@@ -56,6 +56,11 @@ const SHANGHAI_DISTRICTS = [
 
 export default function HostListings() {
   const [showFilters, setShowFilters] = useState(false);
+  const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
+  
+  useEffect(() => {
+    trackPageView({ pageType: "browse_hosts" });
+  }, [trackPageView]);
   
   // Filter state
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");

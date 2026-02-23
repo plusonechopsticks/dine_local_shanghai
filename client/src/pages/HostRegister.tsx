@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -162,6 +164,12 @@ async function compressAndUploadImage(file: File): Promise<string> {
 // ============================================================================
 
 export default function HostRegister() {
+  const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
+  
+  useEffect(() => {
+    trackPageView({ pageType: "become_host" });
+  }, [trackPageView]);
+  
   // State
   const [phase, setPhase] = useState<"initial" | "form" | "success">("initial");
   const [step, setStep] = useState(1);

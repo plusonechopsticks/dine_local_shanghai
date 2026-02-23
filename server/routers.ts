@@ -14,7 +14,10 @@ import {
   getHostListingById,
   updateHostListingStatus,
   updateHostListing,
-  getAllBookings
+  getAllBookings,
+  trackPageView,
+  getPageViewsAnalytics,
+  getPageViewsByType
 } from "./db";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
@@ -1109,8 +1112,38 @@ export const appRouter = router({
             message: `Newsletter sent to ${successCount}/${subscribers.length} subscribers` 
           };
         }
+       }),
+  }),
+  // Analytics router
+  analytics: router({
+    trackPageView: publicProcedure
+      .input(z.object({
+        pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail"]),
+        hostListingId: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await trackPageView(input.pageType, input.hostListingId);
+        return { success: true };
+      }),
+    
+    getAnalytics: protectedProcedure
+      .input(z.object({
+        days: z.number().default(30),
+      }))
+      .query(async ({ input }) => {
+        const data = await getPageViewsAnalytics(input.days);
+        return data;
+      }),
+    
+    getPageTypeAnalytics: protectedProcedure
+      .input(z.object({
+        pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail"]),
+        days: z.number().default(30),
+      }))
+      .query(async ({ input }) => {
+        const data = await getPageViewsByType(input.pageType, input.days);
+        return data;
       }),
   }),
 });
-
 export type AppRouter = typeof appRouter;

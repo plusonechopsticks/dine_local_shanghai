@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { getProxiedImageUrl } from "@/lib/imageUtils";
 import { AnnouncementEditor } from "@/components/AnnouncementEditor";
 import { LiveChatAdmin } from "@/components/LiveChatAdmin";
+import { AdminAnalyticsTab } from "@/components/AdminAnalyticsTab";
 
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
@@ -175,6 +176,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="payments">Payment Successful</TabsTrigger>
           <TabsTrigger value="announcement">Announcement</TabsTrigger>
           <TabsTrigger value="livechat">Live Chat</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -785,6 +787,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="livechat" className="space-y-4">
           <LiveChatAdmin />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <AdminAnalyticsTab />
         </TabsContent>
       </Tabs>
     </div>

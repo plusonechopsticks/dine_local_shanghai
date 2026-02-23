@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +23,12 @@ import {
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 
 export default function Home() {
+  const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
+  
+  useEffect(() => {
+    trackPageView({ pageType: "home" });
+  }, [trackPageView]);
+  
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
