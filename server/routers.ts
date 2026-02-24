@@ -1126,7 +1126,7 @@ export const appRouter = router({
         return { success: true };
       }),
     
-    getAnalytics: protectedProcedure
+    getAnalytics: publicProcedure
       .input(z.object({
         days: z.number().default(30),
       }))
@@ -1135,7 +1135,7 @@ export const appRouter = router({
         return data;
       }),
     
-    getPageTypeAnalytics: protectedProcedure
+    getPageTypeAnalytics: publicProcedure
       .input(z.object({
         pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail"]),
         days: z.number().default(30),
