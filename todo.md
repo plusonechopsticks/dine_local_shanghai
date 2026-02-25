@@ -995,3 +995,15 @@
   - Changed analytics.getAnalytics from protectedProcedure to publicProcedure
   - Changed analytics.getPageTypeAnalytics from protectedProcedure to publicProcedure
   - Analytics tab now accessible without authentication
+
+## Cuisine Visibility Enhancement - COMPLETED ✅
+- [x] Add cuisine badges to host cards on Browse Hosts page
+  - Enhanced badge with amber color and better visibility
+  - Display cuisine type prominently with font-semibold
+- [x] Create 'Explore by Cuisine' section on homepage
+  - Added CuisineExplorerSection with cuisine cards
+  - Dynamically extracts unique cuisines from listings
+  - Each cuisine card shows host count and emoji icon
+- [x] Enhance host detail page to highlight cuisine
+  - Added prominent cuisine badge at top of page
+  - Cuisine now appears before title for immediate visibility

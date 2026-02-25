@@ -343,14 +343,15 @@ function HostCard({ host }: { host: any }) {
                 </Badge>
               )}
               
-              {/* Cuisine Badge - Top Left (below discount if present) */}
+              {/* Cuisine Badge - Top Left (below discount if present) - More Prominent */}
               {host.cuisineStyle && (
-                <Badge className={`absolute left-4 bg-white/20 text-white border-0 backdrop-blur-sm ${
+                <Badge className={`absolute left-4 bg-amber-600/90 text-white border-0 backdrop-blur-sm font-semibold text-sm px-3 py-1.5 ${
                   host.discountPercentage && host.discountPercentage > 0 ? 'top-14' : 'top-4'
                 }`}>
                   {host.cuisineStyle}
                 </Badge>
               )}
+
               
               {/* View Count - Top Left Below Cuisine */}
               {host.viewCount !== undefined && (

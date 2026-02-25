@@ -33,6 +33,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Navigation />
       <HeroSection />
+      <CuisineExplorerSection />
       <ExperienceSection />
       <BenefitsSection />
       <CTASection />
@@ -431,6 +432,88 @@ function CTASection() {
       </div>
     </section>
   );
+}
+
+function CuisineExplorerSection() {
+  const { data: listings } = trpc.host.listApproved.useQuery();
+
+  // Extract unique cuisines from listings
+  const cuisines = listings
+    ? Array.from(new Set(listings.map(h => h.cuisineStyle).filter(Boolean)))
+        .map(cuisine => ({
+          name: cuisine,
+          count: listings.filter(h => h.cuisineStyle === cuisine).length,
+          icon: getCuisineIcon(cuisine),
+        }))
+        .sort((a, b) => b.count - a.count)
+    : [];
+
+  return (
+    <section className="py-20 md:py-28 bg-gradient-to-b from-background to-secondary/10">
+      <div className="container">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2
+              className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Explore by Cuisine
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Discover authentic dining experiences curated by cuisine type
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {cuisines.map((cuisine) => (
+              <a
+                key={cuisine.name}
+                href={`/hosts?cuisine=${encodeURIComponent(cuisine.name)}`}
+                className="group"
+              >
+                <Card className="h-full cursor-pointer hover:shadow-lg transition-all hover:scale-105">
+                  <CardContent className="p-6 flex flex-col items-center justify-center h-full text-center">
+                    <div className="text-4xl mb-3">{cuisine.icon}</div>
+                    <h3 className="font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors">
+                      {cuisine.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {cuisine.count} {cuisine.count === 1 ? 'host' : 'hosts'}
+                    </p>
+                  </CardContent>
+                </Card>
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <a href="/hosts">
+              <Button size="lg" variant="outline" className="gap-2">
+                Browse All Hosts
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function getCuisineIcon(cuisine: string): string {
+  const iconMap: Record<string, string> = {
+    'Sichuan': '🌶️',
+    'Southwestern & Northern Chinese': '🥘',
+    'Shanghai & Northern Chinese': '🥟',
+    'Shanghainese': '🍜',
+    'Northern Chinese': '🥡',
+    'Dumplings': '🥟',
+    'Western': '🍽️',
+    'Vegetarian': '🥗',
+    'Vegan': '🌱',
+    'Fusion': '🍲',
+  };
+  return iconMap[cuisine] || '🍽️';
 }
 
 function AboutSection() {
