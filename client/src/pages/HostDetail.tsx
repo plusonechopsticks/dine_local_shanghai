@@ -360,7 +360,6 @@ export default function HostDetail() {
                   src={host.introVideoUrl}
                   controls
                   autoPlay
-                  muted
                   className="absolute top-0 left-0 w-full h-full"
                   style={{ objectFit: 'contain' }}
                 />
