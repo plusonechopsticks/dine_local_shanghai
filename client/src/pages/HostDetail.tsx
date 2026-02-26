@@ -353,6 +353,20 @@ export default function HostDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Images & Core Info */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Host Video Section - Top Priority */}
+            {host.introVideoUrl && (
+              <div className="relative w-full bg-black rounded-2xl overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                <video
+                  src={host.introVideoUrl}
+                  controls
+                  autoPlay
+                  muted
+                  className="absolute top-0 left-0 w-full h-full"
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
+            )}
+
             {/* Image Carousel */}
             <div className="space-y-4">
               <div
@@ -501,26 +515,6 @@ export default function HostDetail() {
                     <p className="text-xs text-muted-foreground">Maximum</p>
                   </div>
                 </div>
-
-                {/* Host Video Section */}
-                {host.introVideoUrl && (
-                  <Card className="border-border/50">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Sparkles className="h-5 w-5 text-primary" />
-                        <h3 className="text-xl font-bold">Meet the Host</h3>
-                      </div>
-                      <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
-                        <video
-                          src={host.introVideoUrl}
-                          controls
-                          className="absolute top-0 left-0 w-full h-full"
-                          style={{ objectFit: 'contain' }}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
 
                 {/* Menu Section */}
                 <Card className="border-border/50">
