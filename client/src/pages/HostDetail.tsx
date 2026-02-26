@@ -502,6 +502,26 @@ export default function HostDetail() {
                   </div>
                 </div>
 
+                {/* Host Video Section */}
+                {host.introVideoUrl && (
+                  <Card className="border-border/50">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        <h3 className="text-xl font-bold">Meet the Host</h3>
+                      </div>
+                      <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                        <video
+                          src={host.introVideoUrl}
+                          controls
+                          className="absolute top-0 left-0 w-full h-full"
+                          style={{ objectFit: 'contain' }}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Menu Section */}
                 <Card className="border-border/50">
                   <CardContent className="pt-6">
