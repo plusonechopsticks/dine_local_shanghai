@@ -1084,3 +1084,20 @@
 - [x] Add Chinese/English language toggle
   - Language toggle in dashboard header
   - Full Chinese translations for all tabs
+
+
+## Booking Availability Integration - Phase 1 Complete
+- [x] Add availability checking logic to booking procedures
+  - Created isHostAvailable() function to check calendar blocks
+  - Created getHostAvailableSlots() function for date range queries
+  - Checks date blocks, weekday blocks, and all_day blocks
+  - Respects meal type blocking (lunch/dinner/both)
+  - All 8 vitest tests passing
+- [ ] Update booking UI to disable unavailable dates and times
+  - Disable date picker for blocked dates
+  - Disable meal time options based on blocks
+  - Show availability status to guests
+- [ ] Test booking availability with calendar blocks
+  - Verify blocked dates are unavailable
+  - Test weekday blocking
+  - Test meal time blocking

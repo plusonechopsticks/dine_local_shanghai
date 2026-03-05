@@ -1,4 +1,4 @@
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -656,5 +656,131 @@ export async function deleteAvailabilityBlock(blockId: number): Promise<boolean>
   } catch (error) {
     console.error("[Database] Failed to delete availability block:", error);
     return false;
+  }
+}
+
+
+/**
+ * Availability Checking Functions
+ */
+
+export async function isHostAvailable(
+  hostListingId: number,
+  requestedDate: string,
+  mealType: "lunch" | "dinner"
+): Promise<boolean> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot check availability: database not available");
+    return true; // Allow booking if DB is unavailable
+  }
+
+  try {
+    // Get the day of week (0 = Monday, 6 = Sunday)
+    const date = new Date(requestedDate);
+    const dayOfWeek = (date.getUTCDay() + 6) % 7; // Convert to Monday=0, Sunday=6
+
+    // Check for blocks on this specific date
+    const requestedDateObj = new Date(requestedDate);
+    const dateBlocks = await db
+      .select()
+      .from(hostAvailabilityBlocks)
+      .where(
+        and(
+          eq(hostAvailabilityBlocks.hostListingId, hostListingId),
+          eq(hostAvailabilityBlocks.blockType, "date"),
+          eq(hostAvailabilityBlocks.blockDate, requestedDateObj)
+        )
+      );
+
+    // Check if any date block affects this meal
+    for (const block of dateBlocks) {
+      if (block.mealType === "both" || block.mealType === mealType) {
+        return false;
+      }
+    }
+
+    // Check for weekday blocks
+    const weekdayBlocks = await db
+      .select()
+      .from(hostAvailabilityBlocks)
+      .where(
+        and(
+          eq(hostAvailabilityBlocks.hostListingId, hostListingId),
+          eq(hostAvailabilityBlocks.blockType, "weekday"),
+          eq(hostAvailabilityBlocks.blockWeekday, dayOfWeek)
+        )
+      );
+
+    // Check if any weekday block affects this meal
+    for (const block of weekdayBlocks) {
+      if (block.mealType === "both" || block.mealType === mealType) {
+        return false;
+      }
+    }
+
+    // Check for all_day blocks
+    const allDayBlocks = await db
+      .select()
+      .from(hostAvailabilityBlocks)
+      .where(
+        and(
+          eq(hostAvailabilityBlocks.hostListingId, hostListingId),
+          eq(hostAvailabilityBlocks.blockType, "all_day")
+        )
+      );
+
+    // If there's an all_day block, host is unavailable
+    if (allDayBlocks.length > 0) {
+      return false;
+    }
+
+    return true; // Host is available
+  } catch (error) {
+    console.error("[Database] Failed to check availability:", error);
+    return true; // Allow booking if there's an error
+  }
+}
+
+export async function getHostAvailableSlots(
+  hostListingId: number,
+  startDate: string,
+  endDate: string
+): Promise<{
+  date: string;
+  lunch: boolean;
+  dinner: boolean;
+}[]> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get available slots: database not available");
+    return [];
+  }
+
+  try {
+    const slots: { date: string; lunch: boolean; dinner: boolean }[] = [];
+    
+    // Generate all dates in the range
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+      const dateStr = d.toISOString().split("T")[0];
+      
+      // Check availability for lunch and dinner
+      const lunchAvailable = await isHostAvailable(hostListingId, dateStr, "lunch");
+      const dinnerAvailable = await isHostAvailable(hostListingId, dateStr, "dinner");
+      
+      slots.push({
+        date: dateStr,
+        lunch: lunchAvailable,
+        dinner: dinnerAvailable,
+      });
+    }
+    
+    return slots;
+  } catch (error) {
+    console.error("[Database] Failed to get available slots:", error);
+    return [];
   }
 }
