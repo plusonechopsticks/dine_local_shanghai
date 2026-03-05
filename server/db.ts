@@ -22,7 +22,13 @@ import {
   InsertChatMessage,
   pageViews,
   PageView,
-  InsertPageView
+  InsertPageView,
+  hostAccounts,
+  HostAccount,
+  InsertHostAccount,
+  hostAvailabilityBlocks,
+  HostAvailabilityBlock,
+  InsertHostAvailabilityBlock
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -532,5 +538,123 @@ export async function getPageViewsByType(pageType: "home" | "browse_hosts" | "be
   } catch (error) {
     console.error("[Database] Failed to get page views by type:", error);
     return [];
+  }
+}
+
+
+// Host Authentication Functions
+export async function getHostAccountByEmail(email: string): Promise<HostAccount | null> {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    const result = await db
+      .select()
+      .from(hostAccounts)
+      .where(eq(hostAccounts.email, email))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get host account:", error);
+    return null;
+  }
+}
+
+export async function getHostAccountByListingId(hostListingId: number): Promise<HostAccount | null> {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    const result = await db
+      .select()
+      .from(hostAccounts)
+      .where(eq(hostAccounts.hostListingId, hostListingId))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get host account by listing:", error);
+    return null;
+  }
+}
+
+export async function createHostAccount(account: InsertHostAccount): Promise<HostAccount | null> {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    await db.insert(hostAccounts).values(account);
+    return getHostAccountByEmail(account.email);
+  } catch (error) {
+    console.error("[Database] Failed to create host account:", error);
+    return null;
+  }
+}
+
+export async function updateHostAccountPassword(hostListingId: number, passwordHash: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  try {
+    await db
+      .update(hostAccounts)
+      .set({ passwordHash, updatedAt: new Date() })
+      .where(eq(hostAccounts.hostListingId, hostListingId));
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to update host password:", error);
+    return false;
+  }
+}
+
+export async function updateHostLastLogin(hostListingId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  try {
+    await db
+      .update(hostAccounts)
+      .set({ lastLoginAt: new Date() })
+      .where(eq(hostAccounts.hostListingId, hostListingId));
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to update last login:", error);
+    return false;
+  }
+}
+
+// Host Availability Functions
+export async function getHostAvailabilityBlocks(hostListingId: number): Promise<HostAvailabilityBlock[]> {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    return await db
+      .select()
+      .from(hostAvailabilityBlocks)
+      .where(eq(hostAvailabilityBlocks.hostListingId, hostListingId));
+  } catch (error) {
+    console.error("[Database] Failed to get availability blocks:", error);
+    return [];
+  }
+}
+
+export async function createAvailabilityBlock(block: InsertHostAvailabilityBlock): Promise<HostAvailabilityBlock | null> {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    await db.insert(hostAvailabilityBlocks).values(block);
+    const blocks = await getHostAvailabilityBlocks(block.hostListingId);
+    return blocks[blocks.length - 1] || null;
+  } catch (error) {
+    console.error("[Database] Failed to create availability block:", error);
+    return null;
+  }
+}
+
+export async function deleteAvailabilityBlock(blockId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  try {
+    await db
+      .delete(hostAvailabilityBlocks)
+      .where(eq(hostAvailabilityBlocks.id, blockId));
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to delete availability block:", error);
+    return false;
   }
 }

@@ -1028,3 +1028,34 @@
   - Single source of truth for host profile data
   - Changes in either platform reflect immediately in both
 - [ ] Add Chinese/English language toggle (Chinese as default)
+
+
+## Host Management System - IN PROGRESS
+- [x] Create database schema for host authentication and availability
+  - Created host_accounts table (one-to-one with host_listings)
+  - Created host_availability_blocks table (for date/weekday/meal blocking)
+  - Added all necessary database query functions in server/db.ts
+- [ ] Build host login page and authentication system
+  - Create login form with email and password
+  - Implement password hashing and verification
+  - Create session management for logged-in hosts
+  - Add "Forgot Password" functionality
+- [ ] Create host dashboard layout with 4 tabs
+  - Calendar tab (primary feature for blocking availability)
+  - Bookings tab (display bookings and earnings)
+  - Host Listing tab (edit profile, synced with admin panel)
+  - Account tab (change password, profile settings)
+- [ ] Implement calendar blocking functionality
+  - Block specific dates
+  - Block recurring weekdays (Mon-Sun)
+  - Block specific meal times (lunch/dinner/both)
+  - Mobile-friendly interface
+- [ ] Implement bookings and account tabs
+  - Display host's bookings with guest details
+  - Calculate and display earnings (gross and net after 30% fee)
+  - Change password functionality
+  - Profile settings
+- [ ] Add Chinese/English language toggle
+  - Implement i18n for all host dashboard text
+  - Default to Chinese (Simplified)
+  - Easy toggle between languages

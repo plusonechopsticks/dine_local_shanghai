@@ -306,3 +306,56 @@ export const pageViews = mysqlTable("page_views", {
 
 export type PageView = typeof pageViews.$inferSelect;
 export type InsertPageView = typeof pageViews.$inferInsert;
+
+
+/**
+ * Host authentication - simple login system for hosts
+ * Each host has one account linked to their listing
+ */
+export const hostAccounts = mysqlTable("host_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Link to host listing (one-to-one)
+  hostListingId: int("hostListingId").notNull().unique().references(() => hostListings.id, { onDelete: "cascade" }),
+  
+  // Authentication
+  email: varchar("email", { length: 320 }).notNull().unique(), // Same as host profile email
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(), // Hashed password
+  
+  // Session
+  lastLoginAt: timestamp("lastLoginAt"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type HostAccount = typeof hostAccounts.$inferSelect;
+export type InsertHostAccount = typeof hostAccounts.$inferInsert;
+
+/**
+ * Host availability blocking - manage unavailable dates and times
+ * Stores blocked dates, specific weekdays, and meal times
+ */
+export const hostAvailabilityBlocks = mysqlTable("host_availability_blocks", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Link to host listing
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id, { onDelete: "cascade" }),
+  
+  // Block type
+  blockType: mysqlEnum("blockType", ["date", "weekday", "all_day"]).notNull(), // date: specific date, weekday: recurring day, all_day: block entire day
+  
+  // Block details
+  blockDate: date("blockDate"), // For date-specific blocks
+  blockWeekday: int("blockWeekday"), // 0-6 for Monday-Sunday (for recurring weekday blocks)
+  mealType: mysqlEnum("mealType", ["lunch", "dinner", "both"]).default("both").notNull(), // Which meal(s) to block
+  reason: varchar("reason", { length: 255 }), // e.g., "Family vacation", "Personal commitment"
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type HostAvailabilityBlock = typeof hostAvailabilityBlocks.$inferSelect;
+export type InsertHostAvailabilityBlock = typeof hostAvailabilityBlocks.$inferInsert;
