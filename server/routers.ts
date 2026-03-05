@@ -17,8 +17,10 @@ import {
   getAllBookings,
   trackPageView,
   getPageViewsAnalytics,
-  getPageViewsByType
+  getPageViewsByType,
+  getHostAccountByListingId
 } from "./db";
+import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
 import { bookings, hostListings } from "../drizzle/schema";
@@ -1115,6 +1117,48 @@ export const appRouter = router({
        }),
   }),
   // Analytics router
+  // Host Auth router
+  hostAuth: router({
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await authenticateHost(input.email, input.password);
+        
+        if (!result.success) {
+          return { success: false, error: result.error };
+        }
+
+        return {
+          success: true,
+          hostId: result.hostId,
+          email: result.email,
+          listing: result.listing,
+        };
+      }),
+
+    getDashboard: publicProcedure
+      .input(z.object({
+        hostId: z.number(),
+      }))
+      .query(async ({ input }) => {
+        const listing = await getHostListingById(input.hostId);
+        if (!listing) {
+          return { success: false, error: "Host listing not found" };
+        }
+
+        const allBookings = await getAllBookings();
+        const hostBookings = allBookings.filter(b => b.hostListingId === input.hostId);
+        
+        return {
+          success: true,
+          listing,
+          bookings: hostBookings || [],
+        };
+      }),
+  }),
   analytics: router({
     trackPageView: publicProcedure
       .input(z.object({

@@ -1059,3 +1059,17 @@
   - Implement i18n for all host dashboard text
   - Default to Chinese (Simplified)
   - Easy toggle between languages
+
+
+## Host Management System - In Progress
+- [x] Create database schema for host authentication and availability management
+  - Created host_accounts and host_availability_blocks tables
+  - Added database query functions in db.ts
+- [x] Build host login system with email and password authentication
+  - Created HostLogin.tsx component
+  - Added hostAuth router with login procedure
+  - Implemented bcrypt password hashing
+- [ ] Create host dashboard layout with 4 tabs (Calendar, Bookings, Listing, Account)
+- [ ] Implement calendar tab with date/weekday/meal blocking functionality
+- [ ] Implement bookings and account tabs with basic functionality
+- [ ] Add Chinese/English language toggle and test all features
