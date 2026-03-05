@@ -1007,3 +1007,24 @@
 - [x] Enhance host detail page to highlight cuisine
   - Added prominent cuisine badge at top of page
   - Cuisine now appears before title for immediate visibility
+
+
+## Home Page Updates - In Progress
+- [x] Remove family interaction cards from Experience section
+  - Removed "Family Interactions" card (4th card in grid)
+  - Now displays 3 cards: Real Home Setting, Cultural Exchange, Home-Cooked Meals
+
+## Host Management System - PLANNED
+- [ ] Build host authentication system
+  - Simple login for hosts using email from profile
+  - Default password: "food2connect"
+  - Password change functionality in Account tab
+- [ ] Create host dashboard with 4 main tabs
+  - Calendar tab: Block dates, weekdays, meal times (primary focus, mobile-friendly)
+  - Bookings tab: Display bookings, gross/net earnings (after 30% platform fee)
+  - Host Listing tab: Edit profile, cuisine, pricing, photos (synced with admin panel)
+  - Account tab: Change password, profile settings
+- [ ] Implement real-time data sync between host dashboard and admin panel
+  - Single source of truth for host profile data
+  - Changes in either platform reflect immediately in both
+- [ ] Add Chinese/English language toggle (Chinese as default)

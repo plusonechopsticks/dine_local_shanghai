@@ -254,20 +254,7 @@ function ExperienceSection() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-border/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-6">
-                <Users className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
-                Family Interactions
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                If there are kids, it becomes a learning adventure for everyone. Experience the joy
-                of multi-generational family dynamics.
-              </p>
-            </CardContent>
-          </Card>
+
         </div>
       </div>
     </section>
