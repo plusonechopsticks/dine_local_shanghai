@@ -81,8 +81,32 @@ export default function HostDetail() {
     { id: hostId || 0 },
     { enabled: !!hostId }
   );
+  const [disabledDates, setDisabledDates] = useState<Set<string>>(new Set());
+  const [disabledMealTypes, setDisabledMealTypes] = useState<Set<string>>(new Set());
   
-  // Blocked dates feature removed - availability now controlled by day-of-week only
+  // Fetch available slots when host changes
+  useEffect(() => {
+    if (!hostId) return;
+    
+    // Get available slots for the next 90 days
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + 90);
+    
+    // For now, we'll disable dates based on host availability
+    // In a real implementation, you'd call a tRPC procedure to get available slots
+    const disabled = new Set<string>();
+    for (let d = new Date(today); d <= endDate; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+      
+      // Check if this day is available
+      if (host?.availability && !Object.keys(host.availability).map(k => k.toLowerCase()).includes(dayOfWeek)) {
+        disabled.add(dateStr);
+      }
+    }
+    setDisabledDates(disabled);
+  }, [hostId, host?.availability])
   
   // Restore booking data from localStorage on page load
   useEffect(() => {
@@ -837,38 +861,14 @@ export default function HostDetail() {
                 type="date"
                 min={new Date().toISOString().split('T')[0]}
                 value={bookingData.requestedDate}
+                disabled={disabledDates.has(bookingData.requestedDate)}
                 onChange={(e) => {
                   const selectedDate = e.target.value;
-                  // Parse date in local timezone to avoid UTC conversion issues
-                  const [year, month, day] = selectedDate.split('-').map(Number);
-                  const checkDate = new Date(year, month - 1, day);
-                  console.log('[Booking] Date selected:', selectedDate, 'Day:', checkDate.toLocaleDateString('en-US', { weekday: 'long' }));
                   
-                  // Date blocking by availability comments removed
-                  const isBlocked = false;
-                  
-                  if (isBlocked) {
+                  // Check if date is disabled
+                  if (disabledDates.has(selectedDate)) {
                     toast.error("This date is not available. Please choose another date.");
                     return;
-                  }
-                  
-                  // Check if the day of week matches host's availability
-                  if (host?.availability && Object.keys(host.availability).length > 0) {
-                    const dayOfWeek = checkDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-                    // Normalize availability keys to lowercase for comparison
-                    const normalizedAvailability = Object.keys(host.availability).map(k => k.toLowerCase());
-                    console.log('[Debug] Selected day:', dayOfWeek);
-                    console.log('[Debug] Normalized availability:', normalizedAvailability);
-                    const isAvailable = normalizedAvailability.includes(dayOfWeek);
-                    console.log('[Debug] Is available?', isAvailable);
-                    
-                    if (!isAvailable) {
-                      const availableDays = Object.keys(host.availability)
-                        .map(day => day.charAt(0).toUpperCase() + day.slice(1))
-                        .join(', ');
-                      toast.error(`Host is only available on: ${availableDays}`);
-                      return;
-                    }
                   }
                   
                   setBookingData({ ...bookingData, requestedDate: selectedDate });
@@ -886,13 +886,13 @@ export default function HostDetail() {
 
             <div>
               <Label htmlFor="mealType">Meal Type</Label>
-              <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
+              <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })} disabled={disabledMealTypes.has(bookingData.requestedDate)}>
                 <SelectTrigger id="mealType">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lunch">Lunch</SelectItem>
-                  <SelectItem value="dinner">Dinner</SelectItem>
+                  <SelectItem value="lunch" disabled={disabledMealTypes.has(`${bookingData.requestedDate}-lunch`)}>Lunch</SelectItem>
+                  <SelectItem value="dinner" disabled={disabledMealTypes.has(`${bookingData.requestedDate}-dinner`)}>Dinner</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -18,7 +18,8 @@ import {
   trackPageView,
   getPageViewsAnalytics,
   getPageViewsByType,
-  getHostAccountByListingId
+  getHostAccountByListingId,
+  isHostAvailable
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
@@ -47,6 +48,17 @@ export const appRouter = router({
         specialRequests: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
+        // Check host availability before creating booking
+        const isAvailable = await isHostAvailable(
+          input.hostListingId,
+          input.requestedDate,
+          input.mealType
+        );
+        
+        if (!isAvailable) {
+          throw new Error(`Host is not available for ${input.mealType} on ${input.requestedDate}`);
+        }
+        
         // Insert booking into database
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");

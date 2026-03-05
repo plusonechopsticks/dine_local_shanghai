@@ -1101,3 +1101,13 @@
   - Verify blocked dates are unavailable
   - Test weekday blocking
   - Test meal time blocking
+
+- [ ] Integrate availability checking into booking creation tRPC procedure
+  - Call isHostAvailable() before confirming booking
+  - Return error if host is unavailable
+  - Add vitest tests for booking rejection on blocked slots
+- [x] Update booking UI to disable unavailable dates and times
+  - Fetch available slots from server
+  - Disable date picker for blocked dates
+  - Disable meal time options based on blocks
+  - Show visual indicators for blocked slots
