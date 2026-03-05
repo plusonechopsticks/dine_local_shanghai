@@ -1111,3 +1111,33 @@
   - Disable date picker for blocked dates
   - Disable meal time options based on blocks
   - Show visual indicators for blocked slots
+
+## Visual Calendar Component - COMPLETED
+- [x] Create Calendar component with month view
+  - Display current month with all dates
+  - Highlight available dates (clickable)
+  - Gray out blocked dates (disabled)
+  - Show meal time availability indicators
+  - Navigation to previous/next months
+- [x] Integrate calendar into booking form
+  - Replace native date input with calendar component
+  - Show selected date in booking form
+  - Update meal type options based on selected date
+- [x] Add visual indicators for blocked dates
+  - Different styling for blocked vs available dates
+  - Show reason for block (if available)
+  - Highlight weekends/weekdays based on host availability
+
+## Real-Time Availability Updates - COMPLETED
+- [x] Implement polling mechanism for availability changes
+  - Fetch host availability every 10-30 seconds
+  - Update disabled dates state when availability changes
+  - Show notification when availability changes
+- [x] Add useEffect to track host availability changes
+  - Detect when host blocks/unblocks dates
+  - Refresh calendar display automatically
+  - Maintain selected date if still available
+- [x] Test real-time sync between host dashboard and booking UI
+  - Block a date in host portal
+  - Verify it's disabled in booking UI without page refresh
+  - Unblock a date and verify it becomes available

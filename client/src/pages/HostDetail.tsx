@@ -44,6 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 
 const ACTIVITY_LABELS: Record<string, string> = {
   "cooking-class": "Cooking Class",
@@ -83,30 +84,45 @@ export default function HostDetail() {
   );
   const [disabledDates, setDisabledDates] = useState<Set<string>>(new Set());
   const [disabledMealTypes, setDisabledMealTypes] = useState<Set<string>>(new Set());
+  const [showCalendar, setShowCalendar] = useState(false);
   
-  // Fetch available slots when host changes
-  useEffect(() => {
-    if (!hostId) return;
-    
-    // Get available slots for the next 90 days
+  const updateDisabledDates = (hostData: any) => {
     const today = new Date();
     const endDate = new Date(today);
     endDate.setDate(endDate.getDate() + 90);
     
-    // For now, we'll disable dates based on host availability
-    // In a real implementation, you'd call a tRPC procedure to get available slots
     const disabled = new Set<string>();
     for (let d = new Date(today); d <= endDate; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0];
       const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       
-      // Check if this day is available
-      if (host?.availability && !Object.keys(host.availability).map(k => k.toLowerCase()).includes(dayOfWeek)) {
+      if (hostData?.availability && !Object.keys(hostData.availability).map(k => k.toLowerCase()).includes(dayOfWeek)) {
         disabled.add(dateStr);
       }
     }
     setDisabledDates(disabled);
-  }, [hostId, host?.availability])
+  };
+  
+  useEffect(() => {
+    if (!hostId || !host) return;
+    updateDisabledDates(host);
+  }, [hostId, host?.availability]);
+  
+  const utils = trpc.useUtils();
+  
+  useEffect(() => {
+    if (!hostId) return;
+    const pollInterval = setInterval(() => {
+      utils.host.get.invalidate({ id: hostId });
+    }, 15000);
+    return () => clearInterval(pollInterval);
+  }, [hostId, utils]);
+  
+  useEffect(() => {
+    if (host) {
+      updateDisabledDates(host);
+    }
+  }, [host]);
   
   // Restore booking data from localStorage on page load
   useEffect(() => {
@@ -856,32 +872,30 @@ export default function HostDetail() {
 
             <div>
               <Label htmlFor="requestedDate">Preferred Date *</Label>
-              <Input
-                id="requestedDate"
-                type="date"
-                min={new Date().toISOString().split('T')[0]}
-                value={bookingData.requestedDate}
-                disabled={disabledDates.has(bookingData.requestedDate)}
-                onChange={(e) => {
-                  const selectedDate = e.target.value;
-                  
-                  // Check if date is disabled
-                  if (disabledDates.has(selectedDate)) {
-                    toast.error("This date is not available. Please choose another date.");
-                    return;
-                  }
-                  
-                  setBookingData({ ...bookingData, requestedDate: selectedDate });
-                }}
-              />
-              {host?.availability && Object.keys(host.availability).length > 0 && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Available days: {Object.keys(host.availability)
-                    .map(day => day.charAt(0).toUpperCase() + day.slice(1))
-                    .join(', ')}
-                </p>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full justify-start text-left font-normal"
+                onClick={() => setShowCalendar(!showCalendar)}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {bookingData.requestedDate
+                  ? new Date(bookingData.requestedDate + "T00:00:00").toLocaleDateString()
+                  : "Select a date"}
+              </Button>
+              {showCalendar && (
+                <div className="mt-4">
+                  <AvailabilityCalendar
+                    disabledDates={disabledDates}
+                    selectedDate={bookingData.requestedDate}
+                    onDateSelect={(date) => {
+                      setBookingData({ ...bookingData, requestedDate: date });
+                      setShowCalendar(false);
+                    }}
+                    availability={host?.availability}
+                  />
+                </div>
               )}
-
             </div>
 
             <div>
