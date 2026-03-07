@@ -224,19 +224,7 @@ export default function Home() {
           </Button>
         </div>
 
-        {/* Carousel Controls */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition"
-        >
-          <ChevronLeft size={24} />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition"
-        >
-          <ChevronRight size={24} />
-        </button>
+        {/* Carousel Controls - Hidden, using auto-play instead */}
 
         {/* Slide Indicators */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
@@ -415,6 +403,7 @@ export default function Home() {
       {/* Section 5: About Us - Founder's Story */}
       <section id="about-us" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">About Us: A bridge between East and the West</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             {/* Left: Images */}
             <div className="space-y-4">

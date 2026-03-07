@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Navbar } from "./components/Navbar";
@@ -47,6 +47,9 @@ function Router() {
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
+  const [location] = useLocation();
+  const isHomePage = location === "/";
+
   return (
     <ErrorBoundary>
       <ThemeProvider
@@ -54,7 +57,7 @@ function App() {
         // switchable
       >
         <TooltipProvider>
-          <Navbar />
+          {!isHomePage && <Navbar />}
           <Toaster />
           <Router />
           <ChatWidget />
