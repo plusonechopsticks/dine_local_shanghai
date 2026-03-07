@@ -20,7 +20,7 @@ const IMAGES = {
   aboutGallery3: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/9959a377-4e47-41db-9dab-b5d30f0135aa(6)_f1453687.jpeg",
 };
 
-const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika & Steven"];
+const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven"];
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -34,7 +34,7 @@ export default function Home() {
   // Filter featured hosts
   const featuredHosts = allHosts.filter((host) =>
     FEATURED_HOST_NAMES.some((name) => host.hostName?.includes(name))
-  );
+  ).slice(0, 3); // Limit to 3 hosts
 
   const heroSlides = [
     {
@@ -162,7 +162,7 @@ export default function Home() {
             <span className="text-xl font-bold">+1 Chopsticks</span>
           </button>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="flex items-center gap-8">
             <button
               onClick={() => setLocation("/hosts")}
               className="text-gray-700 hover:text-gray-900 font-medium transition"
@@ -183,16 +183,6 @@ export default function Home() {
               Become a Host
             </Button>
           </nav>
-
-          <div className="flex items-center gap-4">
-            <button className="text-sm text-gray-700 hover:text-gray-900 font-medium transition">
-              EN
-            </button>
-            <span className="text-gray-300">/</span>
-            <button className="text-sm text-gray-500 hover:text-gray-900 font-medium transition">
-              中文
-            </button>
-          </div>
         </div>
       </header>
 
@@ -311,19 +301,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: Image */}
-            <div className="relative">
-              <img
-                src={IMAGES.section2}
-                alt="Multi-generational family dining together"
-                className="w-full rounded-lg shadow-lg"
-              />
-              <div className="absolute bottom-4 left-4 right-4 bg-black/60 text-white px-6 py-3 rounded-lg backdrop-blur-sm">
-                <p className="text-center italic text-sm">
-                  "Add an extra pair of chopsticks" — A Chinese expression of hospitality
-                </p>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
@@ -336,7 +314,7 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredHosts.slice(0, 3).map((host) => (
+            {featuredHosts.map((host) => (
               <div
                 key={host.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
@@ -355,7 +333,7 @@ export default function Home() {
 
                 {/* Card Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200 line-clamp-2">
                     {host.hostName}
                   </h3>
                   <p className="text-gray-600 mb-4">{host.cuisineStyle || "🍽️ Local Cuisine"}</p>
@@ -611,11 +589,11 @@ export default function Home() {
             </div>
 
             {/* Right: Image */}
-            <div className="relative">
+            <div className="relative order-1 md:order-2">
               <div className="rounded-lg overflow-hidden shadow-2xl group cursor-pointer">
                 <img
-                  src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=600&fit=crop"
-                  alt="Welcoming kitchen"
+                  src="https://res.cloudinary.com/drxfcfayd/image/upload/v1771181302/plus1chopsticks/hosts/sookie/sookie_profile.jpg"
+                  alt="Sookie hosting"
                   className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
