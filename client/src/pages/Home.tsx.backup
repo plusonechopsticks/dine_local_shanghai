@@ -1,0 +1,743 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeHostCard, setActiveHostCard] = useState(0);
+
+  const heroSlides = [
+    {
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
+      alt: "Host laughing while serving dumplings",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
+      alt: "Bird's eye view of crowded dinner table",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
+      alt: "Guest and host sharing a moment",
+    },
+  ];
+
+  const hostCards = [
+    {
+      name: "Shanghai Home Cooking",
+      cuisine: "🍽️ Shanghai home cooking",
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+      foodImage:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+      verified: true,
+    },
+    {
+      name: "Dumpling Class & Tasting",
+      cuisine: "🥟 Dumpling class and tasting",
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+      foodImage:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+      verified: true,
+    },
+    {
+      name: "Fusion Dining",
+      cuisine: "🍽️ Chinese and Western Fusion",
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+      foodImage:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
+      verified: true,
+    },
+  ];
+
+  // Auto-rotate hero carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-rotate host card images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveHostCard((prev) => (prev + 1) % 2);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header & Navigation */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🥢</span>
+            <span className="text-xl font-bold brand-logo">+1 Chopsticks</span>
+          </div>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium transition">
+              Browse Hosts
+            </a>
+            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium transition">
+              How it Works
+            </a>
+            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium transition">
+              About Us
+            </a>
+            <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50">
+              Become a Host
+            </Button>
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <button className="text-sm text-gray-700 hover:text-gray-900 font-medium transition">
+              EN
+            </button>
+            <span className="text-gray-300">/</span>
+            <button className="text-sm text-gray-500 hover:text-gray-900 font-medium transition">
+              中文
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Section 1: Hero Carousel */}
+      <section className="relative h-[500px] overflow-hidden bg-gray-900">
+        {/* Carousel */}
+        <div className="relative h-full">
+          {heroSlides.map((slide, idx) => (
+            <div
+              key={idx}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                idx === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+          {/* Dark gradient scrim overlay */}
+          <div className="absolute inset-0 hero-scrim" />
+        </div>
+
+        {/* Overlay Text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight md:leading-relaxed tracking-tight">
+            The best restaurant in Shanghai isn't a restaurant.
+          </h1>
+          <h2 className="text-2xl md:text-3xl font-medium mb-10 leading-relaxed">
+            Experience authentic, home-cooked meals hosted by locals.
+          </h2>
+          <Button className="btn-cta text-white px-10 py-4 text-lg font-semibold rounded-lg hover:shadow-lg">
+            Explore Local Hosts
+          </Button>
+        </div>
+
+        {/* Carousel Controls */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition"
+        >
+          <ChevronRight size={24} />
+        </button>
+
+        {/* Slide Indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {heroSlides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-2 h-2 rounded-full transition ${
+                idx === currentSlide ? "bg-white w-8" : "bg-white/50"
+              }`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Section 2: Brand Identity & Story */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            {/* Left: Both Headlines and Text */}
+            <div className="space-y-8">
+              {/* First Headline and Paragraph */}
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Ni Hao! We are +1 chopsticks
+                </h2>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  In Chinese culture, when we invite friends over for dinner, we say "就是加一双筷子吗"—it's simply adding a pair of chopsticks.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  That's our mission: providing curated, affordable home dining for travelers who want more than a tourist menu.
+                </p>
+              </div>
+
+              {/* Second Headline and Paragraph */}
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  Wait, home dining in China? I never heard of that
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  Yup. Because it didn't exist until we made it happen.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  "Real, authentic, local" are what we hear travelers want the most in China. What's better than going to a local's home to enjoy a local meal?
+                </p>
+              </div>
+
+              {/* Third Headline and Paragraph */}
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  Sounds fun! Who are the hosts? Can they cater my dietary needs?
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  Our diverse community of hosts includes families, couples, and young professionals who share passion of cooking and meeting new people. Whether you're a solo traveler, a couple, or a family, we'll match you with the perfect host.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  No matter whose table you join, one thing is guaranteed: we will carefully accommodate all your dietary needs and restrictions to ensure a perfect meal.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  All hosts are verified by the platform on the readiness to host, including language capability, food style and hygiene, and home environment.
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Image */}
+            <div className="relative">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663289672303/bQ4TqPdVNYfFczPVFoZ3jp/home-dining-hospitality-RspiXrdFR2BsuLwG73c4E8.webp"
+                alt="Multi-generational family dining together"
+                className="w-full rounded-lg shadow-lg"
+              />
+              <div className="absolute bottom-4 left-4 right-4 bg-black/60 text-white px-6 py-3 rounded-lg backdrop-blur-sm">
+                <p className="text-center italic text-sm">
+                  "Add an extra pair of chopsticks" — A Chinese expression of hospitality
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3: Featured Hosts Gallery */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Meet your new friends in Shanghai.
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {hostCards.map((card, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                {/* Image Carousel */}
+                <div className="relative h-64 bg-gray-200 overflow-hidden">
+                  <img
+                    src={activeHostCard === 0 ? card.image : card.foodImage}
+                    alt={card.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  {card.verified && (
+                    <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
+                      ✓ Verified
+                    </div>
+                  )}
+                </div>
+
+                {/* Card Content */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">
+                    {card.name}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{card.cuisine}</p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    All hosts are vetted for language capability, food hygiene, and
+                    home environment.
+                  </p>
+                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover:shadow-lg">
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Button
+              variant="outline"
+              className="border-gray-300 text-gray-900 hover:bg-gray-100"
+            >
+              Browse All Hosts
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4: How it Works */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            How it Works — The Easy-Peasy Guide
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              {
+                step: 1,
+                icon: "🔍",
+                title: "Browse",
+                description:
+                  "Pick your favorite host and menu. Check for language capability and accessibility.",
+              },
+              {
+                step: 2,
+                icon: "📅",
+                title: "Book",
+                description:
+                  "Request your date and pay for the confirmed booking; our team handles the rest.",
+              },
+              {
+                step: 3,
+                icon: "📧",
+                title: "Prepare",
+                description:
+                  "Receive location details via email/WeChat. We'll share a Dining Cheat Sheet.",
+              },
+              {
+                step: 4,
+                icon: "🍽️",
+                title: "Eat",
+                description:
+                  "Show up, share a pair of chopsticks, and make a new friend.",
+              },
+            ].map((item, idx) => (
+              <div key={item.step} className="relative">
+                {/* Step Number Circle */}
+                <div className="flex justify-center mb-6">
+                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-lg shadow-lg">
+                    {item.step}
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <div className="text-5xl mb-4">{item.icon}</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Founder's Story */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            About Us: A Bridge Between China and the West
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left: Founder Photo */}
+            <div>
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+                alt="Steven, Founder"
+                className="w-full rounded-lg shadow-xl mb-6 hover:shadow-2xl transition-shadow duration-300"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  {
+                    img: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=200&h=200&fit=crop",
+                    caption: "Dining with friends in Nairobi, 2018",
+                  },
+                  {
+                    img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop",
+                    caption: "Sharing stories in Copenhagen",
+                  },
+                  {
+                    img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop",
+                    caption: "Shanghai dining experiences",
+                  },
+                  {
+                    img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop",
+                    caption: "Home cooking moments",
+                  },
+                ].map((photo, idx) => (
+                  <div key={idx} className="relative group cursor-pointer">
+                    <img
+                      src={photo.img}
+                      alt={photo.caption}
+                      className="w-full h-40 object-cover rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 rounded-lg flex items-center justify-center">
+                      <p className="text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2">
+                        {photo.caption}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Story Text */}
+            <div className="space-y-6">
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Hi, I'm Steven
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have
+                  studied and worked in the US, married my beautiful wife from Tianjin,
+                  and lived in Chicago, Copenhagen, Nairobi, Beijing, and Shanghai.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-red-600 pl-6">
+                <h4 className="font-bold text-gray-900 mb-2 text-lg">My Passion</h4>
+                <p className="text-gray-700 leading-relaxed">
+                  I'm the author of the "China vs the West" series as I'm deeply
+                  passionate about bridging the gap, debunking myths, and showing the
+                  authentic China to everyone.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-red-600 pl-6">
+                <h4 className="font-bold text-gray-900 mb-2 text-lg">My Journey</h4>
+                <p className="text-gray-700 leading-relaxed">
+                  As an avid traveler who's been to 60+ countries and all seven
+                  continents, I've enjoyed making new friends everywhere and have shared
+                  numerous stories at friends' homes. The vibe of meeting someone in a
+                  restaurant or bar is totally different from meeting them at home!
+                </p>
+              </div>
+
+              <div className="border-l-4 border-red-600 pl-6">
+                <h4 className="font-bold text-gray-900 mb-2 text-lg">Professional Background</h4>
+                <p className="text-gray-700 leading-relaxed">
+                  I'm a proud MBA graduate from Kellogg, ex-management consultant at BCG,
+                  and a serial entrepreneur. My mission is to create authentic,
+                  meaningful travel experiences that connect people across cultures.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: FAQ Accordions */}
+      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            Everything you need to know about dining with us
+          </p>
+
+          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
+            <Accordion type="single" collapsible className="w-full">
+              {/* Booking & Logistics */}
+              <AccordionItem value="booking">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  How do I book?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  Simple. Browse the website, pick your favorite host, and book directly.
+                  The +1 Chopsticks team handles the coordination from there.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="duration">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  How long does the experience last?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  Short and sweet! Travelers usually stay for 2–3 hours. It's mostly for
+                  lunch or dinner, though some guests might jump in to help cook if
+                  you're up for it.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="cost">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  What does it cost for a guest?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  It depends on the feast! Prices generally range from CNY 200–500 per
+                  person. We want to make it affordable yet maintaining the quality.
+                  Hosts setting a premium price provide a premium menu and experience.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="schedule">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  What if my schedule changes at the last minute?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  We understand! Experiences can be cancelled for free up to 7 days in advance to respect our hosts' preparation time. Please email us at <a href="mailto:plusonechopsticks@gmail.com" className="text-red-600 hover:text-red-700 font-semibold">plusonechopsticks@gmail.com</a>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Concerns & Safety */}
+              <AccordionItem value="language">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  Do I have to speak Chinese?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  Not at all. We do require one of the guests speak conversational English
+                  as we will require at least one person in the household to speak the
+                  same. Beyond that, an open mind and a warm smile bridge most gaps! We will also prepare a "dining cheat sheet" for you to learn about dining etiquettes in China.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="safety">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  Is the food safe and high quality?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  Absolutely. We aren't trying to list everyone—we are picky! We interview
+                  and vet every single host. In some cases, we even send a scout to
+                  taste-test the menu first. Quality over quantity, always.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="hosts">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  Who are the hosts? Can they cater my dietary needs?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700 space-y-4">
+                  <p>
+                    Our diverse community of hosts includes families, couples, and young professionals who share passion of cooking and meeting new people. Whether you're a solo traveler, a couple, or a family, we'll match you with the perfect host.
+                  </p>
+                  <p>
+                    No matter whose table you join, one thing is guaranteed: we will carefully accommodate all your dietary needs and restrictions to ensure a perfect meal.
+                  </p>
+                  <p>
+                    All hosts are verified by the platform on the readiness to host, including language capability, food style and hygiene, and home environment.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* For Hosts & Partners */}
+              <AccordionItem value="host">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  I'd love to host. What should I do?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  Awesome! Follow the host registration process, upload your pictures and
+                  description, and the +1 Chopsticks team will be in touch!
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="partners">
+                <AccordionTrigger className="text-lg font-semibold text-gray-900">
+                  I'm a Travel Agent. Can we work together?
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-700">
+                  We love partners! Please contact us at plusonechopsticks@gmail.com for
+                  a partnership proposal.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 8: Becoming a Host */}
+      <section className="py-16 bg-gradient-to-r from-red-600 to-red-700 text-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold mb-6 leading-tight">Love cooking and meeting new people?</h2>
+              <p className="text-lg mb-8 text-red-50 leading-relaxed">
+                Share your culture and earn extra income by hosting international guests
+                for dinner. It's a rewarding way to connect with travelers and showcase
+                your culinary skills.
+              </p>
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-200">
+                  <span className="text-2xl flex-shrink-0">💰</span>
+                  <div>
+                    <h4 className="font-bold">Earn income doing what you love</h4>
+                    <p className="text-sm text-red-50">
+                      Set your own prices and flexible hosting schedule
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-200">
+                  <span className="text-2xl flex-shrink-0">🌍</span>
+                  <div>
+                    <h4 className="font-bold">Meet travelers from around the world</h4>
+                    <p className="text-sm text-red-50">
+                      Build meaningful cross-cultural connections
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-200">
+                  <span className="text-2xl flex-shrink-0">🏠</span>
+                  <div>
+                    <h4 className="font-bold">Flexible hosting schedule</h4>
+                    <p className="text-sm text-red-50">
+                      Host when it works for you
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <Button className="bg-white text-red-600 hover:bg-red-50 font-bold px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-200">
+                Become a Host
+              </Button>
+            </div>
+            <div>
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop"
+                alt="Welcoming home kitchen"
+                className="w-full rounded-lg shadow-2xl hover:shadow-2xl transition-shadow duration-300"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 9: Newsletter (Moved to End) */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto bg-gradient-to-br from-red-50 to-orange-50 rounded-lg shadow-md p-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+              Coming to China this year?
+            </h3>
+            <p className="text-gray-600 mb-6 text-center">
+              Get updates on new hosts. No spam, just delicious updates.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+              />
+              <Button className="bg-red-600 hover:bg-red-700 text-white">
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🥢</span>
+                <span className="font-bold text-white">+1 Chopsticks</span>
+              </div>
+              <p className="text-sm">
+                Experience authentic Shanghai cuisine and genuine Chinese hospitality.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-4">For Travelers</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Browse Hosts
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    How it Works
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-4">For Hosts</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Become a Host
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Host Guide
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    Support
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a
+                    href="mailto:plusonechopsticks@gmail.com"
+                    className="hover:text-white transition"
+                  >
+                    plusonechopsticks@gmail.com
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition">
+                    About Us
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-700 pt-8 text-center text-sm">
+            <p>
+              © 2026 +1 Chopsticks. All rights reserved. | Connecting travelers with
+              authentic Shanghai home dining experiences.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

@@ -1,604 +1,740 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import {
-  Users,
-  Heart,
-  Globe,
-  Home as HomeIcon,
-  ChefHat,
-  MessageCircle,
-  ArrowRight,
-  Check,
-  Sparkles,
-} from "lucide-react";
-import { ChopsticksLogo } from "@/components/ChopsticksLogo";
+
+// Image URLs from S3
+const IMAGES = {
+  section2: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/Addinganextrapairofchopsticks_63173a16.png",
+  aboutMain: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_9702_a9faab46.jpeg",
+  aboutGallery1: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_0940_14842580.jpeg",
+  aboutGallery2: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_6358_c2704988.jpeg",
+  aboutGallery3: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/9959a377-4e47-41db-9dab-b5d30f0135aa(6)_f1453687.jpeg",
+};
+
+const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika & Steven"];
 
 export default function Home() {
-  const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
-  
+  const [, setLocation] = useLocation();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeHostCard, setActiveHostCard] = useState(0);
+  const [hoveredGalleryImage, setHoveredGalleryImage] = useState<number | null>(null);
+
+  // Fetch all approved hosts
+  const { data: allHosts = [] } = trpc.host.listApproved.useQuery();
+
+  // Filter featured hosts
+  const featuredHosts = allHosts.filter((host) =>
+    FEATURED_HOST_NAMES.some((name) => host.hostName?.includes(name))
+  );
+
+  const heroSlides = [
+    {
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
+      alt: "Host laughing while serving dumplings",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
+      alt: "Bird's eye view of crowded dinner table",
+    },
+    {
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
+      alt: "Guest and host sharing a moment",
+    },
+  ];
+
+  const galleryImages = [
+    {
+      image: IMAGES.aboutGallery1,
+      caption: "Home dining at Peer's place in Copenhagen",
+    },
+    {
+      image: IMAGES.aboutGallery2,
+      caption: "Home dining at Ahmed's place in Fez",
+    },
+    {
+      image: IMAGES.aboutGallery3,
+      caption: "Steven teaching a new friend how to play '15-20', a famous Chinese drinking game",
+    },
+  ];
+
+  const faqItems = [
+    {
+      category: "Booking & Logistics",
+      items: [
+        {
+          question: "How do I book?",
+          answer: "Browse our hosts, select one that appeals to you, and submit a booking request. The host will review your request and confirm availability.",
+        },
+        {
+          question: "How long does the experience last?",
+          answer: "Most experiences last around 2-3 hours, including the meal and conversation with your host.",
+        },
+        {
+          question: "What does it cost for a guest?",
+          answer: "Prices vary by host, typically ranging from 150-300 RMB per person. You'll see the exact price when viewing each host's profile.",
+        },
+        {
+          question: "What if my schedule changes at the last minute?",
+          answer: "You can cancel your booking up to 48 hours before the scheduled meal for a full refund.",
+        },
+      ],
+    },
+    {
+      category: "Concerns & Safety",
+      items: [
+        {
+          question: "Do I have to speak Chinese?",
+          answer: "No! Many of our hosts speak English and other languages. You can filter hosts by language when browsing.",
+        },
+        {
+          question: "Is the food safe and high quality?",
+          answer: "All our hosts are verified for food safety, hygiene, and quality. We take your health and experience seriously.",
+        },
+        {
+          question: "Who are the hosts? Can they cater my dietary needs?",
+          answer: "Our hosts are local families, couples, and professionals passionate about cooking. Most can accommodate dietary restrictions—just mention them when booking.",
+        },
+      ],
+    },
+    {
+      category: "For Hosts & Partners",
+      items: [
+        {
+          question: "I'd love to host. What should I do?",
+          answer: "Click 'Become a Host' to start the application process. We'll guide you through verification and setup.",
+        },
+        {
+          question: "I'm a Travel Agent. Can we work together?",
+          answer: "Yes! We offer special rates for travel agencies and tour operators. Email us at hello@plus1chopsticks.com to discuss partnership opportunities.",
+        },
+      ],
+    },
+  ];
+
+  // Auto-rotate hero carousel
   useEffect(() => {
-    trackPageView({ pageType: "home" });
-  }, [trackPageView]);
-  
-  return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <HeroSection />
-      <CuisineExplorerSection />
-      <ExperienceSection />
-      <BenefitsSection />
-      <CTASection />
-      <AboutSection />
-      <Footer />
-    </div>
-  );
-}
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-function Navigation() {
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-      <div className="container flex items-center justify-between h-16">
-        <a href="#" className="flex items-center gap-2">
-          <ChopsticksLogo className="h-6 w-6 text-primary" />
-          <span className="font-semibold text-lg" style={{ fontFamily: "var(--font-serif)" }}>
-            +1 Chopsticks
-          </span>
-        </a>
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#experience" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Experience
-          </a>
-          <a href="#benefits" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Benefits
-          </a>
-          <a href="#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            About
-          </a>
-          <a href="/hosts" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Find Hosts
-          </a>
-          <a href="/host-register">
-            <Button size="sm">Become a Host</Button>
-          </a>
-        </div>
-        <a href="/host-register" className="md:hidden">
-          <Button size="sm">Host</Button>
-        </a>
-      </div>
-    </nav>
-  );
-}
+  // Auto-rotate host card images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveHostCard((prev) => (prev + 1) % 2);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-function TravelerEmailSignup() {
-  const [email, setEmail] = useState("");
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
 
-  const submitMutation = trpc.interest.submit.useMutation({
-    onSuccess: () => {
-      toast.success("Thanks! We'll keep you updated.");
-      setEmail("");
-    },
-    onError: (error) => {
-      toast.error(error.message || "Something went wrong. Please try again.");
-    },
-  });
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) {
-      toast.error("Please enter your email.");
-      return;
-    }
-    submitMutation.mutate({
-      name: "Traveler",
-      email: email.trim(),
-      interestType: "traveler",
-      message: undefined,
-    });
+  const truncateSummary = (text: string | null, maxLength: number = 150) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
   };
 
   return (
-    <div className="mt-12 max-w-xl mx-auto">
-      <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20 shadow-md">
-        <CardContent className="p-6">
-          <div className="text-center mb-4">
-            <div className="text-2xl mb-2">🍜 🥟 🍚</div>
-            <p className="text-base font-medium text-foreground mb-1">
-              Coming to China this year?
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Get updates on new hosts. No spam, just delicious updates.
-            </p>
-          </div>
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <Input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1 bg-background border-border"
-            />
-            <Button type="submit" disabled={submitMutation.isPending} className="px-6">
-              {submitMutation.isPending ? "..." : "Send"}
+    <div className="min-h-screen bg-white">
+      {/* Header & Navigation */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <button
+            onClick={() => setLocation("/")}
+            className="flex items-center gap-2 hover:opacity-80 transition"
+          >
+            <span className="text-2xl">🥢</span>
+            <span className="text-xl font-bold">+1 Chopsticks</span>
+          </button>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <button
+              onClick={() => setLocation("/hosts")}
+              className="text-gray-700 hover:text-gray-900 font-medium transition"
+            >
+              Browse Hosts
+            </button>
+            <a href="#how-it-works" className="text-gray-700 hover:text-gray-900 font-medium transition">
+              How it Works
+            </a>
+            <a href="#about-us" className="text-gray-700 hover:text-gray-900 font-medium transition">
+              About Us
+            </a>
+            <Button
+              variant="outline"
+              className="border-red-600 text-red-600 hover:bg-red-50"
+              onClick={() => setLocation("/become-host")}
+            >
+              Become a Host
             </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+          </nav>
 
-function HeroSection() {
-  return (
-    <section className="relative pt-20 pb-20 md:pt-24 md:pb-32 overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8">
-            <Sparkles className="h-4 w-4" />
-            <span>Launching Pilot Program in Shanghai</span>
+          <div className="flex items-center gap-4">
+            <button className="text-sm text-gray-700 hover:text-gray-900 font-medium transition">
+              EN
+            </button>
+            <span className="text-gray-300">/</span>
+            <button className="text-sm text-gray-500 hover:text-gray-900 font-medium transition">
+              中文
+            </button>
           </div>
+        </div>
+      </header>
 
-          {/* Main heading */}
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-6"
-            style={{ fontFamily: "var(--font-serif)" }}
-          >
-            +1 Chopsticks
-            <span className="block text-primary mt-2 text-2xl md:text-3xl lg:text-4xl">加一雙筷子</span>
+      {/* Section 1: Hero Carousel */}
+      <section className="relative h-[500px] overflow-hidden bg-gray-900">
+        {/* Carousel */}
+        <div className="relative h-full">
+          {heroSlides.map((slide, idx) => (
+            <div
+              key={idx}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                idx === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+          {/* Dark gradient scrim overlay */}
+          <div className="absolute inset-0 hero-scrim" />
+        </div>
+
+        {/* Overlay Text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight md:leading-relaxed tracking-tight">
+            The best restaurant in Shanghai isn't a restaurant.
           </h1>
-
-          {/* Subheading */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-            Experience authentic Shanghai cuisine and genuine Chinese hospitality by sharing home-cooked meals with local families.
-            Perfect for travelers seeking cultural immersion beyond restaurants—join a real family dinner where they simply add an extra pair of chopsticks for you.
-          </p>
-
-          {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/host-register">
-              <Button size="lg" className="gap-2 px-8">
-                Become a Host
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </a>
-            <a href="/hosts">
-              <Button size="lg" variant="outline" className="gap-2 px-8 bg-background">
-                Browse Hosts
-              </Button>
-            </a>
-          </div>
-
-          {/* Email signup box */}
-          <TravelerEmailSignup />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ExperienceSection() {
-  return (
-    <section id="experience" className="py-20 md:py-28 bg-secondary/30">
-      <div className="container">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-            style={{ fontFamily: "var(--font-serif)" }}
-          >
-            The Experience
+          <h2 className="text-2xl md:text-3xl font-medium mb-10 leading-relaxed">
+            Experience authentic, home-cooked meals hosted by locals.
           </h2>
-          <p className="text-lg text-muted-foreground">
-            What if you could experience something even more authentic than walking tours or cooking classes?
-          </p>
+          <Button
+            className="btn-cta text-white px-10 py-4 text-lg font-semibold rounded-lg hover:shadow-lg bg-red-600 hover:bg-red-700"
+            onClick={() => setLocation("/hosts")}
+          >
+            Explore Local Hosts
+          </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <Card className="bg-card border-border/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                <HomeIcon className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
-                Real Home Setting
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Step into an actual family home—not a restaurant or staged venue. Experience the warmth
-                and authenticity of a real Chinese household.
-              </p>
-            </CardContent>
-          </Card>
+        {/* Carousel Controls */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition"
+        >
+          <ChevronRight size={24} />
+        </button>
 
-          <Card className="bg-card border-border/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-6">
-                <MessageCircle className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
-                Cultural Exchange
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Share stories, learn about daily life, and create genuine connections that go beyond
-                typical tourist interactions.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card border-border/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                <ChefHat className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
-                Home-Cooked Meals
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Taste authentic dishes the way locals actually eat them—recipes passed down through
-                generations, prepared with love.
-              </p>
-            </CardContent>
-          </Card>
-
-
+        {/* Slide Indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {heroSlides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-2 h-2 rounded-full transition ${
+                idx === currentSlide ? "bg-white w-8" : "bg-white/50"
+              }`}
+            />
+          ))}
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-function BenefitsSection() {
-  const benefits = [
-    "Genuine local connections beyond typical tourist experiences",
-    "Authentic home-cooked meals you won't find in restaurants",
-    "Cultural insights from real family conversations",
-    "Stories and memories that last a lifetime",
-    "Support local families and community tourism",
-    "Safe, vetted host families with language support",
-  ];
+      {/* Section 2: Brand Identity & Story */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            {/* Left: Text */}
+            <div className="space-y-8">
+              {/* First Headline and Paragraph */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Ni Hao! We are +1 chopsticks
+                </h2>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  In Chinese culture, when we invite friends over for dinner, we say "就是加一双筷子吗"—it's simply adding a pair of chopsticks.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  That's our mission: providing curated, affordable home dining for travelers who want more than a tourist menu.
+                </p>
+              </div>
 
-  return (
-    <section id="benefits" className="py-20 md:py-28">
-      <div className="container">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
-          <div>
-            <h2
-              className="text-3xl md:text-4xl font-bold tracking-tight mb-6"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              Why Dine with Local Families?
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              As someone who's explored 60+ countries, I know we all crave those genuine local
-              connections—the kind you get from walking tours, cooking classes, or chance encounters
-              in neighborhood bars. This takes it further.
-            </p>
-            <ul className="space-y-4">
-              {benefits.map((benefit, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Check className="h-3 w-3 text-primary" />
+              {/* Second Headline and Paragraph */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  Wait, home dining in China? I never heard of that
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  Yup. Because it didn't exist until we made it happen.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  "Real, authentic, local" are what we hear travelers want the most in China. What's better than going to a local's home to enjoy a local meal?
+                </p>
+              </div>
+
+              {/* Third Headline and Paragraph */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  Sounds fun! Who are the hosts? Can they cater my dietary needs?
+                </h3>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  Our diverse community of hosts includes families, couples, and young professionals who share passion of cooking and meeting new people. Whether you're a solo traveler, a couple, or a family, we'll match you with the perfect host.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  No matter whose table you join, one thing is guaranteed: we will carefully accommodate all your dietary needs and restrictions to ensure a perfect meal.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  All hosts are verified by the platform on the readiness to host, including language capability, food style and hygiene, and home environment.
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Image */}
+            <div className="relative">
+              <img
+                src={IMAGES.section2}
+                alt="Multi-generational family dining together"
+                className="w-full rounded-lg shadow-lg"
+              />
+              <div className="absolute bottom-4 left-4 right-4 bg-black/60 text-white px-6 py-3 rounded-lg backdrop-blur-sm">
+                <p className="text-center italic text-sm">
+                  "Add an extra pair of chopsticks" — A Chinese expression of hospitality
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3: Featured Hosts Gallery */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Meet your new friends in Shanghai.
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredHosts.slice(0, 3).map((host) => (
+              <div
+                key={host.id}
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                {/* Image */}
+                <div className="relative h-64 bg-gray-200 overflow-hidden">
+                  <img
+                    src={host.profilePhotoUrl || ""}
+                    alt={host.hostName}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
+                    ✓ Verified
                   </div>
-                  <span className="text-foreground">{benefit}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="relative">
-            <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-secondary flex items-center justify-center">
-              <div className="text-center p-8">
-                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                  <Heart className="h-10 w-10 text-primary" />
                 </div>
-                <p
-                  className="text-2xl font-semibold mb-2"
-                  style={{ fontFamily: "var(--font-serif)" }}
-                >
-                  加一雙筷子
-                </p>
-                <p className="text-muted-foreground">
-                  "Add an extra pair of chopsticks"
-                </p>
-                <p className="text-sm text-muted-foreground mt-4 max-w-xs mx-auto">
-                  A Chinese expression of hospitality—there's always room for one more at the table.
-                </p>
+
+                {/* Card Content */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">
+                    {host.hostName}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{host.cuisineStyle || "🍽️ Local Cuisine"}</p>
+                  <p className="text-sm text-gray-700 mb-4 line-clamp-3">
+                    {truncateSummary(host.bio, 120)}
+                  </p>
+                  <Button
+                    className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover:shadow-lg"
+                    onClick={() => setLocation(`/hosts/${host.id}`)}
+                  >
+                    View Details
+                  </Button>
+                </div>
               </div>
-            </div>
-            {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent/10 rounded-full blur-2xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CTASection() {
-  return (
-    <section className="py-20 md:py-28 bg-primary text-primary-foreground">
-      <div className="container">
-        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          {/* For Travelers */}
-          <div className="text-center md:text-left">
-            <div className="w-14 h-14 rounded-xl bg-primary-foreground/10 flex items-center justify-center mb-6 mx-auto md:mx-0">
-              <Globe className="h-7 w-7" />
-            </div>
-            <h3
-              className="text-2xl font-bold mb-4"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              For Travelers
-            </h3>
-            <p className="text-primary-foreground/80 mb-6 leading-relaxed">
-              Heading to China? Experience Shanghai like a local. Skip the tourist traps and
-              discover the real culture through genuine family connections.
-            </p>
-            <ul className="space-y-3 text-left mb-8">
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-primary-foreground/80" />
-                <span>Authentic home-cooked dinner experience</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-primary-foreground/80" />
-                <span>Cultural exchange with local families</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-primary-foreground/80" />
-                <span>Language support provided</span>
-              </li>
-            </ul>
-            <a href="/hosts">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="gap-2"
-              >
-                Browse Hosts
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </a>
-          </div>
-
-          {/* For Host Families */}
-          <div className="text-center md:text-left md:border-l md:border-primary-foreground/20 md:pl-12">
-            <div className="w-14 h-14 rounded-xl bg-primary-foreground/10 flex items-center justify-center mb-6 mx-auto md:mx-0">
-              <HomeIcon className="h-7 w-7" />
-            </div>
-            <h3
-              className="text-2xl font-bold mb-4"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              For Host Families
-            </h3>
-            <p className="text-primary-foreground/80 mb-6 leading-relaxed">
-              Love cooking and meeting new people? Share your culture and earn extra income by
-              hosting international guests for dinner.
-            </p>
-            <ul className="space-y-3 text-left mb-8">
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-primary-foreground/80" />
-                <span>Earn income doing what you love</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-primary-foreground/80" />
-                <span>Meet travelers from around the world</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-primary-foreground/80" />
-                <span>Flexible hosting schedule</span>
-              </li>
-            </ul>
-            <a href="/host-register">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="gap-2"
-              >
-                Become a Host
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CuisineExplorerSection() {
-  const { data: listings } = trpc.host.listApproved.useQuery();
-
-  // Extract unique cuisines from listings
-  const cuisines = listings
-    ? Array.from(new Set(listings.map(h => h.cuisineStyle).filter(Boolean)))
-        .map(cuisine => ({
-          name: cuisine,
-          count: listings.filter(h => h.cuisineStyle === cuisine).length,
-          icon: getCuisineIcon(cuisine),
-        }))
-        .sort((a, b) => b.count - a.count)
-    : [];
-
-  return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-background to-secondary/10">
-      <div className="container">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2
-              className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              Explore by Cuisine
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Discover authentic dining experiences curated by cuisine type
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {cuisines.map((cuisine) => (
-              <a
-                key={cuisine.name}
-                href={`/hosts?cuisine=${encodeURIComponent(cuisine.name)}`}
-                className="group"
-              >
-                <Card className="h-full cursor-pointer hover:shadow-lg transition-all hover:scale-105">
-                  <CardContent className="p-6 flex flex-col items-center justify-center h-full text-center">
-                    <div className="text-4xl mb-3">{cuisine.icon}</div>
-                    <h3 className="font-semibold text-sm md:text-base mb-1 group-hover:text-primary transition-colors">
-                      {cuisine.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {cuisine.count} {cuisine.count === 1 ? 'host' : 'hosts'}
-                    </p>
-                  </CardContent>
-                </Card>
-              </a>
             ))}
           </div>
 
-          <div className="mt-12 text-center">
-            <a href="/hosts">
-              <Button size="lg" variant="outline" className="gap-2">
-                Browse All Hosts
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </a>
+          <div className="text-center mt-12">
+            <Button
+              variant="outline"
+              className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-3 text-lg"
+              onClick={() => setLocation("/hosts")}
+            >
+              Browse All Hosts
+            </Button>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-function getCuisineIcon(cuisine: string): string {
-  const iconMap: Record<string, string> = {
-    'Sichuan': '🌶️',
-    'Southwestern & Northern Chinese': '🥘',
-    'Shanghai & Northern Chinese': '🥟',
-    'Shanghainese': '🍜',
-    'Northern Chinese': '🥡',
-    'Dumplings': '🥟',
-    'Western': '🍽️',
-    'Vegetarian': '🥗',
-    'Vegan': '🌱',
-    'Fusion': '🍲',
-  };
-  return iconMap[cuisine] || '🍽️';
-}
+      {/* Section 4: How It Works */}
+      <section id="how-it-works" className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            How It Works
+          </h2>
 
-function AboutSection() {
-  return (
-    <section id="about" className="py-20 md:py-28 bg-secondary/30">
-      <div className="container">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2
-              className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              About Us
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Our Story
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              {
+                step: 1,
+                emoji: "👀",
+                title: "Browse",
+                description: "Explore our curated selection of local hosts and their unique dining experiences.",
+              },
+              {
+                step: 2,
+                emoji: "📅",
+                title: "Book",
+                description: "Select your preferred date and time. The host will confirm your booking.",
+              },
+              {
+                step: 3,
+                emoji: "🧑‍🍳",
+                title: "Prepare",
+                description: "Confirm any dietary needs and get ready for an authentic culinary experience.",
+              },
+              {
+                step: 4,
+                emoji: "🍽️",
+                title: "Eat",
+                description: "Enjoy delicious home-cooked food and meaningful conversations with your host.",
+              },
+            ].map((item) => (
+              <div key={item.step} className="text-center">
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                    {item.step}
+                  </div>
+                </div>
+                <div className="text-4xl mb-3">{item.emoji}</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-700">{item.description}</p>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Photo */}
-            <div className="order-2 md:order-1">
-              <div className="relative rounded-2xl overflow-hidden shadow-lg">
+      {/* Section 5: About Us - Founder's Story */}
+      <section id="about-us" className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            {/* Left: Images */}
+            <div className="space-y-4">
+              {/* Large main image */}
+              <div className="relative overflow-hidden rounded-lg shadow-lg group cursor-pointer">
                 <img
-                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/FSqBhlYCCWYusVdM.PNG"
-                  alt="Founders sharing a meal"
-                  className="w-full h-auto"
+                  src={IMAGES.aboutMain}
+                  alt="Steven completing 7th continent"
+                  className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                  <p className="text-white text-center px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
+                    Steven completing 7th continent and the lovely Adélie penguin
+                  </p>
+                </div>
+              </div>
+
+              {/* 3-column grid of gallery images */}
+              <div className="grid grid-cols-3 gap-4">
+                {galleryImages.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="relative overflow-hidden rounded-lg shadow-md group cursor-pointer h-48"
+                    onMouseEnter={() => setHoveredGalleryImage(idx)}
+                    onMouseLeave={() => setHoveredGalleryImage(null)}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.caption}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
+                      <p className="text-white text-center px-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
+                        {item.caption}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Text */}
+            <div className="space-y-8">
+              {/* First Block */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">Hi, I'm Steven</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  I'm the founder of +1 Chopsticks, a platform dedicated to connecting travelers with authentic local dining experiences. My journey started with a simple belief: the best way to understand a culture is through its food and people.
+                </p>
+              </div>
+
+              {/* Second Block */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">My Passion</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  I'm passionate about creating meaningful connections between travelers and locals. I believe that home dining is the future of travel, offering authenticity that no restaurant can replicate.
+                </p>
+              </div>
+
+              {/* Third Block */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">My Journey</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  I've traveled to all seven continents, dining in homes from Copenhagen to Fez to Shanghai. These experiences taught me that the most memorable meals happen around local tables, not in tourist restaurants.
+                </p>
+              </div>
+
+              {/* Fourth Block */}
+              <div className="border-l-4 border-red-600 pl-6">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">Professional Background</h3>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  With experience in hospitality, travel, and community building, I've dedicated myself to making home dining accessible and safe for everyone. +1 Chopsticks is my way of sharing the magic of local dining with the world.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: FAQ Accordions */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-center text-gray-600 mb-8">
+              Everything you need to know about dining with us
+            </p>
+
+            <div className="space-y-6">
+              {faqItems.map((category, categoryIdx) => (
+                <div key={categoryIdx}>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    {category.category}
+                  </h3>
+                  <Accordion type="single" collapsible className="space-y-2">
+                    {category.items.map((item, itemIdx) => (
+                      <AccordionItem
+                        key={`${categoryIdx}-${itemIdx}`}
+                        value={`${categoryIdx}-${itemIdx}`}
+                      >
+                        <AccordionTrigger className="text-gray-900 hover:text-red-600 transition">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-gray-700">
+                          {item.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-gray-200 text-center">
+              <p className="text-gray-700 mb-3">Still have questions?</p>
+              <a
+                href="mailto:hello@plus1chopsticks.com"
+                className="text-red-600 hover:text-red-700 font-semibold transition"
+              >
+                Contact us at hello@plus1chopsticks.com
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 7: Become a Host */}
+      <section className="py-16 bg-gradient-to-r from-red-600 to-red-700">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
+            <div className="text-white">
+              <h2 className="text-4xl font-bold mb-6">
+                Love cooking and meeting new people?
+              </h2>
+              <p className="text-xl mb-8 leading-relaxed">
+                Join our community of hosts and share your culinary passion with travelers from around the world. It's easy, rewarding, and fun.
+              </p>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-4 group">
+                  <span className="text-3xl">💰</span>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Earn income doing what you love</h3>
+                    <p className="text-red-100">Set your own prices and keep 80% of earnings</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 group">
+                  <span className="text-3xl">🌍</span>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Meet travelers from around the world</h3>
+                    <p className="text-red-100">Build meaningful connections and share your culture</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 group">
+                  <span className="text-3xl">🏠</span>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Flexible hosting schedule</h3>
+                    <p className="text-red-100">Host when it works for you, no minimum commitments</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+                onClick={() => setLocation("/become-host")}
+              >
+                Become a Host
+              </Button>
+            </div>
+
+            {/* Right: Image */}
+            <div className="relative">
+              <div className="rounded-lg overflow-hidden shadow-2xl group cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=600&fit=crop"
+                  alt="Welcoming kitchen"
+                  className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
             </div>
-
-            {/* Story */}
-            <div className="order-1 md:order-2">
-              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
-                <p>
-                  We're a group of passionate travel enthusiasts. Our founder has backpacked through 60+ countries across seven continents.
-                </p>
-                <p>
-                  During our travels, the most memorable moments weren't at famous landmarks or tourist hotspots—they were when locals warmly invited us into their homes to share a simple, home-cooked meal.
-                </p>
-                <p>
-                  That warmth and breaking down of barriers is the experience we want to recreate in China.
-                </p>
-                <p>
-                  We hope that foreign friends coming to China won't just see the tourist attractions or eat at chain restaurants, but can truly walk into a Shanghainese home and experience authentic Chinese hospitality.
-                </p>
-                <div className="pt-4">
-                  <a href="/host-register">
-                    <Button size="lg" className="gap-2">
-                      Join as a Host
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-function Footer() {
-  return (
-    <footer className="py-12 border-t border-border/50 bg-secondary/20">
-      <div className="container">
-        <div className="flex flex-col items-center gap-8">
-          {/* GetYourGuide Widget */}
-          <div className="flex justify-center">
-            <a href="https://www.getyourguide.com/-s714273" target="_blank" rel="noopener noreferrer">
-              <img 
-                src="https://gyg.me/kUtga42u" 
-                width="160" 
-                height="auto" 
-                style={{ border: "1px solid #c6c8d0" }} 
-                alt="GetYourGuide | +1 Chopsticks" 
+      {/* Section 8: Newsletter */}
+      <section className="py-16 bg-gradient-to-r from-red-50 to-orange-50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">
+              Coming to China this year?
+            </h2>
+            <p className="text-lg text-gray-700 mb-8">
+              Get updates on new hosts. No spam, just delicious updates.
+            </p>
+
+            <div className="flex gap-3">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-red-600"
               />
-            </a>
-          </div>
-
-          {/* Footer Content */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 w-full">
-            <div className="flex items-center gap-2">
-              <ChopsticksLogo className="h-5 w-5 text-primary" />
-              <span className="font-semibold" style={{ fontFamily: "var(--font-serif)" }}>
-                +1 Chopsticks
-              </span>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold"
+                onClick={() => toast.success("Thanks for subscribing!")}
+              >
+                Subscribe
+              </Button>
             </div>
-            <p className="text-sm text-muted-foreground text-center">
-              Let's make travel more meaningful, one dinner table at a time. 🥢
-            </p>
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} +1 Chopsticks. All rights reserved.
-            </p>
           </div>
         </div>
-      </div>
-    </footer>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Column 1: Brand */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🥢</span>
+                <span className="text-lg font-bold text-white">+1 Chopsticks</span>
+              </div>
+              <p className="text-sm">
+                Connecting travelers with authentic home dining experiences in Shanghai and beyond.
+              </p>
+            </div>
+
+            {/* Column 2: For Travelers */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">For Travelers</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <button
+                    onClick={() => setLocation("/hosts")}
+                    className="hover:text-white transition"
+                  >
+                    Browse Hosts
+                  </button>
+                </li>
+                <li>
+                  <a href="#how-it-works" className="hover:text-white transition">
+                    How It Works
+                  </a>
+                </li>
+                <li>
+                  <a href="#faq" className="hover:text-white transition">
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: For Hosts */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">For Hosts</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <button
+                    onClick={() => setLocation("/become-host")}
+                    className="hover:text-white transition"
+                  >
+                    Become a Host
+                  </button>
+                </li>
+                <li>
+                  <a href="mailto:hello@plus1chopsticks.com" className="hover:text-white transition">
+                    Host Support
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Contact */}
+            <div>
+              <h4 className="text-white font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a href="mailto:hello@plus1chopsticks.com" className="hover:text-white transition">
+                    hello@plus1chopsticks.com
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+86-21-1234-5678" className="hover:text-white transition">
+                    +86 21 1234 5678
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 pt-8 text-center text-sm">
+            <p>&copy; 2026 +1 Chopsticks. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }

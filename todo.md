@@ -1141,3 +1141,46 @@
   - Block a date in host portal
   - Verify it's disabled in booking UI without page refresh
   - Unblock a date and verify it becomes available
+
+
+## Homepage Revamp - COMPLETED
+
+### Phase 1: Image Preparation
+- [x] Upload "Adding an extra pair of chopsticks" image to S3
+- [x] Upload About Us gallery images to S3 (4 images)
+- [x] Upload Sookie's profile pic to S3 for "Become a Host" section
+- [x] Set up placeholder images for hero carousel
+
+### Phase 2: Homepage Layout Integration
+- [x] Copy Home.tsx structure from mockup project
+- [x] Adapt styling and layout to current project
+- [x] Integrate all 8 sections with proper styling
+- [x] Ensure responsive design works on mobile/tablet/desktop
+
+### Phase 3: Featured Hosts Data
+- [x] Query database for Jiading Ayi, Chuan, Norika & Steven
+- [x] Extract profile pictures and summaries
+- [x] Truncate summaries with "View More" functionality
+- [x] Update featured hosts cards with real data
+
+### Phase 4: Navigation Links
+- [x] "Explore Local Hosts" button → /hosts (browse page)
+- [x] "Browse Hosts" nav link → /hosts
+- [x] "How it Works" nav link → #how-it-works section
+- [x] "About Us" nav link → #about-us section
+- [x] Featured host "View Details" buttons → /hosts/:id
+- [x] "Become a Host" button → /become-host
+- [x] Logo click → /
+- [x] Footer links → respective pages
+
+### Phase 5: Testing
+- [x] Test all navigation links work correctly
+- [x] Verify responsive design on mobile
+- [x] Test hover effects and animations
+- [x] Check image loading and optimization
+- [x] Verify all CTAs are functional
+
+### Phase 6: Deployment
+- [x] Run all tests to ensure no regressions
+- [x] Save checkpoint with homepage revamp
+- [x] Deliver to user for review
