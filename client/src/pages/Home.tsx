@@ -672,7 +672,7 @@ export default function Home() {
                   </button>
                 </li>
                 <li>
-                  <a href="mailto:hello@plus1chopsticks.com" className="hover:text-white transition">
+                  <a href="mailto:plusonechopsticks@gmail.com" className="hover:text-white transition">
                     Host Support
                   </a>
                 </li>
@@ -684,8 +684,8 @@ export default function Home() {
               <h4 className="text-white font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="mailto:hello@plus1chopsticks.com" className="hover:text-white transition">
-                    hello@plus1chopsticks.com
+                  <a href="mailto:plusonechopsticks@gmail.com" className="hover:text-white transition">
+                    plusonechopsticks@gmail.com
                   </a>
                 </li>
                 <li>
