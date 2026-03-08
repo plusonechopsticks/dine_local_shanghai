@@ -245,8 +245,8 @@ export default function Home() {
                 <p className="text-lg text-gray-700 leading-relaxed mb-3">
                   Yup. Because it didn't exist until we made it happen.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  "Real, authentic, local" are what we hear travelers want the most in China. What's better than going to a local's home to enjoy a local meal?
+                <p className="text-base text-gray-600 leading-relaxed">
+                  Dine at locals' homes. Share homemade dishes, stories, and neighborhoods you won't find on any tour.
                 </p>
               </div>
 
@@ -280,7 +280,35 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Right: Feature Cards */}
+            <div className="space-y-6">
+              {/* Card 1 */}
+              <div className="bg-blue-50 rounded-lg p-6 flex gap-4">
+                <div className="text-4xl flex-shrink-0">🍲</div>
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Home-cooked menus</h4>
+                  <p className="text-gray-600 text-sm">Regional dishes, seasonal ingredients, family recipes.</p>
+                </div>
+              </div>
 
+              {/* Card 2 */}
+              <div className="bg-orange-50 rounded-lg p-6 flex gap-4">
+                <div className="text-4xl flex-shrink-0">🏠</div>
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Hosted by local families</h4>
+                  <p className="text-gray-600 text-sm">Meet your hosts, see their neighborhoods, eat like a local.</p>
+                </div>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-purple-50 rounded-lg p-6 flex gap-4">
+                <div className="text-4xl flex-shrink-0">💬</div>
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Small groups, real conversations</h4>
+                  <p className="text-gray-600 text-sm">6–10 guests per table. Come as a traveler, leave as a friend.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

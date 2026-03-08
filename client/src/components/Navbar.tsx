@@ -15,9 +15,9 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/">
-            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <ChopsticksLogo className="w-8 h-8" />
-              <span className="text-xl font-bold text-gray-900">+1 Chopsticks</span>
+            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
+              <span className="text-2xl">🥢</span>
+              <span className="text-xl font-bold">+1 Chopsticks</span>
             </a>
           </Link>
 
