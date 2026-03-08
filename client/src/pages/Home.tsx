@@ -270,7 +270,10 @@ export default function Home() {
               <div className="pt-4">
                 <Button
                   className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold text-lg"
-                  onClick={() => setLocation("/hosts")}
+                  onClick={() => {
+                    setLocation("/hosts");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                 >
                   Find your Table
                 </Button>
@@ -331,7 +334,10 @@ export default function Home() {
             <Button
               variant="outline"
               className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-3 text-lg"
-              onClick={() => setLocation("/hosts")}
+              onClick={() => {
+                setLocation("/hosts");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             >
               Browse All Hosts
             </Button>
@@ -472,7 +478,7 @@ export default function Home() {
       </section>
 
       {/* Section 6: FAQ Accordions */}
-      <section className="py-16 bg-white">
+      <section id="faq" className="py-16 bg-white">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg shadow-lg p-8">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
@@ -682,11 +688,7 @@ export default function Home() {
                     Become a Host
                   </button>
                 </li>
-                <li>
-                  <a href="mailto:plusonechopsticks@gmail.com" className="hover:text-white transition">
-                    Host Support
-                  </a>
-                </li>
+
               </ul>
             </div>
 
@@ -699,11 +701,7 @@ export default function Home() {
                     plusonechopsticks@gmail.com
                   </a>
                 </li>
-                <li>
-                  <a href="tel:+86-21-1234-5678" className="hover:text-white transition">
-                    +86 21 1234 5678
-                  </a>
-                </li>
+
               </ul>
             </div>
           </div>
