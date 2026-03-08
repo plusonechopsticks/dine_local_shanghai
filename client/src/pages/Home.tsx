@@ -27,6 +27,11 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeHostCard, setActiveHostCard] = useState(0);
   const [hoveredGalleryImage, setHoveredGalleryImage] = useState<number | null>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isSubmittingNewsletter, setIsSubmittingNewsletter] = useState(false);
+
+  // Newsletter submission mutation
+  const submitInterestMutation = trpc.interest.submit.useMutation();
 
   // Fetch all approved hosts
   const { data: allHosts = [] } = trpc.host.listApproved.useQuery();
@@ -610,11 +615,34 @@ export default function Home() {
               <input
                 type="email"
                 placeholder="your@email.com"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-red-600"
               />
               <Button
-                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold"
-                onClick={() => toast.success("Thanks for subscribing!")}
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold disabled:opacity-50"
+                disabled={isSubmittingNewsletter || !newsletterEmail}
+                onClick={async () => {
+                  if (!newsletterEmail) {
+                    toast.error("Please enter your email");
+                    return;
+                  }
+                  setIsSubmittingNewsletter(true);
+                  try {
+                    await submitInterestMutation.mutateAsync({
+                      name: "Newsletter Subscriber",
+                      email: newsletterEmail,
+                      interestType: "traveler",
+                      message: "Subscribed to newsletter",
+                    });
+                    toast.success("Thanks for subscribing!");
+                    setNewsletterEmail("");
+                  } catch (error) {
+                    toast.error("Failed to subscribe. Please try again.");
+                  } finally {
+                    setIsSubmittingNewsletter(false);
+                  }
+                }}
               >
                 Subscribe
               </Button>
