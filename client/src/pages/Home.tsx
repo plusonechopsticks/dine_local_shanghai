@@ -305,7 +305,7 @@ export default function Home() {
                 <div className="text-4xl flex-shrink-0">💬</div>
                 <div>
                   <h4 className="text-xl font-bold text-gray-900 mb-2">Small groups, real conversations</h4>
-                  <p className="text-gray-600 text-sm">6–10 guests per table. Come as a traveler, leave as a friend.</p>
+                  <p className="text-gray-600 text-sm">1–6 guests per table. Come as a traveler, leave as a friend.</p>
                 </div>
               </div>
             </div>

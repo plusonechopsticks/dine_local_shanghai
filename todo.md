@@ -1199,3 +1199,4 @@
 - [x] Fix "About Us" button to scroll to top of About Us section title
 - [x] Standardize Section 2 font sizes to text-base (smaller)
 - [x] Convert About Us gallery to horizontal scrolling carousel on mobile
+- [ ] Align Navbar menu items to match HomeHeader (Browse Hosts, How it Works, About Us, Become a Host)
