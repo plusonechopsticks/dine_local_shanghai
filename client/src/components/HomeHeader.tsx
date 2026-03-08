@@ -33,8 +33,7 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
           className="flex items-center gap-2 hover:opacity-80 transition flex-shrink-0"
         >
           <span className="text-2xl">🥢</span>
-          <span className="text-xl font-bold hidden sm:inline">+1 Chopsticks</span>
-          <span className="text-lg font-bold sm:hidden">+1</span>
+          <span className="text-xl font-bold">+1 Chopsticks</span>
         </button>
 
         {/* Desktop Navigation */}
@@ -68,7 +67,7 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
           <Button
             variant="outline"
             className="border-red-600 text-red-600 hover:bg-red-50"
-            onClick={() => handleNavClick("/become-host")}
+            onClick={() => handleNavClick("/host-register")}
           >
             Become a Host
           </Button>
@@ -121,7 +120,7 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
             <Button
               variant="outline"
               className="border-red-600 text-red-600 hover:bg-red-50 w-full"
-              onClick={() => handleNavClick("/become-host")}
+              onClick={() => handleNavClick("/host-register")}
             >
               Become a Host
             </Button>

@@ -559,7 +559,7 @@ export default function Home() {
 
               <Button
                 className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
-                onClick={() => setLocation("/become-host")}
+                onClick={() => setLocation("/host-register")}
               >
                 Become a Host
               </Button>
@@ -676,7 +676,7 @@ export default function Home() {
               <ul className="space-y-2 text-sm">
                 <li>
                   <button
-                    onClick={() => setLocation("/become-host")}
+                    onClick={() => setLocation("/host-register")}
                     className="hover:text-white transition"
                   >
                     Become a Host
