@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 export function Navbar() {
   const { user, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
 
   const handleMenuClose = () => {
@@ -29,9 +29,8 @@ export function Navbar() {
 
   const handleSectionClick = (id: string) => {
     handleMenuClose();
-    // Check if we're already on the home page
-    const currentPath = window.location.pathname;
-    if (currentPath === "/") {
+    // Check if we're already on the home page using wouter's location
+    if (location === "/") {
       // Already on home, just scroll
       handleAnchorClick(id);
     } else {
@@ -41,10 +40,10 @@ export function Navbar() {
     }
   };
 
-  // Handle scroll after navigation
+  // Handle scroll after navigation - triggered when location changes
   useEffect(() => {
-    if (pendingScroll) {
-      // Use a small delay to ensure the page has loaded
+    if (pendingScroll && location === "/") {
+      // We've navigated to home, now scroll
       const timer = setTimeout(() => {
         const element = document.getElementById(pendingScroll);
         if (element) {
@@ -54,7 +53,7 @@ export function Navbar() {
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [pendingScroll]);
+  }, [location, pendingScroll]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
