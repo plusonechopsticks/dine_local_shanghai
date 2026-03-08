@@ -230,7 +230,7 @@ export default function Home() {
                   Ni Hao! We are +1 chopsticks
                 </h2>
                 <p className="text-base text-gray-700 leading-relaxed mb-3">
-                  In Chinese culture, when we invite friends over for dinner, we say "就是加一双筷子吗"—it's simply adding a pair of chopsticks.
+                  In Chinese culture, when we invite friends over for dinner, we say "加一双筷子"—it's simply adding a pair of chopsticks.
                 </p>
                 <p className="text-base text-gray-700 leading-relaxed">
                   That's our mission: providing curated, affordable home dining for travelers who want more than a tourist menu.

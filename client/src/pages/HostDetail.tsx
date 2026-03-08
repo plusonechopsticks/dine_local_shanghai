@@ -103,6 +103,11 @@ export default function HostDetail() {
     setDisabledDates(disabled);
   };
   
+  // Scroll to top when component mounts or hostId changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [hostId]);
+
   useEffect(() => {
     if (!hostId || !host) return;
     updateDisabledDates(host);
