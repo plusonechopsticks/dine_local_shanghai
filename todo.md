@@ -1206,3 +1206,4 @@
 - [x] Improve mobile carousel: larger images, captions only on hover, more carousel-like appearance
 
 - [x] Fix "How it Works" and "About Us" buttons to work on non-home pages (navigate to home first, then scroll)
+- [x] Add proper section IDs and move them to title elements for accurate scrolling

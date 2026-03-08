@@ -219,7 +219,7 @@ export default function Home() {
       </section>
 
       {/* Section 2: Brand Identity & Story */}
-      <section className="py-16 bg-white">
+      <section id="brand-story" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             {/* Left: Text */}
@@ -314,7 +314,7 @@ export default function Home() {
       </section>
 
       {/* Section 3: Featured Hosts Gallery */}
-      <section className="py-16 bg-gray-50">
+      <section id="featured-hosts" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
             Meet your new friends in Shanghai.
@@ -374,9 +374,9 @@ export default function Home() {
       </section>
 
       {/* Section 4: How It Works */}
-      <section id="how-it-works" className="py-16 bg-white">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h2 id="how-it-works" className="text-3xl font-bold text-center text-gray-900 mb-12">
             How It Works
           </h2>
 
@@ -423,9 +423,9 @@ export default function Home() {
       </section>
 
       {/* Section 5: About Us - Founder's Story */}
-      <section id="about-us" className="py-16 bg-gray-50">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">About Us</h2>
+          <h2 id="about-us" className="text-4xl font-bold text-center text-gray-900 mb-16">About Us</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             {/* Left: Images */}
             <div className="space-y-4">
@@ -527,10 +527,10 @@ export default function Home() {
       </section>
 
       {/* Section 6: FAQ Accordions */}
-      <section id="faq" className="py-16 bg-white">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
+            <h2 id="faq" className="text-3xl font-bold text-center text-gray-900 mb-2">
               Frequently Asked Questions
             </h2>
             <p className="text-center text-gray-600 mb-8">
@@ -576,7 +576,7 @@ export default function Home() {
       </section>
 
       {/* Section 7: Become a Host */}
-      <section className="py-16 bg-gradient-to-r from-red-600 to-red-700">
+      <section id="become-host" className="py-16 bg-gradient-to-r from-red-600 to-red-700">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
