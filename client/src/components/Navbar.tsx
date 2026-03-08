@@ -2,12 +2,13 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Navbar() {
   const { user, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
+  const [pendingScroll, setPendingScroll] = useState<string | null>(null);
 
   const handleMenuClose = () => {
     setIsMobileMenuOpen(false);
@@ -25,6 +26,35 @@ export function Navbar() {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const handleSectionClick = (id: string) => {
+    handleMenuClose();
+    // Check if we're already on the home page
+    const currentPath = window.location.pathname;
+    if (currentPath === "/") {
+      // Already on home, just scroll
+      handleAnchorClick(id);
+    } else {
+      // Not on home, navigate first then scroll
+      setPendingScroll(id);
+      setLocation("/");
+    }
+  };
+
+  // Handle scroll after navigation
+  useEffect(() => {
+    if (pendingScroll) {
+      // Use a small delay to ensure the page has loaded
+      const timer = setTimeout(() => {
+        const element = document.getElementById(pendingScroll);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+        setPendingScroll(null);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingScroll]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
@@ -46,26 +76,18 @@ export function Navbar() {
           >
             Browse Hosts
           </button>
-          <a
-            href="#how-it-works"
-            onClick={(e) => {
-              e.preventDefault();
-              handleAnchorClick("how-it-works");
-            }}
+          <button
+            onClick={() => handleSectionClick("how-it-works")}
             className="text-gray-700 hover:text-gray-900 font-medium transition cursor-pointer"
           >
             How it Works
-          </a>
-          <a
-            href="#about-us"
-            onClick={(e) => {
-              e.preventDefault();
-              handleAnchorClick("about-us");
-            }}
+          </button>
+          <button
+            onClick={() => handleSectionClick("about-us")}
             className="text-gray-700 hover:text-gray-900 font-medium transition cursor-pointer"
           >
             About Us
-          </a>
+          </button>
 
           {!isLoading && (
             <>
@@ -120,26 +142,18 @@ export function Navbar() {
             >
               Browse Hosts
             </button>
-            <a
-              href="#how-it-works"
-              onClick={(e) => {
-                e.preventDefault();
-                handleAnchorClick("how-it-works");
-              }}
+            <button
+              onClick={() => handleSectionClick("how-it-works")}
               className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition cursor-pointer"
             >
               How it Works
-            </a>
-            <a
-              href="#about-us"
-              onClick={(e) => {
-                e.preventDefault();
-                handleAnchorClick("about-us");
-              }}
+            </button>
+            <button
+              onClick={() => handleSectionClick("about-us")}
               className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition cursor-pointer"
             >
               About Us
-            </a>
+            </button>
 
             {!isLoading && (
               <>

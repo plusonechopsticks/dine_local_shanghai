@@ -1204,3 +1204,5 @@
 - [x] Update guest count from "6–10" to "1–6" in feature card
 - [x] Fix "Find your Table" and "Browse All Hosts" scroll-to-top on hosts listing page
 - [x] Improve mobile carousel: larger images, captions only on hover, more carousel-like appearance
+
+- [x] Fix "How it Works" and "About Us" buttons to work on non-home pages (navigate to home first, then scroll)
