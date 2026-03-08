@@ -1216,3 +1216,5 @@
 - [x] Update contact email from hello@plus1chopsticks.com to plusonechopsticks@gmail.com (3 instances: FAQ answer, contact link, contact text)
 
 - [x] Make featured host card images clickable to navigate to host detail page
+
+- [x] Upload Chuan's host introduction video and add to her page with autoplay

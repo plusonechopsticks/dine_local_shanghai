@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE host_listings SET introVideoUrl = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/copy_EC27B9BC-1CE3-47F6-B23B-116E4807FDF5_54cf5ce7.mov' WHERE hostName LIKE '%Chuan%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings SET introVideoUrl = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/copy_EC27B9BC-1CE3-47F6-B23B-116E4807FDF5_54cf5ce7.mov' WHERE hostName LIKE '%Chuan%';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 359
+}
