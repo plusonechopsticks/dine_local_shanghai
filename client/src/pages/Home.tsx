@@ -438,7 +438,7 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                   <p className="text-white text-center px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
-                    Steven completing 7th continent and the lovely Adélie penguin
+                    Steven completing the 7th continent with the lovely penguin
                   </p>
                 </div>
               </div>

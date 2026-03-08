@@ -1207,3 +1207,8 @@
 
 - [x] Fix "How it Works" and "About Us" buttons to work on non-home pages (navigate to home first, then scroll)
 - [x] Add proper section IDs and move them to title elements for accurate scrolling
+
+## Current Issues
+- [x] Verify and fix section scroll behavior on mobile devices (hamburger menu + scroll alignment)
+
+- [ ] Add caption to About Us main image: "Steven completing the 7th continent with the lovely penguin"

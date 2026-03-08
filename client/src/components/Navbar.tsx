@@ -19,12 +19,30 @@ export function Navbar() {
     handleMenuClose();
   };
 
+  const scrollToElement = (id: string, delay: number = 100) => {
+    const timer = setTimeout(() => {
+      const element = document.getElementById(id);
+      if (element) {
+        // Calculate navbar height for offset
+        const navbar = document.querySelector("nav");
+        const navbarHeight = navbar ? navbar.offsetHeight : 80;
+        
+        // Get element position
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+        
+        // Scroll to element with navbar offset
+        window.scrollTo({
+          top: elementPosition - navbarHeight - 20, // 20px extra padding
+          behavior: "smooth"
+        });
+      }
+    }, delay);
+    return timer;
+  };
+
   const handleAnchorClick = (id: string) => {
     handleMenuClose();
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollToElement(id, 50); // Shorter delay when already on page
   };
 
   const handleSectionClick = (id: string) => {
@@ -44,14 +62,11 @@ export function Navbar() {
   useEffect(() => {
     if (pendingScroll && location === "/") {
       // We've navigated to home, now scroll
-      const timer = setTimeout(() => {
-        const element = document.getElementById(pendingScroll);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-        setPendingScroll(null);
-      }, 100);
-      return () => clearTimeout(timer);
+      // Use longer delay on mobile to ensure content is rendered
+      const isMobile = window.innerWidth < 768;
+      const delay = isMobile ? 300 : 150;
+      scrollToElement(pendingScroll, delay);
+      setPendingScroll(null);
     }
   }, [location, pendingScroll]);
 
