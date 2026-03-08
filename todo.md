@@ -1215,4 +1215,4 @@
 
 - [x] Update contact email from hello@plus1chopsticks.com to plusonechopsticks@gmail.com (3 instances: FAQ answer, contact link, contact text)
 
-- [ ] Make featured host card images clickable to navigate to host detail page
+- [x] Make featured host card images clickable to navigate to host detail page
