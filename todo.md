@@ -1214,3 +1214,5 @@
 - [x] Add caption to About Us main image: "Steven completing the 7th continent with the lovely penguin"
 
 - [x] Update contact email from hello@plus1chopsticks.com to plusonechopsticks@gmail.com (3 instances: FAQ answer, contact link, contact text)
+
+- [ ] Make featured host card images clickable to navigate to host detail page

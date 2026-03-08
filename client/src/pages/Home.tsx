@@ -90,11 +90,11 @@ export default function Home() {
         },
         {
           question: "What does it cost for a guest?",
-          answer: "Prices vary by host, typically ranging from 150-300 RMB per person. You'll see the exact price when viewing each host's profile.",
+          answer: "Prices vary by host, typically ranging from 200-500 RMB per person. You'll see the exact price when viewing each host's profile.",
         },
         {
           question: "What if my schedule changes at the last minute?",
-          answer: "You can cancel your booking up to 48 hours before the scheduled meal for a full refund.",
+          answer: "You can cancel your booking up to 7 days before the scheduled meal for a full refund. This gives hosts enough time to prepare!",
         },
       ],
     },
@@ -327,7 +327,7 @@ export default function Home() {
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
               >
                 {/* Image */}
-                <div className="relative h-64 bg-gray-200 overflow-hidden">
+                <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
                   <img
                     src={host.profilePhotoUrl || ""}
                     alt={host.hostName}
