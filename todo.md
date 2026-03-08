@@ -1211,4 +1211,6 @@
 ## Current Issues
 - [x] Verify and fix section scroll behavior on mobile devices (hamburger menu + scroll alignment)
 
-- [ ] Add caption to About Us main image: "Steven completing the 7th continent with the lovely penguin"
+- [x] Add caption to About Us main image: "Steven completing the 7th continent with the lovely penguin"
+
+- [x] Update contact email from hello@plus1chopsticks.com to plusonechopsticks@gmail.com (3 instances: FAQ answer, contact link, contact text)

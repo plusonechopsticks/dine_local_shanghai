@@ -124,7 +124,7 @@ export default function Home() {
         },
         {
           question: "I'm a Travel Agent. Can we work together?",
-          answer: "Yes! We offer special rates for travel agencies and tour operators. Email us at hello@plus1chopsticks.com to discuss partnership opportunities.",
+          answer: "Yes! We offer special rates for travel agencies and tour operators. Email us at plusonechopsticks@gmail.com to discuss partnership opportunities.",
         },
       ],
     },
@@ -565,10 +565,10 @@ export default function Home() {
             <div className="mt-8 pt-8 border-t border-gray-200 text-center">
               <p className="text-gray-700 mb-3">Still have questions?</p>
               <a
-                href="mailto:hello@plus1chopsticks.com"
+                href="mailto:plusonechopsticks@gmail.com"
                 className="text-red-600 hover:text-red-700 font-semibold transition"
               >
-                Contact us at hello@plus1chopsticks.com
+                Contact us at plusonechopsticks@gmail.com
               </a>
             </div>
           </div>
