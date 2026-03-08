@@ -1202,4 +1202,5 @@
 - [x] Align Navbar menu items to match HomeHeader (Browse Hosts, How it Works, About Us, Become a Host)
 - [x] Update Chinese text from "就是加一双筷子吗" to "加一双筷子"
 - [x] Update guest count from "6–10" to "1–6" in feature card
-- [x] Fix "Find your Table" and "Browse All Hosts" scroll-to-top on hosts page
+- [x] Fix "Find your Table" and "Browse All Hosts" scroll-to-top on hosts listing page
+- [x] Improve mobile carousel: larger images, captions only on hover, more carousel-like appearance

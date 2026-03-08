@@ -467,19 +467,19 @@ export default function Home() {
               </div>
 
               {/* Horizontal scrolling carousel on mobile */}
-              <div className="md:hidden flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+              <div className="md:hidden flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory">
                 {galleryImages.map((item, idx) => (
                   <div
                     key={idx}
-                    className="relative overflow-hidden rounded-lg shadow-md flex-shrink-0 w-40 h-40"
+                    className="relative overflow-hidden rounded-lg shadow-lg flex-shrink-0 w-48 h-56 snap-center group"
                   >
                     <img
                       src={item.image}
                       alt={item.caption}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <p className="text-white text-center px-2 text-xs font-italic leading-tight">
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
+                      <p className="text-white text-center px-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
                         {item.caption}
                       </p>
                     </div>

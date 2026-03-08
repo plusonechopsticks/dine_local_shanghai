@@ -58,6 +58,11 @@ export default function HostListings() {
   const [showFilters, setShowFilters] = useState(false);
   const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
   
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   useEffect(() => {
     trackPageView({ pageType: "browse_hosts" });
   }, [trackPageView]);
