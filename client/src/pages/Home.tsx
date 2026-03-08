@@ -229,10 +229,10 @@ export default function Home() {
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
                   Ni Hao! We are +1 chopsticks
                 </h2>
-                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                <p className="text-base text-gray-700 leading-relaxed mb-3">
                   In Chinese culture, when we invite friends over for dinner, we say "就是加一双筷子吗"—it's simply adding a pair of chopsticks.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-base text-gray-700 leading-relaxed">
                   That's our mission: providing curated, affordable home dining for travelers who want more than a tourist menu.
                 </p>
               </div>
@@ -242,7 +242,7 @@ export default function Home() {
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">
                   Wait, home dining in China? I never heard of that
                 </h3>
-                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                <p className="text-base text-gray-700 leading-relaxed mb-3">
                   Yup. Because it didn't exist until we made it happen.
                 </p>
                 <p className="text-base text-gray-600 leading-relaxed">
@@ -255,13 +255,13 @@ export default function Home() {
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">
                   Sounds fun! Who are the hosts? Can they cater my dietary needs?
                 </h3>
-                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                <p className="text-base text-gray-700 leading-relaxed mb-3">
                   Our diverse community of hosts includes families, couples, and young professionals who share passion of cooking and meeting new people. Whether you're a solo traveler, a couple, or a family, we'll match you with the perfect host.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                <p className="text-base text-gray-700 leading-relaxed mb-3">
                   No matter whose table you join, one thing is guaranteed: we will carefully accommodate all your dietary needs and restrictions to ensure a perfect meal.
                 </p>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-base text-gray-700 leading-relaxed">
                   All hosts are verified by the platform on the readiness to host, including language capability, food style and hygiene, and home environment.
                 </p>
               </div>
@@ -443,8 +443,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 3-column grid of gallery images */}
-              <div className="grid grid-cols-3 gap-4">
+              {/* 3-column grid on desktop */}
+              <div className="hidden md:grid grid-cols-3 gap-4">
                 {galleryImages.map((item, idx) => (
                   <div
                     key={idx}
@@ -459,6 +459,27 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
                       <p className="text-white text-center px-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
+                        {item.caption}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Horizontal scrolling carousel on mobile */}
+              <div className="md:hidden flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+                {galleryImages.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="relative overflow-hidden rounded-lg shadow-md flex-shrink-0 w-40 h-40"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.caption}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <p className="text-white text-center px-2 text-xs font-italic leading-tight">
                         {item.caption}
                       </p>
                     </div>

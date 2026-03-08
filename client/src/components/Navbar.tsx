@@ -1,5 +1,4 @@
 import { Link } from "wouter";
-import { ChopsticksLogo } from "./ChopsticksLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "./ui/button";
 import { Menu, X } from "lucide-react";
@@ -7,75 +6,96 @@ import { useState } from "react";
 
 export function Navbar() {
   const { user, isLoading } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleMenuClose = () => {
+    setIsMobileMenuOpen(false);
+  };
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/">
+          <a className="flex items-center gap-2 hover:opacity-80 transition flex-shrink-0">
+            <span className="text-2xl">🥢</span>
+            <span className="text-xl font-bold">+1 Chopsticks</span>
+          </a>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
           <Link href="/">
-            <a className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
-              <span className="text-2xl">🥢</span>
-              <span className="text-xl font-bold">+1 Chopsticks</span>
-            </a>
+            <a className="text-gray-700 hover:text-gray-900 font-medium transition">Home</a>
+          </Link>
+          <Link href="/hosts">
+            <a className="text-gray-700 hover:text-gray-900 font-medium transition">Find Hosts</a>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/">
-              <a className="text-gray-700 hover:text-gray-900 font-medium">Home</a>
-            </Link>
-            <Link href="/hosts">
-              <a className="text-gray-700 hover:text-gray-900 font-medium">Find Hosts</a>
-            </Link>
-
-            {!isLoading && (
-              <>
-                {user ? (
-                  <>
-                    <Link href="/host-dashboard">
-                      <a className="text-gray-700 hover:text-gray-900 font-medium">Host Dashboard</a>
-                    </Link>
-                    <Link href="/guest-dashboard">
-                      <a className="text-gray-700 hover:text-gray-900 font-medium">My Bookings</a>
-                    </Link>
-                    <Link href="/admin">
-                      <a className="text-gray-700 hover:text-gray-900 font-medium">Admin</a>
-                    </Link>
-                  </>
-                ) : (
-                  <>
+          {!isLoading && (
+            <>
+              {user ? (
+                <>
+                  <Link href="/host-dashboard">
+                    <a className="text-gray-700 hover:text-gray-900 font-medium transition">Host Dashboard</a>
+                  </Link>
+                  <Link href="/guest-dashboard">
+                    <a className="text-gray-700 hover:text-gray-900 font-medium transition">My Bookings</a>
+                  </Link>
+                  <Link href="/admin">
+                    <a className="text-gray-700 hover:text-gray-900 font-medium transition">Admin</a>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    className="border-red-600 text-red-600 hover:bg-red-50"
+                    asChild
+                  >
                     <Link href="/host-register">
-                      <a className="text-gray-700 hover:text-gray-900 font-medium">Become a Host</a>
+                      <a>Become a Host</a>
                     </Link>
-                  </>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+                  </Button>
+                </>
+              )}
+            </>
+          )}
         </div>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-2">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6 text-gray-700" />
+          ) : (
+            <Menu className="w-6 h-6 text-gray-700" />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-gray-100 bg-white">
+          <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
             <Link href="/">
-              <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
+              <a
+                onClick={handleMenuClose}
+                className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+              >
+                Home
+              </a>
             </Link>
             <Link href="/hosts">
-              <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Find Hosts</a>
+              <a
+                onClick={handleMenuClose}
+                className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+              >
+                Find Hosts
+              </a>
             </Link>
 
             {!isLoading && (
@@ -83,27 +103,48 @@ export function Navbar() {
                 {user ? (
                   <>
                     <Link href="/host-dashboard">
-                      <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Host Dashboard</a>
+                      <a
+                        onClick={handleMenuClose}
+                        className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+                      >
+                        Host Dashboard
+                      </a>
                     </Link>
                     <Link href="/guest-dashboard">
-                      <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Bookings</a>
+                      <a
+                        onClick={handleMenuClose}
+                        className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+                      >
+                        My Bookings
+                      </a>
                     </Link>
                     <Link href="/admin">
-                      <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Admin</a>
+                      <a
+                        onClick={handleMenuClose}
+                        className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+                      >
+                        Admin
+                      </a>
                     </Link>
                   </>
                 ) : (
                   <>
-                    <Link href="/host-register">
-                      <a className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Become a Host</a>
-                    </Link>
+                    <Button
+                      variant="outline"
+                      className="border-red-600 text-red-600 hover:bg-red-50 w-full justify-start"
+                      asChild
+                    >
+                      <Link href="/host-register">
+                        <a onClick={handleMenuClose}>Become a Host</a>
+                      </Link>
+                    </Button>
                   </>
                 )}
               </>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 }

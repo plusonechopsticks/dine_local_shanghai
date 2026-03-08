@@ -1193,3 +1193,9 @@
 - [ ] Hide full nav on mobile, show hamburger menu
 - [ ] Test navigation on various mobile screen sizes
 - [ ] Ensure all links work correctly in mobile menu
+
+## Current Session Fixes
+- [x] Unify hamburger menu design across all pages (use HomeHeader style in Navbar)
+- [x] Fix "About Us" button to scroll to top of About Us section title
+- [x] Standardize Section 2 font sizes to text-base (smaller)
+- [x] Convert About Us gallery to horizontal scrolling carousel on mobile
