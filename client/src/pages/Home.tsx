@@ -38,16 +38,20 @@ export default function Home() {
 
   const heroSlides = [
     {
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
-      alt: "Host laughing while serving dumplings",
+      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/311292277a75050e5280deb62d18ad37_1741789a.png",
+      alt: "Host and guest toasting with authentic home-cooked meal",
     },
     {
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
-      alt: "Bird's eye view of crowded dinner table",
+      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/cdd3f0ddce48007e5e6fb050f470cbf3_cd7ab9b4.jpeg",
+      alt: "Guests enjoying a home-cooked meal together",
     },
     {
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&h=600&fit=crop",
-      alt: "Guest and host sharing a moment",
+      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_9266_47731ff3.jpeg",
+      alt: "Friends sharing dumplings and authentic home cooking",
+    },
+    {
+      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_0940(1)_1cd227a6.jpeg",
+      alt: "Guests toasting and celebrating at a local home dinner",
     },
   ];
 
