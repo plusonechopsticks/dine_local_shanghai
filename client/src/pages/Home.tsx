@@ -81,20 +81,20 @@ export default function Home() {
       category: "Booking & Logistics",
       items: [
         {
-          question: "How do I book a home dining experience with +1 Chopsticks?",
-          answer: "Booking a home dining experience with +1 Chopsticks is simple and straightforward. First, browse our curated selection of verified local hosts on our platform and explore their unique dining experiences. Each host profile includes their culinary style, menu specialties, and guest reviews. Once you've found a host that interests you, select your preferred date and time from their available calendar. Complete your booking by confirming any dietary needs or preferences. Our team will then confirm your reservation and handle all coordination to ensure a seamless authentic home dining experience in Shanghai.",
+          question: "How do I book?",
+          answer: "Browse our hosts, select one that appeals to you, and submit a booking request. The host will review your request and confirm availability.",
         },
         {
-          question: "How long does a home dining experience last?",
-          answer: "Home dining experiences typically last 2-3 hours, depending on the host and the menu. Most experiences are scheduled for lunch or dinner. The experience includes time for preparation, cooking, dining, and conversation. Some guests enjoy arriving earlier to help with cooking if they're interested in learning more about the preparation process. The flexible duration allows you to fully immerse yourself in the experience without feeling rushed.",
+          question: "How long does the experience last?",
+          answer: "Most experiences last around 2-3 hours, including the meal and conversation with your host.",
         },
         {
-          question: "What does home dining cost per person?",
-          answer: "Home dining experiences with +1 Chopsticks generally range from CNY 200-500 per person. We believe in making authentic cultural experiences affordable while maintaining high quality standards. Our pricing reflects the quality of the meal, the host's expertise, and the overall experience provided. Hosts who set premium prices typically offer premium menus featuring specialty dishes, rare ingredients, or unique culinary experiences. Each host sets their own pricing, allowing for flexibility and variety in what we offer.",
+          question: "What does it cost for a guest?",
+          answer: "Prices vary by host, typically ranging from 200-500 RMB per person. You'll see the exact price when viewing each host's profile.",
         },
         {
-          question: "What if my schedule changes and I need to cancel or reschedule?",
-          answer: "We understand that travel plans can change. Experiences can be cancelled for free up to 7 days in advance to respect our hosts' preparation time. This gives hosts adequate notice to adjust their preparations and potentially accept other guests. If you need to cancel or reschedule within this timeframe, please email us at plusonechopsticks@gmail.com with your booking details. Our team will work with you to find alternative dates or process your cancellation promptly.",
+          question: "What if my schedule changes at the last minute?",
+          answer: "You can cancel your booking up to 7 days before the scheduled meal for a full refund. This gives hosts enough time to prepare!",
         },
       ],
     },
@@ -102,16 +102,16 @@ export default function Home() {
       category: "Concerns & Safety",
       items: [
         {
-          question: "Do I have to speak Chinese to participate in home dining?",
-          answer: "Not at all! You don't need to speak Chinese to enjoy a home dining experience. We do require that at least one guest in your party speaks conversational English, and we ensure that at least one person in the host household also speaks English. Beyond that, an open mind and a warm smile bridge most communication gaps! We will also prepare a 'dining cheat sheet' for you to learn about dining etiquettes and customs in China, helping ensure a smooth and enjoyable experience for everyone involved.",
+          question: "Do I have to speak Chinese?",
+          answer: "No! Many of our hosts speak English and other languages. You can filter hosts by language when browsing.",
         },
         {
-          question: "Is the food safe and high quality? How are hosts verified?",
-          answer: "Food safety and quality are our top priorities. All hosts are thoroughly verified by our platform before they can accept guests. Our verification process includes assessing language capability, culinary expertise, food preparation and hygiene standards, and home environment quality. We conduct background checks and review guest feedback to ensure every host meets our high standards. We only work with hosts who demonstrate a genuine passion for cooking and meeting new people, ensuring you have an authentic, safe, and delicious experience.",
+          question: "Is the food safe and high quality?",
+          answer: "All our hosts are verified for food safety, hygiene, and quality. We take your health and experience seriously.",
         },
         {
-          question: "Who are the hosts? Can they accommodate dietary needs and restrictions?",
-          answer: "Our diverse community of hosts includes families, couples, and young professionals who share a passion for cooking and meeting new people. Whether you're a solo traveler, a couple, or a family, we'll match you with the perfect host based on your preferences and interests. No matter whose table you join, one thing is guaranteed: we will carefully accommodate all your dietary needs and restrictions to ensure a perfect meal. From vegetarian and vegan diets to allergies and religious dietary requirements, our hosts are experienced in adapting menus to create an inclusive dining experience for every guest.",
+          question: "Who are the hosts? Can they cater my dietary needs?",
+          answer: "Our hosts are local families, couples, and professionals passionate about cooking. Most can accommodate dietary restrictions—just mention them when booking.",
         },
       ],
     },
@@ -119,12 +119,12 @@ export default function Home() {
       category: "For Hosts & Partners",
       items: [
         {
-          question: "I'd love to host. What should I do to become a +1 Chopsticks host?",
-          answer: "We're always looking for passionate hosts who love cooking and meeting new people! If you're interested in becoming a +1 Chopsticks host, we'd love to hear from you. Hosts can set their own prices and keep 80% of earnings, with flexible hosting schedules and no minimum commitments. You'll have the opportunity to meet travelers from around the world, share your culinary passion, and build meaningful cross-cultural connections. Contact us at plusonechopsticks@gmail.com to learn more about the hosting application process and requirements.",
+          question: "I'd love to host. What should I do?",
+          answer: "Click 'Become a Host' to start the application process. We'll guide you through verification and setup.",
         },
         {
-          question: "I'm a travel agent or tour operator. Can we work together?",
-          answer: "Yes! We're interested in partnerships with travel agents, tour operators, and travel companies. Home dining experiences make excellent additions to travel packages and can enhance the value of your offerings to clients. We offer competitive rates for group bookings and can work with you to customize experiences for your travelers. If you're interested in partnering with +1 Chopsticks, please reach out to us at plusonechopsticks@gmail.com to discuss collaboration opportunities.",
+          question: "I'm a Travel Agent. Can we work together?",
+          answer: "Yes! We offer special rates for travel agencies and tour operators. Email us at plusonechopsticks@gmail.com to discuss partnership opportunities.",
         },
       ],
     },
@@ -189,7 +189,7 @@ export default function Home() {
         {/* Overlay Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight md:leading-relaxed tracking-tight">
-            Authentic Home Dining in Shanghai - Better Than Any Restaurant
+            The best restaurant in Shanghai isn't a restaurant.
           </h1>
           <h2 className="text-2xl md:text-3xl font-medium mb-10 leading-relaxed">
             Experience authentic, home-cooked meals hosted by locals.
@@ -227,7 +227,7 @@ export default function Home() {
               {/* First Headline and Paragraph */}
               <div className="border-l-4 border-red-600 pl-6">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Ni Hao! We are +1 Chopsticks - Home Dining Experiences in Shanghai
+                  Ni Hao! We are +1 chopsticks
                 </h2>
                 <p className="text-base text-gray-700 leading-relaxed mb-3">
                   In Chinese culture, when we invite friends over for dinner, we say "加一双筷子"—it's simply adding a pair of chopsticks.
@@ -317,7 +317,7 @@ export default function Home() {
       <section id="featured-hosts" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Meet Local Hosts in Shanghai - Verified Home Dining Hosts
+            Meet your new friends in Shanghai.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -377,7 +377,7 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 id="how-it-works" className="text-3xl font-bold text-center text-gray-900 mb-12">
-            How Home Dining Works - 4 Simple Steps to Book Your Experience
+            How It Works
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -425,7 +425,7 @@ export default function Home() {
       {/* Section 5: About Us - Founder's Story */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 id="about-us" className="text-4xl font-bold text-center text-gray-900 mb-16">Authentic Home-Cooked Meals - Shanghai Food at Local Family Homes</h2>
+          <h2 id="about-us" className="text-4xl font-bold text-center text-gray-900 mb-16">About Us</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             {/* Left: Images */}
             <div className="space-y-4">
@@ -494,7 +494,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">Hi, I'm Steven</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm the founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have studied in the US, married my beautiful wife from Tianjin, and lived and worked in China for more than 15 years. As an expert in cultural travel experiences and authentic dining, I'm passionate about creating genuine connections between travelers and local communities through home-cooked meals.
+                  I'm the founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have studied in the US, married my beautiful wife from Tianjin, and lived and worked in China for more than 15 years.
                 </p>
               </div>
 
@@ -502,7 +502,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">My Travels & Passion</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm an avid traveler who's been to <strong>60+ countries and all seven continents</strong>. I enjoyed making new friends everywhere, and have shared numerous stories at my friends' homes from Copenhagen, Denmark to Fes, Morocco; from Nairobi, Kenya to San Paolo in Brazil. These became my favourite travel memories! This global experience directly informs how we design authentic home dining experiences.
+                  I'm an avid traveler who's been to 60+ countries and all seven continents. I enjoyed making new friends everywhere, and have shared numerous stories at my friends' homes from Copenhagen, Denmark to Fes, Morocco; from Nairobi, Kenya to San Paolo in Brazil. These became my favourite travel memories!
                 </p>
               </div>
 
@@ -510,7 +510,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">Bridging Cultures</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm the author of the "China vs the West" series as I'm deeply passionate about bridging the gap, debunking the myths, and showing the authentic China to everyone. In the era of AI, I believe real connection is the new luxury. Meeting a new friend at home is going to foster better connections than at a restaurant! My work has established me as a thought leader in cultural travel and cross-cultural communication.
+                  I'm the author of the "China vs the West" series as I'm deeply passionate about bridging the gap, debunking the myths, and showing the authentic China to everyone. In the era of AI, I believe real connection is the new luxury. Meeting a new friend at home is going to foster better connections than at a restaurant!
                 </p>
               </div>
 
@@ -518,7 +518,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">Professional Background</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm a proud <strong>MBA graduate from Kellogg School of Management, Northwestern University</strong>. I'm a seasoned management consultant and a serial entrepreneur in the hospitality and education sectors. My professional expertise in business strategy, hospitality operations, and community building ensures that +1 Chopsticks operates with the highest standards of quality and safety. My track record of success in multiple ventures demonstrates my ability to create meaningful, sustainable businesses that prioritize both guest and host experiences.
+                  I'm a proud MBA graduate from Kellogg School of Management, Northwestern University. I'm a seasoned management consultant and a serial entrepreneur in the hospitality and education sectors.
                 </p>
               </div>
             </div>
