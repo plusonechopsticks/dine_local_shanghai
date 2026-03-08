@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { HomeHeader } from "@/components/HomeHeader";
 import {
   Accordion,
   AccordionContent,
@@ -161,42 +162,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header & Navigation */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <button
-            onClick={() => setLocation("/")}
-            className="flex items-center gap-2 hover:opacity-80 transition"
-          >
-            <span className="text-2xl">🥢</span>
-            <span className="text-xl font-bold">+1 Chopsticks</span>
-          </button>
-
-          <nav className="flex items-center gap-8">
-            <button
-              onClick={() => setLocation("/hosts")}
-              className="text-gray-700 hover:text-gray-900 font-medium transition"
-            >
-              Browse Hosts
-            </button>
-            <a href="#how-it-works" className="text-gray-700 hover:text-gray-900 font-medium transition">
-              How it Works
-            </a>
-            <a href="#about-us" className="text-gray-700 hover:text-gray-900 font-medium transition">
-              About Us
-            </a>
-            <Button
-              variant="outline"
-              className="border-red-600 text-red-600 hover:bg-red-50"
-              onClick={() => setLocation("/become-host")}
-            >
-              Become a Host
-            </Button>
-          </nav>
-        </div>
-      </header>
+      <HomeHeader />
 
       {/* Section 1: Hero Carousel */}
-      <section className="relative h-[500px] overflow-hidden bg-gray-900">
+      <section id="hero" className="relative h-[500px] overflow-hidden bg-gray-900">
         {/* Carousel */}
         <div className="relative h-full">
           {heroSlides.map((slide, idx) => (
@@ -295,6 +264,16 @@ export default function Home() {
                 <p className="text-lg text-gray-700 leading-relaxed">
                   All hosts are verified by the platform on the readiness to host, including language capability, food style and hygiene, and home environment.
                 </p>
+              </div>
+
+              {/* Find your Table Button */}
+              <div className="pt-4">
+                <Button
+                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold text-lg"
+                  onClick={() => setLocation("/hosts")}
+                >
+                  Find your Table
+                </Button>
               </div>
             </div>
 
