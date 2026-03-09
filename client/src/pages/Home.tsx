@@ -170,7 +170,7 @@ export default function Home() {
       <HomeHeader />
 
       {/* Section 1: Hero Carousel */}
-      <section id="hero" className="relative h-[500px] overflow-hidden bg-gray-900">
+      <section id="hero" className="relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden bg-gray-900">
         {/* Carousel */}
         <div className="relative h-full">
           {heroSlides.map((slide, idx) => (
