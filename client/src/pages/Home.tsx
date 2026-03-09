@@ -382,7 +382,7 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 id="how-it-works" className="text-3xl font-bold text-center text-gray-900 mb-12">
-            How It Works
+            🥢 How +1 Chopsticks Works
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
