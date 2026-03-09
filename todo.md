@@ -1231,3 +1231,8 @@
 - [x] Optimize hero carousel images with descriptive alt tags
 - [x] Optimize featured hosts images with descriptive alt tags
 - [x] Optimize About Us gallery images with descriptive alt tags
+
+
+## FAQ Navigation - Completed ✅
+- [x] Add FAQ link to desktop navigation bar
+- [x] Add FAQ link to mobile hamburger menu
