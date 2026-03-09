@@ -1244,3 +1244,8 @@
 
 ## UI Updates - Completed ✅
 - [x] Change "How It Works" title to "How +1 Chopsticks Works" with chopsticks emoji
+
+
+## SEO - Robots.txt & Sitemap Enhancement - Completed ✅
+- [x] Add sitemap references to robots.txt
+- [x] Create GEO-sitemap for Shanghai locations

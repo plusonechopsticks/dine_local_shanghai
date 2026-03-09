@@ -38,5 +38,10 @@ Disallow: /
 User-agent: MojeekBot
 Disallow: /
 
-# Sitemap location
+# Sitemap locations
+# Main XML sitemap with all pages
 Sitemap: https://plus1chopsticks.com/sitemap.xml
+
+# GEO-sitemap for location-based SEO
+# Includes Shanghai districts and specific coordinates for better local search visibility
+Sitemap: https://plus1chopsticks.com/geo-sitemap.xml
