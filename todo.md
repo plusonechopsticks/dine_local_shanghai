@@ -1236,3 +1236,7 @@
 ## FAQ Navigation - Completed ✅
 - [x] Add FAQ link to desktop navigation bar
 - [x] Add FAQ link to mobile hamburger menu
+
+
+## AI SEO - HowTo Schema - Completed ✅
+- [x] Implement HowTo JSON-LD schema for "How It Works" section
