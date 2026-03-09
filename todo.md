@@ -1249,3 +1249,8 @@
 ## SEO - Robots.txt & Sitemap Enhancement - Completed ✅
 - [x] Add sitemap references to robots.txt
 - [x] Create GEO-sitemap for Shanghai locations
+
+
+## SEO - FAQ Rich Results Enhancement - Completed ✅
+- [x] Enhance FAQPage schema with location-based questions
+- [x] Add GEO-specific FAQ questions for Shanghai dining
