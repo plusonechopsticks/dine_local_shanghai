@@ -1216,3 +1216,9 @@
 - [x] Update contact email from hello@plus1chopsticks.com to plusonechopsticks@gmail.com (3 instances: FAQ answer, contact link, contact text)
 
 - [x] Make featured host card images clickable to navigate to host detail page
+
+## Current Session - Hero Carousel Fix
+- [x] Fix hero carousel image cropping - faces are truncated at the top
+
+- [ ] Update FAQ section with new 9 questions and answers (user-provided content)
+- [ ] Update FAQPage JSON-LD schema to match new FAQ content
