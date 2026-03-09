@@ -76,25 +76,26 @@ export default function Home() {
     },
   ];
 
+  // FAQ Section - scroll target
   const faqItems = [
     {
       category: "Booking & Logistics",
       items: [
         {
-          question: "How do I book?",
-          answer: "Browse our hosts, select one that appeals to you, and submit a booking request. The host will review your request and confirm availability.",
+          question: "How do I book a local dining experience in Shanghai?",
+          answer: "Browse our +1 Chopsticks hosts, select a profile, and submit a booking request. Your host will confirm availability for your selected date.",
         },
         {
-          question: "How long does the experience last?",
-          answer: "Most experiences last around 2-3 hours, including the meal and conversation with your host.",
+          question: "How long does a typical home-cooked meal experience last?",
+          answer: "Most Shanghai home dining sessions last 2-3 hours, covering both the meal and local cultural conversation.",
         },
         {
-          question: "What does it cost for a guest?",
-          answer: "Prices vary by host, typically ranging from 200-500 RMB per person. You'll see the exact price when viewing each host's profile.",
+          question: "What is the cost per person for a guest?",
+          answer: "Prices are set by the host, typically ranging from 200-500 RMB. Exact pricing is listed on each individual host profile.",
         },
         {
-          question: "What if my schedule changes at the last minute?",
-          answer: "You can cancel your booking up to 7 days before the scheduled meal for a full refund. This gives hosts enough time to prepare!",
+          question: "What is your booking cancellation policy?",
+          answer: "Cancel up to 7 days before your scheduled meal for a full refund. This ensures our local hosts have adequate preparation time.",
         },
       ],
     },
@@ -102,16 +103,20 @@ export default function Home() {
       category: "Concerns & Safety",
       items: [
         {
-          question: "Do I have to speak Chinese?",
-          answer: "No! Many of our hosts speak English and other languages. You can filter hosts by language when browsing.",
+          question: "Do I need to speak Chinese to dine with a host?",
+          answer: "No. Many +1 Chopsticks hosts are multilingual; you can filter for English-speaking hosts when browsing.",
         },
         {
-          question: "Is the food safe and high quality?",
-          answer: "All our hosts are verified for food safety, hygiene, and quality. We take your health and experience seriously.",
+          question: "Are the meals and hosts verified for food safety?",
+          answer: "Yes. All +1 Chopsticks hosts undergo a verification process for hygiene, food safety, and ingredient quality to ensure a premium experience.",
         },
         {
-          question: "Who are the hosts? Can they cater my dietary needs?",
-          answer: "Our hosts are local families, couples, and professionals passionate about cooking. Most can accommodate dietary restrictions—just mention them when booking.",
+          question: "Can hosts accommodate dietary restrictions or allergies?",
+          answer: "Yes. Our +1 Chopsticks hosts are local families and professionals who can usually cater to special dietary needs if mentioned during booking.",
+        },
+        {
+          question: "Are these dinners suitable for solo travelers in Shanghai?",
+          answer: "Yes! Many of our hosts are families, couples, and young professionals who enjoy hosting individuals. Most +1 Chopsticks hosts accommodate solo dining, making it a safe and authentic way for solo travelers to experience Shanghainese hospitality and home-cooked meals.",
         },
       ],
     },
@@ -119,12 +124,12 @@ export default function Home() {
       category: "For Hosts & Partners",
       items: [
         {
-          question: "I'd love to host. What should I do?",
-          answer: "Click 'Become a Host' to start the application process. We'll guide you through verification and setup.",
+          question: "How do I apply to become a +1 Chopsticks host in Shanghai?",
+          answer: "Click 'Become a Host' to start our application and verification process. We welcome locals passionate about authentic cooking.",
         },
         {
-          question: "I'm a Travel Agent. Can we work together?",
-          answer: "Yes! We offer special rates for travel agencies and tour operators. Email us at plusonechopsticks@gmail.com to discuss partnership opportunities.",
+          question: "Do you offer partnerships for travel agents?",
+          answer: "Yes. We provide special rates for travel agencies and tour operators. Contact plusonechopsticks@gmail.com for partnership details.",
         },
       ],
     },

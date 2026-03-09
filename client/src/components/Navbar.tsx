@@ -102,6 +102,12 @@ export function Navbar() {
           >
             About Us
           </button>
+          <button
+            onClick={() => handleSectionClick("faq")}
+            className="text-gray-700 hover:text-gray-900 font-medium transition cursor-pointer"
+          >
+            FAQ
+          </button>
 
           {!isLoading && (
             <>
@@ -167,6 +173,12 @@ export function Navbar() {
               className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition cursor-pointer"
             >
               About Us
+            </button>
+            <button
+              onClick={() => handleSectionClick("faq")}
+              className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition cursor-pointer"
+            >
+              FAQ
             </button>
 
             {!isLoading && (

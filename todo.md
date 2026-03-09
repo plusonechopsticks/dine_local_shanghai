@@ -1220,5 +1220,8 @@
 ## Current Session - Hero Carousel Fix
 - [x] Fix hero carousel image cropping - faces are truncated at the top
 
-- [ ] Update FAQ section with new 9 questions and answers (user-provided content)
-- [ ] Update FAQPage JSON-LD schema to match new FAQ content
+- [x] Update FAQ section with new 9 questions and answers (user-provided content)
+- [x] Update FAQPage JSON-LD schema to match new FAQ content
+- [x] Add solo traveler FAQ question
+- [x] Add FAQ link to navigation bar (desktop and mobile)
+- [x] Update FAQPage JSON-LD schema with solo traveler question
