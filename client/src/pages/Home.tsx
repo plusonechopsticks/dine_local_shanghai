@@ -317,7 +317,7 @@ export default function Home() {
       <section id="featured-hosts" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Meet your new friends in Shanghai.
+            Meet your new friends in Shanghai - Authentic Home Dining Experiences
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -494,7 +494,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">Hi, I'm Steven</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm the founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have studied in the US, married my beautiful wife from Tianjin, and lived and worked in China for more than 15 years.
+                  I'm the founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have studied in the US, married my beautiful wife from Tianjin, and lived and worked in China for more than 15 years. As an expert in cultural travel experiences and authentic dining, I'm passionate about creating genuine connections between travelers and local communities through home-cooked meals.
                 </p>
               </div>
 
@@ -502,7 +502,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">My Travels & Passion</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm an avid traveler who's been to 60+ countries and all seven continents. I enjoyed making new friends everywhere, and have shared numerous stories at my friends' homes from Copenhagen, Denmark to Fes, Morocco; from Nairobi, Kenya to San Paolo in Brazil. These became my favourite travel memories!
+                  I'm an avid traveler who's been to <strong>60+ countries and all seven continents</strong>. I enjoyed making new friends everywhere, and have shared numerous stories at my friends' homes from Copenhagen, Denmark to Fes, Morocco; from Nairobi, Kenya to San Paolo in Brazil. These became my favourite travel memories! This global experience directly informs how we design authentic home dining experiences.
                 </p>
               </div>
 
@@ -518,7 +518,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">Professional Background</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm a proud MBA graduate from Kellogg School of Management, Northwestern University. I'm a seasoned management consultant and a serial entrepreneur in the hospitality and education sectors.
+                  I'm a proud <strong>MBA graduate from Kellogg School of Management, Northwestern University</strong>. I'm a seasoned management consultant and a serial entrepreneur in the hospitality and education sectors. My professional expertise in business strategy, hospitality operations, and community building ensures that +1 Chopsticks operates with the highest standards of quality and safety. My track record of success in multiple ventures demonstrates my ability to create meaningful, sustainable businesses that prioritize both guest and host experiences.
                 </p>
               </div>
             </div>
