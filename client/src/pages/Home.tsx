@@ -335,7 +335,7 @@ export default function Home() {
                 <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
                   <img
                     src={host.profilePhotoUrl || ""}
-                    alt={host.hostName}
+                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'Shanghai'} for authentic home dining experience`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
@@ -438,7 +438,7 @@ export default function Home() {
               <div className="relative overflow-hidden rounded-lg shadow-lg group cursor-pointer">
                 <img
                   src={IMAGES.aboutMain}
-                  alt="Steven completing 7th continent"
+                  alt="Steven completing the 7th continent with penguin - founder of +1 Chopsticks authentic home dining in Shanghai"
                   className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
@@ -459,7 +459,7 @@ export default function Home() {
                   >
                     <img
                       src={item.image}
-                      alt={item.caption}
+                      alt={`${item.caption} - authentic home dining experience with local family`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
@@ -480,7 +480,7 @@ export default function Home() {
                   >
                     <img
                       src={item.image}
-                      alt={item.caption}
+                      alt={`${item.caption} - authentic home dining experience with local family`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
