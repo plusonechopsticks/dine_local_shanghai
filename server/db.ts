@@ -28,7 +28,13 @@ import {
   InsertHostAccount,
   hostAvailabilityBlocks,
   HostAvailabilityBlock,
-  InsertHostAvailabilityBlock
+  InsertHostAvailabilityBlock,
+  blogPosts,
+  BlogPost,
+  InsertBlogPost,
+  blogPostViews,
+  BlogPostView,
+  InsertBlogPostView
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 

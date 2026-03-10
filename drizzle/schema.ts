@@ -362,3 +362,60 @@ export const hostAvailabilityBlocks = mysqlTable("host_availability_blocks", {
 
 export type HostAvailabilityBlock = typeof hostAvailabilityBlocks.$inferSelect;
 export type InsertHostAvailabilityBlock = typeof hostAvailabilityBlocks.$inferInsert;
+
+
+/**
+ * Blog posts - articles about travel, food, culture, and entrepreneurship
+ */
+export const blogPosts = mysqlTable("blog_posts", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Content
+  title: varchar("title", { length: 500 }).notNull(),
+  slug: varchar("slug", { length: 500 }).notNull().unique(), // URL-friendly identifier
+  excerpt: text("excerpt").notNull(), // Short summary for listings
+  content: text("content").notNull(), // Full HTML content
+  
+  // Metadata
+  authorName: varchar("authorName", { length: 255 }).notNull().default("Dai Bin"),
+  featuredImageUrl: varchar("featuredImageUrl", { length: 500 }), // Hero image for blog post
+  
+  // Categorization
+  tags: json("tags").$type<string[]>().notNull(), // e.g., ["entrepreneurship", "travel-policy", "food-culture"]
+  
+  // SEO
+  metaDescription: text("metaDescription"), // For search results
+  metaKeywords: varchar("metaKeywords", { length: 500 }), // For search engines
+  
+  // Status
+  published: boolean("published").default(false), // Draft or published
+  publishedAt: timestamp("publishedAt"), // When the post was published
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+/**
+ * Blog post views - track analytics for blog posts
+ */
+export const blogPostViews = mysqlTable("blog_post_views", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Link to blog post
+  blogPostId: int("blogPostId").notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
+  
+  // View tracking
+  viewCount: int("viewCount").default(0).notNull(),
+  lastViewedAt: timestamp("lastViewedAt"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogPostView = typeof blogPostViews.$inferSelect;
+export type InsertBlogPostView = typeof blogPostViews.$inferInsert;

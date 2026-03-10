@@ -1260,3 +1260,20 @@
 - [x] Implement scheduled guest reminder emails (48 hours before experience)
 - [x] Add reminder scheduling logic to Stripe payment webhook
 - [x] Test scheduled email delivery
+
+
+## Blog Feature - In Progress
+- [ ] Create blog database schema and data models
+- [ ] Build blog listing page
+- [ ] Build blog post detail page
+- [ ] Refine first article to incorporate home dining experiences
+- [ ] Create first blog post and test
+
+
+## Blog Feature - Completed ✅
+- [x] Complete blog database schema and migrations
+- [x] Add blog router to tRPC
+- [x] Register blog routes in App.tsx
+- [x] Create first blog post in database
+- [x] Test blog pages
+- [x] Deploy blog feature

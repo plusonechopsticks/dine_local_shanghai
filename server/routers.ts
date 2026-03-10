@@ -24,6 +24,7 @@ import {
 import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
+import { blogRouter } from "./routers/blog";
 import { bookings, hostListings } from "../drizzle/schema";
 import { sql, eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
@@ -1201,5 +1202,6 @@ export const appRouter = router({
         return data;
       }),
   }),
+  blog: blogRouter,
 });
 export type AppRouter = typeof appRouter;
