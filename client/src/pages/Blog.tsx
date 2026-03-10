@@ -93,7 +93,8 @@ export default function Blog() {
                       />
                     </div>
                   )}
-                  <CardHeader>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="line-clamp-2 mb-3">{post.title}</CardTitle>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {(() => {
                         const tags = typeof post.tags === 'string' ? JSON.parse(post.tags) : post.tags;
@@ -104,7 +105,6 @@ export default function Blog() {
                         )) : null;
                       })()}
                     </div>
-                    <CardTitle className="line-clamp-2">{post.title}</CardTitle>
                     <CardDescription className="text-xs">
                       {post.publishedAt
                         ? new Date(post.publishedAt).toLocaleDateString("en-US", {
