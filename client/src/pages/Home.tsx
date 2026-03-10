@@ -727,6 +727,14 @@ export default function Home() {
                     FAQ
                   </a>
                 </li>
+                <li>
+                  <button
+                    onClick={() => setLocation("/blog")}
+                    className="hover:text-white transition"
+                  >
+                    Blog
+                  </button>
+                </li>
               </ul>
             </div>
 

@@ -74,6 +74,12 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
           >
             FAQ
           </a>
+          <button
+            onClick={() => handleNavClick("/blog")}
+            className="text-gray-700 hover:text-gray-900 font-medium transition"
+          >
+            Blog
+          </button>
           <Button
             variant="outline"
             className="border-red-600 text-red-600 hover:bg-red-50"
@@ -137,6 +143,12 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
             >
               FAQ
             </a>
+            <button
+              onClick={() => handleNavClick("/blog")}
+              className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+            >
+              Blog
+            </button>
             <Button
               variant="outline"
               className="border-red-600 text-red-600 hover:bg-red-50 w-full"

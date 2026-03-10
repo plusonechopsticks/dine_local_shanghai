@@ -1277,3 +1277,10 @@
 - [x] Create first blog post in database
 - [x] Test blog pages
 - [x] Deploy blog feature
+
+
+## Navigation - Add Blog Links - Completed ✅
+- [x] Add Blog link to HomeHeader desktop navigation
+- [x] Add Blog link to HomeHeader mobile menu
+- [x] Add Blog link to Navbar component
+- [x] Add Blog link to footer/bottom menu

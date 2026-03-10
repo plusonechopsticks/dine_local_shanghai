@@ -108,6 +108,12 @@ export function Navbar() {
           >
             FAQ
           </button>
+          <button
+            onClick={() => handleNavClick("/blog")}
+            className="text-gray-700 hover:text-gray-900 font-medium transition"
+          >
+            Blog
+          </button>
 
           {!isLoading && (
             <>
@@ -179,6 +185,12 @@ export function Navbar() {
               className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition cursor-pointer"
             >
               FAQ
+            </button>
+            <button
+              onClick={() => handleNavClick("/blog")}
+              className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
+            >
+              Blog
             </button>
 
             {!isLoading && (
