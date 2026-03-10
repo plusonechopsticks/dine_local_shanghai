@@ -11,6 +11,7 @@ import { serveStatic, setupVite } from "./vite";
 import multer from "multer";
 import { storagePut } from "../storage";
 import { nanoid } from "nanoid";
+import { scheduleGuestReminder } from "../reminder-scheduler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -168,6 +169,24 @@ async function startServer(): Promise<any> {
                     });
                     
                     console.log(`[Webhook] Sent host notification email to ${bookingWithHost.hostListing.email}`);
+                    
+                    // Schedule reminder email 48 hours before the experience
+                    try {
+                      await scheduleGuestReminder(
+                        bookingWithHost.id,
+                        bookingWithHost.requestedDate,
+                        bookingWithHost.guestName,
+                        bookingWithHost.guestEmail,
+                        bookingWithHost.hostListing.hostName,
+                        bookingWithHost.mealType as "lunch" | "dinner",
+                        bookingWithHost.numberOfGuests,
+                        bookingWithHost.hostListing.cuisineStyle
+                      );
+                      console.log(`[Webhook] Scheduled reminder email for booking ${bookingWithHost.id}`);
+                    } catch (reminderError: any) {
+                      console.error("[Webhook] Error scheduling reminder email:", reminderError);
+                      // Don't fail the webhook if reminder scheduling fails
+                    }
                   } catch (hostEmailError: any) {
                     console.error("[Webhook] Error sending host notification email:", hostEmailError);
                     // Don't fail the webhook if host email fails

@@ -152,6 +152,9 @@ export const bookings = mysqlTable("bookings", {
   paymentDate: timestamp("paymentDate"),
   stripeSessionId: varchar("stripeSessionId", { length: 255 }),
   
+  // Reminders
+  reminderEmailSent: boolean("reminderEmailSent").default(false), // Track if 48-hour reminder was sent
+  
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

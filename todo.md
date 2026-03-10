@@ -1254,3 +1254,9 @@
 ## SEO - FAQ Rich Results Enhancement - Completed ✅
 - [x] Enhance FAQPage schema with location-based questions
 - [x] Add GEO-specific FAQ questions for Shanghai dining
+
+
+## Email Automation - Scheduled Reminders - Completed ✅
+- [x] Implement scheduled guest reminder emails (48 hours before experience)
+- [x] Add reminder scheduling logic to Stripe payment webhook
+- [x] Test scheduled email delivery
