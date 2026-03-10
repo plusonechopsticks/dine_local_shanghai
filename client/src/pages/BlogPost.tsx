@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft } from "lucide-react";
+import { Streamdown } from "streamdown";
 
 export default function BlogPost() {
   const [location, navigate] = useLocation();
@@ -90,21 +91,20 @@ export default function BlogPost() {
           </header>
 
           {/* Content */}
-          <div
-            className="prose prose-sm max-w-none dark:prose-invert
+          <div className="prose prose-sm max-w-none dark:prose-invert
               prose-headings:text-foreground prose-headings:font-bold
-              prose-p:text-foreground prose-p:leading-relaxed
+              prose-p:text-foreground prose-p:leading-relaxed prose-p:my-4
               prose-a:text-primary prose-a:underline
               prose-strong:text-foreground prose-strong:font-semibold
               prose-em:text-foreground prose-em:italic
               prose-code:text-foreground prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded
               prose-pre:bg-muted prose-pre:text-foreground
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic
-              prose-ul:text-foreground prose-ol:text-foreground
-              prose-li:text-foreground
-              prose-img:rounded-lg prose-img:shadow-md"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+              prose-ul:text-foreground prose-ol:text-foreground prose-ul:my-4 prose-ol:my-4
+              prose-li:text-foreground prose-li:my-2
+              prose-img:rounded-lg prose-img:shadow-md">
+            <Streamdown>{post.content}</Streamdown>
+          </div>
 
           {/* Footer */}
           <footer className="mt-12 pt-8 border-t">
