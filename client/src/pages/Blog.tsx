@@ -20,7 +20,10 @@ export default function Blog() {
   const filteredPosts = useMemo(() => {
     if (!posts) return [];
     if (!selectedTag) return posts;
-    return posts.filter((post: any) => post.tags.includes(selectedTag));
+    return posts.filter((post: any) => {
+      const tags = typeof post.tags === 'string' ? JSON.parse(post.tags) : post.tags;
+      return Array.isArray(tags) && tags.includes(selectedTag);
+    });
   }, [posts, selectedTag]);
 
   return (
@@ -92,11 +95,14 @@ export default function Blog() {
                   )}
                   <CardHeader>
                     <div className="flex flex-wrap gap-2 mb-2">
-                      {post.tags.map((tag: string) => (
-                        <Badge key={tag} variant="secondary" className="text-xs capitalize">
-                          {tag.replace("-", " ")}
-                        </Badge>
-                      ))}
+                      {(() => {
+                        const tags = typeof post.tags === 'string' ? JSON.parse(post.tags) : post.tags;
+                        return Array.isArray(tags) ? tags.map((tag: string) => (
+                          <Badge key={tag} variant="secondary" className="text-xs capitalize">
+                            {tag.replace("-", " ")}
+                          </Badge>
+                        )) : null;
+                      })()}
                     </div>
                     <CardTitle className="line-clamp-2">{post.title}</CardTitle>
                     <CardDescription className="text-xs">
