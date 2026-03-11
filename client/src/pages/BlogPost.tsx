@@ -1,8 +1,9 @@
 import { useLocation } from "wouter";
+import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eye } from "lucide-react";
 import { Streamdown } from "streamdown";
 
 export default function BlogPost() {
@@ -14,6 +15,21 @@ export default function BlogPost() {
     { slug: slug || "" },
     { enabled: !!slug }
   ) as any;
+
+  // Track view count
+  const { data: viewCount } = trpc.blog.getViewCount.useQuery(
+    { blogPostId: post?.id || 0 },
+    { enabled: !!post?.id }
+  ) as any;
+
+  const recordViewMutation = trpc.blog.recordView.useMutation();
+
+  // Record view when post loads
+  useEffect(() => {
+    if (post?.id) {
+      recordViewMutation.mutate({ blogPostId: post.id });
+    }
+  }, [post?.id]);
 
   if (isLoading) {
     return (
@@ -75,7 +91,7 @@ export default function BlogPost() {
 
             <h1 className="text-4xl font-bold text-foreground mb-4">{post.title}</h1>
 
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
               <span>By {post.authorName}</span>
               <span>•</span>
               <span>
@@ -86,6 +102,11 @@ export default function BlogPost() {
                       day: "numeric",
                     })
                   : ""}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                {viewCount || 0} {viewCount === 1 ? "view" : "views"}
               </span>
             </div>
           </header>

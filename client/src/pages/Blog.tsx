@@ -4,8 +4,23 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Eye } from "lucide-react";
 
 const TAGS = ["entrepreneurship", "travel-policy", "food-culture"];
+
+function BlogPostViewCount({ postId }: { postId: number }) {
+  const { data: viewCount } = trpc.blog.getViewCount.useQuery(
+    { blogPostId: postId },
+    { enabled: !!postId }
+  ) as any;
+
+  return (
+    <span className="flex items-center gap-1">
+      <Eye className="w-3 h-3" />
+      {viewCount || 0}
+    </span>
+  );
+}
 
 export default function Blog() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -105,15 +120,18 @@ export default function Blog() {
                         )) : null;
                       })()}
                     </div>
-                    <CardDescription className="text-xs">
-                      {post.publishedAt
-                        ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : ""}
-                    </CardDescription>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        {post.publishedAt
+                          ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : ""}
+                      </span>
+                      <BlogPostViewCount postId={post.id} />
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground line-clamp-3">
