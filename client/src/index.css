@@ -1087,3 +1087,283 @@ section {
     height: 300px;
   }
 }
+
+
+/* ===== PHASE 4: ANIMATIONS & INTERACTIONS ===== */
+
+/* Scroll Reveal Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scroll reveal utility classes */
+.scroll-reveal {
+  animation: slideInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.scroll-reveal.visible {
+  animation: slideInUp 0.8s ease-out forwards;
+  opacity: 1;
+}
+
+.scroll-reveal-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.scroll-reveal-left.visible {
+  animation: slideInLeft 0.8s ease-out forwards;
+  opacity: 1;
+}
+
+.scroll-reveal-right {
+  animation: slideInRight 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.scroll-reveal-right.visible {
+  animation: slideInRight 0.8s ease-out forwards;
+  opacity: 1;
+}
+
+/* Enhanced Host Card Hover Effects */
+.host-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.host-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 40px rgba(28, 20, 8, 0.15);
+}
+
+.host-card-image img {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.host-card:hover .host-card-image img {
+  transform: scale(1.12);
+}
+
+/* Button Hover Effects */
+button:not(:disabled),
+a.btn-browse {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+button:not(:disabled):hover,
+a.btn-browse:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(192, 57, 43, 0.2);
+}
+
+button:not(:disabled):active,
+a.btn-browse:active {
+  transform: translateY(-1px);
+}
+
+/* FAQ Accordion Enhanced Animation */
+.faq-question {
+  transition: all 0.2s ease-out;
+}
+
+.faq-question:hover {
+  color: var(--red);
+}
+
+.faq-chevron {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease-out, border-color 0.3s ease-out;
+}
+
+.faq-item.open .faq-chevron {
+  animation: rotateChevron 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes rotateChevron {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+.faq-answer {
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out;
+}
+
+/* Navigation Blur on Scroll */
+nav {
+  transition: all 0.3s ease-out;
+  background: rgba(246, 241, 231, 0.95);
+  backdrop-filter: blur(0px);
+}
+
+nav.scrolled {
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(28, 20, 8, 0.08);
+}
+
+/* Section Borders Animation */
+section {
+  position: relative;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c0392b, transparent);
+  opacity: 0.3;
+}
+
+/* Smooth Page Transitions */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+html {
+  animation: pageEnter 0.4s ease-out;
+}
+
+/* Link Hover Effects */
+a {
+  transition: color 0.3s ease-out;
+}
+
+a:hover {
+  color: #c0392b;
+}
+
+/* Input Focus Effects */
+input,
+textarea {
+  transition: all 0.3s ease-out;
+  border-color: #e0d5c7;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+  outline: none;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Step connector animation */
+.step-connector {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(192, 57, 43, 0);
+  }
+}
+
+/* Pillar hover effects */
+.phil-pillar {
+  transition: all 0.3s ease-out;
+}
+
+.phil-pillar:hover {
+  background: var(--paper-mid);
+  transform: translateY(-4px);
+}
+
+/* Benefit item hover */
+.benefit {
+  transition: all 0.3s ease-out;
+}
+
+.benefit:hover {
+  transform: translateX(4px);
+}
+
+.benefit-icon {
+  transition: all 0.3s ease-out;
+}
+
+.benefit:hover .benefit-icon {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--paper);
+}
+
+/* How step hover */
+.how-step {
+  transition: all 0.3s ease-out;
+}
+
+.how-step:hover {
+  background: var(--paper-mid);
+}
+
+/* Founder section hover effects */
+.founder-img-main,
+.founder-img-secondary {
+  transition: all 0.4s ease-out;
+}
+
+.founder-section:hover .founder-img-main {
+  transform: translateY(-8px);
+}
+
+.founder-section:hover .founder-img-secondary {
+  transform: translateY(8px);
+}
