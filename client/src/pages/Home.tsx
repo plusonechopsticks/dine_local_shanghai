@@ -230,55 +230,54 @@ export default function Home() {
             Meet your new friends in Shanghai - Authentic Home Dining Experiences
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="hosts-grid">
             {featuredHosts.map((host) => (
               <div
                 key={host.id}
-                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+                className="host-card"
+                onClick={() => setLocation(`/hosts/${host.id}`)}
               >
-                {/* Image */}
-                <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
+                <div className="host-card-image">
                   <img
                     src={host.profilePhotoUrl || ""}
-                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'Shanghai'} for authentic home dining experience`}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'Shanghai'}`}
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
-                    ✓ Verified
-                  </div>
+                  <div className="host-card-overlay" />
+                  <div className="host-card-verified">✓ Verified</div>
+                  {host.introVideoUrl && (
+                    <div className="host-card-video" title="Video available">
+                      ▶
+                    </div>
+                  )}
                 </div>
 
-                {/* Card Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200 line-clamp-2">
-                    {host.hostName}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{host.cuisineStyle || "🍽️ Local Cuisine"}</p>
-                  <p className="text-sm text-gray-700 mb-4 line-clamp-3">
-                    {truncateSummary(host.bio, 120)}
-                  </p>
-                  <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover:shadow-lg"
-                    onClick={() => setLocation(`/hosts/${host.id}`)}
-                  >
-                    View Details
-                  </Button>
+                <div className="host-card-body">
+                  <div className="host-card-cuisine">{host.cuisineStyle || "Local Cuisine"}</div>
+                  <h3 className="host-card-name">{host.hostName}</h3>
+                  <div className="host-card-district">📍 {host.district || "Shanghai"}</div>
+                  <p className="host-card-hook">{truncateSummary(host.bio, 100)}</p>
+                  <div className="host-card-footer">
+                    <span className="host-card-price">View Profile →</span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <Button
-              variant="outline"
-              className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-3 text-lg"
-              onClick={() => {
+          <div className="browse-all-strip">
+            <span className="browse-all-text">Discover <strong>all {allHosts.length} hosts</strong></span>
+            <a
+              href="#"
+              className="btn-browse"
+              onClick={(e) => {
+                e.preventDefault();
                 setLocation("/hosts");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
             >
               Browse All Hosts
-            </Button>
+            </a>
           </div>
         </div>
       </section>
