@@ -427,6 +427,166 @@ export default function Home() {
         </div>
       </section>
 
+
+      {/* Section 5: FAQ Accordions */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg shadow-lg p-8">
+            <h2 id="faq" className="text-3xl font-bold text-center text-gray-900 mb-2">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-center text-gray-600 mb-8">
+              Everything you need to know about dining with us
+            </p>
+
+            <div className="space-y-6">
+              {faqItems.map((category, categoryIdx) => (
+                <div key={categoryIdx}>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    {category.category}
+                  </h3>
+                  <Accordion type="single" collapsible className="space-y-2">
+                    {category.items.map((item, itemIdx) => (
+                      <AccordionItem
+                        key={`${categoryIdx}-${itemIdx}`}
+                        value={`${categoryIdx}-${itemIdx}`}
+                      >
+                        <AccordionTrigger className="text-gray-900 hover:text-red-600 transition">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-gray-700">
+                          {item.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-gray-200 text-center">
+              <p className="text-gray-700 mb-3">Still have questions?</p>
+              <a
+                href="mailto:plusonechopsticks@gmail.com"
+                className="text-red-600 hover:text-red-700 font-semibold transition"
+              >
+                Contact us at plusonechopsticks@gmail.com
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: Become a Host */}
+      <section id="become-host" className="py-16 bg-gradient-to-r from-red-600 to-red-700">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
+            <div className="text-white">
+              <h2 className="text-4xl font-bold mb-6">
+                Love cooking and meeting new people?
+              </h2>
+              <p className="text-xl mb-8 leading-relaxed">
+                Join our community of hosts and share your culinary passion with travelers from around the world. It's easy, rewarding, and fun.
+              </p>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-4 group">
+                  <span className="text-3xl">💰</span>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Earn income doing what you love</h3>
+                    <p className="text-red-100">Set your own prices and keep 80% of earnings</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 group">
+                  <span className="text-3xl">🌍</span>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Meet travelers from around the world</h3>
+                    <p className="text-red-100">Build meaningful connections and share your culture</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 group">
+                  <span className="text-3xl">🏠</span>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Flexible hosting schedule</h3>
+                    <p className="text-red-100">Host when it works for you, no minimum commitments</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+                onClick={() => setLocation("/host-register")}
+              >
+                Become a Host
+              </Button>
+            </div>
+
+            {/* Right: Image */}
+            <div className="relative order-1 md:order-2">
+              <div className="rounded-lg overflow-hidden shadow-2xl group cursor-pointer">
+                <img
+                  src="https://res.cloudinary.com/drxfcfayd/image/upload/v1771181302/plus1chopsticks/hosts/sookie/sookie_profile.jpg"
+                  alt="Sookie hosting"
+                  className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 7: Newsletter */}
+      <section className="py-16 bg-gradient-to-r from-red-50 to-orange-50">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">
+              Coming to China this year?
+            </h2>
+            <p className="text-lg text-gray-700 mb-8">
+              Get updates on new hosts. No spam, just delicious updates.
+            </p>
+
+            <div className="flex gap-3">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-red-600"
+              />
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold disabled:opacity-50"
+                disabled={isSubmittingNewsletter || !newsletterEmail}
+                onClick={async () => {
+                  if (!newsletterEmail) {
+                    toast.error("Please enter your email");
+                    return;
+                  }
+                  setIsSubmittingNewsletter(true);
+                  try {
+                    await submitInterestMutation.mutateAsync({
+                      name: "Newsletter Subscriber",
+                      email: newsletterEmail,
+                      interestType: "traveler",
+                      message: "Subscribed to newsletter",
+                    });
+                    toast.success("Thanks for subscribing!");
+                    setNewsletterEmail("");
+                  } catch (error) {
+                    toast.error("Failed to subscribe. Please try again.");
+                  } finally {
+                    setIsSubmittingNewsletter(false);
+                  }
+                }}
+              >
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Section 5: About Us - Founder's Story */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -526,165 +686,6 @@ export default function Home() {
                   I'm a proud <strong>MBA graduate from Kellogg School of Management, Northwestern University</strong>. I'm a seasoned management consultant and a serial entrepreneur in the hospitality and education sectors. My professional expertise in business strategy, hospitality operations, and community building ensures that +1 Chopsticks operates with the highest standards of quality and safety. My track record of success in multiple ventures demonstrates my ability to create meaningful, sustainable businesses that prioritize both guest and host experiences.
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 6: FAQ Accordions */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="bg-gradient-to-b from-gray-50 to-white rounded-lg shadow-lg p-8">
-            <h2 id="faq" className="text-3xl font-bold text-center text-gray-900 mb-2">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-center text-gray-600 mb-8">
-              Everything you need to know about dining with us
-            </p>
-
-            <div className="space-y-6">
-              {faqItems.map((category, categoryIdx) => (
-                <div key={categoryIdx}>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    {category.category}
-                  </h3>
-                  <Accordion type="single" collapsible className="space-y-2">
-                    {category.items.map((item, itemIdx) => (
-                      <AccordionItem
-                        key={`${categoryIdx}-${itemIdx}`}
-                        value={`${categoryIdx}-${itemIdx}`}
-                      >
-                        <AccordionTrigger className="text-gray-900 hover:text-red-600 transition">
-                          {item.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-gray-700">
-                          {item.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-              <p className="text-gray-700 mb-3">Still have questions?</p>
-              <a
-                href="mailto:plusonechopsticks@gmail.com"
-                className="text-red-600 hover:text-red-700 font-semibold transition"
-              >
-                Contact us at plusonechopsticks@gmail.com
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 7: Become a Host */}
-      <section id="become-host" className="py-16 bg-gradient-to-r from-red-600 to-red-700">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Left: Text */}
-            <div className="text-white">
-              <h2 className="text-4xl font-bold mb-6">
-                Love cooking and meeting new people?
-              </h2>
-              <p className="text-xl mb-8 leading-relaxed">
-                Join our community of hosts and share your culinary passion with travelers from around the world. It's easy, rewarding, and fun.
-              </p>
-
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-4 group">
-                  <span className="text-3xl">💰</span>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">Earn income doing what you love</h3>
-                    <p className="text-red-100">Set your own prices and keep 80% of earnings</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 group">
-                  <span className="text-3xl">🌍</span>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">Meet travelers from around the world</h3>
-                    <p className="text-red-100">Build meaningful connections and share your culture</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 group">
-                  <span className="text-3xl">🏠</span>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-1">Flexible hosting schedule</h3>
-                    <p className="text-red-100">Host when it works for you, no minimum commitments</p>
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
-                onClick={() => setLocation("/host-register")}
-              >
-                Become a Host
-              </Button>
-            </div>
-
-            {/* Right: Image */}
-            <div className="relative order-1 md:order-2">
-              <div className="rounded-lg overflow-hidden shadow-2xl group cursor-pointer">
-                <img
-                  src="https://res.cloudinary.com/drxfcfayd/image/upload/v1771181302/plus1chopsticks/hosts/sookie/sookie_profile.jpg"
-                  alt="Sookie hosting"
-                  className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 8: Newsletter */}
-      <section className="py-16 bg-gradient-to-r from-red-50 to-orange-50">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">
-              Coming to China this year?
-            </h2>
-            <p className="text-lg text-gray-700 mb-8">
-              Get updates on new hosts. No spam, just delicious updates.
-            </p>
-
-            <div className="flex gap-3">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-red-600"
-              />
-              <Button
-                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold disabled:opacity-50"
-                disabled={isSubmittingNewsletter || !newsletterEmail}
-                onClick={async () => {
-                  if (!newsletterEmail) {
-                    toast.error("Please enter your email");
-                    return;
-                  }
-                  setIsSubmittingNewsletter(true);
-                  try {
-                    await submitInterestMutation.mutateAsync({
-                      name: "Newsletter Subscriber",
-                      email: newsletterEmail,
-                      interestType: "traveler",
-                      message: "Subscribed to newsletter",
-                    });
-                    toast.success("Thanks for subscribing!");
-                    setNewsletterEmail("");
-                  } catch (error) {
-                    toast.error("Failed to subscribe. Please try again.");
-                  } finally {
-                    setIsSubmittingNewsletter(false);
-                  }
-                }}
-              >
-                Subscribe
-              </Button>
             </div>
           </div>
         </div>

@@ -4,19 +4,19 @@ This document provides a complete map of all sections in `client/src/pages/Home.
 
 ---
 
-## Section Overview (Updated: Featured Hosts moved before Brand Story)
+## Section Overview (Updated: About Us moved after Newsletter)
 
-| Section # | Name | Lines | Purpose |
-|-----------|------|-------|---------|
-| 1 | Hero Carousel | 172-224 | Full-screen hero with image carousel and CTA |
-| 2 | Featured Hosts Gallery | 226-284 | **MOVED UP** - Featured hosts 3-column grid + "Browse All" CTA |
-| 3 | Brand Identity & Story | 286-379 | **MOVED DOWN** - Brand intro text + feature cards (🍲🏠💬) |
-| 4 | How It Works | 381-429 | 4-step process visualization |
-| 5 | About Us | 430-533 | Steven's bio with gallery images |
-| 6 | FAQ Accordions | 534-582 | Collapsible Q&A organized by category |
-| 7 | Become a Host | 583-641 | Red CTA section with host benefits |
-| 8 | Newsletter | 642-691 | Email subscription form |
-| 9 | Footer | 692-778 | Navigation links + copyright |
+| Section # | Name | Purpose |
+|-----------|------|----------|
+| 1 | Hero Carousel | Full-screen hero with image carousel and CTA |
+| 2 | Featured Hosts Gallery | **MOVED UP** - Featured hosts 3-column grid + "Browse All" CTA |
+| 3 | Brand Identity & Story | **MOVED DOWN** - Brand intro text + feature cards (🍲🏠💬) |
+| 4 | How It Works | 4-step process visualization |
+| 5 | FAQ Accordions | Collapsible Q&A organized by category |
+| 6 | Become a Host | Red CTA section with host benefits |
+| 7 | Newsletter | Email subscription form |
+| 8 | About Us | **MOVED DOWN** - Steven's bio with gallery images |
+| 9 | Footer | Navigation links + copyright |
 
 ---
 
