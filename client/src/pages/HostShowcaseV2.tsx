@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, MapPin, Globe, Users, Clock, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
@@ -8,6 +8,9 @@ export default function HostShowcaseV2() {
   const [, setLocation] = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [menuExpanded, setMenuExpanded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [autoRotateIndex, setAutoRotateIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [bookingData, setBookingData] = useState({
     guestName: '',
     guestEmail: '',
@@ -20,16 +23,25 @@ export default function HostShowcaseV2() {
   // Fetch host data from database (using ID 1 for Norika & Steven)
   const { data: host, isLoading } = trpc.host.get.useQuery({ id: 1 });
 
-  // Limit menu description to max 5 lines
-  const limitMenuDescription = (description: string): string => {
+  // Auto-rotate food photos every 5 seconds
+  useEffect(() => {
+    const foodPhotos = host?.foodPhotoUrls || [];
+    if (foodPhotos.length === 0) return;
+
+    const interval = setInterval(() => {
+      setAutoRotateIndex((prev) => (prev + 1) % foodPhotos.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [host?.foodPhotoUrls]);
+
+  // Extract menu description (first part only, before dishes)
+  const getMenuDescriptionOnly = (description: string): string => {
     if (!description) return description;
     
-    const lines = description.split('\n').filter(line => line.trim());
-    if (lines.length <= 5) {
-      return description;
-    }
-    
-    return lines.slice(0, 5).join('\n');
+    // Split by common dish section markers
+    const parts = description.split(/(?:Meat & Poultry|Vegetarian|Dessert|To Start|Main|Finish|---)/i);
+    return parts[0].trim();
   };
 
   // Extract dishes from menu description (one dish per line)
@@ -54,6 +66,13 @@ export default function HostShowcaseV2() {
     return dishes;
   };
 
+  const handlePlayVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.play();
+      setVideoPlaying(true);
+    }
+  };
+
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
@@ -62,11 +81,11 @@ export default function HostShowcaseV2() {
     return <div className="flex items-center justify-center h-screen">Host not found</div>;
   }
 
-    const foodPhotos = host.foodPhotoUrls || [];
+  const foodPhotos = host.foodPhotoUrls || [];
   const maxGuests = host.maxGuests || 2;
   const pricePerPerson = host.pricePerPerson || 250;
   const menuDescription = host.menuDescription || '';
-  const limitedMenuDescription = limitMenuDescription(menuDescription);
+  const menuDescriptionOnly = getMenuDescriptionOnly(menuDescription);
   const dishes = extractDishes(menuDescription);
 
   const calculatePrice = () => {
@@ -100,278 +119,336 @@ export default function HostShowcaseV2() {
   };
 
   return (
-    <div className="bg-[#faf8f3] text-[#1a1410]">
+    <div className="bg-[#faf8f3] min-h-screen">
       {/* Navigation */}
-      <nav className="sticky top-0 z-40 bg-white border-b border-[#e8e3d8]">
-        <div className="container flex items-center justify-between h-16 px-6">
-          <button
-            onClick={() => setLocation('/hosts')}
-            className="flex items-center gap-2 text-sm font-medium text-[#1a1410] hover:opacity-70"
-          >
-            <ChevronLeft size={18} />
-            All Hosts
+      <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-[#e8e3d8]">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <button onClick={() => setLocation('/')} className="flex items-center gap-2 hover:opacity-70">
+            <span className="text-2xl">🥢</span>
+            <span className="font-serif text-lg">+1 Chopsticks</span>
           </button>
-          <div className="text-lg font-serif">+1 Chopsticks</div>
+          <button onClick={() => setLocation('/all-hosts')} className="text-sm text-gray-600 hover:text-gray-900">
+            ← All Hosts
+          </button>
           <div className="w-20" />
         </div>
       </nav>
 
-      {/* Hero Video Section */}
-      <section className="relative w-full h-screen bg-gradient-to-b from-gray-800 to-gray-900 overflow-hidden">
+      {/* Hero Video Section - 100vh */}
+      <section className="relative w-full h-screen bg-gradient-to-b from-gray-800 to-gray-900 overflow-hidden mt-16">
         {/* Video background */}
         {host.introVideoUrl ? (
-          <video
-            src={host.introVideoUrl}
-            autoPlay
-            muted
-            loop
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gray-800" />
-        )}
-
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/40" />
-
-        {/* Play button overlay (shown when no video) */}
-        {!host.introVideoUrl && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-            <div className="w-20 h-20 rounded-full border-2 border-white/60 flex items-center justify-center mb-4">
-              <div className="w-0 h-0 border-l-8 border-l-white border-t-5 border-t-transparent border-b-5 border-b-transparent ml-1" />
-            </div>
-            <p className="text-white text-sm tracking-widest uppercase">
-              Watch {host.hostName}
-            </p>
-          </div>
-        )}
-
-        {/* Bottom-left info overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-12 z-20">
-          <div className="max-w-2xl">
-            <p className="text-white/70 text-sm tracking-widest uppercase mb-2">
-              {host.fullAddress || host.district} · Shanghai
-            </p>
-            <h1 className="text-white text-5xl font-serif mb-2">{host.hostName}</h1>
-            <p className="text-white/80 text-sm tracking-widest uppercase mb-6">
-              {host.cuisineStyle} · Since 2022
-            </p>
-
-            {/* Info badges */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-sm">
-                <div className="text-xs text-white/70 uppercase tracking-wider">Price</div>
-                <div className="text-lg text-white font-serif">¥{calculatePrice()} / person</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-sm">
-                <div className="text-xs text-white/70 uppercase tracking-wider">Max Guests</div>
-                <div className="text-lg text-white font-serif">{maxGuests}</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-sm">
-                <div className="text-xs text-white/70 uppercase tracking-wider">Duration</div>
-                <div className="text-lg text-white font-serif">{host.mealDurationMinutes || 180} mins</div>
-              </div>
-            </div>
-
-            {/* Language and feature tags */}
-            <div className="flex flex-wrap gap-2">
-              {host.languages && typeof host.languages === 'string' && host.languages.split(',').map((lang: string) => (
-                <span key={lang.trim()} className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
-                  {lang.trim()}
-                </span>
-              ))}
-              {host.languages && Array.isArray(host.languages) && host.languages.map((lang: string) => (
-                <span key={lang} className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
-                  {lang}
-                </span>
-              ))}
-              {host.hasPets && (
-                <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
-                  {host.petDetails || 'Pets'}
-                </span>
-              )}
-              {host.kidsFriendly && (
-                <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
-                  Kids Friendly
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Menu Section */}
-      <section className="bg-[#faf8f3] py-16">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 gap-12">
-          {/* Left: Menu description and sample menu */}
-          <div>
-            <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">The Menu</p>
-            <h2 className="text-4xl font-serif mb-2">
-              {host.cuisineStyle}
-            </h2>
-            
-            {/* Menu description - max 5 lines */}
-            <p className="text-gray-600 text-sm mb-8 leading-relaxed whitespace-pre-wrap">
-              {limitedMenuDescription}
-            </p>
-
-            {/* Sample Menu expandable section */}
-            <div>
+          <>
+            <video
+              ref={videoRef}
+              src={host.introVideoUrl}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+            {/* Play button overlay */}
+            {!videoPlaying && (
               <button
-                onClick={() => setMenuExpanded(!menuExpanded)}
-                className="flex items-center gap-2 text-[#c44536] text-sm tracking-widest uppercase hover:opacity-70 transition"
+                onClick={handlePlayVideo}
+                className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-all z-10"
               >
-                <span>{menuExpanded ? '▼' : '▶'}</span>
-                <span>Sample Menu</span>
-              </button>
-              
-              {menuExpanded && dishes.length > 0 && (
-                <div className="mt-4 space-y-2 ml-6 border-l border-gray-300 pl-4">
-                  {dishes.map((dish, idx) => (
-                    <div key={idx}>
-                      <p className="font-serif text-sm text-gray-700">{dish}</p>
-                    </div>
-                  ))}
+                <div className="bg-white/90 rounded-full p-6 hover:bg-white transition-all">
+                  <Play className="w-12 h-12 text-[#c44536] fill-[#c44536]" />
                 </div>
-              )}
+              </button>
+            )}
+          </>
+        ) : (
+          <div className="w-full h-full bg-gradient-to-b from-gray-800 to-gray-900" />
+        )}
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
+
+        {/* Host info at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+          <p className="text-sm opacity-80 mb-2">{host.location}</p>
+          <h1 className="text-5xl font-serif mb-2">{host.name}</h1>
+          <p className="text-lg opacity-90">{host.cuisineStyle} · Since {host.yearStarted}</p>
+
+          {/* Info badges */}
+          <div className="flex flex-wrap gap-4 mt-6">
+            <div className="bg-white/20 backdrop-blur px-4 py-2 rounded">
+              <p className="text-xs opacity-80">Price</p>
+              <p className="text-lg font-serif">¥{pricePerPerson} / person</p>
+            </div>
+            <div className="bg-white/20 backdrop-blur px-4 py-2 rounded">
+              <p className="text-xs opacity-80">Max Guests</p>
+              <p className="text-lg font-serif">{maxGuests}</p>
+            </div>
+            <div className="bg-white/20 backdrop-blur px-4 py-2 rounded">
+              <p className="text-xs opacity-80">Duration</p>
+              <p className="text-lg font-serif">{host.durationMinutes} mins</p>
             </div>
           </div>
 
-          {/* Right: Photo carousel */}
-          <div className="relative">
-            <div className="aspect-square bg-gray-300 rounded-sm overflow-hidden mb-4">
-              {foodPhotos && foodPhotos.length > 0 ? (
-                <img
-                  src={foodPhotos[currentImageIndex]}
-                  alt="Food"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  No photos
-                </div>
-              )}
-            </div>
-
-            {/* Carousel controls */}
-            {foodPhotos && foodPhotos.length > 1 && (
+          {/* Languages and features */}
+          <div className="flex flex-wrap gap-2 mt-6">
+            {host.languages && typeof host.languages === 'string' && host.languages.split(',').map((lang) => (
+              <span key={lang} className="bg-white/20 backdrop-blur px-3 py-1 rounded text-sm">
+                {lang.trim()}
+              </span>
+            ))}
+            {host.householdFeatures && (
               <>
-                <div className="flex justify-center gap-2 mb-4">
-                  {foodPhotos.map((_: string, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`w-2 h-2 rounded-full transition ${
-                        idx === currentImageIndex ? 'bg-[#1a1410]' : 'bg-gray-400'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <div className="flex justify-between">
-                  <button onClick={prevImage} className="text-gray-600 hover:text-[#1a1410]">
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button onClick={nextImage} className="text-gray-600 hover:text-[#1a1410]">
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
+                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-sm">
+                  {host.householdFeatures}
+                </span>
               </>
             )}
+            {host.kidsWelcome && (
+              <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-sm">
+                Kids Friendly
+              </span>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Meet Host */}
-      <section className="bg-white py-16 border-t border-[#e8e3d8]">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 gap-12">
-          {/* Left: Profile photo */}
-          <div>
-            {host.profilePhotoUrl ? (
-              <img
-                src={host.profilePhotoUrl}
-                alt={host.hostName}
-                className="w-full aspect-square object-cover rounded-sm"
-              />
-            ) : (
-              <div className="w-full aspect-square bg-gray-300 rounded-sm flex items-center justify-center">
-                No photo
+      {/* Main content */}
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        {/* Menu Section */}
+        <div className="mb-20">
+          <p className="text-[#c44536] text-sm tracking-widest uppercase mb-4">The Menu</p>
+          <h2 className="text-4xl font-serif mb-8">
+            {host.cuisineStyle}
+          </h2>
+
+          {/* Menu description - first part only */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <p className="text-gray-600 text-base mb-8 leading-relaxed whitespace-pre-wrap">
+                {menuDescriptionOnly}
+              </p>
+
+              {/* Sample Menu expandable section */}
+              <div>
+                <button
+                  onClick={() => setMenuExpanded(!menuExpanded)}
+                  className="flex items-center gap-2 text-[#c44536] font-serif text-lg mb-6 hover:opacity-70 transition"
+                >
+                  <span>{menuExpanded ? '▼' : '▶'}</span>
+                  <span className="uppercase tracking-widest">Sample Menu</span>
+                </button>
+
+                {menuExpanded && (
+                  <div className="space-y-3 pl-6 border-l-2 border-[#c44536]">
+                    {dishes.map((dish, idx) => (
+                      <p key={idx} className="text-gray-700 text-sm">
+                        {dish}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Food photo carousel - 30% smaller */}
+            <div className="relative">
+              {foodPhotos.length > 0 ? (
+                <div className="relative w-full max-w-md mx-auto">
+                  <img
+                    src={foodPhotos[autoRotateIndex]}
+                    alt="Food"
+                    className="w-full h-auto rounded-sm object-cover"
+                  />
+                  
+                  {/* Navigation arrows */}
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-[#1a1410]" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
+                  >
+                    <ChevronRight className="w-5 h-5 text-[#1a1410]" />
+                  </button>
+
+                  {/* Carousel indicators */}
+                  <div className="flex justify-center gap-2 mt-4">
+                    {foodPhotos.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setAutoRotateIndex(idx)}
+                        className={`w-2 h-2 rounded-full transition ${
+                          idx === autoRotateIndex ? 'bg-[#c44536]' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-64 bg-gray-200 rounded-sm flex items-center justify-center">
+                  <span className="text-gray-500">No photos available</span>
+                </div>
+              )}
+            </div>
           </div>
+        </div>
 
-          {/* Right: Bio and details */}
-          <div>
-            <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">About Your Host</p>
-            <h2 className="text-4xl font-serif mb-8">
-              Meet <em className="text-[#c44536]">{host.hostName}</em>
-            </h2>
+        {/* Meet Host Section - with left details panel */}
+        <div className="mb-20">
+          <p className="text-[#c44536] text-sm tracking-widest uppercase mb-4">About Your Host</p>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+            {/* Left side - Host details and photo */}
+            <div className="lg:col-span-1">
+              {/* Host photo - 40% smaller */}
+              {host.profilePhotoUrl && (
+                <img
+                  src={host.profilePhotoUrl}
+                  alt={host.name}
+                  className="w-full h-auto rounded-sm mb-8 object-cover"
+                />
+              )}
 
-            {/* Bio */}
-            {host.bio && (
-              <div className="mb-8">
-                <p className="text-gray-700 leading-relaxed">{host.bio}</p>
+              {/* Details panel */}
+              <div className="space-y-6">
+                {/* Location */}
+                <div className="flex gap-3">
+                  <MapPin className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Location</p>
+                    <p className="text-sm font-serif text-gray-800">{host.location}</p>
+                  </div>
+                </div>
+
+                {/* Languages */}
+                <div className="flex gap-3">
+                  <Globe className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Languages</p>
+                    <p className="text-sm font-serif text-gray-800">
+                      {host.languages || 'Not specified'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Guest count */}
+                <div className="flex gap-3">
+                  <Users className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Guests</p>
+                    <p className="text-sm font-serif text-gray-800">
+                      Up to {maxGuests} guests
+                    </p>
+                  </div>
+                </div>
+
+                {/* Duration */}
+                <div className="flex gap-3">
+                  <Clock className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Duration</p>
+                    <p className="text-sm font-serif text-gray-800">
+                      {host.durationMinutes} minutes
+                    </p>
+                  </div>
+                </div>
+
+                {/* Verified badge */}
+                <div className="flex gap-3 pt-4 border-t border-[#e8e3d8]">
+                  <Check className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
+                  <div>
+                    <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold">
+                      Verified Host
+                    </p>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
 
-            {/* Overseas Experience */}
-            {host.otherHouseholdInfo && (
-              <div className="mb-8">
-                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Overseas Experience</p>
-                <p className="text-gray-700 leading-relaxed">{host.otherHouseholdInfo}</p>
+            {/* Right side - Bio sections */}
+            <div className="lg:col-span-3">
+              <h3 className="text-3xl font-serif mb-8">
+                Meet <span className="text-[#c44536]">{host.name}</span>
+              </h3>
+
+              {/* Bio */}
+              <div className="mb-10">
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  {host.bio}
+                </p>
               </div>
-            )}
 
-            {/* Fun Facts */}
-            {host.householdFeatures && (
-              <div className="mb-8">
-                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Fun Facts</p>
-                <p className="text-gray-700 leading-relaxed">{host.householdFeatures}</p>
-              </div>
-            )}
+              {/* Overseas Experience */}
+              {host.otherHouseholdInfo && (
+                <div className="mb-10">
+                  <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
+                    Overseas Experience
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    {host.otherHouseholdInfo}
+                  </p>
+                </div>
+              )}
 
-            {/* Why I Want to Host */}
-            {host.introVideoUrl && (
-              <div className="mb-8">
-                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Why I Want to Host</p>
+              {/* Fun Facts */}
+              {host.householdFeatures && (
+                <div className="mb-10">
+                  <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
+                    Fun Facts
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    {host.householdFeatures}
+                  </p>
+                </div>
+              )}
+
+              {/* Why I Want to Host */}
+              <div className="mb-10">
+                <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
+                  Why I Want to Host
+                </h4>
                 <p className="text-gray-700 leading-relaxed">
                   We love hosting friends and having nice chats over dinner. Cultural exchange is what we do.
                 </p>
               </div>
-            )}
 
-            {/* Cultural Passions & Beyond Food */}
-            <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Passions & Interests</p>
-              <p className="text-gray-700 leading-relaxed">
-                We are passionate about geography and exploring different cultures through food. Beyond food, we love sports, reading, and connecting with people from different backgrounds.
-              </p>
+              {/* Passions & Interests */}
+              <div>
+                <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
+                  Passions & Interests
+                </h4>
+                <p className="text-gray-700 leading-relaxed">
+                  We are passionate about geography and exploring different cultures through food. Beyond food, we love sports, reading, and connecting with people from different backgrounds.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Things to Know */}
-      <section className="bg-[#faf8f3] py-16 border-t border-[#e8e3d8]">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">Before You Book</p>
+        {/* Things to Know Section */}
+        <div className="mb-20">
+          <p className="text-[#c44536] text-sm tracking-widest uppercase mb-4">Before You Book</p>
           <h2 className="text-4xl font-serif mb-12">Things to Know</h2>
 
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-2 gap-12">
             <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Duration</p>
-              <p className="text-lg">{host.mealDurationMinutes || 180} minutes</p>
+              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Duration</p>
+              <p className="text-lg font-serif text-gray-800">{host.durationMinutes} minutes</p>
             </div>
             <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Group Size</p>
-              <p className="text-lg">Up to {maxGuests} guests</p>
+              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Group Size</p>
+              <p className="text-lg font-serif text-gray-800">Up to {maxGuests} guests</p>
             </div>
             <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Dietary Accommodations</p>
-              <p className="text-lg">{host.dietaryNote || 'Contact host for details'}</p>
+              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Dietary Accommodations</p>
+              <p className="text-lg font-serif text-gray-800">Contact host for details</p>
             </div>
             <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Languages</p>
-              <p className="text-lg">{typeof host.languages === 'string' ? host.languages : Array.isArray(host.languages) ? host.languages.join(', ') : 'English, Mandarin'}</p>
+              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Languages</p>
+              <p className="text-lg font-serif text-gray-800">{host.languages || 'Not specified'}</p>
             </div>
           </div>
         </div>
@@ -383,73 +460,83 @@ export default function HostShowcaseV2() {
         <div className="bg-[#1a1410] text-white p-5 border-b border-[#e8e3d8]">
           <p className="text-xs tracking-widest uppercase opacity-80 mb-2">Book a Seat</p>
           <div className="text-3xl font-serif">
-            ¥{calculatePrice()}
-            <span className="text-xs opacity-80 ml-2">/ person</span>
+            ¥{pricePerPerson}
+            <span className="text-sm opacity-80 ml-2">/ person</span>
           </div>
         </div>
 
         {/* Widget Body */}
         <div className="p-5 space-y-4">
-          {/* Guest Name */}
+          {/* Name */}
           <div>
-            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Name</label>
+            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
+              Name
+            </label>
             <input
               type="text"
+              placeholder="Your name"
               value={bookingData.guestName}
               onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
-              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
-              placeholder="Your name"
+              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Email</label>
+            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
+              Email
+            </label>
             <input
               type="email"
+              placeholder="your@email.com"
               value={bookingData.guestEmail}
               onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
-              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
-              placeholder="your@email.com"
+              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
             />
           </div>
 
           {/* Date */}
           <div>
-            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Date</label>
+            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
+              Date
+            </label>
             <input
               type="date"
               value={bookingData.requestedDate}
               onChange={(e) => setBookingData({ ...bookingData, requestedDate: e.target.value })}
-              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
+              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
             />
           </div>
 
           {/* Meal Type */}
           <div>
-            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Meal</label>
+            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
+              Meal
+            </label>
             <select
               value={bookingData.mealType}
               onChange={(e) => setBookingData({ ...bookingData, mealType: e.target.value as 'lunch' | 'dinner' })}
-              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
+              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
             >
               <option value="lunch">Lunch</option>
               <option value="dinner">Dinner</option>
             </select>
           </div>
 
-          {/* Guests */}
+          {/* Guest Count */}
           <div>
-            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Guests</label>
-            <div className="grid grid-cols-6 gap-2">
-              {Array.from({ length: maxGuests }, (_, i) => i + 1).map((num) => (
+            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-3">
+              Guests
+            </label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4].map((num) => (
                 <button
                   key={num}
                   onClick={() => setBookingData({ ...bookingData, numberOfGuests: num })}
-                  className={`py-2 text-sm rounded-sm border transition ${
+                  className={`flex-1 py-2 rounded text-sm font-semibold transition ${
                     bookingData.numberOfGuests === num
-                      ? 'bg-[#1a1410] text-white border-[#1a1410]'
-                      : 'border-[#e8e3d8] hover:border-[#1a1410]'
+                      ? 'bg-[#1a1410] text-white'
+                      : 'bg-[#e8e3d8] text-[#1a1410] hover:bg-gray-300'
                   }`}
                 >
                   {num}
@@ -458,43 +545,43 @@ export default function HostShowcaseV2() {
             </div>
           </div>
 
-          {/* Special Requests / Dietary Restrictions */}
+          {/* Dietary & Notes */}
           <div>
-            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">
+            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
               Dietary & Notes
             </label>
             <textarea
+              placeholder="Dietary restrictions, allergies, special requests..."
               value={bookingData.specialRequests}
               onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
-              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm resize-none"
-              rows={3}
-              placeholder="Dietary restrictions, allergies, special requests..."
+              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536] resize-none h-20"
             />
           </div>
 
-          {/* Total */}
+          {/* Price calculation */}
           <div className="border-t border-[#e8e3d8] pt-4">
-            <div className="flex justify-between items-baseline mb-4">
-              <span className="text-xs text-gray-600">¥{calculatePrice()} × {bookingData.numberOfGuests} guests</span>
-              <span className="text-2xl font-serif">¥{calculateTotal()}</span>
+            <div className="flex justify-between mb-4">
+              <span className="text-sm text-gray-600">
+                ¥{pricePerPerson} × {bookingData.numberOfGuests} guests
+              </span>
+              <span className="text-lg font-serif text-[#1a1410]">
+                ¥{calculateTotal()}
+              </span>
             </div>
 
-            {/* Book Button */}
+            {/* Action buttons */}
             <button
               onClick={handleBooking}
-              className="w-full bg-[#c44536] text-white py-3 rounded-sm text-xs tracking-widest uppercase font-medium hover:bg-[#a83a2d] transition"
+              className="w-full bg-[#c44536] text-white py-3 rounded font-semibold hover:bg-opacity-90 transition mb-3"
             >
-              Reserve a Seat
+              RESERVE A SEAT
             </button>
-
-            {/* Message Button */}
-            <button className="w-full mt-2 border border-[#e8e3d8] py-2 rounded-sm text-xs tracking-widest uppercase hover:border-[#1a1410] transition">
-              Message First
+            <button className="w-full border border-[#c44536] text-[#c44536] py-3 rounded font-semibold hover:bg-[#faf8f3] transition">
+              MESSAGE FIRST
             </button>
           </div>
         </div>
       </div>
-
 
     </div>
   );
