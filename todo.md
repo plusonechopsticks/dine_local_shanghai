@@ -1330,3 +1330,36 @@
   - [x] Successfully created booking for Alice Chen (3 guests, dinner 4/12/2026, ¥750)
   - [x] Confirmed redirect to booking confirmation page with all details
   - [x] Verified dietary restrictions are captured and displayed
+
+
+## HostDetailPageV2 - Replace Mock Data with Real Database Data (COMPLETE)
+- [x] Update HostDetailPageV2 to fetch real host data from database
+  - [x] Query host listing by ID using tRPC
+  - [x] Replace mock MOCK_HOST data with actual database data
+  - [x] Display real video URL in hero section
+  - [x] Display real food photos in carousel
+  - [x] Display real host profile photo
+  - [x] Display actual host bio and details from database
+- [x] Test with Norika & Steven's actual profile data
+  - [x] Verify all fields populate correctly
+  - [x] Confirm video and photos display properly
+  - [x] Test booking flow with real data
+
+- [x] Update booking widget UI to match reference design
+  - [x] Apply fixed sidebar positioning (260px width, right-aligned)
+  - [x] Implement scroll-driven states (visible-top, hidden)
+  - [x] Redesign form layout to match reference specs
+  - [x] Update styling with proper color palette and typography
+  - [x] Test booking widget with new design
+
+
+## HostDetailPageV2 - Layout Fixes (COMPLETE)
+- [x] Fix booking widget to only show after scrolling past hero video
+  - [x] Hide widget during hero section (don't cover video)
+  - [x] Widget hidden when scroll position = 0
+  - [x] Widget appears after scrolling past 80% of hero height
+  - [x] Conditional rendering prevents widget from being in DOM during hero
+- [x] Reorder page sections
+  - [x] Move "Things to Know" section to after "Meet Host" section
+  - [x] Keep Menu section after hero
+  - [x] Verified layout with real host data
