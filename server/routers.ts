@@ -64,16 +64,26 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         
-        const dateStr = input.requestedDate instanceof Date
-          ? input.requestedDate.toISOString().split('T')[0]
-          : input.requestedDate;
+        // Convert requestedDate to ISO date string (YYYY-MM-DD) for Drizzle
+        let requestedDateStr: string;
+        if (input.requestedDate instanceof Date) {
+          requestedDateStr = input.requestedDate.toISOString().split('T')[0];
+        } else if (typeof input.requestedDate === 'string') {
+          // Already a string, extract date part if it's an ISO string
+          requestedDateStr = input.requestedDate.includes('T') 
+            ? input.requestedDate.split('T')[0]
+            : input.requestedDate;
+        } else {
+          throw new Error('Invalid requestedDate format');
+        }
         
+        // Insert booking using Drizzle ORM
         await db.insert(bookings).values({
           hostListingId: input.hostListingId,
           guestName: input.guestName,
           guestEmail: input.guestEmail,
           guestPhone: input.guestPhone || null,
-          requestedDate: dateStr as any,
+          requestedDate: requestedDateStr as any,
           mealType: input.mealType,
           numberOfGuests: input.numberOfGuests,
           specialRequests: input.specialRequests || null,
@@ -82,7 +92,7 @@ export const appRouter = router({
         
         // Get the last inserted ID
         const lastIdResult: any = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
-        console.log('[Booking Create] Raw result:', lastIdResult);
+        console.log('[Booking Create] Last ID result:', lastIdResult);
         
         // Extract ID - mysql2 returns [rows, fields]
         let bookingId: number | undefined;

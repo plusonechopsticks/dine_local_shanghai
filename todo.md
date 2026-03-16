@@ -1295,5 +1295,14 @@
   - Convert requestedDate to ISO string format (YYYY-MM-DD) for database
   - Added proper type annotations for bookingId
 - [x] Verified fix with vitest tests - all 6 booking tests passing
-- [x] Booking system now working: users can create bookings successfully
-- [x] Next: Test complete booking flow (form → database → payment → webhook)
+- [x] Discovered actual root cause: Database schema mismatch
+  - Drizzle schema had 19 columns (including reminderEmailSent)
+  - Actual database only had 18 columns (missing reminderEmailSent)
+  - Error: Unknown column 'reminderEmailSent' in 'field list'
+- [x] Fixed database schema by adding missing column
+  - ALTER TABLE bookings ADD COLUMN reminderEmailSent BOOLEAN DEFAULT FALSE
+- [x] Booking system now fully working end-to-end
+  - Users can successfully create bookings
+  - Bookings are stored in database
+  - Confirmation page displays booking details correctly
+  - Ready for payment integration testing
