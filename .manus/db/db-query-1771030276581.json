@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE host_listings SET \noverseasExperience = 'I lived in the U.S. for over a decade, which deepened my appreciation for authentic Chinese cooking and gave me a unique perspective on cultural exchange through food.',\nfunFacts = 'Born in Guizhou, I rediscovered my love for Chinese cooking while living abroad. After two years back in China, I''m excited to share the flavors that brought me home.',\nwhyHost = 'Cooking became my love language when I was homesick abroad. Now I want to open my kitchen to travelers and share thoughtfully prepared meals, good conversation, and genuine cultural exchange.',\nculturalPassions = 'I''m passionate about authentic Chinese regional cuisines, especially the dishes that connect us to our roots and tell our personal stories.'\nWHERE id = 90002;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings SET \noverseasExperience = 'I lived in the U.S. for over a decade, which deepened my appreciation for authentic Chinese cooking and gave me a unique perspective on cultural exchange through food.',\nfunFacts = 'Born in Guizhou, I rediscovered my love for Chinese cooking while living abroad. After two years back in China, I''m excited to share the flavors that brought me home.',\nwhyHost = 'Cooking became my love language when I was homesick abroad. Now I want to open my kitchen to travelers and share thoughtfully prepared meals, good conversation, and genuine cultural exchange.',\nculturalPassions = 'I''m passionate about authentic Chinese regional cuisines, especially the dishes that connect us to our roots and tell our personal stories.'\nWHERE id = 90002;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 66
-}

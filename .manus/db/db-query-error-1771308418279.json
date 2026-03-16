@@ -1,8 +1,0 @@
-{
-  "query": "INSERT INTO traveler_interest (email, created_at) VALUES \n('julietchuang@gmail.com', NOW()),\n('nakcbbc@gmail.com', NOW()),\n('Chungkaho@gmail.com', NOW()),\n('fsk.l.james@gmail.com', NOW()),\n('Yinsonchan@gmail.com', NOW()),\n('Norika007@163.com', NOW()),\n('shellwu13@gmail.com', NOW()),\n('ym2758@gmail.com', NOW()),\n('marcotung@gmail.com', NOW()),\n('takii.wong@gmail.com', NOW()),\n('destinyyan17@gmail.com', NOW()),\n('xy1992929@gmail.com', NOW())\nON DUPLICATE KEY UPDATE email=email;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute INSERT INTO traveler_interest (email, created_at) VALUES \n('julietchuang@gmail.com', NOW()),\n('nakcbbc@gmail.com', NOW()),\n('Chungkaho@gmail.com', NOW()),\n('fsk.l.james@gmail.com', NOW()),\n('Yinsonchan@gmail.com', NOW()),\n('Norika007@163.com', NOW()),\n('shellwu13@gmail.com', NOW()),\n('ym2758@gmail.com', NOW()),\n('marcotung@gmail.com', NOW()),\n('takii.wong@gmail.com', NOW()),\n('destinyyan17@gmail.com', NOW()),\n('xy1992929@gmail.com', NOW())\nON DUPLICATE KEY UPDATE email=email;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1146 (42S02) at line 1: Table 'mkw6exsehjcqgwsa6m4fqn.traveler_interest' doesn't exist"
-  ]
-}

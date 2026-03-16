@@ -1,34 +1,5 @@
 {
   "version": "7",
   "dialect": "mysql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1768749066759,
-      "tag": "0000_omniscient_silk_fever",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1768749235586,
-      "tag": "0001_clever_frightful_four",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1769027071887,
-      "tag": "0002_opposite_maverick",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1769288581289,
-      "tag": "0003_kind_jack_murdock",
-      "breakpoints": true
-    }
-  ]
+  "entries": []
 }
