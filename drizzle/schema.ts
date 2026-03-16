@@ -142,7 +142,7 @@ export const bookings = mysqlTable("bookings", {
   specialRequests: text("specialRequests"), // Dietary restrictions, allergies, preferences
   
   // Status
-  bookingStatus: mysqlEnum("bookingStatus", ["pending", "confirmed", "cancelled", "rejected"]).default("pending").notNull(),
+  status: mysqlEnum("bookingStatus", ["pending", "confirmed", "cancelled", "rejected"]).default("pending").notNull(),
   hostNotes: text("hostNotes"), // Host's response/notes
   hidden: boolean("hidden").default(false), // Hide test bookings from admin view
   

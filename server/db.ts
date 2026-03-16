@@ -349,7 +349,7 @@ export async function getAllBookings(): Promise<(Booking & { hostName?: string }
         mealType: bookings.mealType,
         numberOfGuests: bookings.numberOfGuests,
         specialRequests: bookings.specialRequests,
-        bookingStatus: bookings.bookingStatus,
+        status: bookings.status,
         hostNotes: bookings.hostNotes,
         hidden: bookings.hidden,
         paymentStatus: bookings.paymentStatus,

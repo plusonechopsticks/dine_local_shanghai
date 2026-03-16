@@ -26,7 +26,7 @@ describe("Booking Functionality", () => {
       mealType: "dinner" as const,
       numberOfGuests: 2,
       specialRequests: "Vegetarian",
-      bookingStatus: "pending" as const,
+      status: "pending" as const,
       hostNotes: "Confirmed",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -40,10 +40,10 @@ describe("Booking Functionality", () => {
     expect(mockBooking).toHaveProperty("requestedDate");
     expect(mockBooking).toHaveProperty("mealType");
     expect(mockBooking).toHaveProperty("numberOfGuests");
-    expect(mockBooking).toHaveProperty("bookingStatus");
+    expect(mockBooking).toHaveProperty("status");
     expect(mockBooking).toHaveProperty("createdAt");
     expect(mockBooking.mealType).toBe("dinner");
-    expect(mockBooking.bookingStatus).toBe("pending");
+    expect(mockBooking.status).toBe("pending");
   });
 
   it("booking date formatting works correctly", () => {
