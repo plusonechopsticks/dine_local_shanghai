@@ -1488,3 +1488,22 @@
   - [x] Test floating widget stays fixed while scrolling
   - [x] Verify form fields are accessible in floating widget
   - [x] Verify booking buttons work correctly
+
+
+## HostShowcaseV2 - Booking Widget Redesign (COMPLETE) ✅
+- [x] Simplify floating booking widget form
+  - [x] Keep Date, Time, and Guests fields
+  - [x] Add Name, Email, and Dietary Restrictions fields
+  - [x] Remove Meal Type dropdown (replaced with Time dropdown)
+  - [x] Add calendar date picker
+  - [x] Add time dropdown (6:30 PM, 7:00 PM, 7:30 PM, 8:00 PM)
+- [x] Update button text
+  - [x] Add "and pay later" in small italic text below "RESERVE A SEAT"
+  - [x] Match reference design styling
+- [x] Match reference design layout
+  - [x] Cleaner, more compact form
+  - [x] Better spacing and typography
+  - [x] Professional appearance
+  - [x] Test all form fields and interactions
+  - [x] Verify price calculation updates correctly
+  - [x] Verify booking buttons are functional

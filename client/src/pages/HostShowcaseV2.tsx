@@ -508,18 +508,18 @@ export default function HostShowcaseV2() {
             />
           </div>
 
-          {/* Meal Type */}
+          {/* Time */}
           <div>
             <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
-              Meal
+              Time
             </label>
             <select
-              value={bookingData.mealType}
-              onChange={(e) => setBookingData({ ...bookingData, mealType: e.target.value as 'lunch' | 'dinner' })}
               className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
             >
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
+              <option value="6:30pm">6:30 PM</option>
+              <option value="7:00pm">7:00 PM</option>
+              <option value="7:30pm">7:30 PM</option>
+              <option value="8:00pm">8:00 PM</option>
             </select>
           </div>
 
@@ -572,10 +572,11 @@ export default function HostShowcaseV2() {
             {/* Action buttons */}
             <button
               onClick={handleBooking}
-              className="w-full bg-[#c44536] text-white py-3 rounded font-semibold hover:bg-opacity-90 transition mb-3"
+              className="w-full bg-[#c44536] text-white py-3 rounded font-semibold hover:bg-opacity-90 transition mb-1"
             >
               RESERVE A SEAT
             </button>
+            <p className="text-xs italic text-gray-500 text-center mb-3">and pay later</p>
             <button className="w-full border border-[#c44536] text-[#c44536] py-3 rounded font-semibold hover:bg-[#faf8f3] transition">
               MESSAGE FIRST
             </button>
