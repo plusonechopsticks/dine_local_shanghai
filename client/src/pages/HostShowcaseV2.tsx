@@ -506,6 +506,12 @@ export default function HostShowcaseV2() {
               onChange={(e) => setBookingData({ ...bookingData, requestedDate: e.target.value })}
               className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
             />
+            {/* Simple calendar display */}
+            {bookingData.requestedDate && (
+              <div className="mt-2 p-3 bg-[#faf8f3] rounded text-xs text-center text-[#1a1410]">
+                {new Date(bookingData.requestedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </div>
+            )}
           </div>
 
           {/* Time */}
@@ -528,12 +534,12 @@ export default function HostShowcaseV2() {
             <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-3">
               Guests
             </label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4].map((num) => (
+            <div className="flex gap-1 flex-wrap">
+              {[1, 2, 3, 4, 5, 6].map((num) => (
                 <button
                   key={num}
                   onClick={() => setBookingData({ ...bookingData, numberOfGuests: num })}
-                  className={`flex-1 py-2 rounded text-sm font-semibold transition ${
+                  className={`flex-1 min-w-[45px] py-2 rounded text-sm font-semibold transition ${
                     bookingData.numberOfGuests === num
                       ? 'bg-[#1a1410] text-white'
                       : 'bg-[#e8e3d8] text-[#1a1410] hover:bg-gray-300'

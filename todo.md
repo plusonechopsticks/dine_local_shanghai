@@ -1507,3 +1507,27 @@
   - [x] Test all form fields and interactions
   - [x] Verify price calculation updates correctly
   - [x] Verify booking buttons are functional
+
+
+## HostShowcaseV2 - Booking Widget Fixes (COMPLETE) ✅
+- [x] Add visible calendar picker
+  - [x] Display formatted date below date input
+  - [x] Show selected date in readable format
+  - [x] Highlight selected date
+- [x] Extend guest count to 6
+  - [x] Add buttons for 5 and 6 guests
+  - [x] Update price calculation for all guest counts
+  - [x] Responsive button layout with flex-wrap
+- [x] Verify all fields present
+  - [x] Name field (text input)
+  - [x] Email field (email input)
+  - [x] Date picker (with calendar display)
+  - [x] Time dropdown (6:30 PM, 7:00 PM, 7:30 PM, 8:00 PM)
+  - [x] Guests buttons (1-6)
+  - [x] Dietary Restrictions textarea
+- [x] Match reference design layout
+  - [x] Cleaner spacing and typography
+  - [x] Professional appearance
+  - [x] Proper button styling
+  - [x] All form interactions working correctly
+  - [x] Dynamic price calculation verified
