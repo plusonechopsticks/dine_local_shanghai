@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { ChevronLeft, ChevronRight, Play, MapPin, Globe, Users, Clock, Check } from 'lucide-react';
@@ -6,18 +8,19 @@ import { trpc } from '@/lib/trpc';
 
 export default function HostShowcaseV2() {
   const [, setLocation] = useLocation();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [autoRotateIndex, setAutoRotateIndex] = useState(0);
   const [menuExpanded, setMenuExpanded] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const [autoRotateIndex, setAutoRotateIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Booking form state
   const [bookingData, setBookingData] = useState({
+    selectedDate: '',
+    selectedTime: '',
+    numberOfGuests: 2,
     guestName: '',
     guestEmail: '',
-    requestedDate: '',
-    mealType: 'dinner' as 'lunch' | 'dinner',
-    numberOfGuests: 2,
-    specialRequests: '',
+    dietaryRestrictions: '',
   });
 
   // Fetch host data from database (using ID 1 for Norika & Steven)
@@ -38,8 +41,6 @@ export default function HostShowcaseV2() {
   // Extract menu description (first part only, before dishes)
   const getMenuDescriptionOnly = (description: string): string => {
     if (!description) return description;
-    
-    // Split by common dish section markers
     const parts = description.split(/(?:Meat & Poultry|Vegetarian|Dessert|To Start|Main|Finish|---)/i);
     return parts[0].trim();
   };
@@ -47,22 +48,18 @@ export default function HostShowcaseV2() {
   // Extract dishes from menu description (one dish per line)
   const extractDishes = (description: string): string[] => {
     if (!description) return [];
-    
     const lines = description.split('\n');
     const dishes: string[] = [];
     
     for (const line of lines) {
       const trimmed = line.trim();
-      // Look for lines that start with a number or contain dish names
       if (trimmed && (trimmed.match(/^\d+\./) || trimmed.match(/^[-•]/))) {
-        // Remove numbering and bullets
         const dish = trimmed.replace(/^\d+\.\s*/, '').replace(/^[-•]\s*/, '');
         if (dish.length > 0) {
           dishes.push(dish);
         }
       }
     }
-    
     return dishes;
   };
 
@@ -71,6 +68,15 @@ export default function HostShowcaseV2() {
       videoRef.current.play();
       setVideoPlaying(true);
     }
+  };
+
+  const handleBookingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.selectedDate || !bookingData.selectedTime) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    toast.info('Demo mode - booking functionality not yet enabled');
   };
 
   if (isLoading) {
@@ -82,546 +88,399 @@ export default function HostShowcaseV2() {
   }
 
   const foodPhotos = host.foodPhotoUrls || [];
-  const maxGuests = host.maxGuests || 2;
+  const maxGuests = host.maxGuests || 6;
   const pricePerPerson = host.pricePerPerson || 250;
   const menuDescription = host.menuDescription || '';
   const menuDescriptionOnly = getMenuDescriptionOnly(menuDescription);
   const dishes = extractDishes(menuDescription);
+  const totalPrice = pricePerPerson * bookingData.numberOfGuests;
 
-  const calculatePrice = () => {
-    return pricePerPerson;
-  };
-
-  const calculateTotal = () => {
-    return calculatePrice() * bookingData.numberOfGuests;
-  };
-
-  const handleBooking = () => {
-    if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.requestedDate) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-    toast.info('Demo mode - booking functionality not yet enabled');
-  };
-
-  const nextImage = () => {
-    if (foodPhotos.length > 0) {
-      setCurrentImageIndex((prev) => (prev + 1) % foodPhotos.length);
-    }
-  };
-
-  const prevImage = () => {
-    if (foodPhotos.length > 0) {
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? foodPhotos.length - 1 : prev - 1
-      );
-    }
-  };
+  // Parse languages
+  const languages = typeof host.languages === 'string' 
+    ? host.languages.split(',').map(l => l.trim())
+    : Array.isArray(host.languages) 
+    ? host.languages 
+    : [];
 
   return (
-    <div className="bg-[#faf8f3] min-h-screen pb-24 lg:pb-0">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-[#e8e3d8]">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <button onClick={() => setLocation('/')} className="flex items-center gap-2 hover:opacity-70">
-            <span className="text-2xl">🥢</span>
-            <span className="font-serif text-lg">+1 Chopsticks</span>
-          </button>
-          <button onClick={() => setLocation('/all-hosts')} className="text-sm text-gray-600 hover:text-gray-900">
-            ← All Hosts
-          </button>
-          <div className="w-20" />
-        </div>
-      </nav>
+    <div className="min-h-screen bg-[#faf8f3]">
+      {/* Hero Section - 100vh */}
+      <div className="relative w-full h-screen bg-black overflow-hidden">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          src={host.videoUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
 
-      {/* Hero Video Section - 100vh */}
-      <section className="relative w-full h-screen bg-gradient-to-b from-gray-800 to-gray-900 overflow-hidden mt-16">
-        {/* Video background */}
-        {host.introVideoUrl ? (
-          <>
-            <video
-              ref={videoRef}
-              src={host.introVideoUrl}
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
-            {/* Play button overlay */}
-            {!videoPlaying && (
-              <button
-                onClick={handlePlayVideo}
-                className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-all z-10"
-              >
-                <div className="bg-white/90 rounded-full p-6 hover:bg-white transition-all">
-                  <Play className="w-12 h-12 text-[#c44536] fill-[#c44536]" />
-                </div>
-              </button>
-            )}
-          </>
-        ) : (
-          <div className="w-full h-full bg-gradient-to-b from-gray-800 to-gray-900" />
+        {/* Play button overlay */}
+        {!videoPlaying && (
+          <button
+            onClick={handlePlayVideo}
+            className="absolute inset-0 flex items-center justify-center group"
+          >
+            <div className="w-20 h-20 rounded-full bg-white/90 group-hover:bg-white flex items-center justify-center transition-colors">
+              <Play className="w-8 h-8 text-[#c44536] ml-1" fill="currentColor" />
+            </div>
+          </button>
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-
-        {/* Host info at bottom */}
+        {/* Bottom info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-          <p className="text-sm opacity-80 mb-2">{host.location}</p>
-          <h1 className="text-5xl font-serif mb-2">{host.name}</h1>
-          <p className="text-lg opacity-90">{host.cuisineStyle} · Since {host.yearStarted}</p>
+          <div className="max-w-2xl">
+            <h1 className="text-4xl font-serif mb-2">{host.name}</h1>
+            <p className="text-lg mb-4">{host.location} · {host.cuisineStyle} · Since {host.yearStarted || '2022'}</p>
+            
+            {/* Info badges */}
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">¥{pricePerPerson}</span>
+                <span>/person</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span>Max {maxGuests} guests</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                <span>120 mins</span>
+              </div>
+            </div>
 
-          {/* Info badges */}
-          <div className="flex flex-wrap gap-4 mt-6">
-            <div className="bg-white/20 backdrop-blur px-4 py-2 rounded">
-              <p className="text-xs opacity-80">Price</p>
-              <p className="text-lg font-serif">¥{pricePerPerson} / person</p>
-            </div>
-            <div className="bg-white/20 backdrop-blur px-4 py-2 rounded">
-              <p className="text-xs opacity-80">Max Guests</p>
-              <p className="text-lg font-serif">{maxGuests}</p>
-            </div>
-            <div className="bg-white/20 backdrop-blur px-4 py-2 rounded">
-              <p className="text-xs opacity-80">Duration</p>
-              <p className="text-lg font-serif">{host.durationMinutes} mins</p>
-            </div>
-          </div>
-
-          {/* Languages and features */}
-          <div className="flex flex-wrap gap-2 mt-6">
-            {host.languages && typeof host.languages === 'string' && host.languages.split(',').map((lang) => (
-              <span key={lang} className="bg-white/20 backdrop-blur px-3 py-1 rounded text-sm">
-                {lang.trim()}
-              </span>
-            ))}
-            {host.householdFeatures && (
-              <>
-                <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-sm">
-                  {host.householdFeatures}
-                </span>
-              </>
+            {/* Languages */}
+            {languages.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {languages.map((lang) => (
+                  <span key={lang} className="px-3 py-1 bg-white/20 rounded-full text-sm">
+                    {lang}
+                  </span>
+                ))}
+              </div>
             )}
-            {host.kidsWelcome && (
-              <span className="bg-white/20 backdrop-blur px-3 py-1 rounded text-sm">
-                Kids Friendly
-              </span>
+
+            {/* Features */}
+            {host.features && host.features.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {host.features.map((feature) => (
+                  <span key={feature} className="px-3 py-1 bg-[#c44536]/80 rounded-full text-sm">
+                    {feature}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Menu Section */}
+      <section className="py-16 px-8 max-w-6xl mx-auto">
+        <p className="text-sm text-[#c44536] font-semibold tracking-wider mb-2">THE MENU</p>
+        <h2 className="text-3xl font-serif mb-6">
+          <span className="text-[#1a1410]">{host.cuisineStyle}</span>
+        </h2>
+        
+        {/* Menu description - max 5 lines */}
+        <p className="text-[#666] leading-relaxed mb-6 line-clamp-5">
+          {menuDescriptionOnly}
+        </p>
+
+        {/* Sample Menu expandable */}
+        <button
+          onClick={() => setMenuExpanded(!menuExpanded)}
+          className="flex items-center gap-2 text-[#c44536] font-semibold mb-6 hover:opacity-80 transition"
+        >
+          <span>{menuExpanded ? '▼' : '▶'}</span>
+          <span>SAMPLE MENU</span>
+        </button>
+
+        {menuExpanded && (
+          <div className="space-y-3 mb-8">
+            {dishes.map((dish, index) => (
+              <div key={index} className="flex items-start gap-3 pl-4 border-l-2 border-[#c44536]">
+                <p className="text-[#1a1410]">{dish}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Food carousel */}
+        {foodPhotos.length > 0 && (
+          <div className="flex justify-center mb-8">
+            <div className="relative w-full max-w-md">
+              <img
+                src={foodPhotos[autoRotateIndex]}
+                alt="Food"
+                className="w-full h-64 object-cover rounded-lg"
+              />
+              
+              {/* Navigation arrows */}
+              <button
+                onClick={() => setAutoRotateIndex((prev) => (prev - 1 + foodPhotos.length) % foodPhotos.length)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition"
+              >
+                <ChevronLeft className="w-5 h-5 text-[#1a1410]" />
+              </button>
+              <button
+                onClick={() => setAutoRotateIndex((prev) => (prev + 1) % foodPhotos.length)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full transition"
+              >
+                <ChevronRight className="w-5 h-5 text-[#1a1410]" />
+              </button>
+
+              {/* Carousel indicators */}
+              <div className="flex justify-center gap-2 mt-4">
+                {foodPhotos.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setAutoRotateIndex(index)}
+                    className={`w-2 h-2 rounded-full transition ${
+                      index === autoRotateIndex ? 'bg-[#c44536]' : 'bg-[#e8e3d8]'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* Main content */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        {/* Menu Section */}
-        <div className="mb-20">
-          <p className="text-[#c44536] text-sm tracking-widest uppercase mb-4">The Menu</p>
-          <h2 className="text-4xl font-serif mb-8">
-            {host.cuisineStyle}
-          </h2>
+      {/* Meet Host Section */}
+      <section className="py-16 px-8 max-w-6xl mx-auto">
+        <p className="text-sm text-[#c44536] font-semibold tracking-wider mb-2">ABOUT YOUR HOST</p>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Left side - Details panel */}
+          <div className="flex flex-col gap-8">
+            {/* Host photo - 40% smaller */}
+            {host.profilePhotoUrl && (
+              <img
+                src={host.profilePhotoUrl}
+                alt={host.name}
+                className="w-40 h-40 object-cover rounded-lg"
+              />
+            )}
 
-          {/* Menu description - first part only */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <p className="text-gray-600 text-base mb-8 leading-relaxed whitespace-pre-wrap">
-                {menuDescriptionOnly}
-              </p>
-
-              {/* Sample Menu expandable section */}
-              <div>
-                <button
-                  onClick={() => setMenuExpanded(!menuExpanded)}
-                  className="flex items-center gap-2 text-[#c44536] font-serif text-lg mb-6 hover:opacity-70 transition"
-                >
-                  <span>{menuExpanded ? '▼' : '▶'}</span>
-                  <span className="uppercase tracking-widest">Sample Menu</span>
-                </button>
-
-                {menuExpanded && (
-                  <div className="space-y-3 pl-6 border-l-2 border-[#c44536]">
-                    {dishes.map((dish, idx) => (
-                      <p key={idx} className="text-gray-700 text-sm">
-                        {dish}
-                      </p>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Food photo carousel - 30% smaller */}
-            <div className="relative">
-              {foodPhotos.length > 0 ? (
-                <div className="relative w-full max-w-md mx-auto">
-                  <img
-                    src={foodPhotos[autoRotateIndex]}
-                    alt="Food"
-                    className="w-full h-auto rounded-sm object-cover"
-                  />
-                  
-                  {/* Navigation arrows */}
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
-                  >
-                    <ChevronLeft className="w-5 h-5 text-[#1a1410]" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition"
-                  >
-                    <ChevronRight className="w-5 h-5 text-[#1a1410]" />
-                  </button>
-
-                  {/* Carousel indicators */}
-                  <div className="flex justify-center gap-2 mt-4">
-                    {foodPhotos.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setAutoRotateIndex(idx)}
-                        className={`w-2 h-2 rounded-full transition ${
-                          idx === autoRotateIndex ? 'bg-[#c44536]' : 'bg-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="w-full h-64 bg-gray-200 rounded-sm flex items-center justify-center">
-                  <span className="text-gray-500">No photos available</span>
+            {/* Details */}
+            <div className="space-y-4 text-sm">
+              {host.location && (
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-[#c44536] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#1a1410]">{host.location}</span>
                 </div>
               )}
+
+              {languages.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <Globe className="w-4 h-4 text-[#c44536] flex-shrink-0 mt-0.5" />
+                  <span className="text-[#1a1410]">{languages.join(' · ')}</span>
+                </div>
+              )}
+
+              <div className="flex items-start gap-3">
+                <Users className="w-4 h-4 text-[#c44536] flex-shrink-0 mt-0.5" />
+                <span className="text-[#1a1410]">Up to {maxGuests} guests</span>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Clock className="w-4 h-4 text-[#c44536] flex-shrink-0 mt-0.5" />
+                <span className="text-[#1a1410]">~120 minutes</span>
+              </div>
+
+              {/* Verified Host Badge */}
+              <div className="flex items-center gap-2 text-[#c44536] font-semibold pt-2">
+                <Check className="w-4 h-4" />
+                <span>VERIFIED HOST</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Meet Host Section - with left details panel */}
-        <div className="mb-20">
-          <p className="text-[#c44536] text-sm tracking-widest uppercase mb-4">About Your Host</p>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-            {/* Left side - Host details and photo */}
-            <div className="lg:col-span-1">
-              {/* Host photo - 40% smaller */}
-              {host.profilePhotoUrl && (
-                <img
-                  src={host.profilePhotoUrl}
-                  alt={host.name}
-                  className="w-full h-auto rounded-sm mb-8 object-cover"
-                />
-              )}
-
-              {/* Details panel */}
-              <div className="space-y-6">
-                {/* Location */}
-                <div className="flex gap-3">
-                  <MapPin className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Location</p>
-                    <p className="text-sm font-serif text-gray-800">{host.location}</p>
-                  </div>
-                </div>
-
-                {/* Languages */}
-                <div className="flex gap-3">
-                  <Globe className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Languages</p>
-                    <p className="text-sm font-serif text-gray-800">
-                      {host.languages || 'Not specified'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Guest count */}
-                <div className="flex gap-3">
-                  <Users className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Guests</p>
-                    <p className="text-sm font-serif text-gray-800">
-                      Up to {maxGuests} guests
-                    </p>
-                  </div>
-                </div>
-
-                {/* Duration */}
-                <div className="flex gap-3">
-                  <Clock className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Duration</p>
-                    <p className="text-sm font-serif text-gray-800">
-                      {host.durationMinutes} minutes
-                    </p>
-                  </div>
-                </div>
-
-                {/* Verified badge */}
-                <div className="flex gap-3 pt-4 border-t border-[#e8e3d8]">
-                  <Check className="w-5 h-5 text-[#c44536] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold">
-                      Verified Host
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right side - Bio sections */}
-            <div className="lg:col-span-3">
-              <h3 className="text-3xl font-serif mb-8">
+          {/* Right side - Bio sections */}
+          <div className="lg:col-span-2 space-y-8">
+            <div>
+              <h3 className="text-2xl font-serif mb-3">
                 Meet <span className="text-[#c44536]">{host.name}</span>
               </h3>
+              <p className="text-[#666] leading-relaxed">
+                {host.bio}
+              </p>
+            </div>
 
-              {/* Bio */}
-              <div className="mb-10">
-                <p className="text-gray-700 leading-relaxed mb-6">
-                  {host.bio}
-                </p>
-              </div>
-
-              {/* Overseas Experience */}
-              {host.otherHouseholdInfo && (
-                <div className="mb-10">
-                  <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
-                    Overseas Experience
-                  </h4>
-                  <p className="text-gray-700 leading-relaxed">
-                    {host.otherHouseholdInfo}
-                  </p>
-                </div>
-              )}
-
-              {/* Fun Facts */}
-              {host.householdFeatures && (
-                <div className="mb-10">
-                  <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
-                    Fun Facts
-                  </h4>
-                  <p className="text-gray-700 leading-relaxed">
-                    {host.householdFeatures}
-                  </p>
-                </div>
-              )}
-
-              {/* Why I Want to Host */}
-              <div className="mb-10">
-                <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
-                  Why I Want to Host
-                </h4>
-                <p className="text-gray-700 leading-relaxed">
-                  We love hosting friends and having nice chats over dinner. Cultural exchange is what we do.
-                </p>
-              </div>
-
-              {/* Passions & Interests */}
+            {host.funFacts && (
               <div>
-                <h4 className="text-sm text-[#c44536] uppercase tracking-widest font-semibold mb-3">
-                  Passions & Interests
-                </h4>
-                <p className="text-gray-700 leading-relaxed">
-                  We are passionate about geography and exploring different cultures through food. Beyond food, we love sports, reading, and connecting with people from different backgrounds.
+                <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">FUN FACTS</p>
+                <p className="text-[#666] leading-relaxed">
+                  {host.funFacts}
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
+            )}
 
-        {/* Things to Know Section */}
-        <div className="mb-20">
-          <p className="text-[#c44536] text-sm tracking-widest uppercase mb-4">Before You Book</p>
-          <h2 className="text-4xl font-serif mb-12">Things to Know</h2>
+            {host.whyHost && (
+              <div>
+                <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">WHY I WANT TO HOST</p>
+                <p className="text-[#666] leading-relaxed">
+                  {host.whyHost}
+                </p>
+              </div>
+            )}
 
-          <div className="grid grid-cols-2 gap-12">
-            <div>
-              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Duration</p>
-              <p className="text-lg font-serif text-gray-800">{host.durationMinutes} minutes</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Group Size</p>
-              <p className="text-lg font-serif text-gray-800">Up to {maxGuests} guests</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Dietary Accommodations</p>
-              <p className="text-lg font-serif text-gray-800">Contact host for details</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#c44536] uppercase tracking-widest font-semibold mb-3">Languages</p>
-              <p className="text-lg font-serif text-gray-800">{host.languages || 'Not specified'}</p>
-            </div>
+            {(host.culturalPassions || host.beyondFood) && (
+              <div>
+                <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">PASSIONS & INTERESTS</p>
+                <p className="text-[#666] leading-relaxed">
+                  {host.culturalPassions} {host.beyondFood && `Beyond food, ${host.beyondFood}`}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Booking Widget - Floating on desktop right side */}
-      <div className="hidden lg:block fixed right-8 top-32 w-80 bg-white border border-[#e8e3d8] rounded-sm shadow-lg z-40 max-h-[calc(100vh-200px)] overflow-y-auto">
-        {/* Widget Header */}
-        <div className="bg-[#1a1410] text-white p-5 border-b border-[#e8e3d8]">
-          <p className="text-xs tracking-widest uppercase opacity-80 mb-2">Book a Seat</p>
-          <div className="text-3xl font-serif">
-            ¥{pricePerPerson}
-            <span className="text-sm opacity-80 ml-2">/ person</span>
+      {/* Things to Know Section */}
+      <section className="py-16 px-8 max-w-6xl mx-auto">
+        <p className="text-sm text-[#c44536] font-semibold tracking-wider mb-2">BEFORE YOU BOOK</p>
+        <h2 className="text-3xl font-serif mb-12">Things to Know</h2>
+
+        <div className="grid grid-cols-2 gap-8">
+          <div>
+            <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">DURATION</p>
+            <p className="text-[#1a1410]">~120 minutes</p>
+          </div>
+          <div>
+            <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">GROUP SIZE</p>
+            <p className="text-[#1a1410]">Up to {maxGuests} guests</p>
+          </div>
+          <div>
+            <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">DIETARY ACCOMMODATIONS</p>
+            <p className="text-[#1a1410]">Contact host for details</p>
+          </div>
+          <div>
+            <p className="text-xs text-[#c44536] font-semibold tracking-wider mb-2">LANGUAGES</p>
+            <p className="text-[#1a1410]">{languages.join(', ')}</p>
           </div>
         </div>
+      </section>
 
-        {/* Widget Body */}
-        <div className="p-5 space-y-4">
-          {/* Name */}
-          <div>
-            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
-              Name
-            </label>
-            <input
-              type="text"
-              placeholder="Your name"
-              value={bookingData.guestName}
-              onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
-              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
-            />
-          </div>
+      {/* Booking Widget - Only appears after hero video */}
+      <section className="py-16 px-8 max-w-2xl mx-auto mb-16">
+        <div className="bg-white border border-[#e8e3d8] rounded-lg p-8">
+          <h3 className="text-2xl font-serif mb-8">BOOK A SEAT</h3>
 
-          {/* Email */}
-          <div>
-            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={bookingData.guestEmail}
-              onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
-              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
-            />
-          </div>
+          <form onSubmit={handleBookingSubmit} className="space-y-6">
+            {/* Date */}
+            <div>
+              <label className="block text-xs text-[#c44536] font-semibold tracking-wider mb-2">DATE</label>
+              <input
+                type="date"
+                value={bookingData.selectedDate}
+                onChange={(e) => setBookingData({ ...bookingData, selectedDate: e.target.value })}
+                className="w-full px-4 py-3 border border-[#e8e3d8] rounded-lg focus:outline-none focus:border-[#c44536]"
+              />
+            </div>
 
-          {/* Date */}
-          <div>
-            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
-              Date
-            </label>
-            <input
-              type="date"
-              value={bookingData.requestedDate}
-              onChange={(e) => setBookingData({ ...bookingData, requestedDate: e.target.value })}
-              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
-            />
-            {/* Simple calendar display */}
-            {bookingData.requestedDate && (
-              <div className="mt-2 p-3 bg-[#faf8f3] rounded text-xs text-center text-[#1a1410]">
-                {new Date(bookingData.requestedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            {/* Time */}
+            <div>
+              <label className="block text-xs text-[#c44536] font-semibold tracking-wider mb-2">TIME</label>
+              <select
+                value={bookingData.selectedTime}
+                onChange={(e) => setBookingData({ ...bookingData, selectedTime: e.target.value })}
+                className="w-full px-4 py-3 border border-[#e8e3d8] rounded-lg focus:outline-none focus:border-[#c44536]"
+              >
+                <option value="">Select a time</option>
+                <option value="6:30 PM">6:30 PM</option>
+                <option value="7:00 PM">7:00 PM</option>
+                <option value="7:30 PM">7:30 PM</option>
+                <option value="8:00 PM">8:00 PM</option>
+              </select>
+            </div>
+
+            {/* Guests */}
+            <div>
+              <label className="block text-xs text-[#c44536] font-semibold tracking-wider mb-3">GUESTS</label>
+              <div className="flex flex-wrap gap-2">
+                {[1, 2, 3, 4, 5, 6].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setBookingData({ ...bookingData, numberOfGuests: num })}
+                    className={`w-10 h-10 rounded-lg font-semibold transition ${
+                      bookingData.numberOfGuests === num
+                        ? 'bg-[#1a1410] text-white'
+                        : 'bg-[#f5f0e8] text-[#1a1410] hover:bg-[#e8e3d8]'
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
               </div>
-            )}
-          </div>
-
-          {/* Time */}
-          <div>
-            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
-              Time
-            </label>
-            <select
-              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536]"
-            >
-              <option value="6:30pm">6:30 PM</option>
-              <option value="7:00pm">7:00 PM</option>
-              <option value="7:30pm">7:30 PM</option>
-              <option value="8:00pm">8:00 PM</option>
-            </select>
-          </div>
-
-          {/* Guest Count */}
-          <div>
-            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-3">
-              Guests
-            </label>
-            <div className="flex gap-1 flex-wrap">
-              {[1, 2, 3, 4, 5, 6].map((num) => (
-                <button
-                  key={num}
-                  onClick={() => setBookingData({ ...bookingData, numberOfGuests: num })}
-                  className={`flex-1 min-w-[45px] py-2 rounded text-sm font-semibold transition ${
-                    bookingData.numberOfGuests === num
-                      ? 'bg-[#1a1410] text-white'
-                      : 'bg-[#e8e3d8] text-[#1a1410] hover:bg-gray-300'
-                  }`}
-                >
-                  {num}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Dietary & Notes */}
-          <div>
-            <label className="text-xs text-[#c44536] uppercase tracking-widest font-semibold block mb-2">
-              Dietary & Notes
-            </label>
-            <textarea
-              placeholder="Dietary restrictions, allergies, special requests..."
-              value={bookingData.specialRequests}
-              onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
-              className="w-full border border-[#e8e3d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#c44536] resize-none h-20"
-            />
-          </div>
-
-          {/* Price calculation */}
-          <div className="border-t border-[#e8e3d8] pt-4">
-            <div className="flex justify-between mb-4">
-              <span className="text-sm text-gray-600">
-                ¥{pricePerPerson} × {bookingData.numberOfGuests} guests
-              </span>
-              <span className="text-lg font-serif text-[#1a1410]">
-                ¥{calculateTotal()}
-              </span>
             </div>
 
-            {/* Action buttons */}
-            <button
-              onClick={handleBooking}
-              className="w-full bg-[#c44536] text-white py-3 rounded font-semibold hover:bg-opacity-90 transition mb-1"
-            >
-              RESERVE A SEAT
-            </button>
-            <p className="text-xs italic text-gray-500 text-center mb-3">and pay later</p>
-            <button className="w-full border border-[#c44536] text-[#c44536] py-3 rounded font-semibold hover:bg-[#faf8f3] transition">
-              MESSAGE FIRST
-            </button>
-          </div>
-        </div>
-      </div>
+            {/* Name */}
+            <div>
+              <label className="block text-xs text-[#c44536] font-semibold tracking-wider mb-2">NAME</label>
+              <input
+                type="text"
+                placeholder="Your name"
+                value={bookingData.guestName}
+                onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
+                className="w-full px-4 py-3 border border-[#e8e3d8] rounded-lg focus:outline-none focus:border-[#c44536]"
+              />
+            </div>
 
-      {/* Sticky Booking Bar at Bottom - Mobile and Tablet */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#1a1410] text-white px-4 py-4 border-t border-[#e8e3d8] z-50 lg:hidden">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs opacity-80">Price per person</p>
-            <p className="text-xl font-serif">¥{pricePerPerson}</p>
-          </div>
-          <button
-            onClick={handleBooking}
-            className="bg-[#c44536] text-white px-6 py-3 rounded font-semibold hover:bg-opacity-90 transition whitespace-nowrap"
-          >
-            BOOK A SEAT
-          </button>
-        </div>
-      </div>
+            {/* Email */}
+            <div>
+              <label className="block text-xs text-[#c44536] font-semibold tracking-wider mb-2">EMAIL</label>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={bookingData.guestEmail}
+                onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
+                className="w-full px-4 py-3 border border-[#e8e3d8] rounded-lg focus:outline-none focus:border-[#c44536]"
+              />
+            </div>
 
-      {/* Sticky Booking Bar at Bottom - Desktop */}
-      <div className="hidden lg:fixed lg:bottom-0 lg:left-0 lg:right-0 bg-[#1a1410] text-white px-4 py-4 border-t border-[#e8e3d8] z-40">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs opacity-80">Price per person</p>
-            <p className="text-2xl font-serif">¥{pricePerPerson}</p>
-          </div>
-          <button
-            onClick={handleBooking}
-            className="bg-[#c44536] text-white px-8 py-3 rounded font-semibold hover:bg-opacity-90 transition whitespace-nowrap"
-          >
-            BOOK A SEAT
-          </button>
-        </div>
-      </div>
+            {/* Dietary Restrictions */}
+            <div>
+              <label className="block text-xs text-[#c44536] font-semibold tracking-wider mb-2">DIETARY RESTRICTIONS</label>
+              <textarea
+                placeholder="Dietary restrictions, allergies, special requests..."
+                value={bookingData.dietaryRestrictions}
+                onChange={(e) => setBookingData({ ...bookingData, dietaryRestrictions: e.target.value })}
+                className="w-full px-4 py-3 border border-[#e8e3d8] rounded-lg focus:outline-none focus:border-[#c44536] resize-none"
+                rows={4}
+              />
+            </div>
 
+            {/* Price and buttons */}
+            <div className="pt-4 border-t border-[#e8e3d8]">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-[#666]">¥{pricePerPerson} × {bookingData.numberOfGuests} guests</span>
+                <span className="text-2xl font-serif text-[#1a1410]">¥{totalPrice}</span>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-[#c44536] text-white py-3 rounded-lg font-semibold hover:bg-[#a83a2a] transition mb-2"
+              >
+                RESERVE A SEAT
+              </button>
+              <p className="text-center text-xs text-[#999] italic">and pay later</p>
+
+              <button
+                type="button"
+                className="w-full mt-4 border-2 border-[#c44536] text-[#c44536] py-3 rounded-lg font-semibold hover:bg-[#faf8f3] transition"
+              >
+                MESSAGE FIRST
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
     </div>
   );
 }
