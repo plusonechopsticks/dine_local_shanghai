@@ -237,9 +237,9 @@ export default function HostDashboard() {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="bookings">
               Bookings
-              {bookings.filter((b: Booking) => b.status === "pending").length > 0 && (
+              {bookings.filter((b: Booking) => b.bookingStatus === "pending").length > 0 && (
                 <Badge className="ml-2 bg-red-500">
-                  {bookings.filter((b: Booking) => b.status === "pending").length}
+                  {bookings.filter((b: Booking) => b.bookingStatus === "pending").length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -328,7 +328,7 @@ export default function HostDashboard() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <p className="text-3xl font-bold text-primary mb-1">
-                      {bookings.filter((b: Booking) => b.status === "confirmed").length}
+                       {bookings.filter((b: Booking) => b.bookingStatus === "confirmed").length}
                     </p>
                     <p className="text-sm text-gray-600">Confirmed Bookings</p>
                   </div>
@@ -339,7 +339,7 @@ export default function HostDashboard() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <p className="text-3xl font-bold text-yellow-600 mb-1">
-                      {bookings.filter((b: Booking) => b.status === "pending").length}
+                      {bookings.filter((b: Booking) => b.bookingStatus === "pending").length}
                     </p>
                     <p className="text-sm text-gray-600">Pending Requests</p>
                   </div>
@@ -406,17 +406,17 @@ export default function HostDashboard() {
                       <div className="flex flex-col gap-2 ml-4">
                         <Badge
                           className={
-                            booking.status === "pending"
+                             booking.bookingStatus === "pending"
                               ? "bg-yellow-600"
-                              : booking.status === "confirmed"
+                               : booking.bookingStatus === "confirmed"
                               ? "bg-green-600"
                               : "bg-red-600"
                           }
                         >
-                          {booking.status}
+                           {booking.bookingStatus}
                         </Badge>
 
-                        {booking.status === "pending" && (
+                         {booking.bookingStatus === "pending" && (
                           <>
                             <Button
                               onClick={() =>

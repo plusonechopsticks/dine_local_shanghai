@@ -1,0 +1,82 @@
+{
+  "query": "SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'bookings' AND TABLE_SCHEMA = DATABASE();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT COLUMN_NAME, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'bookings' AND TABLE_SCHEMA = DATABASE();",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "COLUMN_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "hostListingId",
+      "COLUMN_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "guestName",
+      "COLUMN_TYPE": "varchar(255)"
+    },
+    {
+      "COLUMN_NAME": "guestEmail",
+      "COLUMN_TYPE": "varchar(320)"
+    },
+    {
+      "COLUMN_NAME": "guestPhone",
+      "COLUMN_TYPE": "varchar(20)"
+    },
+    {
+      "COLUMN_NAME": "requestedDate",
+      "COLUMN_TYPE": "date"
+    },
+    {
+      "COLUMN_NAME": "mealType",
+      "COLUMN_TYPE": "enum('lunch','dinner')"
+    },
+    {
+      "COLUMN_NAME": "numberOfGuests",
+      "COLUMN_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "specialRequests",
+      "COLUMN_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "bookingStatus",
+      "COLUMN_TYPE": "enum('pending','confirmed','cancelled','rejected')"
+    },
+    {
+      "COLUMN_NAME": "hostNotes",
+      "COLUMN_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "createdAt",
+      "COLUMN_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "updatedAt",
+      "COLUMN_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "paymentStatus",
+      "COLUMN_TYPE": "enum('pending','paid','refunded')"
+    },
+    {
+      "COLUMN_NAME": "totalAmount",
+      "COLUMN_TYPE": "decimal(10,2)"
+    },
+    {
+      "COLUMN_NAME": "paymentDate",
+      "COLUMN_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "stripeSessionId",
+      "COLUMN_TYPE": "varchar(255)"
+    },
+    {
+      "COLUMN_NAME": "hidden",
+      "COLUMN_TYPE": "tinyint(1)"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tCOLUMN_TYPE\nid\tint\nhostListingId\tint\nguestName\tvarchar(255)\nguestEmail\tvarchar(320)\nguestPhone\tvarchar(20)\nrequestedDate\tdate\nmealType\tenum('lunch','dinner')\nnumberOfGuests\tint\nspecialRequests\ttext\nbookingStatus\tenum('pending','confirmed','cancelled','rejected')\nhostNotes\ttext\ncreatedAt\ttimestamp\nupdatedAt\ttimestamp\npaymentStatus\tenum('pending','paid','refunded')\ntotalAmount\tdecimal(10,2)\npaymentDate\ttimestamp\nstripeSessionId\tvarchar(255)\nhidden\ttinyint(1)\n",
+  "stderr": "",
+  "execution_time_ms": 342
+}

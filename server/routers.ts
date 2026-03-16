@@ -73,7 +73,7 @@ export const appRouter = router({
           mealType: input.mealType,
           numberOfGuests: input.numberOfGuests,
           specialRequests: input.specialRequests || null,
-          status: "pending",
+          bookingStatus: "pending",
         });
         
         // Get the last inserted ID
