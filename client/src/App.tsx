@@ -19,7 +19,8 @@ import BookingConfirmation from "./pages/BookingConfirmation";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
-import HostDetailPageV2 from "./pages/HostDetailPageV2";
+import HostShowcaseV2 from "./pages/HostShowcaseV2";
+
 import { ChatWidget } from "./components/ChatWidget";
 
 function Router() {
@@ -28,17 +29,17 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/host-register"} component={HostRegister} />
-      <Route path={"/hosts"} component={HostListings} />
-      <Route path={"/hosts/:id"} component={HostDetail} />
+      <Route path="/hosts" component={HostListings} />
+      <Route path="/showcase" component={HostShowcaseV2} />
+      <Route path="/hosts/:id" component={HostDetail} />
       <Route path={"/host/login"} component={HostLogin} />
       <Route path={"/host/portal"} component={HostPortal} />
       <Route path={"/host-dashboard"} component={HostDashboard} />
       <Route path={"/guest-dashboard"} component={GuestDashboard} />
       <Route path={"/admin"} component={AdminDashboard} />
-      <Route path={"/ admin/newsletter"} component={AdminNewsletter} />
+      <Route path={"/admin/newsletter"} component={AdminNewsletter} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/hosts/:id/v2" component={HostDetailPageV2} />
       <Route path="/booking-success" component={BookingSuccess} />
       <Route path="/booking-confirmation" component={BookingConfirmation} />
       <Route path="/404" component={NotFound} />

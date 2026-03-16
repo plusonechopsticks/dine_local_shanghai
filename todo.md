@@ -1363,3 +1363,21 @@
   - [x] Move "Things to Know" section to after "Meet Host" section
   - [x] Keep Menu section after hero
   - [x] Verified layout with real host data
+
+
+## HostDetailPageV2 - Editorial Design with Real Data (COMPLETE) ✅
+- [x] Create new HostShowcaseV2.tsx component
+  - [x] Hero section with real video from Norika & Steven
+  - [x] Menu section with expandable categories and photo carousel
+  - [x] Things to Know grid section
+  - [x] Meet Host section with real bio and profile photo
+  - [x] Fixed right sidebar booking widget (non-functional UI only)
+- [x] Add route to App.tsx at /showcase
+- [x] Test page with real Norika & Steven data
+  - [x] Verify all sections display correctly
+  - [x] Verify video and photos load
+  - [x] Verify booking widget appears and hides appropriately
+  - [x] Test responsive design on mobile
+  - [x] Verify booking form is UI-only (shows demo mode message on submit)
+  - [x] Test form field interactions (name, email, phone, date, meal type, guests, dietary requirements)
+  - [x] Verify price calculation updates with guest count changes
