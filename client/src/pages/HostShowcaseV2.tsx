@@ -1,312 +1,482 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, MapPin, Users, Clock, DollarSign } from 'lucide-react';
+import { useState } from 'react';
+import { useLocation } from 'wouter';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-
-// Mock data for Norika & Steven (Host ID 1)
-const NORIKA_STEVEN_DATA = {
-  id: 1,
-  hostName: 'Norika and Steven',
-  profilePhotoUrl: 'https://res.cloudinary.com/drxfcfayd/image/upload/v1769882356/host-images/ifdaljpfkzdovtrq3pbj.jpg',
-  introVideoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/MkrKJzqKzwZGcieH.mov',
-  foodPhotoUrls: [
-    'https://res.cloudinary.com/drxfcfayd/image/upload/v1769882356/host-images/food1.jpg',
-    'https://res.cloudinary.com/drxfcfayd/image/upload/v1769882356/host-images/food2.jpg',
-    'https://res.cloudinary.com/drxfcfayd/image/upload/v1769882356/host-images/food3.jpg',
-  ],
-  bio: 'Hi! We are avid travelers who have been to more than 60 countries and love sharing our passion for food and culture. Steven and I met while traveling and have been exploring the world together ever since.',
-  menuDescription: 'Northern-Southern fusion cuisine featuring traditional Shanghai dishes with modern twists. Our menu changes seasonally based on available ingredients.',
-  cuisineStyle: 'Northern-Southern fusion',
-  pricePerPerson: 250,
-  maxGuests: 4,
-  activities: 'Vegetarian options available',
-  otherPassions: 'Squash, NBA, cycling, reading and international relations!',
-  whyHost: 'We love hosting friends as we can share stories and joy over great food. Hosting is a way for us to connect with people from different backgrounds and cultures.',
-  culturalPassions: 'Geography (ask me how big Shanghai is...)',
-  overseasExperience: 'Steven lived abroad in US, Europe, Africa and LATAM before settling in Shanghai.',
-  languages: 'English, Mandarin Chinese',
-  location: 'Jing\'an District, Shanghai',
-};
+import { trpc } from '@/lib/trpc';
 
 export default function HostShowcaseV2() {
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [widgetVisible, setWidgetVisible] = useState(false);
+  const [, setLocation] = useLocation();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [expandedMenuCategories, setExpandedMenuCategories] = useState<Record<string, boolean>>({
+    'to-start': false,
+    'main': false,
+    'finish': false,
+  });
   const [bookingData, setBookingData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    date: '',
-    mealType: 'dinner',
-    guests: 1,
-    dietary: '',
+    guestName: '',
+    guestEmail: '',
+    requestedDate: '',
+    mealType: 'dinner' as 'lunch' | 'dinner',
+    numberOfGuests: 2,
+    specialRequests: '',
   });
 
-  // Handle scroll to show/hide widget
-  useEffect(() => {
-    const handleScroll = () => {
-      const heroHeight = window.innerHeight * 0.8; // 80vh
-      setWidgetVisible(window.scrollY > heroHeight);
-    };
+  // Fetch host data from database (using ID 1 for Norika & Steven)
+  const { data: host, isLoading } = trpc.host.get.useQuery({ id: 1 });
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
 
-  const host = NORIKA_STEVEN_DATA;
-  const photos = host.foodPhotoUrls || [];
-  
-  const nextPhoto = () => setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
-  const prevPhoto = () => setCurrentPhotoIndex((prev) => (prev - 1 + photos.length) % photos.length);
+  if (!host) {
+    return <div className="flex items-center justify-center h-screen">Host not found</div>;
+  }
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const foodPhotos = host.foodPhotoUrls || [];
+  const maxGuests = host.maxGuests || 2;
+  const pricePerPerson = host.pricePerPerson || 250;
+
+  const calculatePrice = () => {
+    return pricePerPerson;
+  };
+
+  const calculateTotal = () => {
+    return calculatePrice() * bookingData.numberOfGuests;
+  };
+
+  const handleBooking = () => {
+    if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.requestedDate) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
     toast.info('Demo mode - booking functionality not yet enabled');
   };
 
+  const toggleMenuCategory = (category: string) => {
+    setExpandedMenuCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  const nextImage = () => {
+    if (foodPhotos.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % foodPhotos.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (foodPhotos.length > 0) {
+      setCurrentImageIndex((prev) =>
+        prev === 0 ? foodPhotos.length - 1 : prev - 1
+      );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section with Video */}
-      <div className="relative w-full" style={{ height: '80vh' }}>
-        <video
-          src={host.introVideoUrl}
-          autoPlay
-          muted
-          loop
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/20"></div>
-      </div>
+    <div className="bg-[#faf8f3] text-[#1a1410]">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-40 bg-white border-b border-[#e8e3d8]">
+        <div className="container flex items-center justify-between h-16 px-6">
+          <button
+            onClick={() => setLocation('/hosts')}
+            className="flex items-center gap-2 text-sm font-medium text-[#1a1410] hover:opacity-70"
+          >
+            <ChevronLeft size={18} />
+            All Hosts
+          </button>
+          <div className="text-lg font-serif">+1 Chopsticks</div>
+          <div className="w-20" />
+        </div>
+      </nav>
 
-      <div className="flex flex-col lg:flex-row gap-8 p-8 max-w-7xl mx-auto">
-        {/* Main Content */}
-        <div className="flex-1">
-          {/* Menu Section */}
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6">What We Serve</h2>
-            <Card className="p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-2">{host.cuisineStyle}</h3>
-              <p className="text-gray-600 mb-4">{host.menuDescription}</p>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <DollarSign className="w-4 h-4" />
-                <span>¥{host.pricePerPerson} per person</span>
+      {/* Hero Video Section */}
+      <section className="relative w-full h-[75vh] bg-gradient-to-b from-gray-800 to-gray-900 overflow-hidden">
+        {/* Video background */}
+        {host.introVideoUrl ? (
+          <video
+            src={host.introVideoUrl}
+            autoPlay
+            muted
+            loop
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gray-800" />
+        )}
+
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* Play button overlay (shown when no video) */}
+        {!host.introVideoUrl && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            <div className="w-20 h-20 rounded-full border-2 border-white/60 flex items-center justify-center mb-4">
+              <div className="w-0 h-0 border-l-8 border-l-white border-t-5 border-t-transparent border-b-5 border-b-transparent ml-1" />
+            </div>
+            <p className="text-white text-sm tracking-widest uppercase">
+              Watch {host.hostName}
+            </p>
+          </div>
+        )}
+
+        {/* Bottom-left info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-12 z-20">
+          <div className="max-w-2xl">
+            <p className="text-white/70 text-sm tracking-widest uppercase mb-2">
+              {host.fullAddress || host.district} · Shanghai
+            </p>
+            <h1 className="text-white text-5xl font-serif mb-2">{host.hostName}</h1>
+            <p className="text-white/80 text-sm tracking-widest uppercase mb-6">
+              {host.cuisineStyle} · Since 2022
+            </p>
+
+            {/* Info badges */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-sm">
+                <div className="text-xs text-white/70 uppercase tracking-wider">Price</div>
+                <div className="text-lg text-white font-serif">¥{calculatePrice()} / person</div>
               </div>
-            </Card>
+              <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-sm">
+                <div className="text-xs text-white/70 uppercase tracking-wider">Max Guests</div>
+                <div className="text-lg text-white font-serif">{maxGuests}</div>
+              </div>
+              <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-sm">
+                <div className="text-xs text-white/70 uppercase tracking-wider">Duration</div>
+                <div className="text-lg text-white font-serif">{host.mealDurationMinutes || 180} mins</div>
+              </div>
+            </div>
 
-            {/* Photo Carousel */}
-            {photos.length > 0 && (
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-6">
-                <img
-                  src={photos[currentPhotoIndex]}
-                  alt={`Food photo ${currentPhotoIndex + 1}`}
-                  className="w-full h-80 object-cover"
-                />
-                {photos.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevPhoto}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full"
-                    >
-                      <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <button
-                      onClick={nextPhoto}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full"
-                    >
-                      <ChevronRight className="w-6 h-6" />
-                    </button>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                      {photos.map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`w-2 h-2 rounded-full ${
-                            idx === currentPhotoIndex ? 'bg-white' : 'bg-white/50'
-                          }`}
-                        />
-                      ))}
+            {/* Language and feature tags */}
+            <div className="flex flex-wrap gap-2">
+              {host.languages && typeof host.languages === 'string' && host.languages.split(',').map((lang: string) => (
+                <span key={lang.trim()} className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
+                  {lang.trim()}
+                </span>
+              ))}
+              {host.languages && Array.isArray(host.languages) && host.languages.map((lang: string) => (
+                <span key={lang} className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
+                  {lang}
+                </span>
+              ))}
+              {host.hasPets && (
+                <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
+                  {host.petDetails || 'Pets'}
+                </span>
+              )}
+              {host.kidsFriendly && (
+                <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full">
+                  Kids Friendly
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Menu Section */}
+      <section className="bg-[#faf8f3] py-16">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 gap-12">
+          {/* Left: Menu list */}
+          <div>
+            <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">The Menu</p>
+            <h2 className="text-4xl font-serif mb-2">
+              {host.cuisineStyle}
+            </h2>
+            <p className="text-gray-600 text-sm mb-8 leading-relaxed">
+              {host.menuDescription}
+            </p>
+
+            {/* Menu categories */}
+            <div className="space-y-8">
+              {['to-start', 'main', 'finish'].map((category) => (
+                <div key={category}>
+                  <button
+                    onClick={() => toggleMenuCategory(category)}
+                    className="flex items-center gap-2 text-[#c44536] text-sm tracking-widest uppercase hover:opacity-70 transition"
+                  >
+                    <span>▶</span>
+                    <span>
+                      {category === 'to-start' ? 'To Start' : category === 'main' ? 'Main Table' : 'To Finish'}
+                    </span>
+                  </button>
+                  {expandedMenuCategories[category] && (
+                    <div className="mt-4 space-y-3 ml-6 border-l border-gray-300 pl-4">
+                      <div>
+                        <p className="font-serif text-sm">Sample Dish 1</p>
+                        <p className="text-xs text-gray-600">Description of the dish</p>
+                      </div>
+                      <div>
+                        <p className="font-serif text-sm">Sample Dish 2</p>
+                        <p className="text-xs text-gray-600">Description of the dish</p>
+                      </div>
                     </div>
-                  </>
-                )}
-              </div>
-            )}
-          </section>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-          {/* Meet the Host Section */}
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6">Meet Your Hosts</h2>
-            <div className="flex gap-6 mb-6">
+          {/* Right: Photo carousel */}
+          <div className="relative">
+            <div className="aspect-square bg-gray-300 rounded-sm overflow-hidden mb-4">
+              {foodPhotos && foodPhotos.length > 0 ? (
+                <img
+                  src={foodPhotos[currentImageIndex]}
+                  alt="Food"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                  No photos
+                </div>
+              )}
+            </div>
+
+            {/* Carousel controls */}
+            {foodPhotos && foodPhotos.length > 1 && (
+              <>
+                <div className="flex justify-center gap-2 mb-4">
+                  {foodPhotos.map((_: string, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`w-2 h-2 rounded-full transition ${
+                        idx === currentImageIndex ? 'bg-[#1a1410]' : 'bg-gray-400'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between">
+                  <button onClick={prevImage} className="text-gray-600 hover:text-[#1a1410]">
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button onClick={nextImage} className="text-gray-600 hover:text-[#1a1410]">
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Things to Know */}
+      <section className="bg-white py-16 border-t border-[#e8e3d8]">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">Before You Book</p>
+          <h2 className="text-4xl font-serif mb-12">Things to Know</h2>
+
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Duration</p>
+              <p className="text-lg">{host.mealDurationMinutes || 180} minutes</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Group Size</p>
+              <p className="text-lg">Up to {maxGuests} guests</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Dietary Accommodations</p>
+              <p className="text-lg">{host.dietaryNote || 'Contact host for details'}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Languages</p>
+              <p className="text-lg">{typeof host.languages === 'string' ? host.languages : Array.isArray(host.languages) ? host.languages.join(', ') : 'English, Mandarin'}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet Host */}
+      <section className="bg-[#faf8f3] py-16 border-t border-[#e8e3d8]">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 gap-12">
+          {/* Left: Profile photo */}
+          <div>
+            {host.profilePhotoUrl ? (
               <img
                 src={host.profilePhotoUrl}
                 alt={host.hostName}
-                className="w-32 h-32 rounded-full object-cover"
+                className="w-full aspect-square object-cover rounded-sm"
               />
-              <div>
-                <h3 className="text-2xl font-bold mb-2">{host.hostName}</h3>
-                <p className="text-gray-600 mb-4">{host.bio}</p>
-                <div className="space-y-2 text-sm">
-                  <p><strong>Languages:</strong> {host.languages}</p>
-                  <p><strong>Location:</strong> {host.location}</p>
-                </div>
+            ) : (
+              <div className="w-full aspect-square bg-gray-300 rounded-sm flex items-center justify-center">
+                No photo
               </div>
-            </div>
-          </section>
+            )}
+          </div>
 
-          {/* Things to Know Section */}
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6">Things to Know</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h4 className="font-semibold mb-2 flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Group Size
-                </h4>
-                <p className="text-gray-600">Up to {host.maxGuests} guests per meal</p>
-              </Card>
-              <Card className="p-6">
-                <h4 className="font-semibold mb-2 flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  Duration
-                </h4>
-                <p className="text-gray-600">Approximately 2-3 hours</p>
-              </Card>
-              <Card className="p-6">
-                <h4 className="font-semibold mb-2">Passions</h4>
-                <p className="text-gray-600">{host.otherPassions}</p>
-              </Card>
-              <Card className="p-6">
-                <h4 className="font-semibold mb-2">Why We Host</h4>
-                <p className="text-gray-600">{host.whyHost}</p>
-              </Card>
-            </div>
-          </section>
+          {/* Right: Bio and details */}
+          <div>
+            <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">About Your Host</p>
+            <h2 className="text-4xl font-serif mb-8">
+              Meet <em className="text-[#c44536]">{host.hostName}</em>
+            </h2>
 
-          {/* Additional Info */}
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold mb-6">More About Us</h2>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">Cultural Interests</h4>
-                <p className="text-gray-600">{host.culturalPassions}</p>
+            {/* Bio */}
+            {host.bio && (
+              <div className="mb-8">
+                <p className="text-gray-700 leading-relaxed">{host.bio}</p>
               </div>
-              <div>
-                <h4 className="font-semibold mb-2">International Experience</h4>
-                <p className="text-gray-600">{host.overseasExperience}</p>
+            )}
+
+            {/* Overseas Experience */}
+            {host.otherHouseholdInfo && (
+              <div className="mb-8">
+                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Overseas Experience</p>
+                <p className="text-gray-700 leading-relaxed">{host.otherHouseholdInfo}</p>
               </div>
+            )}
+
+            {/* Fun Facts */}
+            {host.householdFeatures && (
+              <div className="mb-8">
+                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Fun Facts</p>
+                <p className="text-gray-700 leading-relaxed">{host.householdFeatures}</p>
+              </div>
+            )}
+
+            {/* Why Host */}
+            {host.introVideoUrl && (
+              <div className="mb-8">
+                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Why I Host</p>
+                <p className="text-gray-700 leading-relaxed">
+                  We love hosting friends and having nice chats over dinner. Cultural exchange is what we do.
+                </p>
+              </div>
+            )}
+
+            {/* Cultural Passions */}
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Cultural Passion</p>
+              <p className="text-gray-700 leading-relaxed">
+                We are passionate about geography and exploring different cultures through food.
+              </p>
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking Widget - Fixed Right Sidebar */}
+      <div className="fixed right-12 top-32 w-80 bg-white border border-[#e8e3d8] rounded-sm shadow-lg z-30 max-h-[calc(100vh-160px)] overflow-y-auto hidden lg:block">
+        {/* Widget Header */}
+        <div className="bg-[#1a1410] text-white p-5 border-b border-[#e8e3d8]">
+          <p className="text-xs tracking-widest uppercase opacity-80 mb-2">Book a Seat</p>
+          <div className="text-3xl font-serif">
+            ¥{calculatePrice()}
+            <span className="text-xs opacity-80 ml-2">/ person</span>
+          </div>
         </div>
 
-        {/* Booking Widget Sidebar - Only visible after scrolling past hero */}
-        {widgetVisible && (
-          <div className="lg:w-80 lg:sticky lg:top-24 lg:h-fit">
-            <Card className="p-6 shadow-lg">
-              <h3 className="text-xl font-bold mb-4">Reserve a Seat</h3>
-              <form onSubmit={handleBookingSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <input
-                    type="text"
-                    value={bookingData.name}
-                    onChange={(e) => setBookingData({ ...bookingData, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={bookingData.email}
-                    onChange={(e) => setBookingData({ ...bookingData, email: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="your@email.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Phone (Optional)</label>
-                  <input
-                    type="tel"
-                    value={bookingData.phone}
-                    onChange={(e) => setBookingData({ ...bookingData, phone: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+86 1234567890"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Date</label>
-                  <input
-                    type="date"
-                    value={bookingData.date}
-                    onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Meal Type</label>
-                  <select
-                    value={bookingData.mealType}
-                    onChange={(e) => setBookingData({ ...bookingData, mealType: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="lunch">Lunch</option>
-                    <option value="dinner">Dinner</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Number of Guests</label>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4].map((num) => (
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => setBookingData({ ...bookingData, guests: num })}
-                        className={`flex-1 py-2 rounded-lg border ${
-                          bookingData.guests === num
-                            ? 'bg-blue-500 text-white border-blue-500'
-                            : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Dietary Requirements</label>
-                  <textarea
-                    value={bookingData.dietary}
-                    onChange={(e) => setBookingData({ ...bookingData, dietary: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., Vegetarian, no shellfish..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="bg-gray-100 p-3 rounded-lg">
-                  <p className="text-sm text-gray-600">
-                    Total: <strong>¥{host.pricePerPerson * bookingData.guests}</strong>
-                  </p>
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium"
-                >
-                  Reserve a Seat
-                </Button>
-              </form>
-            </Card>
+        {/* Widget Body */}
+        <div className="p-5 space-y-4">
+          {/* Guest Name */}
+          <div>
+            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Name</label>
+            <input
+              type="text"
+              value={bookingData.guestName}
+              onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
+              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
+              placeholder="Your name"
+            />
           </div>
-        )}
+
+          {/* Email */}
+          <div>
+            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Email</label>
+            <input
+              type="email"
+              value={bookingData.guestEmail}
+              onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
+              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
+              placeholder="your@email.com"
+            />
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Date</label>
+            <input
+              type="date"
+              value={bookingData.requestedDate}
+              onChange={(e) => setBookingData({ ...bookingData, requestedDate: e.target.value })}
+              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
+            />
+          </div>
+
+          {/* Meal Type */}
+          <div>
+            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Meal</label>
+            <select
+              value={bookingData.mealType}
+              onChange={(e) => setBookingData({ ...bookingData, mealType: e.target.value as 'lunch' | 'dinner' })}
+              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm"
+            >
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+            </select>
+          </div>
+
+          {/* Guests */}
+          <div>
+            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">Guests</label>
+            <div className="grid grid-cols-6 gap-2">
+              {Array.from({ length: maxGuests }, (_, i) => i + 1).map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setBookingData({ ...bookingData, numberOfGuests: num })}
+                  className={`py-2 text-sm rounded-sm border transition ${
+                    bookingData.numberOfGuests === num
+                      ? 'bg-[#1a1410] text-white border-[#1a1410]'
+                      : 'border-[#e8e3d8] hover:border-[#1a1410]'
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Special Requests / Dietary Restrictions */}
+          <div>
+            <label className="text-xs text-[#c44536] tracking-widest uppercase block mb-2">
+              Dietary & Notes
+            </label>
+            <textarea
+              value={bookingData.specialRequests}
+              onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
+              className="w-full px-3 py-2 border border-[#e8e3d8] rounded-sm text-sm resize-none"
+              rows={3}
+              placeholder="Dietary restrictions, allergies, special requests..."
+            />
+          </div>
+
+          {/* Total */}
+          <div className="border-t border-[#e8e3d8] pt-4">
+            <div className="flex justify-between items-baseline mb-4">
+              <span className="text-xs text-gray-600">¥{calculatePrice()} × {bookingData.numberOfGuests} guests</span>
+              <span className="text-2xl font-serif">¥{calculateTotal()}</span>
+            </div>
+
+            {/* Book Button */}
+            <button
+              onClick={handleBooking}
+              className="w-full bg-[#c44536] text-white py-3 rounded-sm text-xs tracking-widest uppercase font-medium hover:bg-[#a83a2d] transition"
+            >
+              Reserve a Seat
+            </button>
+
+            {/* Message Button */}
+            <button className="w-full mt-2 border border-[#e8e3d8] py-2 rounded-sm text-xs tracking-widest uppercase hover:border-[#1a1410] transition">
+              Message First
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Main content padding for fixed widget */}
+      <div className="h-20" />
     </div>
   );
 }
