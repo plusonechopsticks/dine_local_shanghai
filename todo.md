@@ -1397,3 +1397,27 @@
   - [x] Fix languages field parsing (string vs array)
   - [x] Test form interactions and price calculation
   - [x] Verify all sections render correctly with real host data
+
+
+## HostShowcaseV2 - Menu and Section Restructuring (COMPLETE) ✅
+- [x] Summarize menu description to maximum 5 lines
+  - [x] Limit menu description to first 5 lines
+  - [x] Ensure key information is preserved
+- [x] Restructure menu display
+  - [x] Replace 3 categories with single "Sample Menu" expandable section
+  - [x] Display dishes one per line when expanded
+  - [x] Parse menu items from database
+- [x] Reorder page sections
+  - [x] Move "Things to Know" section after "Meet Host" section
+- [x] Update Meet Host bio layout
+  - [x] Bio section
+  - [x] Overseas Experience section
+  - [x] Fun Facts section
+  - [x] Why I Want to Host section
+  - [x] Combined: Cultural Passions + Beyond Food section
+- [x] Test all functionality
+  - [x] Verify menu expands/collapses correctly
+  - [x] Verify dishes display one per line
+  - [x] Verify section ordering is correct
+  - [x] Verify booking widget still functional
+  - [x] Verify all bio sections display correctly

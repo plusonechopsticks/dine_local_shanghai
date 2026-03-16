@@ -7,11 +7,7 @@ import { trpc } from '@/lib/trpc';
 export default function HostShowcaseV2() {
   const [, setLocation] = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [expandedMenuCategories, setExpandedMenuCategories] = useState<Record<string, boolean>>({
-    'to-start': false,
-    'main': false,
-    'finish': false,
-  });
+  const [menuExpanded, setMenuExpanded] = useState(false);
   const [bookingData, setBookingData] = useState({
     guestName: '',
     guestEmail: '',
@@ -24,6 +20,40 @@ export default function HostShowcaseV2() {
   // Fetch host data from database (using ID 1 for Norika & Steven)
   const { data: host, isLoading } = trpc.host.get.useQuery({ id: 1 });
 
+  // Limit menu description to max 5 lines
+  const limitMenuDescription = (description: string): string => {
+    if (!description) return description;
+    
+    const lines = description.split('\n').filter(line => line.trim());
+    if (lines.length <= 5) {
+      return description;
+    }
+    
+    return lines.slice(0, 5).join('\n');
+  };
+
+  // Extract dishes from menu description (one dish per line)
+  const extractDishes = (description: string): string[] => {
+    if (!description) return [];
+    
+    const lines = description.split('\n');
+    const dishes: string[] = [];
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Look for lines that start with a number or contain dish names
+      if (trimmed && (trimmed.match(/^\d+\./) || trimmed.match(/^[-•]/))) {
+        // Remove numbering and bullets
+        const dish = trimmed.replace(/^\d+\.\s*/, '').replace(/^[-•]\s*/, '');
+        if (dish.length > 0) {
+          dishes.push(dish);
+        }
+      }
+    }
+    
+    return dishes;
+  };
+
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
@@ -32,9 +62,12 @@ export default function HostShowcaseV2() {
     return <div className="flex items-center justify-center h-screen">Host not found</div>;
   }
 
-  const foodPhotos = host.foodPhotoUrls || [];
+    const foodPhotos = host.foodPhotoUrls || [];
   const maxGuests = host.maxGuests || 2;
   const pricePerPerson = host.pricePerPerson || 250;
+  const menuDescription = host.menuDescription || '';
+  const limitedMenuDescription = limitMenuDescription(menuDescription);
+  const dishes = extractDishes(menuDescription);
 
   const calculatePrice = () => {
     return pricePerPerson;
@@ -50,13 +83,6 @@ export default function HostShowcaseV2() {
       return;
     }
     toast.info('Demo mode - booking functionality not yet enabled');
-  };
-
-  const toggleMenuCategory = (category: string) => {
-    setExpandedMenuCategories((prev) => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
   };
 
   const nextImage = () => {
@@ -177,43 +203,37 @@ export default function HostShowcaseV2() {
       {/* Menu Section */}
       <section className="bg-[#faf8f3] py-16">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 gap-12">
-          {/* Left: Menu list */}
+          {/* Left: Menu description and sample menu */}
           <div>
             <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">The Menu</p>
             <h2 className="text-4xl font-serif mb-2">
               {host.cuisineStyle}
             </h2>
-            <p className="text-gray-600 text-sm mb-8 leading-relaxed">
-              {host.menuDescription}
+            
+            {/* Menu description - max 5 lines */}
+            <p className="text-gray-600 text-sm mb-8 leading-relaxed whitespace-pre-wrap">
+              {limitedMenuDescription}
             </p>
 
-            {/* Menu categories */}
-            <div className="space-y-8">
-              {['to-start', 'main', 'finish'].map((category) => (
-                <div key={category}>
-                  <button
-                    onClick={() => toggleMenuCategory(category)}
-                    className="flex items-center gap-2 text-[#c44536] text-sm tracking-widest uppercase hover:opacity-70 transition"
-                  >
-                    <span>▶</span>
-                    <span>
-                      {category === 'to-start' ? 'To Start' : category === 'main' ? 'Main Table' : 'To Finish'}
-                    </span>
-                  </button>
-                  {expandedMenuCategories[category] && (
-                    <div className="mt-4 space-y-3 ml-6 border-l border-gray-300 pl-4">
-                      <div>
-                        <p className="font-serif text-sm">Sample Dish 1</p>
-                        <p className="text-xs text-gray-600">Description of the dish</p>
-                      </div>
-                      <div>
-                        <p className="font-serif text-sm">Sample Dish 2</p>
-                        <p className="text-xs text-gray-600">Description of the dish</p>
-                      </div>
+            {/* Sample Menu expandable section */}
+            <div>
+              <button
+                onClick={() => setMenuExpanded(!menuExpanded)}
+                className="flex items-center gap-2 text-[#c44536] text-sm tracking-widest uppercase hover:opacity-70 transition"
+              >
+                <span>{menuExpanded ? '▼' : '▶'}</span>
+                <span>Sample Menu</span>
+              </button>
+              
+              {menuExpanded && dishes.length > 0 && (
+                <div className="mt-4 space-y-2 ml-6 border-l border-gray-300 pl-4">
+                  {dishes.map((dish, idx) => (
+                    <div key={idx}>
+                      <p className="font-serif text-sm text-gray-700">{dish}</p>
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -261,35 +281,8 @@ export default function HostShowcaseV2() {
         </div>
       </section>
 
-      {/* Things to Know */}
-      <section className="bg-white py-16 border-t border-[#e8e3d8]">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">Before You Book</p>
-          <h2 className="text-4xl font-serif mb-12">Things to Know</h2>
-
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Duration</p>
-              <p className="text-lg">{host.mealDurationMinutes || 180} minutes</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Group Size</p>
-              <p className="text-lg">Up to {maxGuests} guests</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Dietary Accommodations</p>
-              <p className="text-lg">{host.dietaryNote || 'Contact host for details'}</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Languages</p>
-              <p className="text-lg">{typeof host.languages === 'string' ? host.languages : Array.isArray(host.languages) ? host.languages.join(', ') : 'English, Mandarin'}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Meet Host */}
-      <section className="bg-[#faf8f3] py-16 border-t border-[#e8e3d8]">
+      <section className="bg-white py-16 border-t border-[#e8e3d8]">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 gap-12">
           {/* Left: Profile photo */}
           <div>
@@ -336,22 +329,49 @@ export default function HostShowcaseV2() {
               </div>
             )}
 
-            {/* Why Host */}
+            {/* Why I Want to Host */}
             {host.introVideoUrl && (
               <div className="mb-8">
-                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Why I Host</p>
+                <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Why I Want to Host</p>
                 <p className="text-gray-700 leading-relaxed">
                   We love hosting friends and having nice chats over dinner. Cultural exchange is what we do.
                 </p>
               </div>
             )}
 
-            {/* Cultural Passions */}
+            {/* Cultural Passions & Beyond Food */}
             <div>
-              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Cultural Passion</p>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Passions & Interests</p>
               <p className="text-gray-700 leading-relaxed">
-                We are passionate about geography and exploring different cultures through food.
+                We are passionate about geography and exploring different cultures through food. Beyond food, we love sports, reading, and connecting with people from different backgrounds.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Things to Know */}
+      <section className="bg-[#faf8f3] py-16 border-t border-[#e8e3d8]">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-[#c44536] text-xs tracking-widest uppercase mb-2">Before You Book</p>
+          <h2 className="text-4xl font-serif mb-12">Things to Know</h2>
+
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Duration</p>
+              <p className="text-lg">{host.mealDurationMinutes || 180} minutes</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Group Size</p>
+              <p className="text-lg">Up to {maxGuests} guests</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Dietary Accommodations</p>
+              <p className="text-lg">{host.dietaryNote || 'Contact host for details'}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#c44536] tracking-widest uppercase mb-2">Languages</p>
+              <p className="text-lg">{typeof host.languages === 'string' ? host.languages : Array.isArray(host.languages) ? host.languages.join(', ') : 'English, Mandarin'}</p>
             </div>
           </div>
         </div>
