@@ -119,7 +119,7 @@ export default function HostShowcaseV2() {
   };
 
   return (
-    <div className="bg-[#faf8f3] min-h-screen">
+    <div className="bg-[#faf8f3] min-h-screen pb-24 lg:pb-0">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-[#e8e3d8]">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -454,8 +454,8 @@ export default function HostShowcaseV2() {
         </div>
       </section>
 
-      {/* Booking Widget - Appears after hero section */}
-      <div className="w-80 bg-white border border-[#e8e3d8] rounded-sm shadow-lg mx-auto mt-12 mb-12 hidden lg:block">
+      {/* Booking Widget - Floating on desktop right side */}
+      <div className="hidden lg:block fixed right-8 top-32 w-80 bg-white border border-[#e8e3d8] rounded-sm shadow-lg z-40 max-h-[calc(100vh-200px)] overflow-y-auto">
         {/* Widget Header */}
         <div className="bg-[#1a1410] text-white p-5 border-b border-[#e8e3d8]">
           <p className="text-xs tracking-widest uppercase opacity-80 mb-2">Book a Seat</p>
@@ -580,6 +580,38 @@ export default function HostShowcaseV2() {
               MESSAGE FIRST
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Sticky Booking Bar at Bottom - Mobile and Tablet */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#1a1410] text-white px-4 py-4 border-t border-[#e8e3d8] z-50 lg:hidden">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs opacity-80">Price per person</p>
+            <p className="text-xl font-serif">¥{pricePerPerson}</p>
+          </div>
+          <button
+            onClick={handleBooking}
+            className="bg-[#c44536] text-white px-6 py-3 rounded font-semibold hover:bg-opacity-90 transition whitespace-nowrap"
+          >
+            BOOK A SEAT
+          </button>
+        </div>
+      </div>
+
+      {/* Sticky Booking Bar at Bottom - Desktop */}
+      <div className="hidden lg:fixed lg:bottom-0 lg:left-0 lg:right-0 bg-[#1a1410] text-white px-4 py-4 border-t border-[#e8e3d8] z-40">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs opacity-80">Price per person</p>
+            <p className="text-2xl font-serif">¥{pricePerPerson}</p>
+          </div>
+          <button
+            onClick={handleBooking}
+            className="bg-[#c44536] text-white px-8 py-3 rounded font-semibold hover:bg-opacity-90 transition whitespace-nowrap"
+          >
+            BOOK A SEAT
+          </button>
         </div>
       </div>
 

@@ -1469,3 +1469,22 @@
   - [x] Verify Meet Host left-side details panel displays correctly
   - [x] Verify all icons render properly
   - [x] Verify responsive design
+
+
+## HostShowcaseV2 - Booking Widget Positioning (COMPLETE) ✅
+- [x] Floating booking widget on desktop
+  - [x] Position fixed on right side (right-8, top-32)
+  - [x] Hide on mobile/tablet (lg:block hidden)
+  - [x] Maintain scroll position (stays visible while scrolling)
+  - [x] Responsive to viewport changes
+  - [x] Scrollable form content (overflow-y-auto)
+- [x] Sticky booking bar at bottom
+  - [x] Show on mobile/tablet (lg:hidden)
+  - [x] Show on desktop (lg:fixed)
+  - [x] Display price and BOOK A SEAT button
+  - [x] Fixed at bottom of page (bottom-0)
+  - [x] Match reference design style (dark background, burgundy button)
+  - [x] Smooth transitions and interactions
+  - [x] Test floating widget stays fixed while scrolling
+  - [x] Verify form fields are accessible in floating widget
+  - [x] Verify booking buttons work correctly
