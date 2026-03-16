@@ -1,0 +1,51 @@
+{
+  "query": "SELECT id, hostName, cuisineStyle, bio FROM host_listings WHERE status = 'approved' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, cuisineStyle, bio FROM host_listings WHERE status = 'approved' ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "hostName": "Norika and Steven",
+      "cuisineStyle": "Home style cooking",
+      "bio": "Hi! We are avid travelers who have been to more than 60 countries, and just set our foot on all seven continents on earth! (Antarctica is a great honeymoon location :). We love hosting friends and have some nice chats over Chinese dinner. Cultural exchange is what I have been doing in life - I have lived in four continents (Shanghai, Copenhagen, Nairobi and Chicago). Come and enjoy a nice meal and good conversations!"
+    },
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "cuisineStyle": "Chinese and Western Fusion",
+      "bio": "Hi, I’m Grace. Born in Guizhou and shaped by more than a decade living abroad—mostly in the U.S.—I found my way back to Chinese cooking through a familiar homesickness: missing the flavors of home."
+    },
+    {
+      "id": "120001",
+      "hostName": "Grace Tong",
+      "cuisineStyle": "Dumpling class and tasting",
+      "bio": "Hi, I’m Grace. Born in Guizhou and shaped by more than a decade living abroad—mostly in the U.S.—I found my way back to Chinese cooking through a familiar homesickness: missing the flavors of home. Cooking authentic Chinese dishes became my love language, and after two years back in China, I’m excited to open my kitchen to fellow travelers from around the world. Come share a thoughtfully prepared meal, good conversation, and a genuine cultural exchange—one table, many stories."
+    },
+    {
+      "id": "150001",
+      "hostName": "Jiading Ayi ",
+      "cuisineStyle": "Local Shanghaiese style",
+      "bio": "Auntie Lee — a true daughter of Jiading Old Town, the very cradle of Shanghai's famous soup dumplings (Xiao Long Bao). Since 2016, she has been a Superhost on Airbnb, welcoming hundreds of guests into her courtyard home. Though her English is limited, her hospitality is universal: she has traveled widely herself and communicates flawlessly through the language of delicious food."
+    },
+    {
+      "id": "180001",
+      "hostName": "Chuan 川",
+      "cuisineStyle": "Guangxi-Guangdong-Southeast Asian Fusion",
+      "bio": "Chuan's culinary journey began in childhood when she couldn't find delicious, lightly-oiled stir-fried eggplant in restaurants, so she decided to cook herself. Her passion for home cooking was ignited from that moment. Her philosophy of \"eating well\" means nutritious, balanced meals with clean flavors and authentic taste. Her dishes blend ingredients and flavors from Guangxi, Guangdong, and Southeast Asia."
+    },
+    {
+      "id": "210001",
+      "hostName": "Echo Ren",
+      "cuisineStyle": "Shanghai home cooking ",
+      "bio": "Hi! I’m a Shanghai local and I love home cooking."
+    }
+  ],
+  "messages": [
+    "Cooking authentic Chinese dishes became my love language, and after two years back in China, I’m excited to open my kitchen to fellow travelers from around the world. Come share a thoughtfully prepared meal, good conversation, and a genuine cultural exchange—one table, many stories.",
+    "She’ll be joined by her daughter (management at foreign-owned company) or her daughter’s childhood friend (multinational corporate background), ensuring smooth conversation and cultural bridge-building over the meal or other activities.",
+    "I cook for my family every day and often host relatives during holidays. My cooking is typical Chinese home-style food-simple, comforting and meant to be shared.",
+    "This would be my first time hosting international guests, but I’d love to open my home and share a real family- style Chinese meal and everyday stories about life in Shanghai."
+  ],
+  "stdout": "id\thostName\tcuisineStyle\tbio\n1\tNorika and Steven\tHome style cooking\tHi! We are avid travelers who have been to more than 60 countries, and just set our foot on all seven continents on earth! (Antarctica is a great honeymoon location :). We love hosting friends and have some nice chats over Chinese dinner. Cultural exchange is what I have been doing in life - I have lived in four continents (Shanghai, Copenhagen, Nairobi and Chicago). Come and enjoy a nice meal and good conversations!\n90002\tGrace Tong\tChinese and Western Fusion\tHi, I’m Grace. Born in Guizhou and shaped by more than a decade living abroad—mostly in the U.S.—I found my way back to Chinese cooking through a familiar homesickness: missing the flavors of home.\n\nCooking authentic Chinese dishes became my love language, and after two years back in China, I’m excited to open my kitchen to fellow travelers from around the world. Come share a thoughtfully prepared meal, good conversation, and a genuine cultural exchange—one table, many stories.\n120001\tGrace Tong\tDumpling class and tasting\tHi, I’m Grace. Born in Guizhou and shaped by more than a decade living abroad—mostly in the U.S.—I found my way back to Chinese cooking through a familiar homesickness: missing the flavors of home. Cooking authentic Chinese dishes became my love language, and after two years back in China, I’m excited to open my kitchen to fellow travelers from around the world. Come share a thoughtfully prepared meal, good conversation, and a genuine cultural exchange—one table, many stories.\n150001\tJiading Ayi \tLocal Shanghaiese style\tAuntie Lee — a true daughter of Jiading Old Town, the very cradle of Shanghai's famous soup dumplings (Xiao Long Bao). Since 2016, she has been a Superhost on Airbnb, welcoming hundreds of guests into her courtyard home. Though her English is limited, her hospitality is universal: she has traveled widely herself and communicates flawlessly through the language of delicious food.\n\nShe’ll be joined by her daughter (management at foreign-owned company) or her daughter’s childhood friend (multinational corporate background), ensuring smooth conversation and cultural bridge-building over the meal or other activities.\n180001\tChuan 川\tGuangxi-Guangdong-Southeast Asian Fusion\tChuan's culinary journey began in childhood when she couldn't find delicious, lightly-oiled stir-fried eggplant in restaurants, so she decided to cook herself. Her passion for home cooking was ignited from that moment. Her philosophy of \"eating well\" means nutritious, balanced meals with clean flavors and authentic taste. Her dishes blend ingredients and flavors from Guangxi, Guangdong, and Southeast Asia.\n210001\tEcho Ren\tShanghai home cooking \tHi! I’m a Shanghai local and I love home cooking.\nI cook for my family every day and often host relatives during holidays. My cooking is typical Chinese home-style food-simple, comforting and meant to be shared.\nThis would be my first time hosting international guests, but I’d love to open my home and share a real family- style Chinese meal and everyday stories about life in Shanghai.\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

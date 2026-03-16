@@ -1,0 +1,61 @@
+{
+  "query": "SELECT JSON_PRETTY(availability) as availability_json FROM host_listings WHERE id = 240001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT JSON_PRETTY(availability) as availability_json FROM host_listings WHERE id = 240001;",
+  "rows": [
+    {
+      "availability_json": "{"
+    },
+    {
+      "availability_json": "  \"Friday\": ["
+    },
+    {
+      "availability_json": "    \"dinner\""
+    },
+    {
+      "availability_json": "  ],"
+    },
+    {
+      "availability_json": "  \"Saturday\": ["
+    },
+    {
+      "availability_json": "    \"dinner\""
+    },
+    {
+      "availability_json": "  ],"
+    },
+    {
+      "availability_json": "  \"Sunday\": ["
+    },
+    {
+      "availability_json": "    \"dinner\""
+    },
+    {
+      "availability_json": "  ],"
+    },
+    {
+      "availability_json": "  \"Thursday\": ["
+    },
+    {
+      "availability_json": "    \"dinner\""
+    },
+    {
+      "availability_json": "  ],"
+    },
+    {
+      "availability_json": "  \"Wednesday\": ["
+    },
+    {
+      "availability_json": "    \"dinner\""
+    },
+    {
+      "availability_json": "  ]"
+    },
+    {
+      "availability_json": "}"
+    }
+  ],
+  "messages": [],
+  "stdout": "availability_json\n{\n  \"Friday\": [\n    \"dinner\"\n  ],\n  \"Saturday\": [\n    \"dinner\"\n  ],\n  \"Sunday\": [\n    \"dinner\"\n  ],\n  \"Thursday\": [\n    \"dinner\"\n  ],\n  \"Wednesday\": [\n    \"dinner\"\n  ]\n}\n",
+  "stderr": "",
+  "execution_time_ms": 366
+}

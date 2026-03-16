@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO interest_submissions (name, email, interestType, createdAt)\nSELECT hostName, email, 'traveler', NOW()\nFROM host_listings\nWHERE email IS NOT NULL AND email != ''\nON DUPLICATE KEY UPDATE email=email;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute INSERT INTO interest_submissions (name, email, interestType, createdAt)\nSELECT hostName, email, 'traveler', NOW()\nFROM host_listings\nWHERE email IS NOT NULL AND email != ''\nON DUPLICATE KEY UPDATE email=email;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1052 (23000) at line 1: Column 'email' in field list is ambiguous"
+  ]
+}

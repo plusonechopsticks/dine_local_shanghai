@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, hostName, email, status, createdAt FROM host_listings WHERE email = 'echoren881@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, email, status, createdAt FROM host_listings WHERE email = 'echoren881@gmail.com';",
+  "rows": [
+    {
+      "id": "210001",
+      "hostName": "Echo Ren",
+      "email": "echoren881@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-02-08 08:43:41"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\temail\tstatus\tcreatedAt\n210001\tEcho Ren\techoren881@gmail.com\tpending\t2026-02-08 08:43:41\n",
+  "stderr": "",
+  "execution_time_ms": 365
+}

@@ -1,0 +1,18 @@
+{
+  "query": "SELECT name, email FROM interest_submissions WHERE name LIKE '%Chuan%' AND interestType = 'traveler';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT name, email FROM interest_submissions WHERE name LIKE '%Chuan%' AND interestType = 'traveler';",
+  "rows": [
+    {
+      "name": "Juliet Chuang",
+      "email": "61727165@qq.com"
+    },
+    {
+      "name": "Chuan 川",
+      "email": "61727165@qq.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\temail\nJuliet Chuang\t61727165@qq.com\nChuan 川\t61727165@qq.com\n",
+  "stderr": "",
+  "execution_time_ms": 350
+}

@@ -1,0 +1,120 @@
+{
+  "query": "SELECT b.id, b.guestName, b.guestEmail, b.numberOfGuests, b.paymentStatus, b.totalAmount, b.stripeSessionId, b.createdAt, h.hostName\nFROM bookings b\nLEFT JOIN host_listings h ON b.hostListingId = h.id\nWHERE b.createdAt >= '2026-02-10 19:00:00' AND b.createdAt <= '2026-02-10 21:00:00'\nORDER BY b.createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT b.id, b.guestName, b.guestEmail, b.numberOfGuests, b.paymentStatus, b.totalAmount, b.stripeSessionId, b.createdAt, h.hostName\nFROM bookings b\nLEFT JOIN host_listings h ON b.hostListingId = h.id\nWHERE b.createdAt >= '2026-02-10 19:00:00' AND b.createdAt <= '2026-02-10 21:00:00'\nORDER BY b.createdAt DESC;",
+  "rows": [
+    {
+      "id": "300002",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 20:53:24",
+      "hostName": "Ayi "
+    },
+    {
+      "id": "300001",
+      "guestName": "Test",
+      "guestEmail": "test@test.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 20:43:03",
+      "hostName": "Ayi "
+    },
+    {
+      "id": "270002",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 20:09:48",
+      "hostName": "Test Host"
+    },
+    {
+      "id": "270001",
+      "guestName": "Test",
+      "guestEmail": "test@test.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 20:08:56",
+      "hostName": "Test Host"
+    },
+    {
+      "id": "240011",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 19:37:24",
+      "hostName": "Ayi "
+    },
+    {
+      "id": "240010",
+      "guestName": "Test",
+      "guestEmail": "test@test.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 19:31:00",
+      "hostName": "Ayi "
+    },
+    {
+      "id": "240009",
+      "guestName": "Test User 5",
+      "guestEmail": "test5@example.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 19:12:22",
+      "hostName": "Norika and Steven"
+    },
+    {
+      "id": "240008",
+      "guestName": "Test User 4",
+      "guestEmail": "test4@example.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 19:09:09",
+      "hostName": "Norika and Steven"
+    },
+    {
+      "id": "240007",
+      "guestName": "Test User 3",
+      "guestEmail": "test3@example.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 19:05:06",
+      "hostName": "Norika and Steven"
+    },
+    {
+      "id": "240006",
+      "guestName": "Test User 2",
+      "guestEmail": "test2@example.com",
+      "numberOfGuests": "1",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "stripeSessionId": "NULL",
+      "createdAt": "2026-02-10 19:01:32",
+      "hostName": "Norika and Steven"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tguestName\tguestEmail\tnumberOfGuests\tpaymentStatus\ttotalAmount\tstripeSessionId\tcreatedAt\thostName\n300002\ttest\ttest@test.com\t1\tpending\tNULL\tNULL\t2026-02-10 20:53:24\tAyi \n300001\tTest\ttest@test.com\t1\tpending\tNULL\tNULL\t2026-02-10 20:43:03\tAyi \n270002\ttest\ttest@test.com\t1\tpending\tNULL\tNULL\t2026-02-10 20:09:48\tTest Host\n270001\tTest\ttest@test.com\t1\tpending\tNULL\tNULL\t2026-02-10 20:08:56\tTest Host\n240011\ttest\ttest@test.com\t1\tpending\tNULL\tNULL\t2026-02-10 19:37:24\tAyi \n240010\tTest\ttest@test.com\t1\tpending\tNULL\tNULL\t2026-02-10 19:31:00\tAyi \n240009\tTest User 5\ttest5@example.com\t1\tpending\tNULL\tNULL\t2026-02-10 19:12:22\tNorika and Steven\n240008\tTest User 4\ttest4@example.com\t1\tpending\tNULL\tNULL\t2026-02-10 19:09:09\tNorika and Steven\n240007\tTest User 3\ttest3@example.com\t1\tpending\tNULL\tNULL\t2026-02-10 19:05:06\tNorika and Steven\n240006\tTest User 2\ttest2@example.com\t1\tpending\tNULL\tNULL\t2026-02-10 19:01:32\tNorika and Steven\n",
+  "stderr": "",
+  "execution_time_ms": 354
+}

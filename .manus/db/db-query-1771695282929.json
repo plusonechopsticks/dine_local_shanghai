@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, hostName, profilePhotoUrl, foodPhotoUrls FROM host_listings WHERE hostName IN ('Jiading Ayi', 'Grace Tong');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, profilePhotoUrl, foodPhotoUrls FROM host_listings WHERE hostName IN ('Jiading Ayi', 'Grace Tong');",
+  "rows": [
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1769882183/host-images/vaioaycyfqjqqtxng3gl.jpg",
+      "foodPhotoUrls": "[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882118/host-images/lletohvybcivoacisryq.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882120/host-images/stacv7tg6rlwa6ltigqk.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882122/host-images/enerun7rg2wvkrnq29ef.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882124/host-images/gmwcadmks0fulwavwo6r.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882126/host-images/zxols0urs8x0gd1szuzm.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882128/host-images/rrjgtrzmwnq9sd6gk1pj.jpg\"]"
+    },
+    {
+      "id": "120001",
+      "hostName": "Grace Tong",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1769882183/host-images/vaioaycyfqjqqtxng3gl.jpg",
+      "foodPhotoUrls": "[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881401/host-images/vpwz3itks0vllkudk7s5.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881405/host-images/rdqdicxlvgx5v0vctaia.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881409/host-images/jzhgvwqjv14rvy17mztr.jpg\"]"
+    },
+    {
+      "id": "150001",
+      "hostName": "Jiading Ayi ",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1769882814/host-images/m953al1omf5zczdkum7h.jpg",
+      "foodPhotoUrls": "[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882814/host-images/m953al1omf5zczdkum7h.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882816/host-images/tprru9pocfkfdchwatw0.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882819/host-images/eippvkl9rbajx3gpjwyx.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882821/host-images/ujfy1gmzw3pdrhcjoq8v.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882824/host-images/aavo9glnluvnx5fawn0p.jpg\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tprofilePhotoUrl\tfoodPhotoUrls\n90002\tGrace Tong\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1769882183/host-images/vaioaycyfqjqqtxng3gl.jpg\t[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882118/host-images/lletohvybcivoacisryq.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882120/host-images/stacv7tg6rlwa6ltigqk.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882122/host-images/enerun7rg2wvkrnq29ef.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882124/host-images/gmwcadmks0fulwavwo6r.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882126/host-images/zxols0urs8x0gd1szuzm.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882128/host-images/rrjgtrzmwnq9sd6gk1pj.jpg\"]\n120001\tGrace Tong\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1769882183/host-images/vaioaycyfqjqqtxng3gl.jpg\t[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881401/host-images/vpwz3itks0vllkudk7s5.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881405/host-images/rdqdicxlvgx5v0vctaia.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881409/host-images/jzhgvwqjv14rvy17mztr.jpg\"]\n150001\tJiading Ayi \thttps://res.cloudinary.com/drxfcfayd/image/upload/v1769882814/host-images/m953al1omf5zczdkum7h.jpg\t[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882814/host-images/m953al1omf5zczdkum7h.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882816/host-images/tprru9pocfkfdchwatw0.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882819/host-images/eippvkl9rbajx3gpjwyx.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882821/host-images/ujfy1gmzw3pdrhcjoq8v.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769882824/host-images/aavo9glnluvnx5fawn0p.jpg\"]\n",
+  "stderr": "",
+  "execution_time_ms": 443
+}

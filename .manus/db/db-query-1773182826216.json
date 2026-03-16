@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE blog_posts SET title = 'China''s overlooked export boom isn''t in goods — it''s in tourism, and curated food experiences enhance China''s soft power' WHERE id = 'blog-1-china-export-boom';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE blog_posts SET title = 'China''s overlooked export boom isn''t in goods — it''s in tourism, and curated food experiences enhance China''s soft power' WHERE id = 'blog-1-china-export-boom';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 383
+}

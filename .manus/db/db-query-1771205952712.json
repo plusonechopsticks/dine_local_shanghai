@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, hostName, availability FROM host_listings WHERE id = 240001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, availability FROM host_listings WHERE id = 240001;",
+  "rows": [
+    {
+      "id": "240001",
+      "hostName": "Sookie",
+      "availability": "{\"Friday\": [\"dinner\"], \"Saturday\": [\"dinner\"], \"Sunday\": [\"dinner\"], \"Thursday\": [\"dinner\"], \"Wednesday\": [\"dinner\"]}"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tavailability\n240001\tSookie\t{\"Friday\": [\"dinner\"], \"Saturday\": [\"dinner\"], \"Sunday\": [\"dinner\"], \"Thursday\": [\"dinner\"], \"Wednesday\": [\"dinner\"]}\n",
+  "stderr": "",
+  "execution_time_ms": 390
+}

@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, activities, otherNotes FROM host_listings WHERE id = 150001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, activities, otherNotes FROM host_listings WHERE id = 150001;",
+  "rows": [
+    {
+      "id": "150001",
+      "activities": "[\"cooking-class\", \"market-visit\", \"cultural-tour\"]",
+      "otherNotes": "Auntie's kitchen is a true home environment—seasonal, flexible, and honest. While we can adapt many dishes for vegetarian/pescatarian guests and avoid nuts, we cannot guarantee allergen-free preparation for severe allergies or strict religious dietary laws. Please communicate needs when booking!"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tactivities\totherNotes\n150001\t[\"cooking-class\", \"market-visit\", \"cultural-tour\"]\tAuntie's kitchen is a true home environment—seasonal, flexible, and honest. While we can adapt many dishes for vegetarian/pescatarian guests and avoid nuts, we cannot guarantee allergen-free preparation for severe allergies or strict religious dietary laws. Please communicate needs when booking!\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

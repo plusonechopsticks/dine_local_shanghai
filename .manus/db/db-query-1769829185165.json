@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, hostName, status FROM host_listings ORDER BY status;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, status FROM host_listings ORDER BY status;",
+  "rows": [
+    {
+      "id": "1",
+      "hostName": "Norika and Steven",
+      "status": "approved"
+    },
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "status": "approved"
+    },
+    {
+      "id": "30001",
+      "hostName": "Li Wei",
+      "status": "rejected"
+    },
+    {
+      "id": "60001",
+      "hostName": "Test Host",
+      "status": "rejected"
+    },
+    {
+      "id": "90001",
+      "hostName": "G",
+      "status": "rejected"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tstatus\n1\tNorika and Steven\tapproved\n90002\tGrace Tong\tapproved\n30001\tLi Wei\trejected\n60001\tTest Host\trejected\n90001\tG\trejected\n",
+  "stderr": "",
+  "execution_time_ms": 363
+}
