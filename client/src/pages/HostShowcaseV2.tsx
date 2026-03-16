@@ -117,7 +117,7 @@ export default function HostShowcaseV2() {
       </nav>
 
       {/* Hero Video Section */}
-      <section className="relative w-full h-[75vh] bg-gradient-to-b from-gray-800 to-gray-900 overflow-hidden">
+      <section className="relative w-full h-screen bg-gradient-to-b from-gray-800 to-gray-900 overflow-hidden">
         {/* Video background */}
         {host.introVideoUrl ? (
           <video
@@ -377,8 +377,8 @@ export default function HostShowcaseV2() {
         </div>
       </section>
 
-      {/* Booking Widget - Fixed Right Sidebar */}
-      <div className="fixed right-12 top-32 w-80 bg-white border border-[#e8e3d8] rounded-sm shadow-lg z-30 max-h-[calc(100vh-160px)] overflow-y-auto hidden lg:block">
+      {/* Booking Widget - Appears after hero section */}
+      <div className="w-80 bg-white border border-[#e8e3d8] rounded-sm shadow-lg mx-auto mt-12 mb-12 hidden lg:block">
         {/* Widget Header */}
         <div className="bg-[#1a1410] text-white p-5 border-b border-[#e8e3d8]">
           <p className="text-xs tracking-widest uppercase opacity-80 mb-2">Book a Seat</p>
@@ -495,8 +495,7 @@ export default function HostShowcaseV2() {
         </div>
       </div>
 
-      {/* Main content padding for fixed widget */}
-      <div className="h-20" />
+
     </div>
   );
 }

@@ -1421,3 +1421,17 @@
   - [x] Verify section ordering is correct
   - [x] Verify booking widget still functional
   - [x] Verify all bio sections display correctly
+
+
+## HostShowcaseV2 - Hero Video and Booking Widget Positioning (COMPLETE) ✅
+- [x] Update hero video to 100vh
+  - [x] Change from 75vh to 100vh
+  - [x] Ensure video fills entire viewport
+  - [x] Verify mobile responsiveness
+- [x] Reposition booking widget
+  - [x] Remove fixed sidebar positioning
+  - [x] Move booking widget to appear after hero video section
+  - [x] Adjust layout for better flow
+  - [x] Test on mobile and desktop
+  - [x] Verify form interactions working correctly
+  - [x] Verify price calculation updates with guest count
