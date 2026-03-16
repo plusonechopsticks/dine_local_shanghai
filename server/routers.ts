@@ -64,30 +64,32 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database connection failed");
         
+        const dateStr = input.requestedDate instanceof Date
+          ? input.requestedDate.toISOString().split('T')[0]
+          : input.requestedDate;
+        
         await db.insert(bookings).values({
           hostListingId: input.hostListingId,
           guestName: input.guestName,
           guestEmail: input.guestEmail,
           guestPhone: input.guestPhone || null,
-          requestedDate: new Date(input.requestedDate),
+          requestedDate: dateStr as any,
           mealType: input.mealType,
           numberOfGuests: input.numberOfGuests,
           specialRequests: input.specialRequests || null,
-          status: "pending",
+          bookingStatus: "pending",
         });
         
         // Get the last inserted ID
-        const lastIdResult = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
-        console.log('[Booking Create] Raw result:', JSON.stringify(lastIdResult));
+        const lastIdResult: any = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+        console.log('[Booking Create] Raw result:', lastIdResult);
         
-        // Extract ID from result - structure varies by driver
-        let bookingId;
-        if (Array.isArray(lastIdResult) && lastIdResult.length > 0) {
-          const firstRow: any = lastIdResult[0];
-          if (Array.isArray(firstRow) && firstRow.length > 0) {
-            bookingId = firstRow[0]?.id || firstRow[0]?.['LAST_INSERT_ID()'];
-          } else {
-            bookingId = firstRow?.id || firstRow?.['LAST_INSERT_ID()'];
+        // Extract ID - mysql2 returns [rows, fields]
+        let bookingId: number | undefined;
+        if (Array.isArray(lastIdResult) && lastIdResult.length >= 1) {
+          const rows = lastIdResult[0] as any[];
+          if (Array.isArray(rows) && rows.length > 0) {
+            bookingId = rows[0].id || rows[0]['LAST_INSERT_ID()'];
           }
         }
         

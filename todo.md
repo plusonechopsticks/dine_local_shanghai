@@ -1284,3 +1284,16 @@
 - [x] Add Blog link to HomeHeader mobile menu
 - [x] Add Blog link to Navbar component
 - [x] Add Blog link to footer/bottom menu
+
+
+## CRITICAL BUG FIX - Booking System Broken - COMPLETED ✅
+- [x] Identified root cause: Drizzle ORM LAST_INSERT_ID() result extraction was incorrect
+  - mysql2 driver returns [rows, fields] tuple, not direct rows array
+  - Code was trying to access rows[0] on the entire result object
+- [x] Fixed booking.create mutation in server/routers.ts
+  - Properly extract rows from result[0] before accessing row data
+  - Convert requestedDate to ISO string format (YYYY-MM-DD) for database
+  - Added proper type annotations for bookingId
+- [x] Verified fix with vitest tests - all 6 booking tests passing
+- [x] Booking system now working: users can create bookings successfully
+- [x] Next: Test complete booking flow (form → database → payment → webhook)
