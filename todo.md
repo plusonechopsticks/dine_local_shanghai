@@ -1306,3 +1306,27 @@
   - Bookings are stored in database
   - Confirmation page displays booking details correctly
   - Ready for payment integration testing
+
+
+## Host Detail Page V2 - Editorial Design (COMPLETE)
+- [x] Create new HostDetailPageV2.tsx with editorial design
+  - [x] Hero section with video placeholder (75vh height)
+  - [x] Menu section with expandable categories and photo carousel
+  - [x] Things to Know grid section
+  - [x] Meet Host section with bio and details
+  - [x] Fixed right sidebar booking widget
+- [x] Improve booking widget
+  - [x] Add guest name field
+  - [x] Add guest email field
+  - [x] Add phone number field (optional)
+  - [x] Add dietary requirements field
+  - [x] Ensure all required fields are validated before submission
+  - [x] Fix date format handling (ISO format YYYY-MM-DD)
+- [x] Link booking widget to confirmation page
+  - [x] Redirect to /booking-confirmation with proper query parameters
+  - [x] Pass booking ID, guest name, email, date, meal type, guests, dietary restrictions
+- [x] Add route to App.tsx at /hosts/:id/v2 (test route, not visible in main nav)
+- [x] Test end-to-end booking flow from V2 page to confirmation
+  - [x] Successfully created booking for Alice Chen (3 guests, dinner 4/12/2026, ¥750)
+  - [x] Confirmed redirect to booking confirmation page with all details
+  - [x] Verified dietary restrictions are captured and displayed

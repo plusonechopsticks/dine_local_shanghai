@@ -19,6 +19,7 @@ import BookingConfirmation from "./pages/BookingConfirmation";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import HostDetailPageV2 from "./pages/HostDetailPageV2";
 import { ChatWidget } from "./components/ChatWidget";
 
 function Router() {
@@ -37,7 +38,9 @@ function Router() {
       <Route path={"/ admin/newsletter"} component={AdminNewsletter} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/booking-success" component={BookingSuccess} />      <Route path="/booking-confirmation" component={BookingConfirmation} />
+      <Route path="/hosts/:id/v2" component={HostDetailPageV2} />
+      <Route path="/booking-success" component={BookingSuccess} />
+      <Route path="/booking-confirmation" component={BookingConfirmation} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />    </Switch>
