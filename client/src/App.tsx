@@ -20,6 +20,7 @@ import AdminNewsletter from "./pages/AdminNewsletter";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import HostShowcaseV2 from "./pages/HostShowcaseV2";
+import HostDetailV2 from "./pages/HostDetailV2";
 
 import { ChatWidget } from "./components/ChatWidget";
 
@@ -31,6 +32,7 @@ function Router() {
       <Route path={"/host-register"} component={HostRegister} />
       <Route path="/hosts" component={HostListings} />
       <Route path="/showcase" component={HostShowcaseV2} />
+      <Route path="/hosts/:id/v2" component={HostDetailV2} />
       <Route path="/hosts/:id" component={HostDetail} />
       <Route path={"/host/login"} component={HostLogin} />
       <Route path={"/host/portal"} component={HostPortal} />
