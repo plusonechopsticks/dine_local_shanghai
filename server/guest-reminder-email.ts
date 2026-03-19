@@ -58,7 +58,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
           <!-- Main Content -->
           <tr>
             <td style="padding: 0 40px 30px 40px;">
-              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Your Dining Experience is in 2 Days! ${mealEmoji}</h2>
+              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Hi ${data.guestName}! Your Dining Experience is in 2 Days! ${mealEmoji}</h2>
               <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
                 Get ready for an unforgettable evening of authentic Shanghai home cooking with ${data.hostName}!
               </p>
@@ -129,6 +129,35 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
                 <li>Experience genuine Shanghai hospitality</li>
                 <li>Typical experience lasts 2-3 hours</li>
               </ul>
+            </td>
+          </tr>
+
+          <!-- Home Dining Cheat Sheets -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <h3 style="margin: 0 0 20px 0; color: #1f2937; font-size: 18px; font-weight: 600; text-align: center;">📚 Your Home Dining Cheat Sheets</h3>
+              <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                First time dining in a Shanghai home? Don't worry! Here are three helpful guides to make your experience smooth and enjoyable:
+              </p>
+              
+              <!-- Cheat Sheet 1 -->
+              <div style="margin-bottom: 24px; text-align: center;">
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gJvoPIaYkJzcUXed.PNG" alt="Home Dining Cheat Sheet 1: Getting There & Arriving" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              </div>
+              
+              <!-- Cheat Sheet 2 -->
+              <div style="margin-bottom: 24px; text-align: center;">
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/YRUHjnBjIrOsYeTy.PNG" alt="Home Dining Cheat Sheet 2: Chopsticks Manners & Good Etiquette" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              </div>
+              
+              <!-- Cheat Sheet 3 -->
+              <div style="text-align: center;">
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/fOeqwqkOExiaqFWf.PNG" alt="Home Dining Cheat Sheet 3: Useful Expressions for the Table" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              </div>
+              
+              <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                <strong>Pro tip:</strong> Save these images to your phone for quick reference during your dining experience!
+              </p>
             </td>
           </tr>
 
