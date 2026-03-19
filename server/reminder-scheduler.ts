@@ -15,6 +15,7 @@ const scheduledReminders = new Map<number, ScheduledReminder>();
 
 /**
  * Schedule a guest reminder email to be sent 48 hours before the experience
+ * Only schedules reminders for PAID bookings
  */
 export async function scheduleGuestReminder(
   bookingId: number,
@@ -24,9 +25,16 @@ export async function scheduleGuestReminder(
   hostName: string,
   mealType: "lunch" | "dinner",
   numberOfGuests: number,
-  cuisine: string
+  cuisine: string,
+  paymentStatus: string = "pending"
 ) {
   try {
+    // Only schedule reminders for PAID bookings
+    if (paymentStatus !== "paid") {
+      console.log(`[Reminder Scheduler] Booking ${bookingId} is not paid (status: ${paymentStatus}), skipping reminder schedule`);
+      return;
+    }
+    
     // Calculate 48 hours before the experience
     const reminderTime = new Date(experienceDate.getTime() - 48 * 60 * 60 * 1000);
     

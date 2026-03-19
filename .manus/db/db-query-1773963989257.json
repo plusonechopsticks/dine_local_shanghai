@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, guestName, guestEmail, requestedDate, reminderEmailSent FROM bookings ORDER BY requestedDate ASC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, guestName, guestEmail, requestedDate, reminderEmailSent FROM bookings ORDER BY requestedDate ASC LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "guestName": "Shugen test",
+      "guestEmail": "steventohk@gmail.com",
+      "requestedDate": "2026-01-31",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "60001",
+      "guestName": "Totolaomu",
+      "guestEmail": "norika007@163.com",
+      "requestedDate": "2026-02-01",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "30001",
+      "guestName": "Joan test",
+      "guestEmail": "joan123@gmail.com",
+      "requestedDate": "2026-02-06",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "90001",
+      "guestName": "Shugenbaba test",
+      "guestEmail": "shugenbaba@gmail.com",
+      "requestedDate": "2026-02-10",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "240011",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "requestedDate": "2026-02-11",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "300001",
+      "guestName": "Test",
+      "guestEmail": "test@test.com",
+      "requestedDate": "2026-02-11",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "300002",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "requestedDate": "2026-02-11",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "240004",
+      "guestName": "Test",
+      "guestEmail": "test@test.com",
+      "requestedDate": "2026-02-11",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "300003",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "requestedDate": "2026-02-11",
+      "reminderEmailSent": "0"
+    },
+    {
+      "id": "270002",
+      "guestName": "test",
+      "guestEmail": "test@test.com",
+      "requestedDate": "2026-02-12",
+      "reminderEmailSent": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tguestName\tguestEmail\trequestedDate\treminderEmailSent\n1\tShugen test\tsteventohk@gmail.com\t2026-01-31\t0\n60001\tTotolaomu\tnorika007@163.com\t2026-02-01\t0\n30001\tJoan test\tjoan123@gmail.com\t2026-02-06\t0\n90001\tShugenbaba test\tshugenbaba@gmail.com\t2026-02-10\t0\n240011\ttest\ttest@test.com\t2026-02-11\t0\n300001\tTest\ttest@test.com\t2026-02-11\t0\n300002\ttest\ttest@test.com\t2026-02-11\t0\n240004\tTest\ttest@test.com\t2026-02-11\t0\n300003\ttest\ttest@test.com\t2026-02-11\t0\n270002\ttest\ttest@test.com\t2026-02-12\t0\n",
+  "stderr": "",
+  "execution_time_ms": 343
+}

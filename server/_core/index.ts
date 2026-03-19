@@ -170,7 +170,7 @@ async function startServer(): Promise<any> {
                     
                     console.log(`[Webhook] Sent host notification email to ${bookingWithHost.hostListing.email}`);
                     
-                    // Schedule reminder email 48 hours before the experience
+                    // Schedule reminder email 48 hours before the experience (only for paid bookings)
                     try {
                       await scheduleGuestReminder(
                         bookingWithHost.id,
@@ -180,7 +180,8 @@ async function startServer(): Promise<any> {
                         bookingWithHost.hostListing.hostName,
                         bookingWithHost.mealType as "lunch" | "dinner",
                         bookingWithHost.numberOfGuests,
-                        bookingWithHost.hostListing.cuisineStyle
+                        bookingWithHost.hostListing.cuisineStyle,
+                        "paid"
                       );
                       console.log(`[Webhook] Scheduled reminder email for booking ${bookingWithHost.id}`);
                     } catch (reminderError: any) {
