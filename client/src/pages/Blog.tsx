@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
 
-const TAGS = ["entrepreneurship", "travel-policy", "food-culture"];
+const TAGS = ["entrepreneurship", "travel-policy", "travel-tips", "food-culture"];
 
 function BlogPostViewCount({ postId }: { postId: number }) {
   const { data: viewCount } = trpc.blog.getViewCount.useQuery(
