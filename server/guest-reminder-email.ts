@@ -145,17 +145,23 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
               
               <!-- Cheat Sheet 1 -->
               <div style="margin-bottom: 24px; text-align: center;">
-                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gJvoPIaYkJzcUXed.PNG" alt="Home Dining Cheat Sheet 1: Getting There & Arriving" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <a href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gJvoPIaYkJzcUXed.PNG" style="text-decoration: none; display: inline-block; cursor: pointer;" target="_blank">
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/gJvoPIaYkJzcUXed.PNG" alt="Home Dining Cheat Sheet 1: Getting There & Arriving" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;">
+                </a>
               </div>
               
               <!-- Cheat Sheet 2 -->
               <div style="margin-bottom: 24px; text-align: center;">
-                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/YRUHjnBjIrOsYeTy.PNG" alt="Home Dining Cheat Sheet 2: Chopsticks Manners & Good Etiquette" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <a href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/YRUHjnBjIrOsYeTy.PNG" style="text-decoration: none; display: inline-block; cursor: pointer;" target="_blank">
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/YRUHjnBjIrOsYeTy.PNG" alt="Home Dining Cheat Sheet 2: Chopsticks Manners & Good Etiquette" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;">
+                </a>
               </div>
               
               <!-- Cheat Sheet 3 -->
               <div style="text-align: center;">
-                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/fOeqwqkOExiaqFWf.PNG" alt="Home Dining Cheat Sheet 3: Useful Expressions for the Table" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <a href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/fOeqwqkOExiaqFWf.PNG" style="text-decoration: none; display: inline-block; cursor: pointer;" target="_blank">
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/fOeqwqkOExiaqFWf.PNG" alt="Home Dining Cheat Sheet 3: Useful Expressions for the Table" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;">
+                </a>
               </div>
               
               <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
