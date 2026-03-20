@@ -21,7 +21,7 @@ const IMAGES = {
   aboutGallery3: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/9959a377-4e47-41db-9dab-b5d30f0135aa(6)_f1453687.jpeg",
 };
 
-const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven"];
+const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven", "Echo", "Grace", "Sookie"];
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -40,7 +40,7 @@ export default function Home() {
   // Filter featured hosts
   const featuredHosts = allHosts.filter((host) =>
     FEATURED_HOST_NAMES.some((name) => host.hostName?.includes(name))
-  ).slice(0, 3); // Limit to 3 hosts
+  ).slice(0, 6); // Limit to 6 hosts (2 rows of 3)
 
   const heroSlides = [
     {
@@ -231,7 +231,7 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredHosts.map((host) => (
+            {featuredHosts.slice(0, 3).map((host) => (
               <div
                 key={host.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
@@ -267,6 +267,47 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          {/* Second Row of Featured Hosts */}
+          {featuredHosts.length > 3 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+              {featuredHosts.slice(3, 6).map((host) => (
+              <div
+                key={host.id}
+                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+              >
+                {/* Image */}
+                <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
+                  <img
+                    src={host.profilePhotoUrl || ""}
+                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'Shanghai'} for authentic home dining experience`}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
+                    ✓ Verified
+                  </div>
+                </div>
+
+                {/* Card Content */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200 line-clamp-2">
+                    {host.hostName}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{host.cuisineStyle || "🍽️ Local Cuisine"}</p>
+                  <p className="text-sm text-gray-700 mb-4 line-clamp-3">
+                    {truncateSummary(host.bio, 120)}
+                  </p>
+                  <Button
+                    className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover:shadow-lg"
+                    onClick={() => setLocation(`/hosts/${host.id}`)}
+                  >
+                    View Details
+                  </Button>
+                  </div>
+              </div>
+            ))}
+            </div>
+          )}
 
           <div className="text-center mt-12">
             <Button
