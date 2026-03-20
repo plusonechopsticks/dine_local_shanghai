@@ -32,7 +32,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your +1 Chopsticks Experience is Tomorrow! - Reminder</title>
+  <title>Home Dining Cheat Sheets to your +1 Chopsticks Experience</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
@@ -111,6 +111,9 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
                   <li>Instructions for arrival</li>
                   <li>Discussion of your dietary requirements</li>
                 </ul>
+                <p style="margin: 12px 0 0 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
+                  <strong>Note:</strong> The host's email (${data.hostEmail}) is also copied on this message in case you'd like to reach out proactively!
+                </p>
                 <p style="margin: 12px 0 0 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
                   <strong>If you haven't received this email, please contact us immediately at <a href="mailto:plusonechopsticks@gmail.com" style="color: #2563eb; text-decoration: underline;">plusonechopsticks@gmail.com</a></strong>
                 </p>
