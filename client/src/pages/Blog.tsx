@@ -164,7 +164,7 @@ export default function Blog() {
                     </div>
                   )}
                   <CardHeader className="pb-2">
-                    <CardTitle className="line-clamp-2 mb-2 text-lg">{post.title}</CardTitle>
+                    <CardTitle className="mb-2 text-lg leading-tight">{post.title}</CardTitle>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {(() => {
                         const tags = typeof post.tags === 'string' ? JSON.parse(post.tags) : post.tags;

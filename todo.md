@@ -1573,3 +1573,9 @@
 - [x] Ensure full 16:9 aspect ratio images are visible
 - [x] Adjust card height and image container sizing (h-48 → h-56)
 - [x] Verify responsive design on mobile and desktop
+
+## Blog Post Title Overflow Fix - Completed ✅
+- [x] Fix blog post titles being cut off (removed line-clamp-2)
+- [x] Allow titles to wrap to 3+ lines as needed
+- [x] Ensure all blog post titles are fully visible
+- [x] Maintain consistent card layout and spacing (added leading-tight)
