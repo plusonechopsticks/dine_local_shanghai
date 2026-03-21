@@ -155,7 +155,7 @@ export default function Blog() {
                   onClick={() => navigate(`/blog/${post.slug}`)}
                 >
                   {post.featuredImageUrl && (
-                    <div className="h-48 overflow-hidden bg-muted">
+                    <div className="h-56 overflow-hidden bg-muted">
                       <img
                         src={post.featuredImageUrl}
                         alt={post.title}
@@ -163,8 +163,8 @@ export default function Blog() {
                       />
                     </div>
                   )}
-                  <CardHeader className="pb-3">
-                    <CardTitle className="line-clamp-2 mb-3">{post.title}</CardTitle>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="line-clamp-2 mb-2 text-lg">{post.title}</CardTitle>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {(() => {
                         const tags = typeof post.tags === 'string' ? JSON.parse(post.tags) : post.tags;
