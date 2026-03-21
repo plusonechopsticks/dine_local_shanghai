@@ -11,7 +11,7 @@ import { serveStatic, setupVite } from "./vite";
 import multer from "multer";
 import { storagePut } from "../storage";
 import { nanoid } from "nanoid";
-import { scheduleGuestReminder } from "../reminder-scheduler";
+import { scheduleGuestReminder, initializeExistingReminders } from "../reminder-scheduler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -320,6 +320,8 @@ async function startServer(): Promise<any> {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    // Initialize reminders for existing paid bookings
+    initializeExistingReminders().catch(err => console.error("Failed to initialize reminders:", err));
   });
 
   return server;

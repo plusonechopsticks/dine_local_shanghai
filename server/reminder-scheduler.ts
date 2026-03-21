@@ -113,3 +113,61 @@ export function cancelGuestReminder(bookingId: number) {
 export function getScheduledReminders() {
   return Array.from(scheduledReminders.values());
 }
+
+/**
+ * Initialize reminders for existing paid bookings on server startup
+ * This reschedules reminders for paid bookings that haven't had reminders sent yet
+ */
+export async function initializeExistingReminders() {
+  try {
+    console.log("[Reminder Scheduler] Initializing reminders for existing paid bookings...");
+    const db = await getDb();
+    if (!db) {
+      console.error("[Reminder Scheduler] Failed to get database connection");
+      return;
+    }
+
+    // Get all paid bookings that haven't had reminders sent
+    const paidBookings = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.paymentStatus, "paid"));
+
+    console.log(`[Reminder Scheduler] Found ${paidBookings.length} paid bookings`);
+
+    let scheduledCount = 0;
+    for (const booking of paidBookings) {
+      // Skip if reminder already sent
+      if (booking.reminderEmailSent) {
+        continue;
+      }
+
+      // Calculate when reminder should be sent (48 hours before experience)
+      const reminderTime = new Date(booking.requestedDate.getTime() - 48 * 60 * 60 * 1000);
+      const now = new Date();
+
+      // Only schedule if reminder time is in the future
+      if (reminderTime > now) {
+        console.log(`[Reminder Scheduler] Scheduling reminder for booking ${booking.id}`);
+        await scheduleGuestReminder(
+          booking.id,
+          booking.requestedDate,
+          booking.guestName,
+          booking.guestEmail,
+          "", // hostName will be fetched from DB if needed
+          booking.mealType as "lunch" | "dinner",
+          booking.numberOfGuests,
+          "", // cuisine
+          booking.paymentStatus
+        );
+        scheduledCount++;
+      } else {
+        console.log(`[Reminder Scheduler] Reminder time is in the past for booking ${booking.id}, skipping`);
+      }
+    }
+
+    console.log(`[Reminder Scheduler] Successfully initialized ${scheduledCount} reminders`);
+  } catch (error) {
+    console.error("[Reminder Scheduler] Error initializing existing reminders:", error);
+  }
+}
