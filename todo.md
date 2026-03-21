@@ -1555,3 +1555,15 @@
 - [x] Back date Steven To's blog post to March 13, 2026
 - [x] Add newsletter subscription box to blog section (using same form as homepage)
 - [x] Test newsletter signup functionality
+
+## Blog View Count Fix - Completed ✅
+- [x] Debug blog post view count showing zero for all posts
+- [x] Identify missing blog_post_views database table
+- [x] Create blog_post_views table in database
+- [x] Verify view tracking system is working correctly
+
+## New Blog Post - Planning Your First China Trip (In Progress)
+- [ ] Write blog post content from user outline
+- [ ] Generate blog post thumbnail image
+- [ ] Add blog post to database with proper tags and metadata
+- [ ] Publish blog post to blog page
