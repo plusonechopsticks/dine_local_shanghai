@@ -43,6 +43,13 @@
       "when": 1773623137229,
       "tag": "0005_material_terrax",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1774074959611,
+      "tag": "0006_solid_miracleman",
+      "breakpoints": true
     }
   ]
 }

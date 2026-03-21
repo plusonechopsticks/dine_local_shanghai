@@ -403,10 +403,10 @@ export type InsertBlogPost = typeof blogPosts.$inferInsert;
  * Blog post views - track analytics for blog posts
  */
 export const blogPostViews = mysqlTable("blog_post_views", {
-  id: int("id").autoincrement().primaryKey(),
+  id: varchar("id", { length: 255 }).primaryKey(),
   
   // Link to blog post
-  blogPostId: int("blogPostId").notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
+  blogPostId: varchar("blogPostId", { length: 255 }).notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
   
   // View tracking
   viewCount: int("viewCount").default(0).notNull(),

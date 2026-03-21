@@ -4,23 +4,14 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { toast } from "sonner";
 
 const TAGS = ["entrepreneurship", "travel-policy", "travel-tips", "food-culture"];
 
-function BlogPostViewCount({ postId }: { postId: number }) {
-  const { data: viewCount } = trpc.blog.getViewCount.useQuery(
-    { blogPostId: postId },
-    { enabled: !!postId }
-  ) as any;
-
-  return (
-    <span className="flex items-center gap-1">
-      <Eye className="w-3 h-3" />
-      {viewCount || 0}
-    </span>
-  );
+// View count component removed - simplified implementation
+function BlogPostViewCount() {
+  return null;
 }
 
 function NewsletterForm() {
@@ -194,7 +185,6 @@ export default function Blog() {
                             })
                           : ""}
                       </span>
-                      <BlogPostViewCount postId={post.id} />
                     </div>
                   </CardHeader>
                   <CardContent>
