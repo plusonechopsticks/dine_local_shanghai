@@ -1542,3 +1542,11 @@
 - [x] Update Steven To's blog post featured image to custom 16:9 widescreen design
 - [x] Fix featured image not updating - corrected slug to 'home-dining-cheat-sheet-steven-to'
 - [x] Verify new featured image displays correctly on blog listing page
+
+## Featured Hosts Carousel - Completed ✅
+- [x] Update featured hosts section to carousel between two groups of 3 hosts
+- [x] Group 1: Jiading Ayi, Norika & Steven, Chuan (show first)
+- [x] Group 2: Sookie, Echo Ren, Grace Tong
+- [x] Auto-rotate every 5 seconds with smooth transitions
+- [x] Add carousel navigation (dots/indicators for manual control)
+- [x] Responsive design for mobile and desktop

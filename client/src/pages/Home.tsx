@@ -21,6 +21,12 @@ const IMAGES = {
   aboutGallery3: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/9959a377-4e47-41db-9dab-b5d30f0135aa(6)_f1453687.jpeg",
 };
 
+// Define featured host groups in order
+const FEATURED_HOST_GROUPS = [
+  ["Jiading Ayi", "Norika and Steven", "Chuan"], // Group 1 (first 3)
+  ["Sookie", "Echo Ren", "Grace Tong"], // Group 2
+];
+
 const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven", "Echo", "Grace", "Sookie"];
 
 export default function Home() {
@@ -30,6 +36,7 @@ export default function Home() {
   const [hoveredGalleryImage, setHoveredGalleryImage] = useState<number | null>(null);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isSubmittingNewsletter, setIsSubmittingNewsletter] = useState(false);
+  const [currentHostGroup, setCurrentHostGroup] = useState(0);
 
   // Newsletter submission mutation
   const submitInterestMutation = trpc.interest.submit.useMutation();
@@ -37,10 +44,28 @@ export default function Home() {
   // Fetch all approved hosts
   const { data: allHosts = [] } = trpc.host.listApproved.useQuery();
 
-  // Filter featured hosts
+  // Filter featured hosts by current group
+  const getHostsByGroup = (groupIndex) => {
+    const groupNames = FEATURED_HOST_GROUPS[groupIndex];
+    return allHosts.filter((host) =>
+      groupNames.some((name) => host.hostName?.toLowerCase().includes(name.toLowerCase()))
+    );
+  };
+
+  const currentGroupHosts = getHostsByGroup(currentHostGroup);
+
+  // Auto-rotate carousel every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentHostGroup((prev) => (prev + 1) % FEATURED_HOST_GROUPS.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Keep featuredHosts for backward compatibility
   const featuredHosts = allHosts.filter((host) =>
     FEATURED_HOST_NAMES.some((name) => host.hostName?.includes(name))
-  ).slice(0, 6); // Limit to 6 hosts (2 rows of 3)
+  ).slice(0, 6);
 
   const heroSlides = [
     {
@@ -230,8 +255,8 @@ export default function Home() {
             Meet your new friends in Shanghai - Authentic Home Dining Experiences
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredHosts.slice(0, 3).map((host) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-500">
+            {currentGroupHosts.map((host) => (
               <div
                 key={host.id}
                 className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
@@ -268,46 +293,16 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Second Row of Featured Hosts */}
-          {featuredHosts.length > 3 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-              {featuredHosts.slice(3, 6).map((host) => (
-              <div
-                key={host.id}
-                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
-              >
-                {/* Image */}
-                <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
-                  <img
-                    src={host.profilePhotoUrl || ""}
-                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'Shanghai'} for authentic home dining experience`}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
-                    ✓ Verified
-                  </div>
-                </div>
-
-                {/* Card Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200 line-clamp-2">
-                    {host.hostName}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{host.cuisineStyle || "🍽️ Local Cuisine"}</p>
-                  <p className="text-sm text-gray-700 mb-4 line-clamp-3">
-                    {truncateSummary(host.bio, 120)}
-                  </p>
-                  <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover:shadow-lg"
-                    onClick={() => setLocation(`/hosts/${host.id}`)}
-                  >
-                    View Details
-                  </Button>
-                  </div>
-              </div>
+          {/* Carousel Indicators */}
+          <div className="flex justify-center gap-2 mt-8">
+            {FEATURED_HOST_GROUPS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentHostGroup(idx)}
+                className={`w-2 h-2 rounded-full transition ${idx === currentHostGroup ? "bg-red-600 w-8" : "bg-gray-300"}`}
+              />
             ))}
-            </div>
-          )}
+          </div>
 
           <div className="text-center mt-12">
             <Button
