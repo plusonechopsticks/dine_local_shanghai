@@ -54,7 +54,7 @@ export default function BlogPost() {
 
       {/* Hero Image */}
       {post.featuredImageUrl && (
-        <div className="h-96 overflow-hidden bg-muted">
+        <div className="w-full aspect-video overflow-hidden bg-muted">
           <img
             src={post.featuredImageUrl}
             alt={post.title}
