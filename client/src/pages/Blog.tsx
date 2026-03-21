@@ -155,7 +155,7 @@ export default function Blog() {
                   onClick={() => navigate(`/blog/${post.slug}`)}
                 >
                   {post.featuredImageUrl && (
-                    <div className="h-56 overflow-hidden bg-muted">
+                    <div className="h-64 overflow-hidden bg-muted">
                       <img
                         src={post.featuredImageUrl}
                         alt={post.title}
@@ -163,7 +163,7 @@ export default function Blog() {
                       />
                     </div>
                   )}
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-1 pt-3">
                     <CardTitle className="mb-2 text-lg leading-tight">{post.title}</CardTitle>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {(() => {

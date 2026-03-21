@@ -1579,3 +1579,5 @@
 - [x] Allow titles to wrap to 3+ lines as needed
 - [x] Ensure all blog post titles are fully visible
 - [x] Maintain consistent card layout and spacing (added leading-tight)
+- [x] Increased thumbnail height to h-64 and reduced top padding
+- [x] Removed unnecessary white space above thumbnails
