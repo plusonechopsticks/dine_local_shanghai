@@ -1534,3 +1534,11 @@
 
 ## Featured Hosts Section - Completed
 - [x] Update featured hosts section to display 2 rows of 3 hosts (Row 1: Sookie, Echo Ren, Chuan; Row 2: Jiading Ayi, Grace Tong, Norika & Steven)
+
+## Blog Posts - Completed ✅
+- [x] Create "China App Stack" blog post by Daniel Sun with featured image
+- [x] Add "Travel Tips" filter category to blog page
+- [x] Create "Your Cheat Sheet for a Chinese Home Dinner" blog post by Steven To with embedded cheat sheet images
+- [x] Update Steven To's blog post featured image to custom 16:9 widescreen design
+- [x] Fix featured image not updating - corrected slug to 'home-dining-cheat-sheet-steven-to'
+- [x] Verify new featured image displays correctly on blog listing page
