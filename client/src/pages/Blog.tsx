@@ -4,7 +4,8 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye } from "lucide-react";
+import { Eye, Mail } from "lucide-react";
+import { toast } from "sonner";
 
 const TAGS = ["entrepreneurship", "travel-policy", "travel-tips", "food-culture"];
 
@@ -19,6 +20,51 @@ function BlogPostViewCount({ postId }: { postId: number }) {
       <Eye className="w-3 h-3" />
       {viewCount || 0}
     </span>
+  );
+}
+
+function NewsletterForm() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitInterestMutation = trpc.interest.submit.useMutation();
+
+  return (
+    <div className="flex gap-3 max-w-md mx-auto">
+      <input
+        type="email"
+        placeholder="your@email.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-red-600"
+      />
+      <Button
+        className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 font-semibold disabled:opacity-50"
+        disabled={isSubmitting || !email}
+        onClick={async () => {
+          if (!email) {
+            toast.error("Please enter your email");
+            return;
+          }
+          setIsSubmitting(true);
+          try {
+            await submitInterestMutation.mutateAsync({
+              name: "Newsletter Subscriber",
+              email,
+              interestType: "traveler",
+              message: "Subscribed to newsletter",
+            });
+            toast.success("Thanks for subscribing!");
+            setEmail("");
+          } catch (error) {
+            toast.error("Failed to subscribe. Please try again.");
+          } finally {
+            setIsSubmitting(false);
+          }
+        }}
+      >
+        Subscribe
+      </Button>
+    </div>
   );
 }
 
@@ -76,6 +122,24 @@ export default function Blog() {
                 {tag.replace("-", " ")}
               </Button>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup Section */}
+      <section className="bg-gradient-to-r from-red-50 to-orange-50 py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="flex justify-center mb-4">
+              <Mail className="w-8 h-8 text-red-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Get Stories Delivered to Your Inbox
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Subscribe to our newsletter for new blog posts, travel tips, and insider stories from Shanghai's local dining scene.
+            </p>
+            <NewsletterForm />
           </div>
         </div>
       </section>

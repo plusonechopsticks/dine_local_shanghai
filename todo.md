@@ -1550,3 +1550,8 @@
 - [x] Auto-rotate every 5 seconds with smooth transitions
 - [x] Add carousel navigation (dots/indicators for manual control)
 - [x] Responsive design for mobile and desktop
+
+## Blog Updates - Completed ✅
+- [x] Back date Steven To's blog post to March 13, 2026
+- [x] Add newsletter subscription box to blog section (using same form as homepage)
+- [x] Test newsletter signup functionality
