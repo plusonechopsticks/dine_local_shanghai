@@ -2,7 +2,6 @@ import {
   sendGuestConfirmationEmail,
   sendPaymentReminderEmail,
   sendHostConfirmationEmail,
-  sendHostApprovalEmail,
   sendGuestRejectionEmail,
 } from "./server/email.ts";
 import { generateGuestReminderEmail } from "./server/guest-reminder-email.ts";
@@ -17,7 +16,7 @@ async function sendAllSampleEmails() {
   const paymentDate = new Date();
 
   // 1. Guest Confirmation Email (after payment)
-  console.log("[1/5] Sending Guest Confirmation Email...");
+  console.log("[1/4] Sending Guest Confirmation Email...");
   await sendGuestConfirmationEmail({
     bookingId: 123456,
     guestName: "Sample Guest",
@@ -32,7 +31,7 @@ async function sendAllSampleEmails() {
   });
 
   // 2. Payment Reminder Email
-  console.log("[2/5] Sending Payment Reminder Email...");
+  console.log("[2/4] Sending Payment Reminder Email...");
   await sendPaymentReminderEmail({
     bookingId: 123457,
     guestName: "Sample Guest",
@@ -46,7 +45,7 @@ async function sendAllSampleEmails() {
   });
 
   // 3. Host Confirmation Email (when booking is confirmed)
-  console.log("[3/5] Sending Host Confirmation Email...");
+  console.log("[3/4] Sending Host Confirmation Email...");
   await sendHostConfirmationEmail({
     bookingId: 123456,
     guestName: "Sample Guest",
@@ -62,17 +61,8 @@ async function sendAllSampleEmails() {
     hostEarnings: 280,
   });
 
-  // 4. Host Approval Email
-  console.log("[4/5] Sending Host Approval Email...");
-  await sendHostApprovalEmail(
-    "Sample Host",
-    userEmail,
-    "Jing'an District",
-    "Shanghai Cuisine"
-  );
-
-  // 5. Guest Reminder Email
-  console.log("[5/5] Sending Guest Reminder Email...");
+  // 4. Guest Reminder Email
+  console.log("[4/4] Sending Guest Reminder Email...");
   const reminderHtml = generateGuestReminderEmail({
     guestName: "Sample Guest",
     hostName: "Chuan 川",
@@ -89,7 +79,7 @@ async function sendAllSampleEmails() {
     html: reminderHtml,
   });
 
-  console.log("\n✅ All 5 sample emails sent successfully!");
+  console.log("\n✅ All 4 sample emails sent successfully!");
   console.log("Check your email (plusonechopsticks@gmail.com) for all samples.");
 }
 

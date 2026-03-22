@@ -29,7 +29,7 @@ import { bookings, hostListings } from "../drizzle/schema";
 import { sql, eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
-import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendHostApprovalEmail, sendEmail } from "./email";
+import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendEmail } from "./email";
 import { generatePaymentReminderEmail } from "./email-templates";
 import { generateNewsletterHtml } from "./newsletter-template";
 import { nanoid } from "nanoid";
@@ -688,27 +688,6 @@ export const appRouter = router({
           input.guestEmail,
           input.hostName,
           input.reason
-        );
-
-        return { success: true, emailSent };
-      }),
-
-    // Host: Send host approval email
-    sendHostApprovalEmail: publicProcedure
-      .input(z.object({
-        hostName: z.string(),
-        hostEmail: z.string().email(),
-        district: z.string(),
-        cuisineStyle: z.string(),
-      }))
-      .mutation(async ({ input }) => {
-        // TODO: Add role-based access control - for now allowing public access for testing
-
-        const emailSent = await sendHostApprovalEmail(
-          input.hostName,
-          input.hostEmail,
-          input.district,
-          input.cuisineStyle
         );
 
         return { success: true, emailSent };
