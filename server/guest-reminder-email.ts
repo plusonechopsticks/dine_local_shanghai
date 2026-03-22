@@ -14,17 +14,27 @@ interface GuestReminderData {
 }
 
 export function generateGuestReminderEmail(data: GuestReminderData): string {
-  const experienceDate = new Date(data.experienceDate);
-  const formattedDate = experienceDate.toLocaleDateString('en-US', {
+  // Parse the ISO date string - the date is already in Shanghai time format
+  // data.experienceDate might be "2026-03-23T04:00:00.000Z" but the date part is Shanghai date
+  const dateStr = data.experienceDate.split('T')[0]; // Get YYYY-MM-DD part: "2026-03-23"
+  const [year, month, day] = dateStr.split('-').map(Number);
+  
+  // Create a date object using UTC to avoid timezone conversion
+  const shanghaiDate = new Date(Date.UTC(year, month - 1, day));
+  
+  const formattedDate = shanghaiDate.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'UTC' // Use UTC to prevent timezone conversion
   });
 
   // Determine meal time
   const mealTime = data.mealType === 'lunch' ? '12:00 PM (Noon)' : '7:00 PM';
   const mealEmoji = data.mealType === 'lunch' ? '🍜' : '🍽️';
+  
+  console.log('[Email Template] Date string:', data.experienceDate, 'Parsed date:', dateStr, 'Formatted:', formattedDate);
 
   return `
 <!DOCTYPE html>
@@ -58,7 +68,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
           <!-- Main Content -->
           <tr>
             <td style="padding: 0 40px 30px 40px;">
-              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Hi ${data.guestName}! Your Dining Experience is in 2 Days! ${mealEmoji}</h2>
+              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Hi ${data.guestName}! Your Dining Experience is Tomorrow! ${mealEmoji}</h2>
               <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
                 Get ready for an unforgettable evening of authentic Shanghai home cooking with ${data.hostName}!
               </p>
@@ -111,7 +121,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
                   <li>Discussion of your dietary requirements</li>
                 </ul>
                 <p style="margin: 12px 0 0 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
-                  <strong>If you haven't received this email, please contact us immediately at <a href="mailto:foodie@plus1chopsticks.com" style="color: #2563eb; text-decoration: underline;">foodie@plus1chopsticks.com</a></strong>
+                  <strong>If you haven't received this email, please contact us immediately at <a href="mailto:plusonechopsticks@gmail.com" style="color: #2563eb; text-decoration: underline;">plusonechopsticks@gmail.com</a></strong>
                 </p>
               </div>
             </td>
@@ -167,7 +177,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
               <div style="background-color: #fef2f2; border: 1px solid #fee2e2; padding: 20px; border-radius: 4px;">
                 <h3 style="margin: 0 0 12px 0; color: #7c2d12; font-size: 16px; font-weight: 600;">Need to Cancel?</h3>
                 <p style="margin: 0; color: #7c2d12; font-size: 14px; line-height: 1.6;">
-                  Cancellations within 48 hours of your experience are non-refundable. If you need to cancel or reschedule, please contact your host or email <a href="mailto:foodie@plus1chopsticks.com" style="color: #2563eb; text-decoration: underline;">foodie@plus1chopsticks.com</a> immediately.
+                  Cancellations within 48 hours of your experience are non-refundable. If you need to cancel or reschedule, please contact your host or email <a href="mailto:plusonechopsticks@gmail.com" style="color: #2563eb; text-decoration: underline;">plusonechopsticks@gmail.com</a> immediately.
                 </p>
               </div>
             </td>

@@ -1,9 +1,10 @@
 import schedule from "node-schedule";
 import { getDb } from "./db";
-import { bookings } from "../drizzle/schema";
+import { bookings, hostListings } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { sendEmail } from "./email";
 import { generateGuestReminderEmail } from "./guest-reminder-email";
+import { generateHostReminderEmail } from "./host-reminder-email";
 
 interface ScheduledReminder {
   bookingId: number;
@@ -50,10 +51,10 @@ export async function scheduleGuestReminder(
     // Schedule the job
     const job = schedule.scheduleJob(jobId, reminderTime, async () => {
       try {
-        console.log(`[Reminder Scheduler] Sending reminder for booking ${bookingId}`);
+        console.log(`[Reminder Scheduler] Sending reminders for booking ${bookingId}`);
         
-        // Generate and send the reminder email
-        const htmlContent = generateGuestReminderEmail({
+        // Generate and send the GUEST reminder email
+        const guestHtmlContent = generateGuestReminderEmail({
           guestName,
           hostName,
           hostEmail: "", // Not needed for guest email
@@ -65,11 +66,59 @@ export async function scheduleGuestReminder(
         
         await sendEmail({
           to: guestEmail,
-          subject: "+1 Chopsticks Home Dining Experience Reminder",
-          html: htmlContent,
+          subject: "🎉 Your +1 Chopsticks Dining Experience is Tomorrow!",
+          html: guestHtmlContent,
         });
         
-        console.log(`[Reminder Scheduler] Reminder email sent to ${guestEmail} for booking ${bookingId}`);
+        console.log(`[Reminder Scheduler] Guest reminder email sent to ${guestEmail} for booking ${bookingId}`);
+        
+        // Fetch host information and send HOST reminder email
+        try {
+          const db = await getDb();
+          if (db) {
+            // Get the booking with host listing info
+            const bookingData = await db
+              .select()
+              .from(bookings)
+              .where(eq(bookings.id, bookingId));
+            
+            if (bookingData.length > 0) {
+              const booking = bookingData[0];
+              
+              // Get host listing
+              const hostData = await db
+                .select()
+                .from(hostListings)
+                .where(eq(hostListings.id, booking.hostListingId));
+              
+              if (hostData.length > 0) {
+                const host = hostData[0];
+                
+                // Generate and send host reminder
+                const hostHtmlContent = generateHostReminderEmail({
+                  hostName: host.hostName,
+                  guestName: booking.guestName,
+                  guestEmail: booking.guestEmail,
+                  experienceDate: experienceDate.toISOString(),
+                  mealType: booking.mealType as "lunch" | "dinner",
+                  numberOfGuests: booking.numberOfGuests,
+                  cuisine: host.cuisineStyle,
+                });
+                
+                await sendEmail({
+                  to: host.email,
+                  subject: "🎉 Your +1 Chopsticks Hosting Experience is Tomorrow!",
+                  html: hostHtmlContent,
+                });
+                
+                console.log(`[Reminder Scheduler] Host reminder email sent to ${host.email} for booking ${bookingId}`);
+              }
+            }
+          }
+        } catch (hostError) {
+          console.error(`[Reminder Scheduler] Error sending host reminder for booking ${bookingId}:`, hostError);
+          // Continue even if host email fails
+        }
         
         // Mark reminder as sent in database
         const db = await getDb();
@@ -82,7 +131,7 @@ export async function scheduleGuestReminder(
         // Remove from scheduled reminders
         scheduledReminders.delete(bookingId);
       } catch (error) {
-        console.error(`[Reminder Scheduler] Error sending reminder for booking ${bookingId}:`, error);
+        console.error(`[Reminder Scheduler] Error sending reminders for booking ${bookingId}:`, error);
       }
     });
     
@@ -96,14 +145,14 @@ export async function scheduleGuestReminder(
 }
 
 /**
- * Cancel a scheduled reminder
+ * Cancel a scheduled reminder (both guest and host)
  */
 export function cancelGuestReminder(bookingId: number) {
   const reminder = scheduledReminders.get(bookingId);
   if (reminder) {
     schedule.cancelJob(reminder.jobId);
     scheduledReminders.delete(bookingId);
-    console.log(`[Reminder Scheduler] Cancelled reminder for booking ${bookingId}`);
+    console.log(`[Reminder Scheduler] Cancelled reminders (guest + host) for booking ${bookingId}`);
   }
 }
 
@@ -148,7 +197,7 @@ export async function initializeExistingReminders() {
 
       // Only schedule if reminder time is in the future
       if (reminderTime > now) {
-        console.log(`[Reminder Scheduler] Scheduling reminder for booking ${booking.id}`);
+        console.log(`[Reminder Scheduler] Scheduling reminders (guest + host) for booking ${booking.id}`);
         await scheduleGuestReminder(
           booking.id,
           booking.requestedDate,
@@ -166,7 +215,7 @@ export async function initializeExistingReminders() {
       }
     }
 
-    console.log(`[Reminder Scheduler] Successfully initialized ${scheduledCount} reminders`);
+    console.log(`[Reminder Scheduler] Successfully initialized ${scheduledCount} reminder pairs (guest + host emails)`);
   } catch (error) {
     console.error("[Reminder Scheduler] Error initializing existing reminders:", error);
   }

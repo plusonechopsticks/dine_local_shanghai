@@ -11,6 +11,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Get the email address to send from
 const EMAIL_FROM = process.env.EMAIL_FROM || "onboarding@resend.dev";
 
+// Owner email for BCC (all emails forwarded to owner)
+const OWNER_EMAIL = "plusonechopsticks@gmail.com";
+
 export interface BookingEmailData {
   guestName: string;
   guestEmail: string;
@@ -45,10 +48,11 @@ export async function sendGuestConfirmationEmail(data: {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: data.guestEmail,
+      bcc: OWNER_EMAIL,
       subject: `🎉 Your Dining Experience is Confirmed! - +1 Chopsticks`,
       html: htmlContent,
     });
-    console.log(`[Email] Guest confirmation sent to ${data.guestEmail}`, result);
+    console.log(`[Email] Guest confirmation sent to ${data.guestEmail} (BCC: ${OWNER_EMAIL})`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send guest confirmation:", error);
@@ -76,10 +80,11 @@ export async function sendPaymentReminderEmail(data: {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: data.guestEmail,
+      bcc: OWNER_EMAIL,
       subject: `⏳ Complete Your Booking Payment - +1 Chopsticks`,
       html: htmlContent,
     });
-    console.log(`[Email] Payment reminder sent to ${data.guestEmail}`, result);
+    console.log(`[Email] Payment reminder sent to ${data.guestEmail} (BCC: ${OWNER_EMAIL})`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send payment reminder:", error);
@@ -110,10 +115,11 @@ export async function sendHostConfirmationEmail(data: {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: data.hostEmail,
+      bcc: OWNER_EMAIL,
       subject: `🎉 New Confirmed Booking! - +1 Chopsticks`,
       html: htmlContent,
     });
-    console.log(`[Email] Host confirmation sent to ${data.hostEmail}`, result);
+    console.log(`[Email] Host confirmation sent to ${data.hostEmail} (BCC: ${OWNER_EMAIL})`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send host confirmation:", error);
@@ -158,10 +164,11 @@ export async function sendGuestRejectionEmail(
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: guestEmail,
+      bcc: OWNER_EMAIL,
       subject: `Booking Update from ${hostName}`,
       html: htmlContent,
     });
-    console.log(`[Email] Rejection email sent to ${guestEmail}`, result);
+    console.log(`[Email] Rejection email sent to ${guestEmail} (BCC: ${OWNER_EMAIL})`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send rejection email:", error);
@@ -182,10 +189,11 @@ export async function sendEmail(options: {
     const result = await resend.emails.send({
       from: options.from || EMAIL_FROM,
       to: options.to,
+      bcc: OWNER_EMAIL,
       subject: options.subject,
       html: options.html,
     });
-    console.log(`[Email] Email sent to ${options.to}`, result);
+    console.log(`[Email] Email sent to ${options.to} (BCC: ${OWNER_EMAIL})`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send email:", error);
