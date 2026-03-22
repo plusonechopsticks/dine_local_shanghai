@@ -1,14 +1,10 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// Create a transporter using Gmail or another service
-// For production, use environment variables for credentials
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "noreply@dineatlocal.com",
-    pass: process.env.EMAIL_PASSWORD || "test-password",
-  },
-});
+// Initialize Resend client with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Get the email address to send from
+const EMAIL_FROM = process.env.EMAIL_FROM || "onboarding@resend.dev";
 
 export interface BookingEmailData {
   guestName: string;
@@ -62,13 +58,13 @@ export async function sendGuestConfirmationEmail(data: BookingEmailData) {
   `;
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER || "noreply@dineatlocal.com",
+    const result = await resend.emails.send({
+      from: EMAIL_FROM,
       to: data.guestEmail,
       subject: `Booking Confirmed with ${data.hostName}!`,
       html: htmlContent,
     });
-    console.log(`[Email] Guest confirmation sent to ${data.guestEmail}`);
+    console.log(`[Email] Guest confirmation sent to ${data.guestEmail}`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send guest confirmation:", error);
@@ -113,13 +109,13 @@ export async function sendHostConfirmationEmail(data: BookingEmailData) {
   `;
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER || "noreply@dineatlocal.com",
+    const result = await resend.emails.send({
+      from: EMAIL_FROM,
       to: data.hostEmail,
       subject: `New Booking: ${data.guestName} - ${new Date(data.bookingDate).toLocaleDateString()}`,
       html: htmlContent,
     });
-    console.log(`[Email] Host confirmation sent to ${data.hostEmail}`);
+    console.log(`[Email] Host confirmation sent to ${data.hostEmail}`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send host confirmation:", error);
@@ -176,13 +172,13 @@ export async function sendHostApprovalEmail(
   `;
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER || "noreply@dineatlocal.com",
+    const result = await resend.emails.send({
+      from: EMAIL_FROM,
       to: hostEmail,
       subject: "🎉 Your Host Profile Has Been Approved!",
       html: htmlContent,
     });
-    console.log(`[Email] Host approval email sent to ${hostEmail}`);
+    console.log(`[Email] Host approval email sent to ${hostEmail}`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send host approval email:", error);
@@ -222,13 +218,13 @@ export async function sendGuestRejectionEmail(
   `;
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER || "noreply@dineatlocal.com",
+    const result = await resend.emails.send({
+      from: EMAIL_FROM,
       to: guestEmail,
       subject: `Booking Update from ${hostName}`,
       html: htmlContent,
     });
-    console.log(`[Email] Rejection email sent to ${guestEmail}`);
+    console.log(`[Email] Rejection email sent to ${guestEmail}`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send rejection email:", error);
@@ -246,13 +242,13 @@ export async function sendEmail(options: {
   from?: string;
 }) {
   try {
-    await transporter.sendMail({
-      from: options.from || process.env.EMAIL_USER || "noreply@dineatlocal.com",
+    const result = await resend.emails.send({
+      from: options.from || EMAIL_FROM,
       to: options.to,
       subject: options.subject,
       html: options.html,
     });
-    console.log(`[Email] Email sent to ${options.to}`);
+    console.log(`[Email] Email sent to ${options.to}`, result);
     return true;
   } catch (error) {
     console.error("[Email] Failed to send email:", error);

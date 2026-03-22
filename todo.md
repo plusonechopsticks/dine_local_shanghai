@@ -1591,3 +1591,14 @@
 - [x] Integrated initialization into server startup
 - [x] Verified 2 reminders successfully scheduled for future bookings
 - [x] Tested and confirmed scheduler is now working
+
+
+## Email System Migration to Resend - In Progress
+- [ ] Install Resend package
+- [ ] Remove Nodemailer package
+- [ ] Replace email.ts with Resend implementation
+- [ ] Set RESEND_API_KEY environment variable
+- [ ] Set EMAIL_FROM environment variable
+- [ ] Test email sending with Resend
+- [ ] Verify reminder scheduler works with new email system
+- [ ] Send test reminder email to Danny Con
