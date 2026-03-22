@@ -141,17 +141,17 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
               
               <!-- Cheat Sheet 1: Getting There & Arriving -->
               <div style="margin-bottom: 24px; text-align: center;">
-                <img src="https://res.cloudinary.com/dkr8jgzxp/image/upload/v1/gJvoPIaYkJzcUXed.PNG" alt="Getting There & Arriving" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/QrLQJrSWYhOYageb.png" alt="Getting There & Arriving" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
               </div>
 
               <!-- Cheat Sheet 2: Chopsticks Manners -->
               <div style="margin-bottom: 24px; text-align: center;">
-                <img src="https://res.cloudinary.com/dkr8jgzxp/image/upload/v1/YRUHjnBjIrOsYeTy.PNG" alt="Chopsticks Manners" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/uojRVtrekQZvMhtq.png" alt="Chopsticks Manners" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
               </div>
 
               <!-- Cheat Sheet 3: Useful Expressions -->
               <div style="margin-bottom: 24px; text-align: center;">
-                <img src="https://res.cloudinary.com/dkr8jgzxp/image/upload/v1/fOeqwqkOExiaqFWf.PNG" alt="Useful Expressions" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/bJPmiSkMPWodOhTx.png" alt="Useful Expressions" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
               </div>
 
               <!-- Pro Tip -->

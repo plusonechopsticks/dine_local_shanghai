@@ -120,9 +120,9 @@ describe("Guest Reminder Email Template", () => {
     expect(html).toContain("📚");
 
     // Check for all three cheat sheet images
-    expect(html).toContain("gJvoPIaYkJzcUXed.PNG"); // Cheat Sheet 1: Getting There & Arriving
-    expect(html).toContain("YRUHjnBjIrOsYeTy.PNG"); // Cheat Sheet 2: Chopsticks Manners
-    expect(html).toContain("fOeqwqkOExiaqFWf.PNG"); // Cheat Sheet 3: Useful Expressions
+    expect(html).toContain("QrLQJrSWYhOYageb.png"); // Cheat Sheet 1: Getting There & Arriving
+    expect(html).toContain("uojRVtrekQZvMhtq.png"); // Cheat Sheet 2: Chopsticks Manners
+    expect(html).toContain("bJPmiSkMPWodOhTx.png"); // Cheat Sheet 3: Useful Expressions
 
     // Check for image alt texts
     expect(html).toContain("Getting There & Arriving");
