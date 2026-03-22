@@ -178,7 +178,7 @@ describe("Guest Reminder Email Template", () => {
 
     const html = generateGuestReminderEmail(emailData);
 
-    expect(html).toContain("plusonechopsticks@gmail.com");
+    expect(html).toContain("foodie@plus1chopsticks.com");
   });
 
   it("should format date correctly", () => {

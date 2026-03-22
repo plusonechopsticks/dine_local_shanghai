@@ -131,45 +131,66 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
             </td>
           </tr>
 
-          <!-- Home Dining Tips -->
+          <!-- Home Dining Cheat Sheets -->
           <tr>
             <td style="padding: 0 40px 30px 40px;">
-              <h3 style="margin: 0 0 20px 0; color: #1f2937; font-size: 18px; font-weight: 600; text-align: center;">📚 Home Dining Tips</h3>
-              <p style="margin: 0 0 16px 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-                First time dining in a Shanghai home? Here are some helpful tips:
+              <h3 style="margin: 0 0 20px 0; color: #1f2937; font-size: 18px; font-weight: 600; text-align: center;">📚 Your Home Dining Cheat Sheets</h3>
+              <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                First time dining in a Shanghai home? Don't worry! Here are three helpful guides to make your experience smooth and enjoyable:
               </p>
               
-              <div style="background-color: #f9fafb; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">Chopstick Etiquette</h4>
-                <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.6;">
-                  Hold chopsticks about 1/3 of the way down, rest them on the bowl between bites, and never stick them upright in rice (it resembles a funeral ritual).
-                </p>
+              <!-- Cheat Sheet 1: Getting There & Arriving -->
+              <div style="margin-bottom: 24px; text-align: center;">
+                <img src="https://res.cloudinary.com/dkr8jgzxp/image/upload/v1/gJvoPIaYkJzcUXed.PNG" alt="Getting There & Arriving" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
               </div>
 
-              <div style="background-color: #f9fafb; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">Dining Etiquette</h4>
-                <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.6;">
-                  Wait for the host to start eating, accept food graciously, and try everything offered. It's polite to leave a little food on your plate to show you're satisfied.
-                </p>
+              <!-- Cheat Sheet 2: Chopsticks Manners -->
+              <div style="margin-bottom: 24px; text-align: center;">
+                <img src="https://res.cloudinary.com/dkr8jgzxp/image/upload/v1/YRUHjnBjIrOsYeTy.PNG" alt="Chopsticks Manners" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
               </div>
 
-              <div style="background-color: #f9fafb; padding: 16px; border-radius: 4px;">
-                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">Useful Phrases</h4>
-                <p style="margin: 0; color: #6b7280; font-size: 13px; line-height: 1.6;">
-                  "好吃!" (Hǎo chī!) = Delicious! | "谢谢" (Xièxie) = Thank you | "干杯!" (Gānbēi!) = Cheers!
+              <!-- Cheat Sheet 3: Useful Expressions -->
+              <div style="margin-bottom: 24px; text-align: center;">
+                <img src="https://res.cloudinary.com/dkr8jgzxp/image/upload/v1/fOeqwqkOExiaqFWf.PNG" alt="Useful Expressions" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+              </div>
+
+              <!-- Pro Tip -->
+              <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center; font-style: italic;">
+                Pro tip: Save these images to your phone for quick reference during your dining experience!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Need to Cancel Section -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <div style="background-color: #fef2f2; border: 1px solid #fee2e2; padding: 20px; border-radius: 4px;">
+                <h3 style="margin: 0 0 12px 0; color: #7c2d12; font-size: 16px; font-weight: 600;">Need to Cancel?</h3>
+                <p style="margin: 0; color: #7c2d12; font-size: 14px; line-height: 1.6;">
+                  Cancellations within 48 hours of your experience are non-refundable. If you need to cancel or reschedule, please contact your host or email <a href="mailto:foodie@plus1chopsticks.com" style="color: #2563eb; text-decoration: underline;">foodie@plus1chopsticks.com</a> immediately.
                 </p>
               </div>
             </td>
           </tr>
 
+          <!-- Closing -->
+          <tr>
+            <td style="padding: 30px 40px; text-align: center;">
+              <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px; font-weight: 600;">
+                We can't wait for you to experience authentic Shanghai home cooking!
+              </h3>
+              <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                Warm regards,<br>
+                <strong>The +1 Chopsticks Team</strong>
+              </p>
+            </td>
+          </tr>
+
           <!-- Footer -->
           <tr>
-            <td style="padding: 30px 40px; text-align: center; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
-              <p style="margin: 0; color: #6b7280; font-size: 12px; line-height: 1.6;">
-                Questions? Contact us at <a href="mailto:foodie@plus1chopsticks.com" style="color: #7c2d12; text-decoration: underline;">foodie@plus1chopsticks.com</a>
-              </p>
-              <p style="margin: 12px 0 0 0; color: #9ca3af; font-size: 11px;">
-                © 2026 +1 Chopsticks. All rights reserved.
+            <td style="padding: 20px 40px; text-align: center; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; color: #9ca3af; font-size: 11px;">
+                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experiences
               </p>
             </td>
           </tr>
