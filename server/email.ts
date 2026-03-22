@@ -1,4 +1,9 @@
 import { Resend } from "resend";
+import {
+  generateBookingConfirmationEmail,
+  generatePaymentReminderEmail,
+  generateHostNotificationEmail,
+} from "./email-templates.ts";
 
 // Initialize Resend client with API key
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -20,48 +25,27 @@ export interface BookingEmailData {
 }
 
 /**
- * Send booking confirmation email to guest
+ * Send booking confirmation email to guest (after payment)
  */
-export async function sendGuestConfirmationEmail(data: BookingEmailData) {
-  const htmlContent = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #8B3A3A;">Booking Confirmed! 🎉</h2>
-      
-      <p>Hi ${data.guestName},</p>
-      
-      <p>Great news! Your dinner request with <strong>${data.hostName}</strong> has been approved!</p>
-      
-      <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="margin-top: 0; color: #333;">Booking Details</h3>
-        <p><strong>Host:</strong> ${data.hostName}</p>
-        <p><strong>Date:</strong> ${new Date(data.bookingDate).toLocaleDateString()}</p>
-        <p><strong>Meal Type:</strong> ${data.mealType.charAt(0).toUpperCase() + data.mealType.slice(1)}</p>
-        <p><strong>Number of Guests:</strong> ${data.numberOfGuests}</p>
-        <p><strong>Cuisine:</strong> ${data.cuisine}</p>
-        ${data.hostAddress ? `<p><strong>Location:</strong> ${data.hostAddress}</p>` : ""}
-        ${data.specialRequests ? `<p><strong>Your Special Requests:</strong> ${data.specialRequests}</p>` : ""}
-      </div>
-      
-      <p><strong>Next Steps:</strong></p>
-      <ul>
-        <li>Check your email for ${data.hostName}'s contact information</li>
-        <li>Reach out to confirm any final details about dietary restrictions or preferences</li>
-        <li>Arrive on time and enjoy an authentic family dinner experience!</li>
-      </ul>
-      
-      <p>If you have any questions, feel free to contact the host directly or reach out to our support team.</p>
-      
-      <p style="color: #666; font-size: 12px; margin-top: 30px;">
-        This is an automated email. Please do not reply to this address.
-      </p>
-    </div>
-  `;
+export async function sendGuestConfirmationEmail(data: {
+  bookingId: number;
+  guestName: string;
+  guestEmail: string;
+  hostName: string;
+  requestedDate: string;
+  mealType: "lunch" | "dinner";
+  numberOfGuests: number;
+  totalAmount: string;
+  paymentDate: Date;
+  stripeSessionId: string;
+}) {
+  const htmlContent = generateBookingConfirmationEmail(data);
 
   try {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: data.guestEmail,
-      subject: `Booking Confirmed with ${data.hostName}!`,
+      subject: `🎉 Your Dining Experience is Confirmed! - +1 Chopsticks`,
       html: htmlContent,
     });
     console.log(`[Email] Guest confirmation sent to ${data.guestEmail}`, result);
@@ -73,46 +57,60 @@ export async function sendGuestConfirmationEmail(data: BookingEmailData) {
 }
 
 /**
- * Send booking confirmation email to host
+ * Send payment reminder email to guest
  */
-export async function sendHostConfirmationEmail(data: BookingEmailData) {
-  const htmlContent = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #8B3A3A;">New Booking Confirmed! 👨‍🍳</h2>
-      
-      <p>Hi ${data.hostName},</p>
-      
-      <p>You have a confirmed booking! Here are the details:</p>
-      
-      <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="margin-top: 0; color: #333;">Guest Information</h3>
-        <p><strong>Guest Name:</strong> ${data.guestName}</p>
-        <p><strong>Email:</strong> <a href="mailto:${data.guestEmail}">${data.guestEmail}</a></p>
-        <p><strong>Number of Guests:</strong> ${data.numberOfGuests}</p>
-        <p><strong>Meal Type:</strong> ${data.mealType.charAt(0).toUpperCase() + data.mealType.slice(1)}</p>
-        <p><strong>Date:</strong> ${new Date(data.bookingDate).toLocaleDateString()}</p>
-        ${data.specialRequests ? `<p><strong>Special Requests/Allergies:</strong> ${data.specialRequests}</p>` : ""}
-      </div>
-      
-      <p><strong>Recommended Next Steps:</strong></p>
-      <ul>
-        <li>Contact ${data.guestName} to confirm final details</li>
-        <li>Discuss any dietary restrictions or food preferences</li>
-        <li>Confirm the exact time and location</li>
-        <li>Share any house rules or what guests should bring</li>
-      </ul>
-      
-      <p style="color: #666; font-size: 12px; margin-top: 30px;">
-        This is an automated email. Please do not reply to this address.
-      </p>
-    </div>
-  `;
+export async function sendPaymentReminderEmail(data: {
+  bookingId: number;
+  guestName: string;
+  guestEmail: string;
+  hostName: string;
+  requestedDate: string;
+  mealType: "lunch" | "dinner";
+  numberOfGuests: number;
+  totalAmount: string;
+  paymentLink: string;
+}) {
+  const htmlContent = generatePaymentReminderEmail(data);
+
+  try {
+    const result = await resend.emails.send({
+      from: EMAIL_FROM,
+      to: data.guestEmail,
+      subject: `⏳ Complete Your Booking Payment - +1 Chopsticks`,
+      html: htmlContent,
+    });
+    console.log(`[Email] Payment reminder sent to ${data.guestEmail}`, result);
+    return true;
+  } catch (error) {
+    console.error("[Email] Failed to send payment reminder:", error);
+    return false;
+  }
+}
+
+/**
+ * Send host notification email (when booking is confirmed)
+ */
+export async function sendHostConfirmationEmail(data: {
+  bookingId: number;
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string | null;
+  requestedDate: string;
+  mealType: "lunch" | "dinner";
+  numberOfGuests: number;
+  totalAmount: number;
+  dietaryRestrictions: string | null;
+  hostName: string;
+  hostEmail: string;
+  hostEarnings: number;
+}) {
+  const htmlContent = generateHostNotificationEmail(data);
 
   try {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: data.hostEmail,
-      subject: `New Booking: ${data.guestName} - ${new Date(data.bookingDate).toLocaleDateString()}`,
+      subject: `🎉 New Confirmed Booking! - +1 Chopsticks`,
       html: htmlContent,
     });
     console.log(`[Email] Host confirmation sent to ${data.hostEmail}`, result);
