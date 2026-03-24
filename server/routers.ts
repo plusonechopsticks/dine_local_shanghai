@@ -19,7 +19,14 @@ import {
   getPageViewsAnalytics,
   getPageViewsByType,
   getHostAccountByListingId,
-  isHostAvailable
+  isHostAvailable,
+  createGuestTestimonial,
+  getGuestTestimonialById,
+  getAllGuestTestimonials,
+  getGuestTestimonialsByHostId,
+  getFeaturedGuestTestimonials,
+  updateGuestTestimonial,
+  deleteGuestTestimonial
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
@@ -1194,5 +1201,128 @@ export const appRouter = router({
       }),
   }),
   blog: blogRouter,
+  
+  /**
+   * Guest Testimonials Router
+   */
+  testimonials: router({
+    // Get all published testimonials
+    getAll: publicProcedure
+      .query(async () => {
+        const testimonials = await getAllGuestTestimonials();
+        return testimonials;
+      }),
+    
+    // Get featured testimonials
+    getFeatured: publicProcedure
+      .input(z.object({
+        limit: z.number().default(10),
+      }))
+      .query(async ({ input }) => {
+        const testimonials = await getFeaturedGuestTestimonials(input.limit);
+        return testimonials;
+      }),
+    
+    // Get testimonials by host
+    getByHostId: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+      }))
+      .query(async ({ input }) => {
+        const testimonials = await getGuestTestimonialsByHostId(input.hostListingId);
+        return testimonials;
+      }),
+    
+    // Get single testimonial
+    getById: publicProcedure
+      .input(z.object({
+        id: z.number(),
+      }))
+      .query(async ({ input }) => {
+        const testimonial = await getGuestTestimonialById(input.id);
+        return testimonial;
+      }),
+    
+    // Create testimonial (admin only)
+    create: publicProcedure
+      .input(z.object({
+        guestName: z.string().min(1),
+        guestLocation: z.string().min(1),
+        travelerType: z.string().min(1),
+        hostListingId: z.number(),
+        experienceDate: z.string(),
+        type: z.enum(["direct_review", "guest_story"]).default("direct_review"),
+        title: z.string().min(1),
+        subtitle: z.string().optional(),
+        attributionLine: z.string().min(1),
+        previewText: z.string().min(1),
+        fullText: z.string().min(1),
+        additionalText: z.string().optional(),
+        tertiaryText: z.string().optional(),
+        images: z.array(z.object({
+          url: z.string().url(),
+          alt: z.string(),
+          type: z.enum(["guest", "host", "food", "experience"]),
+          caption: z.string().optional(),
+        })),
+        badge: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        ctaLabel: z.string().optional(),
+        ctaUrl: z.string().url().optional(),
+        featured: z.boolean().default(false),
+        displayOrder: z.number().default(0),
+        published: z.boolean().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        const testimonial = await createGuestTestimonial({
+          ...input,
+          experienceDate: input.experienceDate as any,
+        });
+        return testimonial;
+      }),
+    
+    // Update testimonial (admin only)
+    update: publicProcedure
+      .input(z.object({
+        id: z.number(),
+        data: z.object({
+          guestName: z.string().optional(),
+          guestLocation: z.string().optional(),
+          travelerType: z.string().optional(),
+          title: z.string().optional(),
+          subtitle: z.string().optional(),
+          attributionLine: z.string().optional(),
+          previewText: z.string().optional(),
+          fullText: z.string().optional(),
+          additionalText: z.string().optional(),
+          tertiaryText: z.string().optional(),
+          images: z.array(z.object({
+            url: z.string().url(),
+            alt: z.string(),
+            type: z.enum(["guest", "host", "food", "experience"]),
+            caption: z.string().optional(),
+          })).optional(),
+          badge: z.string().optional(),
+          tags: z.array(z.string()).optional(),
+          featured: z.boolean().optional(),
+          displayOrder: z.number().optional(),
+          published: z.boolean().optional(),
+        }),
+      }))
+      .mutation(async ({ input }) => {
+        const testimonial = await updateGuestTestimonial(input.id, input.data as any);
+        return testimonial;
+      }),
+    
+    // Delete testimonial (admin only)
+    delete: publicProcedure
+      .input(z.object({
+        id: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        const success = await deleteGuestTestimonial(input.id);
+        return { success };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

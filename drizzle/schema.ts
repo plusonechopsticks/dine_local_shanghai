@@ -419,3 +419,60 @@ export const blogPostViews = mysqlTable("blog_post_views", {
 
 export type BlogPostView = typeof blogPostViews.$inferSelect;
 export type InsertBlogPostView = typeof blogPostViews.$inferInsert;
+
+/**
+ * Guest testimonials - reviews and stories from guests after their dining experience
+ * Supports photo carousels, truncated previews, and full modal reviews
+ */
+export const guestTestimonials = mysqlTable("guest_testimonials", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Guest Information
+  guestName: varchar("guestName", { length: 255 }).notNull(),
+  guestLocation: varchar("guestLocation", { length: 255 }).notNull(), // e.g., "Singapore"
+  travelerType: varchar("travelerType", { length: 100 }).notNull(), // e.g., "Solo Traveler", "Couple", "Family"
+  
+  // Host Reference
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id, { onDelete: "cascade" }),
+  experienceDate: date("experienceDate").notNull(), // When they had the experience
+  
+  // Testimonial Content
+  type: mysqlEnum("type", ["direct_review", "guest_story"]).default("direct_review").notNull(), // Type of testimonial
+  title: varchar("title", { length: 255 }).notNull(), // e.g., "Solo traveler experience"
+  subtitle: varchar("subtitle", { length: 500 }), // Optional subtitle
+  attributionLine: varchar("attributionLine", { length: 500 }).notNull(), // e.g., "From En Kai, Singapore, Solo Traveler"
+  
+  // Review Text (supports multiple sections)
+  previewText: text("previewText").notNull(), // Truncated version (4-6 lines) for card display
+  fullText: text("fullText").notNull(), // Main review text (section 1)
+  additionalText: text("additionalText"), // Optional section 2 (e.g., feedback on booking)
+  tertiaryText: text("tertiaryText"), // Optional section 3 (e.g., platform appreciation)
+  
+  // Images
+  images: json("images").$type<Array<{
+    url: string;
+    alt: string;
+    type: "guest" | "host" | "food" | "experience"; // Image category
+    caption?: string;
+  }>>().notNull(), // Array of image objects with URLs and metadata
+  
+  // Metadata & Tags
+  badge: varchar("badge", { length: 100 }), // e.g., "Real guest experience", "Featured"
+  tags: json("tags").$type<string[]>().default([]).notNull(), // e.g., ["authentic", "welcoming", "food"]
+  
+  // CTA Button (optional)
+  ctaLabel: varchar("ctaLabel", { length: 100 }), // e.g., "Book your own experience"
+  ctaUrl: varchar("ctaUrl", { length: 500 }), // URL for CTA button
+  
+  // Display Settings
+  featured: boolean("featured").default(false).notNull(), // Show in featured carousel
+  displayOrder: int("displayOrder").default(0).notNull(), // Sort order
+  published: boolean("published").default(true).notNull(), // Publish/draft status
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GuestTestimonial = typeof guestTestimonials.$inferSelect;
+export type InsertGuestTestimonial = typeof guestTestimonials.$inferInsert;

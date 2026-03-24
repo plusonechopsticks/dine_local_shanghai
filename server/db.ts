@@ -1,7 +1,6 @@
 import { eq, and, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { 
-  InsertUser, 
+import {
   users, 
   interestSubmissions, 
   InsertInterestSubmission, 
@@ -34,7 +33,10 @@ import {
   InsertBlogPost,
   blogPostViews,
   BlogPostView,
-  InsertBlogPostView
+  InsertBlogPostView,
+  guestTestimonials,
+  GuestTestimonial,
+  InsertGuestTestimonial
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -788,5 +790,161 @@ export async function getHostAvailableSlots(
   } catch (error) {
     console.error("[Database] Failed to get available slots:", error);
     return [];
+  }
+}
+
+/**
+ * Guest Testimonials Functions
+ */
+export async function createGuestTestimonial(
+  data: InsertGuestTestimonial
+): Promise<GuestTestimonial> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+
+  try {
+    await db.insert(guestTestimonials).values(data);
+    
+    // Get the last inserted ID
+    const lastIdResult: any = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+    const rows = (Array.isArray(lastIdResult) ? lastIdResult[0] : lastIdResult) as any[];
+    const id = rows[0]?.id;
+    
+    if (!id) throw new Error("Failed to get testimonial ID");
+    
+    // Fetch and return the created testimonial
+    const result = await db
+      .select()
+      .from(guestTestimonials)
+      .where(eq(guestTestimonials.id, id))
+      .limit(1);
+    
+    if (!result[0]) throw new Error("Failed to retrieve created testimonial");
+    return result[0];
+  } catch (error) {
+    console.error("[Database] Failed to create guest testimonial:", error);
+    throw error;
+  }
+}
+
+export async function getGuestTestimonialById(id: number): Promise<GuestTestimonial | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db
+      .select()
+      .from(guestTestimonials)
+      .where(eq(guestTestimonials.id, id))
+      .limit(1);
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error("[Database] Failed to get guest testimonial:", error);
+    return null;
+  }
+}
+
+export async function getAllGuestTestimonials(): Promise<GuestTestimonial[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(guestTestimonials)
+      .where(eq(guestTestimonials.published, true))
+      .orderBy(sql`${guestTestimonials.displayOrder} ASC, ${guestTestimonials.createdAt} DESC`);
+    
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get all guest testimonials:", error);
+    return [];
+  }
+}
+
+export async function getGuestTestimonialsByHostId(hostListingId: number): Promise<GuestTestimonial[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(guestTestimonials)
+      .where(
+        and(
+          eq(guestTestimonials.hostListingId, hostListingId),
+          eq(guestTestimonials.published, true)
+        )
+      )
+      .orderBy(sql`${guestTestimonials.displayOrder} ASC, ${guestTestimonials.createdAt} DESC`);
+    
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get testimonials by host:", error);
+    return [];
+  }
+}
+
+export async function getFeaturedGuestTestimonials(limit: number = 10): Promise<GuestTestimonial[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  try {
+    const result = await db
+      .select()
+      .from(guestTestimonials)
+      .where(
+        and(
+          eq(guestTestimonials.featured, true),
+          eq(guestTestimonials.published, true)
+        )
+      )
+      .orderBy(sql`${guestTestimonials.displayOrder} ASC, ${guestTestimonials.createdAt} DESC`)
+      .limit(limit);
+    
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get featured testimonials:", error);
+    return [];
+  }
+}
+
+export async function updateGuestTestimonial(
+  id: number,
+  data: Partial<InsertGuestTestimonial>
+): Promise<GuestTestimonial | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    await db
+      .update(guestTestimonials)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(guestTestimonials.id, id));
+    
+    return getGuestTestimonialById(id);
+  } catch (error) {
+    console.error("[Database] Failed to update guest testimonial:", error);
+    return null;
+  }
+}
+
+export async function deleteGuestTestimonial(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+
+  try {
+    await db
+      .delete(guestTestimonials)
+      .where(eq(guestTestimonials.id, id));
+    
+    return true;
+  } catch (error) {
+    console.error("[Database] Failed to delete guest testimonial:", error);
+    return false;
   }
 }

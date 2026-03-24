@@ -1635,3 +1635,14 @@
 - [x] Verify all tRPC mutations still work correctly
 - [x] Resolved guest feedback: no more red weekend coloring, clean date grid calendar
 - [x] Disable today and all past dates from calendar selection
+
+
+## Guest Stories Section - Completed ✅
+- [x] Upload En Kai guest review images to Cloudinary (7 images: 1 guest + 6 food photos)
+- [x] Create database schema for guest testimonials (24 fields including multi-section text, image carousel, tags)
+- [x] Build GuestStories component with photo carousel and modal (responsive, 3-column grid)
+- [x] Create tRPC procedures for fetching testimonials (getAll, getFeatured, getByHostId, getById, create, update, delete)
+- [x] Integrate GuestStories section into homepage after featured hosts
+- [x] Insert first guest testimonial (En Kai) into database - Featured and Published
+- [ ] Add second guest testimonial (pending user details)
+- [ ] Add third guest testimonial (pending user details)

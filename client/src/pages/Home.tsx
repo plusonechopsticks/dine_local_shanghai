@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HomeHeader } from "@/components/HomeHeader";
+import { GuestStories } from "@/components/GuestStories";
 import {
   Accordion,
   AccordionContent,
@@ -43,6 +44,9 @@ export default function Home() {
 
   // Fetch all approved hosts
   const { data: allHosts = [] } = trpc.host.listApproved.useQuery();
+  
+  // Fetch guest testimonials
+  const { data: testimonials = [] } = trpc.testimonials.getAll.useQuery();
 
   // Filter featured hosts by current group
   const getHostsByGroup = (groupIndex) => {
@@ -318,6 +322,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Section 2.5: Guest Stories */}
+      {testimonials.length > 0 && (
+        <GuestStories testimonials={testimonials} />
+      )}
 
       {/* Section 3: Brand Identity & Story */}
       <section id="brand-story" className="py-16 bg-white">
