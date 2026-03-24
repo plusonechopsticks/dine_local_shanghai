@@ -91,6 +91,16 @@ export default function HostDetail() {
     
     const disabled = new Set<string>();
     
+    // Disable all dates before today (past dates)
+    // Go back 365 days to cover any past dates that might be displayed
+    const pastStart = new Date(today);
+    pastStart.setFullYear(pastStart.getFullYear() - 1);
+    
+    for (let d = new Date(pastStart); d < today; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      disabled.add(dateStr);
+    }
+    
     // Disable today
     disabled.add(today.toISOString().split('T')[0]);
     
