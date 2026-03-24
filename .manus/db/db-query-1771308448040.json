@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO interest_submissions (name, email, interestType, createdAt) VALUES \n('Juliet Chuang', 'julietchuang@gmail.com', 'traveler', NOW()),\n('Nak C', 'nakcbbc@gmail.com', 'traveler', NOW()),\n('Chung Ka Ho', 'Chungkaho@gmail.com', 'traveler', NOW()),\n('James F', 'fsk.l.james@gmail.com', 'traveler', NOW()),\n('Yinson Chan', 'Yinsonchan@gmail.com', 'traveler', NOW()),\n('Norika', 'Norika007@163.com', 'traveler', NOW()),\n('Shell Wu', 'shellwu13@gmail.com', 'traveler', NOW()),\n('YM', 'ym2758@gmail.com', 'traveler', NOW()),\n('Marco Tung', 'marcotung@gmail.com', 'traveler', NOW()),\n('Takii Wong', 'takii.wong@gmail.com', 'traveler', NOW()),\n('Destiny Yan', 'destinyyan17@gmail.com', 'traveler', NOW()),\n('XY', 'xy1992929@gmail.com', 'traveler', NOW())\nON DUPLICATE KEY UPDATE email=email;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute INSERT INTO interest_submissions (name, email, interestType, createdAt) VALUES \n('Juliet Chuang', 'julietchuang@gmail.com', 'traveler', NOW()),\n('Nak C', 'nakcbbc@gmail.com', 'traveler', NOW()),\n('Chung Ka Ho', 'Chungkaho@gmail.com', 'traveler', NOW()),\n('James F', 'fsk.l.james@gmail.com', 'traveler', NOW()),\n('Yinson Chan', 'Yinsonchan@gmail.com', 'traveler', NOW()),\n('Norika', 'Norika007@163.com', 'traveler', NOW()),\n('Shell Wu', 'shellwu13@gmail.com', 'traveler', NOW()),\n('YM', 'ym2758@gmail.com', 'traveler', NOW()),\n('Marco Tung', 'marcotung@gmail.com', 'traveler', NOW()),\n('Takii Wong', 'takii.wong@gmail.com', 'traveler', NOW()),\n('Destiny Yan', 'destinyyan17@gmail.com', 'traveler', NOW()),\n('XY', 'xy1992929@gmail.com', 'traveler', NOW())\nON DUPLICATE KEY UPDATE email=email;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 357
-}

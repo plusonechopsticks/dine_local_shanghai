@@ -1,8 +1,0 @@
-{
-  "query": "SELECT id, name, bio, overseas_experience, languages, fun_facts, why_host, cultural_passions FROM host_listings WHERE approval_status = 'approved';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, name, bio, overseas_experience, languages, fun_facts, why_host, cultural_passions FROM host_listings WHERE approval_status = 'approved';",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 1: Unknown column 'approval_status' in 'where clause'"
-  ]
-}

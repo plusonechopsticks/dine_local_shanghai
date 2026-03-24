@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE host_listings SET introVideoUrl = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/MkrKJzqKzwZGcieH.mov' WHERE id = 1;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings SET introVideoUrl = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/MkrKJzqKzwZGcieH.mov' WHERE id = 1;",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 420
-}

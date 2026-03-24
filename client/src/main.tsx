@@ -46,8 +46,6 @@ const trpcClient = trpc.createClient({
         return globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
-          // Increase timeout for file uploads
-          signal: AbortSignal.timeout(120000), // 120 seconds for large uploads
         });
       },
     }),

@@ -1,8 +1,0 @@
-{
-  "query": "ALTER TABLE blog_post_views \nMODIFY COLUMN id VARCHAR(255) PRIMARY KEY,\nMODIFY COLUMN blogPostId VARCHAR(255) NOT NULL;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute ALTER TABLE blog_post_views \nMODIFY COLUMN id VARCHAR(255) PRIMARY KEY,\nMODIFY COLUMN blogPostId VARCHAR(255) NOT NULL;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 8200 (HY000) at line 1: can't change column constraint (PRIMARY KEY)"
-  ]
-}

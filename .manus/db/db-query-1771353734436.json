@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO interest_submissions (name, email, interestType, createdAt) VALUES \n('Emily', 'emilyiswithyou@gmail.com', 'traveler', NOW()),\n('Vera Li', 'verali0916@gmail.com', 'traveler', NOW());",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute INSERT INTO interest_submissions (name, email, interestType, createdAt) VALUES \n('Emily', 'emilyiswithyou@gmail.com', 'traveler', NOW()),\n('Vera Li', 'verali0916@gmail.com', 'traveler', NOW());",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 389
-}

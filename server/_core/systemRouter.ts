@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
-import { sendEmail } from "../email";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -26,27 +25,5 @@ export const systemRouter = router({
       return {
         success: delivered,
       } as const;
-    }),
-
-  sendTestEmail: publicProcedure
-    .input(
-      z.object({
-        to: z.string().email(),
-        subject: z.string().min(1),
-        html: z.string().min(1),
-      })
-    )
-    .mutation(async ({ input }) => {
-      try {
-        const result = await sendEmail({
-          to: input.to,
-          subject: input.subject,
-          html: input.html,
-        });
-        return { success: result };
-      } catch (error) {
-        console.error("[Test Email] Error:", error);
-        return { success: false, error: String(error) };
-      }
     }),
 });

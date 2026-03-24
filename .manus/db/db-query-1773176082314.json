@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `blog_posts` (\n  `id` varchar(255) PRIMARY KEY,\n  `title` varchar(255) NOT NULL,\n  `slug` varchar(255) NOT NULL UNIQUE,\n  `excerpt` text,\n  `content` longtext NOT NULL,\n  `authorName` varchar(255),\n  `featuredImageUrl` varchar(500),\n  `tags` json,\n  `metaDescription` text,\n  `metaKeywords` text,\n  `published` boolean DEFAULT false,\n  `publishedAt` datetime,\n  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute CREATE TABLE IF NOT EXISTS `blog_posts` (\n  `id` varchar(255) PRIMARY KEY,\n  `title` varchar(255) NOT NULL,\n  `slug` varchar(255) NOT NULL UNIQUE,\n  `excerpt` text,\n  `content` longtext NOT NULL,\n  `authorName` varchar(255),\n  `featuredImageUrl` varchar(500),\n  `tags` json,\n  `metaDescription` text,\n  `metaKeywords` text,\n  `published` boolean DEFAULT false,\n  `publishedAt` datetime,\n  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 419
-}

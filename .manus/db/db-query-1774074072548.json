@@ -1,9 +1,0 @@
-{
-  "query": "UPDATE blog_posts SET publishedAt = '2026-03-13 00:00:00' WHERE slug = 'home-dining-cheat-sheet-steven-to';",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE blog_posts SET publishedAt = '2026-03-13 00:00:00' WHERE slug = 'home-dining-cheat-sheet-steven-to';",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 527
-}
