@@ -32,7 +32,7 @@ export default function AvailabilityCalendar({
 
     if (isDisabled) {
       return {
-        className: "bg-red-50 border border-red-200 text-red-600 cursor-not-allowed",
+        className: "bg-gray-100 border border-gray-300 text-gray-500 cursor-not-allowed",
         title: "Not available",
       };
     }
@@ -95,7 +95,7 @@ export default function AvailabilityCalendar({
               <span className="text-sm text-gray-700">Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-50 border border-red-200 rounded" />
+              <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded" />
               <span className="text-sm text-gray-700">Not Available</span>
             </div>
             <div className="flex items-center gap-2">
