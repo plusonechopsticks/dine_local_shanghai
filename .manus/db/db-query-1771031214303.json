@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE host_listings SET \notherPassions = 'I love bringing people together over food and conversation. Sharing meals is how I connect with others and build meaningful relationships across cultures.'\nWHERE id = 90002;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings SET \notherPassions = 'I love bringing people together over food and conversation. Sharing meals is how I connect with others and build meaningful relationships across cultures.'\nWHERE id = 90002;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 64
+}

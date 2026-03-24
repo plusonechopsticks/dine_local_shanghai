@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE host_listings \nSET overseasExperience = 'I''m deeply rooted in Jiading and Shanghai - this is my home and my passion. My expertise comes from a lifetime of living and cooking in Shanghai, not from traveling abroad. I believe the best hospitality comes from truly knowing your own culture.'\nWHERE hostName = 'Ayi';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings \nSET overseasExperience = 'I''m deeply rooted in Jiading and Shanghai - this is my home and my passion. My expertise comes from a lifetime of living and cooking in Shanghai, not from traveling abroad. I believe the best hospitality comes from truly knowing your own culture.'\nWHERE hostName = 'Ayi';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 85
+}

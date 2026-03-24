@@ -1,0 +1,52 @@
+{
+  "query": "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE();",
+  "rows": [
+    {
+      "TABLE_NAME": "blocked_dates"
+    },
+    {
+      "TABLE_NAME": "host_accounts"
+    },
+    {
+      "TABLE_NAME": "host_availability_blocks"
+    },
+    {
+      "TABLE_NAME": "interest_submissions"
+    },
+    {
+      "TABLE_NAME": "bookings"
+    },
+    {
+      "TABLE_NAME": "payments"
+    },
+    {
+      "TABLE_NAME": "announcements"
+    },
+    {
+      "TABLE_NAME": "chat_sessions"
+    },
+    {
+      "TABLE_NAME": "chat_messages"
+    },
+    {
+      "TABLE_NAME": "page_views"
+    },
+    {
+      "TABLE_NAME": "blog_posts"
+    },
+    {
+      "TABLE_NAME": "__drizzle_migrations"
+    },
+    {
+      "TABLE_NAME": "users"
+    },
+    {
+      "TABLE_NAME": "host_listings"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\nblocked_dates\nhost_accounts\nhost_availability_blocks\ninterest_submissions\nbookings\npayments\nannouncements\nchat_sessions\nchat_messages\npage_views\nblog_posts\n__drizzle_migrations\nusers\nhost_listings\n",
+  "stderr": "",
+  "execution_time_ms": 413
+}

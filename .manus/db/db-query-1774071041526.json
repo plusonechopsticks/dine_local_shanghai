@@ -1,0 +1,50 @@
+{
+  "query": "SELECT id, hostName, district FROM host_listings WHERE status = 'approved' ORDER BY displayOrder ASC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, district FROM host_listings WHERE status = 'approved' ORDER BY displayOrder ASC",
+  "rows": [
+    {
+      "id": "180001",
+      "hostName": "Chuan 川",
+      "district": "Xuhui"
+    },
+    {
+      "id": "210001",
+      "hostName": "Echo Ren",
+      "district": "Pudong"
+    },
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "district": "Xuhui"
+    },
+    {
+      "id": "150001",
+      "hostName": "Jiading Ayi ",
+      "district": "Jiading"
+    },
+    {
+      "id": "240001",
+      "hostName": "Sookie",
+      "district": "Putuo"
+    },
+    {
+      "id": "1",
+      "hostName": "Norika and Steven",
+      "district": "Songjiang"
+    },
+    {
+      "id": "270001",
+      "hostName": "Vivie",
+      "district": "Changning"
+    },
+    {
+      "id": "300001",
+      "hostName": "Bonnie",
+      "district": "Jing'An"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tdistrict\n180001\tChuan 川\tXuhui\n210001\tEcho Ren\tPudong\n90002\tGrace Tong\tXuhui\n150001\tJiading Ayi \tJiading\n240001\tSookie\tPutuo\n1\tNorika and Steven\tSongjiang\n270001\tVivie\tChangning\n300001\tBonnie\tJing'An\n",
+  "stderr": "",
+  "execution_time_ms": 443
+}

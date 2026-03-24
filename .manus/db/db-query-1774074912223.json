@@ -1,0 +1,25 @@
+{
+  "query": "SELECT id, title, slug FROM blog_posts;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, title, slug FROM blog_posts;",
+  "rows": [
+    {
+      "id": "blog-1-china-export-boom",
+      "title": "From Goods to Gastronomy: The rise of China's tourism export boom",
+      "slug": "from-goods-to-gastronomy-chinas-tourism-export-boom"
+    },
+    {
+      "id": "blog-daniel-sun-china-app-stack",
+      "title": "A Tourist's 2026 'China App Stack': Essential Apps for Traveling in China",
+      "slug": "china-app-stack-essential-apps-traveling"
+    },
+    {
+      "id": "blog-steven-to-home-dining-cheat-sheet",
+      "title": "Your Cheat Sheet for a Chinese Home Dinner (No Experience Needed)",
+      "slug": "home-dining-cheat-sheet-steven-to"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\nblog-1-china-export-boom\tFrom Goods to Gastronomy: The rise of China's tourism export boom\tfrom-goods-to-gastronomy-chinas-tourism-export-boom\nblog-daniel-sun-china-app-stack\tA Tourist's 2026 'China App Stack': Essential Apps for Traveling in China\tchina-app-stack-essential-apps-traveling\nblog-steven-to-home-dining-cheat-sheet\tYour Cheat Sheet for a Chinese Home Dinner (No Experience Needed)\thome-dining-cheat-sheet-steven-to\n",
+  "stderr": "",
+  "execution_time_ms": 409
+}

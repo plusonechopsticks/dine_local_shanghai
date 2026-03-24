@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, title, publishedAt FROM blog_posts ORDER BY publishedAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, title, publishedAt FROM blog_posts ORDER BY publishedAt DESC;",
+  "rows": [
+    {
+      "id": "blog-china-trip-planning-guide",
+      "title": "Planning Your First China Trip: The Itinerary Questions Everyone Asks (Keep Updating)",
+      "publishedAt": "2026-03-21 06:41:27"
+    },
+    {
+      "id": "blog-steven-to-home-dining-cheat-sheet",
+      "title": "Your Cheat Sheet for a Chinese Home Dinner (No Experience Needed)",
+      "publishedAt": "2026-03-13 00:00:00"
+    },
+    {
+      "id": "blog-1-china-export-boom",
+      "title": "From Goods to Gastronomy: The rise of China's tourism export boom",
+      "publishedAt": "2026-03-10 20:55:48"
+    },
+    {
+      "id": "blog-daniel-sun-china-app-stack",
+      "title": "A Tourist's 2026 'China App Stack': Essential Apps for Traveling in China",
+      "publishedAt": "2026-02-06 00:00:00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tpublishedAt\nblog-china-trip-planning-guide\tPlanning Your First China Trip: The Itinerary Questions Everyone Asks (Keep Updating)\t2026-03-21 06:41:27\nblog-steven-to-home-dining-cheat-sheet\tYour Cheat Sheet for a Chinese Home Dinner (No Experience Needed)\t2026-03-13 00:00:00\nblog-1-china-export-boom\tFrom Goods to Gastronomy: The rise of China's tourism export boom\t2026-03-10 20:55:48\nblog-daniel-sun-china-app-stack\tA Tourist's 2026 'China App Stack': Essential Apps for Traveling in China\t2026-02-06 00:00:00\n",
+  "stderr": "",
+  "execution_time_ms": 356
+}

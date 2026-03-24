@@ -1,0 +1,140 @@
+{
+  "query": "SELECT name, email, createdAt FROM interest_submissions WHERE interestType = 'traveler' AND email NOT LIKE '%@example.com' ORDER BY name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT name, email, createdAt FROM interest_submissions WHERE interestType = 'traveler' AND email NOT LIKE '%@example.com' ORDER BY name;",
+  "rows": [
+    {
+      "name": "Chung Ka Ho",
+      "email": "Chungkaho@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Destiny Yan",
+      "email": "destinyyan17@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Echo Ren",
+      "email": "echoren881@gmail.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "G",
+      "email": "g@g.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "Grace Tong",
+      "email": "gracetong89@gmail.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "Grace Tong",
+      "email": "gracetong89@gmail.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "JAMES WANG",
+      "email": "JWANG9902@GMAIL.COM",
+      "createdAt": "2026-01-30 23:42:43"
+    },
+    {
+      "name": "James F",
+      "email": "fsk.l.james@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Jiading Ayi ",
+      "email": "annnwooo@hotmail.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "Juliet Chuang",
+      "email": "julietchuang@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Marco Tung",
+      "email": "marcotung@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Nak C",
+      "email": "nakcbbc@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Norika",
+      "email": "Norika007@163.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Norika and Steven",
+      "email": "shugenbaba@gmail.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "Shell Wu",
+      "email": "shellwu13@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Shugenbaba",
+      "email": "shugenbaba@gmail.com",
+      "createdAt": "2026-01-18 15:38:45"
+    },
+    {
+      "name": "Sookie",
+      "email": "1171646523@qq.com",
+      "createdAt": "2026-02-17 06:08:39"
+    },
+    {
+      "name": "Takii Wong",
+      "email": "takii.wong@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Traveler",
+      "email": "kalelovil@gmail.com",
+      "createdAt": "2026-02-16 02:03:17"
+    },
+    {
+      "name": "Traveler",
+      "email": "zmz.julien@icloud.com",
+      "createdAt": "2026-02-11 11:53:42"
+    },
+    {
+      "name": "Traveler",
+      "email": "sjzhang123@gmail.com",
+      "createdAt": "2026-02-09 19:06:52"
+    },
+    {
+      "name": "Traveler",
+      "email": "irenedirks@live.com",
+      "createdAt": "2026-02-08 08:44:33"
+    },
+    {
+      "name": "Traveler",
+      "email": "plusonechopsticks@gmail.com",
+      "createdAt": "2026-02-08 00:04:11"
+    },
+    {
+      "name": "XY",
+      "email": "xy1992929@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "YM",
+      "email": "ym2758@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    },
+    {
+      "name": "Yinson Chan",
+      "email": "Yinsonchan@gmail.com",
+      "createdAt": "2026-02-17 06:07:28"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\temail\tcreatedAt\nChung Ka Ho\tChungkaho@gmail.com\t2026-02-17 06:07:28\nDestiny Yan\tdestinyyan17@gmail.com\t2026-02-17 06:07:28\nEcho Ren\techoren881@gmail.com\t2026-02-17 06:08:39\nG\tg@g.com\t2026-02-17 06:08:39\nGrace Tong\tgracetong89@gmail.com\t2026-02-17 06:08:39\nGrace Tong\tgracetong89@gmail.com\t2026-02-17 06:08:39\nJAMES WANG\tJWANG9902@GMAIL.COM\t2026-01-30 23:42:43\nJames F\tfsk.l.james@gmail.com\t2026-02-17 06:07:28\nJiading Ayi \tannnwooo@hotmail.com\t2026-02-17 06:08:39\nJuliet Chuang\tjulietchuang@gmail.com\t2026-02-17 06:07:28\nMarco Tung\tmarcotung@gmail.com\t2026-02-17 06:07:28\nNak C\tnakcbbc@gmail.com\t2026-02-17 06:07:28\nNorika\tNorika007@163.com\t2026-02-17 06:07:28\nNorika and Steven\tshugenbaba@gmail.com\t2026-02-17 06:08:39\nShell Wu\tshellwu13@gmail.com\t2026-02-17 06:07:28\nShugenbaba\tshugenbaba@gmail.com\t2026-01-18 15:38:45\nSookie\t1171646523@qq.com\t2026-02-17 06:08:39\nTakii Wong\ttakii.wong@gmail.com\t2026-02-17 06:07:28\nTraveler\tkalelovil@gmail.com\t2026-02-16 02:03:17\nTraveler\tzmz.julien@icloud.com\t2026-02-11 11:53:42\nTraveler\tsjzhang123@gmail.com\t2026-02-09 19:06:52\nTraveler\tirenedirks@live.com\t2026-02-08 08:44:33\nTraveler\tplusonechopsticks@gmail.com\t2026-02-08 00:04:11\nXY\txy1992929@gmail.com\t2026-02-17 06:07:28\nYM\tym2758@gmail.com\t2026-02-17 06:07:28\nYinson Chan\tYinsonchan@gmail.com\t2026-02-17 06:07:28\n",
+  "stderr": "",
+  "execution_time_ms": 426
+}

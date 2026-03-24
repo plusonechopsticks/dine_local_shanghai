@@ -1,0 +1,14 @@
+{
+  "query": "SELECT id, foodPhotoUrls FROM host_listings WHERE id = '90001'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, foodPhotoUrls FROM host_listings WHERE id = '90001'",
+  "rows": [
+    {
+      "id": "90001",
+      "foodPhotoUrls": "[\"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/wvIAZYSjwPIxhagC.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/XKqIHkARGWUEQFLz.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/oiVjlkbkzMkrGGYj.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/DwvptgAneANfjGjY.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/loBIWlpbrOTsKxmg.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/mzBdvpKTjgXVUZtx.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/hugbbzNyLHPOyWUl.jpeg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/Hqwl8fPiVJKX5X0sZWWYz.jpeg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/UHW0XmGRq8-LVht0YAjOD.jpeg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/BwVC6FOM2fbY6YgGqX0fP.jpeg\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tfoodPhotoUrls\n90001\t[\"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/wvIAZYSjwPIxhagC.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/XKqIHkARGWUEQFLz.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/oiVjlkbkzMkrGGYj.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/DwvptgAneANfjGjY.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/loBIWlpbrOTsKxmg.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/mzBdvpKTjgXVUZtx.jpeg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/hugbbzNyLHPOyWUl.jpeg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/Hqwl8fPiVJKX5X0sZWWYz.jpeg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/UHW0XmGRq8-LVht0YAjOD.jpeg\", \"https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/host-images/BwVC6FOM2fbY6YgGqX0fP.jpeg\"]\n",
+  "stderr": "",
+  "execution_time_ms": 359
+}

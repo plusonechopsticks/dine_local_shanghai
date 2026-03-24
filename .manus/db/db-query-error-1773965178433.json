@@ -1,0 +1,8 @@
+{
+  "query": "SELECT \n  b.id,\n  b.guestName,\n  b.guestEmail,\n  b.experienceDate,\n  b.mealType,\n  b.numberOfGuests,\n  b.paymentStatus,\n  h.hostName,\n  h.email as hostEmail,\n  h.cuisineStyle\nFROM bookings b\nJOIN host_listings h ON b.hostListingId = h.id\nWHERE b.paymentStatus = 'PAID' \n  AND b.experienceDate > NOW()\nORDER BY b.experienceDate ASC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT \n  b.id,\n  b.guestName,\n  b.guestEmail,\n  b.experienceDate,\n  b.mealType,\n  b.numberOfGuests,\n  b.paymentStatus,\n  h.hostName,\n  h.email as hostEmail,\n  h.cuisineStyle\nFROM bookings b\nJOIN host_listings h ON b.hostListingId = h.id\nWHERE b.paymentStatus = 'PAID' \n  AND b.experienceDate > NOW()\nORDER BY b.experienceDate ASC",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'b.experienceDate' in 'order clause'"
+  ]
+}

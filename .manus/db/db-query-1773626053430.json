@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO bookings (hostListingId, guestName, guestEmail, requestedDate, mealType, numberOfGuests, bookingStatus) VALUES (1, 'TestGuest', 'test@example.com', '2026-04-10', 'dinner', 2, 'pending');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute INSERT INTO bookings (hostListingId, guestName, guestEmail, requestedDate, mealType, numberOfGuests, bookingStatus) VALUES (1, 'TestGuest', 'test@example.com', '2026-04-10', 'dinner', 2, 'pending');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 358
+}

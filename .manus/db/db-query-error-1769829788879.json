@@ -1,0 +1,8 @@
+{
+  "query": "SELECT * FROM conversations WHERE guestName LIKE '%James%' OR guestEmail LIKE '%james%'; SELECT * FROM messages WHERE senderName LIKE '%James%' OR senderEmail LIKE '%james%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT * FROM conversations WHERE guestName LIKE '%James%' OR guestEmail LIKE '%james%'; SELECT * FROM messages WHERE senderName LIKE '%James%' OR senderEmail LIKE '%james%';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'mkw6exsehjcqgwsa6m4fqn.conversations' doesn't exist"
+  ]
+}

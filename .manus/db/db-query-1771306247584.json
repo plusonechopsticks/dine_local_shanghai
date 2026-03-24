@@ -1,0 +1,13 @@
+{
+  "query": "SELECT bio FROM host_listings WHERE id = 180001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT bio FROM host_listings WHERE id = 180001;",
+  "rows": [
+    {
+      "bio": "Chuan's culinary journey began in childhood when she couldn't find delicious, lightly-oiled stir-fried eggplant in restaurants, so she decided to cook herself. Her passion for home cooking was ignited from that moment. Her philosophy of \"eating well\" means nutritious, balanced meals with clean flavors and authentic taste. Her dishes blend ingredients and flavors from Guangxi, Guangdong, and Southeast Asia."
+    }
+  ],
+  "messages": [],
+  "stdout": "bio\nChuan's culinary journey began in childhood when she couldn't find delicious, lightly-oiled stir-fried eggplant in restaurants, so she decided to cook herself. Her passion for home cooking was ignited from that moment. Her philosophy of \"eating well\" means nutritious, balanced meals with clean flavors and authentic taste. Her dishes blend ingredients and flavors from Guangxi, Guangdong, and Southeast Asia.\n",
+  "stderr": "",
+  "execution_time_ms": 464
+}

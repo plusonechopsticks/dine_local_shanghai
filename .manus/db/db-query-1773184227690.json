@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE blog_posts SET excerpt = 'While China''s export numbers dominate headlines, a quieter boom is reshaping tourism. Discover why authentic home dining experiences are becoming the new frontier of cultural exchange.' WHERE id = 'blog-1-china-export-boom';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE blog_posts SET excerpt = 'While China''s export numbers dominate headlines, a quieter boom is reshaping tourism. Discover why authentic home dining experiences are becoming the new frontier of cultural exchange.' WHERE id = 'blog-1-china-export-boom';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 391
+}

@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE host_listings \nSET profilePhotoUrl = 'https://res.cloudinary.com/drxfcfayd/image/upload/v1769881401/host-images/vpwz3itks0vllkudk7s5.jpg',\n    foodPhotoUrls = '[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881401/host-images/vpwz3itks0vllkudk7s5.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881405/host-images/rdqdicxlvgx5v0vctaia.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881409/host-images/jzhgvwqjv14rvy17mztr.jpg\"]'\nWHERE hostName = 'Grace Tong' AND title LIKE '%umpling%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings \nSET profilePhotoUrl = 'https://res.cloudinary.com/drxfcfayd/image/upload/v1769881401/host-images/vpwz3itks0vllkudk7s5.jpg',\n    foodPhotoUrls = '[\"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881401/host-images/vpwz3itks0vllkudk7s5.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881405/host-images/rdqdicxlvgx5v0vctaia.jpg\", \"https://res.cloudinary.com/drxfcfayd/image/upload/v1769881409/host-images/jzhgvwqjv14rvy17mztr.jpg\"]'\nWHERE hostName = 'Grace Tong' AND title LIKE '%umpling%';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 54
+}
