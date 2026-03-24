@@ -87,11 +87,22 @@ export default function HostDetail() {
   
   const updateDisabledDates = (hostData: any) => {
     const today = new Date();
-    const endDate = new Date(today);
-    endDate.setDate(endDate.getDate() + 90);
+    today.setHours(0, 0, 0, 0);
     
     const disabled = new Set<string>();
-    for (let d = new Date(today); d <= endDate; d.setDate(d.getDate() + 1)) {
+    
+    // Disable today
+    disabled.add(today.toISOString().split('T')[0]);
+    
+    // Start from tomorrow
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const endDate = new Date(tomorrow);
+    endDate.setDate(endDate.getDate() + 90);
+    
+    // Disable dates based on host availability (from tomorrow onwards)
+    for (let d = new Date(tomorrow); d <= endDate; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0];
       const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       
