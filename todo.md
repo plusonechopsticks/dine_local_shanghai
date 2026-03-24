@@ -1624,3 +1624,13 @@
 - [x] Send updated confirmation email to host (Jiading Ayi - weiwei-0124@163.com)
 - [x] Forward confirmation to owner (plusonechopsticks@gmail.com)
 - [x] Booking details: Dinner for 2 guests at Jiading Ayi's home, Saturday March 29, 2026
+
+## Booking Widget UI Redesign - Completed ✅
+- [x] Analyze current booking form structure and HostDetail.tsx
+- [x] Create custom DateGridCalendar component to replace react-calendar
+- [x] Rebuild BookingForm with vertical layout
+- [x] Remove phone field from form
+- [x] Update submit button text to "RESERVE YOUR SEAT" with burgundy color
+- [x] Create vitest tests for calendar date selection and availability logic
+- [x] Verify all tRPC mutations still work correctly
+- [x] Resolved guest feedback: no more red weekend coloring, clean date grid calendar

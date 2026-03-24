@@ -44,7 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import AvailabilityCalendar from "@/components/AvailabilityCalendar";
+import DateGridCalendar from "@/components/DateGridCalendar";
 
 const ACTIVITY_LABELS: Record<string, string> = {
   "cooking-class": "Cooking Class",
@@ -68,7 +68,6 @@ export default function HostDetail() {
   const [bookingData, setBookingData] = useState({
     guestName: "",
     guestEmail: "",
-    guestPhone: "",
     requestedDate: "",
     mealType: "dinner",
     numberOfGuests: "1",
@@ -865,15 +864,7 @@ export default function HostDetail() {
               />
             </div>
 
-            <div>
-              <Label htmlFor="guestPhone">Phone (Optional)</Label>
-              <Input
-                id="guestPhone"
-                placeholder="Your phone number"
-                value={bookingData.guestPhone}
-                onChange={(e) => setBookingData({ ...bookingData, guestPhone: e.target.value })}
-              />
-            </div>
+
 
             <div>
               <Label htmlFor="requestedDate">Preferred Date *</Label>
@@ -890,7 +881,7 @@ export default function HostDetail() {
               </Button>
               {showCalendar && (
                 <div className="mt-4">
-                  <AvailabilityCalendar
+                  <DateGridCalendar
                     disabledDates={disabledDates}
                     selectedDate={bookingData.requestedDate}
                     onDateSelect={(date) => {
@@ -958,9 +949,9 @@ export default function HostDetail() {
                 <Button
                   onClick={handleSubmitBooking}
                   disabled={createBookingMutation.isPending}
-                  className="bg-primary hover:bg-primary/90"
+                  className="bg-burgundy-600 hover:bg-burgundy-700 text-white font-semibold"
                 >
-                  {createBookingMutation.isPending ? "Submitting..." : "Submit Request"}
+                  {createBookingMutation.isPending ? "Submitting..." : "RESERVE YOUR SEAT"}
                 </Button>
               </>
             ) : (
@@ -974,7 +965,6 @@ export default function HostDetail() {
                     setBookingData({
                       guestName: "",
                       guestEmail: "",
-                      guestPhone: "",
                       requestedDate: "",
                       mealType: "dinner",
                       numberOfGuests: "1",
