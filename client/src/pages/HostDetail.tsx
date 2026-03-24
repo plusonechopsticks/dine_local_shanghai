@@ -970,9 +970,9 @@ export default function HostDetail() {
                 <Button
                   onClick={handleSubmitBooking}
                   disabled={createBookingMutation.isPending}
-                  className="bg-burgundy-600 hover:bg-burgundy-700 text-white font-semibold"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                 >
-                  {createBookingMutation.isPending ? "Submitting..." : "RESERVE YOUR SEAT"}
+                  {createBookingMutation.isPending ? "Submitting..." : "Request Booking"}
                 </Button>
               </>
             ) : (
