@@ -47,22 +47,34 @@ export default function BookingConfirmation() {
     onSuccess: (data) => {
       if (data.url) {
         toast.success("Redirecting to payment...");
-        window.location.href = data.url;
+        window.open(data.url, '_blank');
+      } else {
+        toast.error("No payment URL returned. Please try again.");
       }
     },
     onError: (error: any) => {
-      toast.error(error.message || "Failed to create payment session");
+      console.error('[Payment] Error:', error);
+      toast.error(error.message || "Failed to create payment session. Please try again.");
     },
   });
 
   const handlePayment = () => {
-    if (!bookingId || !bookingDetails) return;
+    if (!bookingId || !bookingDetails) {
+      toast.error("Booking details not found. Please go back and try again.");
+      return;
+    }
+
+    const amount = parseFloat(bookingDetails.amount) || 0;
+    if (amount <= 0) {
+      toast.error("Invalid booking amount. Please go back and try again.");
+      return;
+    }
 
     createCheckoutSessionMutation.mutate({
       bookingId,
-      amount: bookingDetails.amount,
-      hostName: bookingDetails.hostName,
-      guestEmail: bookingDetails.guestEmail,
+      amount,
+      hostName: bookingDetails.hostName || "Host",
+      guestEmail: bookingDetails.guestEmail || "",
     });
   };
 
