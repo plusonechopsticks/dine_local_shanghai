@@ -165,6 +165,15 @@ export default function HostDetail() {
     }
   }, [hostId]);
 
+  // Auto-save booking data to localStorage whenever it changes
+  useEffect(() => {
+    if (!hostId) return;
+    
+    const cacheKey = `booking_cache_${hostId}`;
+    localStorage.setItem(cacheKey, JSON.stringify(bookingData));
+    console.log('[Booking Cache] Auto-saved booking data to localStorage');
+  }, [bookingData, hostId]);
+
   // Track view count
   const incrementViewMutation = trpc.host.incrementView.useMutation();
   
