@@ -155,8 +155,11 @@ export function GuestStories({ testimonials }: GuestStoriesProps) {
                 <div className="p-6">
                   {/* Attribution */}
                   <div className="mb-4">
-                    <p className="text-sm font-semibold text-amber-700">
-                      From {testimonial.guestName}, {testimonial.location}, {testimonial.travelerType}
+                    <p className="text-sm font-semibold text-amber-700 whitespace-nowrap overflow-hidden text-ellipsis">
+                      From {testimonial.guestName}, {testimonial.location}
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {testimonial.travelerType}
                     </p>
                   </div>
 
