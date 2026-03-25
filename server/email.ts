@@ -5,8 +5,18 @@ import {
   generateHostNotificationEmail,
 } from "./email-templates.ts";
 
-// Initialize Resend client with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend client lazily to avoid crash on missing API key at startup
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY environment variable is not set");
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
+const resend = { emails: { send: (...args: Parameters<Resend["emails"]["send"]>) => getResend().emails.send(...args) } };
 
 // Get the email address to send from
 const EMAIL_FROM = process.env.EMAIL_FROM || "onboarding@resend.dev";
