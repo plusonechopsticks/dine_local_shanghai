@@ -730,26 +730,30 @@ export default function HostDetail() {
                         }
                       >
                         <SelectTrigger className="mt-1">
-                          <SelectValue />
+                          <SelectValue placeholder="Select a meal type" />
                         </SelectTrigger>
                         <SelectContent>
-                          {availableDays.length > 0 && bookingData.requestedDate && (
-                            <>
-                              {(() => {
-                                const date = new Date(bookingData.requestedDate + 'T00:00:00');
-                                const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
-                                return (
-                                  <>
-                                    {sortedAvailability[dayName]?.includes("lunch") && (
-                                      <SelectItem value="lunch">Lunch</SelectItem>
-                                    )}
-                                    {sortedAvailability[dayName]?.includes("dinner") && (
-                                      <SelectItem value="dinner">Dinner</SelectItem>
-                                    )}
-                                  </>
-                                );
-                              })()}
-                            </>
+                          {bookingData.requestedDate ? (
+                            (() => {
+                              const date = new Date(bookingData.requestedDate + 'T00:00:00');
+                              const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+                              const availableMeals = sortedAvailability[dayName] || [];
+                              return (
+                                <>
+                                  {availableMeals.includes("lunch") && (
+                                    <SelectItem value="lunch">Lunch</SelectItem>
+                                  )}
+                                  {availableMeals.includes("dinner") && (
+                                    <SelectItem value="dinner">Dinner</SelectItem>
+                                  )}
+                                  {availableMeals.length === 0 && (
+                                    <div className="px-2 py-1.5 text-sm text-muted-foreground">No meals available for this date</div>
+                                  )}
+                                </>
+                              );
+                            })()
+                          ) : (
+                            <div className="px-2 py-1.5 text-sm text-muted-foreground">Select a date first</div>
                           )}
                         </SelectContent>
                       </Select>
@@ -757,24 +761,18 @@ export default function HostDetail() {
 
                     {/* Number of Guests */}
                     <div>
-                      <Label className="text-sm font-medium">Number of Guests *</Label>
-                      <div className="flex gap-2 mt-2">
-                        {[1, 2, 3, 4].map((num) => (
-                          <button
-                            key={num}
-                            onClick={() =>
-                              setBookingData({ ...bookingData, numberOfGuests: num.toString() })
-                            }
-                            className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
-                              bookingData.numberOfGuests === num.toString()
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                            }`}
-                          >
-                            {num}
-                          </button>
-                        ))}
-                      </div>
+                      <Label htmlFor="guests" className="text-sm font-medium">Number of Guests *</Label>
+                      <Input
+                        id="guests"
+                        type="number"
+                        min="1"
+                        max={host.maxGuests}
+                        value={bookingData.numberOfGuests}
+                        onChange={(e) =>
+                          setBookingData({ ...bookingData, numberOfGuests: e.target.value })
+                        }
+                        className="mt-1"
+                      />
                       {parseInt(bookingData.numberOfGuests) > host.maxGuests && (
                         <p className="text-xs text-destructive mt-2">
                           Maximum {host.maxGuests} guests allowed
