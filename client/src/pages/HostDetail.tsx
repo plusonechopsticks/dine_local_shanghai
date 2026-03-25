@@ -344,7 +344,7 @@ export default function HostDetail() {
   return (
     <div className="min-h-screen bg-background">
       {/* HERO SECTION */}
-      <section className="relative w-full bg-black" style={{ height: '80vh' }}>
+      <section className="relative w-full bg-black" style={{ height: '100vh', height: '100svh' }}>
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-20">
           <button
@@ -365,14 +365,14 @@ export default function HostDetail() {
               muted
               loop
               playsInline
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : images.length > 0 ? (
             <>
               <img
                 src={images[currentImageIndex]}
                 alt={`${host.hostName} photo ${currentImageIndex + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
               {/* Slideshow Navigation */}
               {images.length > 1 && (
