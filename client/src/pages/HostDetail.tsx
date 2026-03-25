@@ -60,6 +60,7 @@ export default function HostDetail() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentFoodImageIndex, setCurrentFoodImageIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -305,6 +306,14 @@ export default function HostDetail() {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  const nextFoodImage = () => {
+    setCurrentFoodImageIndex((prev) => (prev + 1) % foodPhotos.length);
+  };
+
+  const prevFoodImage = () => {
+    setCurrentFoodImageIndex((prev) => (prev - 1 + foodPhotos.length) % foodPhotos.length);
+  };
+
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
   };
@@ -459,8 +468,8 @@ export default function HostDetail() {
             <div className="relative">
               <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
                 <img
-                  src={getProxiedImageUrl(foodPhotos[currentImageIndex])}
-                  alt={`${host.hostName} food photo ${currentImageIndex + 1}`}
+                  src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
+                  alt={`${host.hostName} food photo ${currentFoodImageIndex + 1}`}
                   className="w-full h-full object-contain"
                 />
                 
@@ -468,14 +477,14 @@ export default function HostDetail() {
                 {foodPhotos.length > 1 && (
                   <>
                     <button
-                      onClick={prevImage}
+                      onClick={prevFoodImage}
                       className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
                       aria-label="Previous photo"
                     >
                       <ChevronLeft size={24} className="text-white" />
                     </button>
                     <button
-                      onClick={nextImage}
+                      onClick={nextFoodImage}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
                       aria-label="Next photo"
                     >
@@ -487,9 +496,9 @@ export default function HostDetail() {
                       {foodPhotos.map((_, index) => (
                         <button
                           key={index}
-                          onClick={() => setCurrentImageIndex(index)}
+                          onClick={() => setCurrentFoodImageIndex(index)}
                           className={`h-2 rounded-full transition-all ${
-                            index === currentImageIndex
+                            index === currentFoodImageIndex
                               ? "w-6 bg-white"
                               : "w-2 bg-white/60 hover:bg-white/80"
                           }`}
