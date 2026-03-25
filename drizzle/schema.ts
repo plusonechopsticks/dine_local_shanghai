@@ -1,421 +1,258 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json, date, decimal } from "drizzle-orm/mysql-core";
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, int, text, timestamp, index, foreignKey, date, varchar, json, mysqlEnum, decimal } from "drizzle-orm/mysql-core"
+import { sql } from "drizzle-orm"
 
-/**
- * Core user table backing auth flow.
- */
-export const users = mysqlTable("users", {
-  id: int("id").autoincrement().primaryKey(),
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
-  name: text("name"),
-  email: varchar("email", { length: 320 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-});
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
-
-/**
- * Interest submissions from landing page
- * Stores both traveler and host family interests
- */
-export const interestSubmissions = mysqlTable("interest_submissions", {
-  id: int("id").autoincrement().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 320 }).notNull(),
-  interestType: mysqlEnum("interestType", ["traveler", "host"]).notNull(),
-  message: text("message"),
-  hidden: boolean("hidden").default(false), // Hide test submissions from admin view
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type InterestSubmission = typeof interestSubmissions.$inferSelect;
-export type InsertInterestSubmission = typeof interestSubmissions.$inferInsert;
-
-/**
- * Simplified host interest submissions for inaugural batch
- * Collects basic contact info before full application
- */
-export const hostInterests = mysqlTable("host_interests", {
-  id: int("id").autoincrement().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  district: varchar("district", { length: 100 }).notNull(),
-  contact: varchar("contact", { length: 255 }).notNull(), // Email or WeChat ID
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type HostInterest = typeof hostInterests.$inferSelect;
-export type InsertHostInterest = typeof hostInterests.$inferInsert;
-
-/**
- * Host listings - detailed profiles for host families
- */
-export const hostListings = mysqlTable("host_listings", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Host Profile
-  hostName: varchar("hostName", { length: 255 }).notNull(),
-  profilePhotoUrl: varchar("profilePhotoUrl", { length: 500 }), // Selfie
-  languages: json("languages").$type<string[]>().notNull(), // e.g., ["English", "Mandarin"]
-  bio: text("bio").notNull(),
-  activities: json("activities").$type<string[]>().default([] as any).notNull(), // e.g., ["cooking-class", "park-visit", "shopping"]
-  
-  // Human-Centered Profile Fields
-  overseasExperience: text("overseasExperience"), // Where they've lived/traveled abroad
-  funFacts: text("funFacts"), // Personality quirks and interesting facts
-  whyHost: text("whyHost"), // Their motivation for hosting
-  culturalPassions: text("culturalPassions"), // What they love about Chinese culture beyond food
-  otherPassions: text("otherPassions"), // Non-food passions and interests (from activities, otherNotes)
-  
-  // Contact
-  email: varchar("email", { length: 320 }).notNull(),
-  wechatOrPhone: varchar("wechatOrPhone", { length: 100 }).notNull(),
-  
-  // Location
-  district: varchar("district", { length: 100 }).notNull(),
-  fullAddress: text("fullAddress"), // Only filled after approval
-  
-  // Availability - stored as JSON for flexibility
-  // e.g., { "monday": ["lunch", "dinner"], "saturday": ["dinner"] }
-  availability: json("availability").$type<Record<string, string[]>>().notNull(),
-  availabilityComments: text("availabilityComments"), // Host notes about unavailable dates (CNY, travel, etc.)
-  
-  // Dining Details
-  maxGuests: int("maxGuests").notNull().default(2),
-  cuisineStyle: varchar("cuisineStyle", { length: 255 }).notNull(),
-  title: varchar("title", { length: 500 }), // AI-generated or custom title for the experience
-  menuDescription: text("menuDescription").notNull(),
-  foodPhotoUrls: json("foodPhotoUrls").$type<string[]>().notNull(), // At least 3 photos
-  introVideoUrl: varchar("introVideoUrl", { length: 500 }), // Host introductory video URL
-  dietaryNote: text("dietaryNote"), // e.g., "Can accommodate vegetarian, vegan, gluten-free. Not suitable for shellfish allergy."
-  mealDurationMinutes: int("mealDurationMinutes").notNull().default(120),
-  pricePerPerson: int("pricePerPerson").notNull().default(100), // in RMB
-  otherNotes: text("otherNotes"), // Additional notes about the experience
-  
-  // Household Info
-  kidsFriendly: boolean("kidsFriendly").notNull().default(true),
-  hasPets: boolean("hasPets").notNull().default(false),
-  petDetails: varchar("petDetails", { length: 255 }), // e.g., "One friendly cat"
-  householdFeatures: json("householdFeatures").$type<string[]>().default([] as any).notNull(), // e.g., ["has-pets", "has-stairs"]
-  otherHouseholdInfo: text("otherHouseholdInfo"), // Additional household information
-  
-  // Status
-  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
-  adminNotes: text("adminNotes"),
-  
-  // Analytics
-  viewCount: int("viewCount").notNull().default(0),
-  
-  // Promotions
-  discountPercentage: int("discountPercentage").notNull().default(0), // 0-100, e.g., 25 for 25% off
-  
-  // Display Order (lower number = higher priority, 0 = default)
-  displayOrder: int("displayOrder").notNull().default(0),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type HostListing = typeof hostListings.$inferSelect;
-export type InsertHostListing = typeof hostListings.$inferInsert;
-
-/**
- * Bookings - guest requests to dine with hosts
- */
-export const bookings = mysqlTable("bookings", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Host and Guest
-  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
-  guestName: varchar("guestName", { length: 255 }).notNull(),
-  guestEmail: varchar("guestEmail", { length: 320 }).notNull(),
-  guestPhone: varchar("guestPhone", { length: 20 }),
-  
-  // Booking Details
-  requestedDate: date("requestedDate").notNull(), // The date they want to dine
-  mealType: mysqlEnum("mealType", ["lunch", "dinner"]).notNull(),
-  numberOfGuests: int("numberOfGuests").notNull().default(1),
-  specialRequests: text("specialRequests"), // Dietary restrictions, allergies, preferences
-  
-  // Status
-  bookingStatus: mysqlEnum("bookingStatus", ["pending", "confirmed", "cancelled", "rejected"]).default("pending").notNull(),
-  hostNotes: text("hostNotes"), // Host's response/notes
-  hidden: boolean("hidden").default(false), // Hide test bookings from admin view
-  
-  // Payment
-  paymentStatus: mysqlEnum("paymentStatus", ["pending", "paid", "refunded"]).default("pending"),
-  totalAmount: decimal("totalAmount", { precision: 10, scale: 2 }),
-  paymentDate: timestamp("paymentDate"),
-  stripeSessionId: varchar("stripeSessionId", { length: 255 }),
-  
-  // Reminders
-  reminderEmailSent: boolean("reminderEmailSent").default(false), // Track if 48-hour reminder was sent
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type Booking = typeof bookings.$inferSelect;
-export type InsertBooking = typeof bookings.$inferInsert;
-
-/**
- * Conversations - chat threads between hosts and guests
- */
-export const conversations = mysqlTable("conversations", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Participants
-  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
-  guestEmail: varchar("guestEmail", { length: 320 }).notNull(),
-  guestName: varchar("guestName", { length: 255 }).notNull(),
-  
-  // Related booking (optional - conversation can exist without confirmed booking)
-  bookingId: int("bookingId").references(() => bookings.id),
-  
-  // Metadata
-  subject: varchar("subject", { length: 255 }).notNull(), // e.g., "Booking for Feb 8"
-  lastMessage: text("lastMessage"), // Preview of last message
-  lastMessageAt: timestamp("lastMessageAt"),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type Conversation = typeof conversations.$inferSelect;
-export type InsertConversation = typeof conversations.$inferInsert;
-
-/**
- * Messages - individual messages in a conversation
- */
-export const messages = mysqlTable("messages", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Conversation reference
-  conversationId: int("conversationId").notNull().references(() => conversations.id, { onDelete: "cascade" }),
-  
-  // Sender info
-  senderType: mysqlEnum("senderType", ["host", "guest"]).notNull(),
-  senderName: varchar("senderName", { length: 255 }).notNull(),
-  senderEmail: varchar("senderEmail", { length: 320 }).notNull(),
-  
-  // Message content
-  content: text("content").notNull(),
-  
-  // Read status
-  isRead: boolean("isRead").default(false).notNull(),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type Message = typeof messages.$inferSelect;
-export type InsertMessage = typeof messages.$inferInsert;
-
-/**
- * Site announcements for Find Hosts page
- * Editable by admin to display important updates
- */
 export const announcements = mysqlTable("announcements", {
-  id: int("id").autoincrement().primaryKey(),
-  content: text("content").notNull(),
-  isActive: boolean("is_active").default(true).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+	id: int().autoincrement().notNull(),
+	content: text().notNull(),
+	isActive: tinyint("is_active").default(1).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
-export type Announcement = typeof announcements.$inferSelect;
-export type InsertAnnouncement = typeof announcements.$inferInsert;
+export const blockedDates = mysqlTable("blocked_dates", {
+	id: int().autoincrement().notNull(),
+	hostListingId: int().notNull().references(() => hostListings.id),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	startDate: date({ mode: 'string' }).notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	endDate: date({ mode: 'string' }).notNull(),
+	reason: varchar({ length: 500 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("idx_host_dates").on(table.hostListingId, table.startDate, table.endDate),
+]);
 
-/**
- * Chat sessions - visitor support conversations
- * Tracks each unique chat session with AI and admin support
- */
-export const chatSessions = mysqlTable("chat_sessions", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Visitor info (optional - can be anonymous)
-  visitorName: varchar("visitorName", { length: 255 }),
-  visitorEmail: varchar("visitorEmail", { length: 320 }),
-  
-  // Session metadata
-  sessionId: varchar("sessionId", { length: 100 }).notNull().unique(), // UUID for tracking
-  status: mysqlEnum("status", ["active", "needs_human", "resolved"]).default("active").notNull(),
-  
-  // Admin takeover
-  adminTookOver: boolean("adminTookOver").default(false).notNull(),
-  adminTookOverAt: timestamp("adminTookOverAt"),
-  
-  // Last activity
-  lastMessageAt: timestamp("lastMessageAt").defaultNow().notNull(),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type ChatSession = typeof chatSessions.$inferSelect;
-export type InsertChatSession = typeof chatSessions.$inferInsert;
-
-/**
- * Chat messages - individual messages in a chat session
- */
-export const chatMessages = mysqlTable("chat_messages", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Session reference
-  sessionId: int("sessionId").notNull().references(() => chatSessions.id, { onDelete: "cascade" }),
-  
-  // Message details
-  senderType: mysqlEnum("senderType", ["visitor", "ai", "admin"]).notNull(),
-  content: text("content").notNull(),
-  
-  // Admin info (if sender is admin)
-  adminName: varchar("adminName", { length: 255 }),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type ChatMessage = typeof chatMessages.$inferSelect;
-export type InsertChatMessage = typeof chatMessages.$inferInsert;
-
-/**
- * Page views - track daily traffic for analytics
- * Records page views for key pages and host profiles
- */
-export const pageViews = mysqlTable("page_views", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Page information
-  pageType: mysqlEnum("pageType", ["home", "browse_hosts", "become_host", "host_detail"]).notNull(),
-  hostListingId: int("hostListingId").references(() => hostListings.id, { onDelete: "cascade" }), // Only for host_detail pages
-  
-  // Date (stored as DATE for grouping by day)
-  viewDate: date("viewDate").notNull(),
-  
-  // View count for that day
-  viewCount: int("viewCount").notNull().default(1),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type PageView = typeof pageViews.$inferSelect;
-export type InsertPageView = typeof pageViews.$inferInsert;
-
-
-/**
- * Host authentication - simple login system for hosts
- * Each host has one account linked to their listing
- */
-export const hostAccounts = mysqlTable("host_accounts", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Link to host listing (one-to-one)
-  hostListingId: int("hostListingId").notNull().unique().references(() => hostListings.id, { onDelete: "cascade" }),
-  
-  // Authentication
-  email: varchar("email", { length: 320 }).notNull().unique(), // Same as host profile email
-  passwordHash: varchar("passwordHash", { length: 255 }).notNull(), // Hashed password
-  
-  // Session
-  lastLoginAt: timestamp("lastLoginAt"),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type HostAccount = typeof hostAccounts.$inferSelect;
-export type InsertHostAccount = typeof hostAccounts.$inferInsert;
-
-/**
- * Host availability blocking - manage unavailable dates and times
- * Stores blocked dates, specific weekdays, and meal times
- */
-export const hostAvailabilityBlocks = mysqlTable("host_availability_blocks", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Link to host listing
-  hostListingId: int("hostListingId").notNull().references(() => hostListings.id, { onDelete: "cascade" }),
-  
-  // Block type
-  blockType: mysqlEnum("blockType", ["date", "weekday", "all_day"]).notNull(), // date: specific date, weekday: recurring day, all_day: block entire day
-  
-  // Block details
-  blockDate: date("blockDate"), // For date-specific blocks
-  blockWeekday: int("blockWeekday"), // 0-6 for Monday-Sunday (for recurring weekday blocks)
-  mealType: mysqlEnum("mealType", ["lunch", "dinner", "both"]).default("both").notNull(), // Which meal(s) to block
-  reason: varchar("reason", { length: 255 }), // e.g., "Family vacation", "Personal commitment"
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type HostAvailabilityBlock = typeof hostAvailabilityBlocks.$inferSelect;
-export type InsertHostAvailabilityBlock = typeof hostAvailabilityBlocks.$inferInsert;
-
-
-/**
- * Blog posts - articles about travel, food, culture, and entrepreneurship
- */
-export const blogPosts = mysqlTable("blog_posts", {
-  id: int("id").autoincrement().primaryKey(),
-  
-  // Content
-  title: varchar("title", { length: 500 }).notNull(),
-  slug: varchar("slug", { length: 500 }).notNull().unique(), // URL-friendly identifier
-  excerpt: text("excerpt").notNull(), // Short summary for listings
-  content: text("content").notNull(), // Full HTML content
-  
-  // Metadata
-  authorName: varchar("authorName", { length: 255 }).notNull().default("Dai Bin"),
-  featuredImageUrl: varchar("featuredImageUrl", { length: 500 }), // Hero image for blog post
-  
-  // Categorization
-  tags: json("tags").$type<string[]>().notNull(), // e.g., ["entrepreneurship", "travel-policy", "food-culture"]
-  
-  // SEO
-  metaDescription: text("metaDescription"), // For search results
-  metaKeywords: varchar("metaKeywords", { length: 500 }), // For search engines
-  
-  // Status
-  published: boolean("published").default(false), // Draft or published
-  publishedAt: timestamp("publishedAt"), // When the post was published
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
-
-export type BlogPost = typeof blogPosts.$inferSelect;
-export type InsertBlogPost = typeof blogPosts.$inferInsert;
-
-/**
- * Blog post views - track analytics for blog posts
- */
 export const blogPostViews = mysqlTable("blog_post_views", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  
-  // Link to blog post
-  blogPostId: varchar("blogPostId", { length: 255 }).notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
-  
-  // View tracking
-  viewCount: int("viewCount").default(0).notNull(),
-  lastViewedAt: timestamp("lastViewedAt"),
-  
-  // Timestamps
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+	id: varchar({ length: 255 }).notNull(),
+	blogPostId: varchar({ length: 255 }).notNull(),
+	viewCount: int().default(0).notNull(),
+	lastViewedAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
-export type BlogPostView = typeof blogPostViews.$inferSelect;
-export type InsertBlogPostView = typeof blogPostViews.$inferInsert;
+export const blogPosts = mysqlTable("blog_posts", {
+	id: int().autoincrement().notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	slug: varchar({ length: 500 }).notNull(),
+	excerpt: text().notNull(),
+	content: text().notNull(),
+	authorName: varchar({ length: 255 }).default('Dai Bin').notNull(),
+	featuredImageUrl: varchar({ length: 500 }),
+	tags: json().notNull(),
+	metaDescription: text(),
+	metaKeywords: varchar({ length: 500 }),
+	published: tinyint().default(0),
+	publishedAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("blog_posts_slug_unique").on(table.slug),
+]);
+
+export const bookings = mysqlTable("bookings", {
+	id: int().autoincrement().notNull(),
+	hostListingId: int().notNull().references(() => hostListings.id),
+	guestName: varchar({ length: 255 }).notNull(),
+	guestEmail: varchar({ length: 320 }).notNull(),
+	guestPhone: varchar({ length: 20 }),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	requestedDate: date({ mode: 'string' }).notNull(),
+	mealType: mysqlEnum(['lunch','dinner']).notNull(),
+	numberOfGuests: int().default(1).notNull(),
+	specialRequests: text(),
+	bookingStatus: mysqlEnum(['pending','confirmed','cancelled','rejected']).default('pending').notNull(),
+	hostNotes: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+	paymentStatus: mysqlEnum(['pending','paid','refunded']).default('pending'),
+	totalAmount: decimal({ precision: 10, scale: 2 }),
+	paymentDate: timestamp({ mode: 'string' }),
+	stripeSessionId: varchar({ length: 255 }),
+	reminderEmailSent: tinyint().default(0),
+	hidden: tinyint().default(0),
+});
+
+export const chatMessages = mysqlTable("chat_messages", {
+	id: int().autoincrement().notNull(),
+	sessionId: int().notNull().references(() => chatSessions.id),
+	senderType: mysqlEnum(['visitor','ai','admin']).notNull(),
+	content: text().notNull(),
+	adminName: varchar({ length: 255 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const chatSessions = mysqlTable("chat_sessions", {
+	id: int().autoincrement().notNull(),
+	visitorName: varchar({ length: 255 }),
+	visitorEmail: varchar({ length: 320 }),
+	sessionId: varchar({ length: 100 }).notNull(),
+	status: mysqlEnum(['active','needs_human','resolved']).default('active').notNull(),
+	adminTookOver: tinyint().default(0).notNull(),
+	adminTookOverAt: timestamp({ mode: 'string' }),
+	lastMessageAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("sessionId").on(table.sessionId),
+]);
+
+export const guestTestimonials = mysqlTable("guest_testimonials", {
+	id: int().autoincrement().notNull(),
+	guestName: varchar({ length: 255 }).notNull(),
+	guestLocation: varchar({ length: 255 }).notNull(),
+	travelerType: varchar({ length: 100 }).notNull(),
+	hostListingId: int().notNull().references(() => hostListings.id, { onDelete: "cascade" } ),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	experienceDate: date({ mode: 'string' }).notNull(),
+	type: mysqlEnum(['direct_review','guest_story']).default('direct_review').notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	subtitle: varchar({ length: 500 }),
+	attributionLine: varchar({ length: 500 }).notNull(),
+	previewText: text().notNull(),
+	fullText: text().notNull(),
+	additionalText: text(),
+	tertiaryText: text(),
+	images: json().notNull(),
+	badge: varchar({ length: 100 }),
+	tags: json().notNull(),
+	ctaLabel: varchar({ length: 100 }),
+	ctaUrl: varchar({ length: 500 }),
+	featured: tinyint().default(0).notNull(),
+	displayOrder: int().default(0).notNull(),
+	published: tinyint().default(1).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const hostAccounts = mysqlTable("host_accounts", {
+	id: int().autoincrement().notNull(),
+	hostListingId: int().notNull().references(() => hostListings.id),
+	email: varchar({ length: 320 }).notNull(),
+	passwordHash: varchar({ length: 255 }).notNull(),
+	lastLoginAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	index("hostListingId").on(table.hostListingId),
+	index("email").on(table.email),
+]);
+
+export const hostAvailabilityBlocks = mysqlTable("host_availability_blocks", {
+	id: int().autoincrement().notNull(),
+	hostListingId: int().notNull().references(() => hostListings.id),
+	blockType: mysqlEnum(['date','weekday','all_day']).notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	blockDate: date({ mode: 'string' }),
+	blockWeekday: int(),
+	mealType: mysqlEnum(['lunch','dinner','both']).default('both').notNull(),
+	reason: varchar({ length: 255 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const hostListings = mysqlTable("host_listings", {
+	id: int().autoincrement().notNull(),
+	hostName: varchar({ length: 255 }).notNull(),
+	profilePhotoUrl: varchar({ length: 500 }),
+	languages: json().notNull(),
+	bio: text().notNull(),
+	activities: json(),
+	email: varchar({ length: 320 }).notNull(),
+	wechatOrPhone: varchar({ length: 100 }).notNull(),
+	district: varchar({ length: 100 }).notNull(),
+	fullAddress: text(),
+	availability: json().notNull(),
+	maxGuests: int().default(2).notNull(),
+	cuisineStyle: varchar({ length: 255 }).notNull(),
+	title: text(),
+	menuDescription: text().notNull(),
+	foodPhotoUrls: json().notNull(),
+	introVideoUrl: varchar({ length: 500 }),
+	dietaryNote: text(),
+	dietaryAccommodations: json(),
+	mealDurationMinutes: int().default(120).notNull(),
+	pricePerPerson: int().default(100).notNull(),
+	otherNotes: text(),
+	kidsFriendly: tinyint().default(1).notNull(),
+	hasPets: tinyint().default(0).notNull(),
+	petDetails: varchar({ length: 255 }),
+	otherHouseholdInfo: text(),
+	householdFeatures: json(),
+	status: mysqlEnum(['pending','approved','rejected']).default('pending').notNull(),
+	adminNotes: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	viewCount: int().default(0).notNull(),
+	discountPercentage: int().default(0),
+	displayOrder: int().default(0).notNull(),
+	availabilityComments: text(),
+	overseasExperience: text(),
+	funFacts: text(),
+	whyHost: text(),
+	culturalPassions: text(),
+	otherPassions: text(),
+});
+
+export const interestSubmissions = mysqlTable("interest_submissions", {
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	interestType: mysqlEnum(['traveler','host']).notNull(),
+	message: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	hidden: tinyint().default(0),
+});
+
+export const pageViews = mysqlTable("page_views", {
+	id: int().autoincrement().notNull(),
+	pageType: varchar({ length: 50 }).notNull(),
+	hostListingId: int(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	viewDate: date({ mode: 'string' }).notNull(),
+	viewCount: int().default(1).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	index("unique_page_view").on(table.pageType, table.hostListingId, table.viewDate),
+	index("idx_pageType").on(table.pageType),
+	index("idx_viewDate").on(table.viewDate),
+]);
+
+export const payments = mysqlTable("payments", {
+	id: int().autoincrement().notNull(),
+	bookingId: int().notNull().references(() => bookings.id),
+	stripePaymentIntentId: varchar({ length: 255 }).notNull(),
+	stripeClientSecret: varchar({ length: 500 }).notNull(),
+	amountInCents: int().notNull(),
+	currency: varchar({ length: 3 }).default('cny').notNull(),
+	status: mysqlEnum(['pending','succeeded','failed','cancelled']).default('pending').notNull(),
+	hostListingId: int().notNull().references(() => hostListings.id),
+	guestEmail: varchar({ length: 320 }).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("stripePaymentIntentId").on(table.stripePaymentIntentId),
+]);
+
+export const users = mysqlTable("users", {
+	id: int().autoincrement().notNull(),
+	openId: varchar({ length: 64 }).notNull(),
+	name: text(),
+	email: varchar({ length: 320 }),
+	loginMethod: varchar({ length: 64 }),
+	role: mysqlEnum(['user','admin']).default('user').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	lastSignedIn: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+},
+(table) => [
+	index("users_openId_unique").on(table.openId),
+]);

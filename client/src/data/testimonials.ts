@@ -1,6 +1,7 @@
 export const TESTIMONIALS = [
   {
     id: "en-kai",
+    hostId: 180001, // Chuan
     guestName: "En Kai",
     location: "Singapore",
     travelerType: "Solo Traveler",
@@ -45,6 +46,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "danny",
+    hostId: 1, // Jiading Ayi
     guestName: "Danny",
     location: "Australia",
     travelerType: "Family with kid",

@@ -7,8 +7,6 @@ import { invokeLLM } from "./_core/llm";
 import { 
   createInterestSubmission, 
   getAllInterestSubmissions,
-  createHostInterest,
-  getAllHostInterests,
   createHostListing,
   getAllHostListings,
   getHostListingById,
@@ -22,7 +20,7 @@ import {
   isHostAvailable
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
-import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
+// import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
 import { blogRouter } from "./routers/blog";
 import { bookings, hostListings } from "../drizzle/schema";

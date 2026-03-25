@@ -6,9 +6,7 @@ import {
   interestSubmissions, 
   InsertInterestSubmission, 
   InterestSubmission,
-  hostInterests,
-  InsertHostInterest,
-  HostInterest,
+
   hostListings,
   InsertHostListing,
   HostListing,
@@ -166,47 +164,48 @@ export async function getAllInterestSubmissions(): Promise<InterestSubmission[]>
   }
 }
 
-// Host interest helpers (simplified inaugural batch)
-export async function createHostInterest(interest: InsertHostInterest): Promise<HostInterest | null> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot create host interest: database not available");
-    return null;
-  }
-
-  try {
-    await db.insert(hostInterests).values(interest);
-    // Get the inserted record
-    const result = await db
-      .select()
-      .from(hostInterests)
-      .where(eq(hostInterests.contact, interest.contact))
-      .orderBy(desc(hostInterests.createdAt))
-      .limit(1);
-    return result[0] || null;
-  } catch (error) {
-    console.error("[Database] Failed to create host interest:", error);
-    throw error;
-  }
-}
-
-export async function getAllHostInterests(): Promise<HostInterest[]> {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get host interests: database not available");
-    return [];
-  }
-
-  try {
-    return await db
-      .select()
-      .from(hostInterests)
-      .orderBy(desc(hostInterests.createdAt));
-  } catch (error) {
-    console.error("[Database] Failed to get host interests:", error);
-    throw error;
-  }
-}
+// Host interest helpers (simplified inaugural batch)// export async function createHostInterest(
+//   interest: InsertHostInterest
+// ): Promise<HostInterest | null> {
+//   const db = await getDb();
+//   if (!db) {
+//     console.warn("[Database] Cannot create host interest: database not available");
+//     return null;
+//   }
+//
+//   try {
+//     await db.insert(hostInterests).values(interest);
+//     // Get the inserted record
+//     const result = await db
+//       .select()
+//       .from(hostInterests)
+//       .where(eq(hostInterests.contact, interest.contact))
+//       .orderBy(desc(hostInterests.createdAt))
+//       .limit(1);
+//     return result[0] || null;
+//   } catch (error) {
+//     console.error("[Database] Failed to create host interest:", error);
+//     throw error;
+//   }
+// }
+//
+// export async function getAllHostInterests(): Promise<HostInterest[]> {
+//   const db = await getDb();
+//   if (!db) {
+//     console.warn("[Database] Cannot get host interests: database not available");
+//     return [];
+//   }
+//
+//   try {
+//     return await db
+//       .select()
+//       .from(hostInterests)
+//       .orderBy(desc(hostInterests.createdAt));
+//   } catch (error) {
+//     console.error("[Database] Failed to get host interests:", error);
+//     throw error;
+//   }
+// }
 
 // Host listing helpers
 export async function createHostListing(listing: InsertHostListing): Promise<HostListing | null> {

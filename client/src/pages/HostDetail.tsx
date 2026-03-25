@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
+import { WhatGuestsRemember } from "@/components/WhatGuestsRemember";
 import { trpc } from "@/lib/trpc";
 import { getProxiedImageUrl, getOGImageUrl } from "@/lib/imageUtils";
 import {
@@ -353,7 +354,7 @@ export default function HostDetail() {
   return (
     <div className="min-h-screen bg-background">
       {/* HERO SECTION */}
-      <section className="relative w-full bg-black" style={{ height: '100vh', height: '100svh' }}>
+      <section className="relative w-full bg-black" style={{ height: 'min(100vh, 100svh)' }}>
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-20">
           <button
@@ -836,6 +837,9 @@ export default function HostDetail() {
             </Card>
           </div>
         </div>
+
+        {/* What Guests Remember Section */}
+        <WhatGuestsRemember hostId={host.id} />
       </main>
     </div>
   );
