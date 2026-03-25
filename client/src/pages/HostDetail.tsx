@@ -195,6 +195,21 @@ export default function HostDetail() {
     setTouchEnd(0);
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 mb-4">
+            <div className="h-8 w-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Loading host details...</h2>
+          <p className="text-muted-foreground">Please wait while we fetch the information.</p>
+        </div>
+      </div>
+    );
+  }
+
   // Error state
   if (isError || !host) {
     return (
