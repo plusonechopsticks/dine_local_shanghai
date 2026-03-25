@@ -369,6 +369,16 @@ export default function HostDetail() {
         <div className="w-full h-full flex items-center justify-center">
           {host.introVideoUrl ? (
             <video
+              ref={(el) => {
+                if (el && el.requestFullscreen) {
+                  el.requestFullscreen().catch(() => {});
+                  el.addEventListener('fullscreenchange', () => {
+                    if (!document.fullscreenElement) {
+                      el.pause();
+                    }
+                  });
+                }
+              }}
               src={host.introVideoUrl}
               autoPlay
               loop
@@ -696,11 +706,12 @@ export default function HostDetail() {
                               onDateSelect={(date) => {
                                 setBookingData({
                                   ...bookingData,
-                                  requestedDate: date.toISOString().split("T")[0],
+                                  requestedDate: date,
                                 });
                                 setShowCalendar(false);
                               }}
                               disabledDates={disabledDates}
+                              selectedDate={bookingData.requestedDate}
                             />
                           </div>
                         )}
