@@ -122,12 +122,13 @@ export function Navbar() {
                   <Link href="/host-dashboard">
                     <a className="text-gray-700 hover:text-gray-900 font-medium transition">Host Dashboard</a>
                   </Link>
-                  <Link href="/guest-dashboard">
-                    <a className="text-gray-700 hover:text-gray-900 font-medium transition">My Bookings</a>
-                  </Link>
-                  <Link href="/admin">
-                    <a className="text-gray-700 hover:text-gray-900 font-medium transition">Admin</a>
-                  </Link>
+                  <Button
+                    variant="outline"
+                    className="border-red-600 text-red-600 hover:bg-red-50"
+                    onClick={() => handleNavClick("/host-register")}
+                  >
+                    Become a Host
+                  </Button>
                 </>
               ) : (
                 <>
@@ -205,22 +206,13 @@ export function Navbar() {
                         Host Dashboard
                       </a>
                     </Link>
-                    <Link href="/guest-dashboard">
-                      <a
-                        onClick={handleMenuClose}
-                        className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
-                      >
-                        My Bookings
-                      </a>
-                    </Link>
-                    <Link href="/admin">
-                      <a
-                        onClick={handleMenuClose}
-                        className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
-                      >
-                        Admin
-                      </a>
-                    </Link>
+                    <Button
+                      variant="outline"
+                      className="border-red-600 text-red-600 hover:bg-red-50 w-full"
+                      onClick={() => handleNavClick("/host-register")}
+                    >
+                      Become a Host
+                    </Button>
                   </>
                 ) : (
                   <>
