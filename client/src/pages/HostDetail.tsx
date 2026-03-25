@@ -533,17 +533,17 @@ export default function HostDetail() {
             
             {/* Host Info */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Bio */}
+              {/* About Me */}
               {host.bio && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">About</h3>
+                  <h3 className="text-lg font-semibold mb-3">About Me</h3>
                   <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                     {host.bio}
                   </div>
                 </div>
               )}
               
-              {/* Overseas Experience */}
+              {/* Travel Experience */}
               {host.overseasExperience && (
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Travel Experience</h3>
@@ -553,26 +553,38 @@ export default function HostDetail() {
                 </div>
               )}
               
-              {/* Languages & Household Tags */}
-              <div className="flex flex-wrap gap-2">
-                {host.languages && host.languages.length > 0 && (
-                  host.languages.map((lang, index) => (
-                    <span key={index} className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
-                      {lang}
-                    </span>
-                  ))
-                )}
-                {host.kidsFriendly && (
-                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                    Kids Friendly
-                  </span>
-                )}
-                {host.hasPets && (
-                  <span className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">
-                    Has Pets
-                  </span>
-                )}
-              </div>
+              {/* Languages */}
+              {host.languages && host.languages.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Languages</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {host.languages.map((lang, index) => (
+                      <span key={index} className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Household Tags */}
+              {(host.kidsFriendly || host.hasPets) && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Household</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {host.kidsFriendly && (
+                      <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        Kids Friendly
+                      </span>
+                    )}
+                    {host.hasPets && (
+                      <span className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">
+                        Has Pets
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
