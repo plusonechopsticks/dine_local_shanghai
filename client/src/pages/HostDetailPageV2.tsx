@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { trpc } from '../lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { HostDetailsHero } from '@/components/HostDetailsHero';
 
 export default function HostDetailPageV2() {
   const params = useParams();
@@ -57,24 +58,16 @@ export default function HostDetailPageV2() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section with Video */}
-      <section className="relative w-full bg-black" style={{ height: '80vh' }}>
-        {host.introVideoUrl ? (
-          <video
-            src={host.introVideoUrl}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center">
-            <p className="text-white text-lg">No video available</p>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-black/30" />
-      </section>
+      {/* Hero Section - New Component */}
+      <HostDetailsHero
+        hostName={host.hostName}
+        district={host.district}
+        cuisine={host.cuisineStyle}
+        pricePerPerson={host.pricePerPerson}
+        maxGuests={host.maxGuests}
+        introVideoUrl={host.introVideoUrl}
+        foodPhotoUrls={host.foodPhotoUrls}
+      />
 
       {/* Main Content */}
       <div className="relative">
