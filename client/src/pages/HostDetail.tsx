@@ -255,6 +255,22 @@ export default function HostDetail() {
     },
   });
 
+  // Calculate images early (before any conditional returns or useEffects)
+  const images = host ? [
+    host.profilePhotoUrl,
+    ...(foodPhotos || []),
+  ].filter(Boolean).map(url => getProxiedImageUrl(url)) : [];
+
+  // Auto-advance slideshow every 5 seconds if no video
+  useEffect(() => {
+    if (!host?.introVideoUrl && images.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [host?.introVideoUrl, images.length]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -280,11 +296,6 @@ export default function HostDetail() {
       </div>
     );
   }
-
-  const images = [
-    host.profilePhotoUrl,
-    ...(foodPhotos || []),
-  ].filter(Boolean).map(url => getProxiedImageUrl(url));
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -329,16 +340,6 @@ export default function HostDetail() {
   const bioPreview = host.bio && host.bio.length > 200 
     ? host.bio.substring(0, 200) + "..." 
     : host.bio;
-
-  // Auto-advance slideshow every 5 seconds if no video
-  useEffect(() => {
-    if (!host.introVideoUrl && images.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [host.introVideoUrl, images.length]);
 
   return (
     <div className="min-h-screen bg-background">
