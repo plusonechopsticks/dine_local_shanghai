@@ -371,7 +371,6 @@ export default function HostDetail() {
             <video
               src={host.introVideoUrl}
               autoPlay
-              muted
               loop
               playsInline
               className="w-full h-full object-contain"
