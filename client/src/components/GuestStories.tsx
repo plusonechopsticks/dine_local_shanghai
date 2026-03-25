@@ -69,10 +69,7 @@ export function GuestStories({ testimonials }: GuestStoriesProps) {
     <section className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="mb-12">
-          <p className="text-sm font-semibold text-amber-700 tracking-wide mb-2">
-            GUEST STORIES
-          </p>
+        <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-gray-900">
             What guests say after their 🥢 +1 Chopsticks experience
           </h2>
