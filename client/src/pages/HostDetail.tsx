@@ -383,7 +383,7 @@ export default function HostDetail() {
           <div className="lg:col-span-2 space-y-12">
             {/* Welcome Section */}
             <section>
-              <h2 className="text-4xl font-light mb-6">Welcome to {host.hostName}'s home dining table!</h2>
+              <h2 className="text-4xl font-light mb-6">Welcome to {host.hostName}'s Home Dining Experience!</h2>
               <div className="text-lg text-muted-foreground leading-relaxed max-w-3xl whitespace-pre-wrap">
                 {host.menuDescription
                   .split(/[;\n]/)
