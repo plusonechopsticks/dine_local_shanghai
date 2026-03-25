@@ -473,16 +473,6 @@ export default function HostDetail() {
                             para.trim() ? <p key={i}>{para.trim()}</p> : null
                           ))}
                         </div>
-                        {host.bio.length > 300 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setExpandedBio(!expandedBio)}
-                            className="mt-2 px-0 text-primary hover:text-primary/80"
-                          >
-                            {expandedBio ? "Show less" : "Show more"}
-                          </Button>
-                        )}
                       </div>
                     )}
 
@@ -516,16 +506,16 @@ export default function HostDetail() {
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                           <Users size={18} className="text-primary" /> Household
                         </h3>
-                        <div className="flex flex-wrap gap-2 mb-3">
+                        <div className="flex flex-wrap items-center gap-2">
                           {(host.householdFeatures as string[] || []).map((feature) => (
                             <Badge key={feature} variant="outline" className="text-sm">
                               {HOUSEHOLD_FEATURE_LABELS[feature] || feature}
                             </Badge>
                           ))}
+                          {host.petDetails && (
+                            <span className="text-muted-foreground text-sm">🐾 {host.petDetails}</span>
+                          )}
                         </div>
-                        {host.petDetails && (
-                          <p className="text-muted-foreground text-sm mt-2">🐾 {host.petDetails}</p>
-                        )}
                       </div>
                     )}
 
@@ -538,7 +528,9 @@ export default function HostDetail() {
                         <div className="flex flex-wrap gap-2">
                           {host.activities.map((activity) => (
                             <Badge key={activity} variant="secondary">
-                              {ACTIVITY_LABELS[activity] || activity}
+                              {(ACTIVITY_LABELS[activity] || activity)
+                                .replace(/-/g, ' ')
+                                .replace(/\b\w/g, (c: string) => c.toUpperCase())}
                             </Badge>
                           ))}
                         </div>
@@ -550,23 +542,7 @@ export default function HostDetail() {
               </div>
             </section>
 
-            {/* Availability Section */}
-            {availableDays.length > 0 && (
-              <section>
-                <h2 className="text-4xl font-light mb-6">Availability</h2>
-                <div className="space-y-3">
-                  {availableDays.map((day) => (
-                    <div key={day} className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
-                      <CheckCircle size={20} className="text-green-600" />
-                      <span className="font-medium capitalize">{day}</span>
-                      <span className="text-sm text-muted-foreground ml-auto">
-                        {(sortedAvailability[day] || []).map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(", ")}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+
           </div>
 
           {/* RIGHT COLUMN: Booking Widget (Sticky) */}
