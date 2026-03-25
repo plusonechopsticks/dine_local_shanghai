@@ -457,11 +457,11 @@ export default function HostDetail() {
           {/* Food Photos Carousel */}
           {foodPhotos.length > 0 && (
             <div className="relative">
-              <div className="relative w-full bg-secondary rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+              <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
                 <img
                   src={getProxiedImageUrl(foodPhotos[currentImageIndex])}
                   alt={`${host.hostName} food photo ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
                 
                 {/* Navigation Buttons */}
