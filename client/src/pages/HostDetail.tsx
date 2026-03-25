@@ -386,18 +386,19 @@ export default function HostDetail() {
               <button
                 onClick={() => {
                   if (videoRef.current) {
-                    if (isVideoPlaying) {
-                      videoRef.current.pause();
-                    } else {
+                    if (videoRef.current.paused) {
                       videoRef.current.play();
+                      setIsVideoPlaying(true);
+                    } else {
+                      videoRef.current.pause();
+                      setIsVideoPlaying(false);
                     }
-                    setIsVideoPlaying(!isVideoPlaying);
                   }
                 }}
-                className="absolute inset-0 flex items-center justify-center hover:bg-black/20 transition-colors z-10 group"
+                className="absolute inset-0 flex items-center justify-center hover:bg-black/20 transition-colors z-10 group cursor-pointer"
                 aria-label={isVideoPlaying ? "Pause video" : "Play video"}
               >
-                <div className="bg-white/30 hover:bg-white/50 rounded-full p-4 transition-all group-hover:scale-110">
+                <div className="bg-white/30 hover:bg-white/50 rounded-full p-4 transition-all group-hover:scale-110 pointer-events-none">
                   {isVideoPlaying ? (
                     <Pause size={48} className="text-white fill-white" />
                   ) : (
