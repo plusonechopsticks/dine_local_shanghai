@@ -129,10 +129,10 @@ export default function HostDetail() {
       disabled.add(dateStr);
     }
     
-    // Block future dates that don't match host availability
+    // Check availability for today and future dates (90 days)
     for (let i = 0; i < 90; i++) {
       const date = new Date(today);
-      date.setDate(date.getDate() + i + 1); // Start from tomorrow
+      date.setDate(date.getDate() + i); // Start from today
       const dateStr = date.toISOString().split("T")[0];
       const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
       
