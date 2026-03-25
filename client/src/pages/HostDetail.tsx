@@ -437,17 +437,64 @@ export default function HostDetail() {
 
       {/* REST OF PAGE CONTENT BELOW HERO */}
       <main className="container py-8">
+        {/* Welcome Section with Menu Description and Food Carousel */}
+        <section className="mb-12">
+          <h2 className="text-4xl font-light mb-6">Welcome to {host.hostName}'s home dining table!</h2>
+          <p className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-3xl">{host.menuDescription}</p>
+          
+          {/* Food Photos Carousel */}
+          {foodPhotos.length > 0 && (
+            <div className="relative">
+              <div className="relative w-full bg-secondary rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                <img
+                  src={getProxiedImageUrl(foodPhotos[currentImageIndex])}
+                  alt={`${host.hostName} food photo ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Navigation Buttons */}
+                {foodPhotos.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
+                      aria-label="Previous photo"
+                    >
+                      <ChevronLeft size={24} className="text-white" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
+                      aria-label="Next photo"
+                    >
+                      <ChevronRight size={24} className="text-white" />
+                    </button>
+                    
+                    {/* Dot Indicators */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                      {foodPhotos.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`h-2 rounded-full transition-all ${
+                            index === currentImageIndex
+                              ? "w-6 bg-white"
+                              : "w-2 bg-white/60 hover:bg-white/80"
+                          }`}
+                          aria-label={`Go to photo ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </section>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Core Info */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Menu Description */}
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-lg font-semibold mb-4">About This Experience</h3>
-                <p className="text-muted-foreground leading-relaxed">{host.menuDescription}</p>
-              </CardContent>
-            </Card>
-
             {/* Tabs: Experience vs Host Info */}
             <div className="border-b">
               <div className="flex gap-8">
