@@ -727,9 +727,18 @@ export default function HostDetail() {
                       <div className="mt-2">
                         <button
                           onClick={() => setShowCalendar(!showCalendar)}
-                          className="w-full px-3 py-2 border border-input rounded-md text-sm text-left hover:bg-accent transition-colors"
+                          className="w-full px-3 py-2 border border-input rounded-md text-sm text-left hover:bg-accent transition-colors flex items-center gap-2"
                         >
-                          {bookingData.requestedDate || "Select a date"}
+                          <Calendar size={18} className="text-muted-foreground" />
+                          <span>
+                            {bookingData.requestedDate
+                              ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })
+                              : "Select a date"}
+                          </span>
                         </button>
                         {showCalendar && (
                           <div className="mt-2 p-3 border border-input rounded-md bg-background relative z-50">
