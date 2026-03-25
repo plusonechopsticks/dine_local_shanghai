@@ -143,10 +143,7 @@ export function GuestStories({ testimonials }: GuestStoriesProps) {
                         </>
                       )}
 
-                      {/* Experience Label */}
-                      <div className="absolute bottom-4 left-4 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-gray-900">
-                        {testimonial.experienceTitle}
-                      </div>
+
                     </>
                   )}
                 </div>
