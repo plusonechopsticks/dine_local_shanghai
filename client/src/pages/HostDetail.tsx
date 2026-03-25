@@ -593,6 +593,7 @@ export default function HostDetail() {
                         <div className="mt-2 border border-input rounded-md p-3 bg-white z-50">
                           <DateGridCalendar
                             disabledDates={disabledDates}
+                            availability={host.availability}
                             onDateSelect={(date) => {
                               setBookingData({ ...bookingData, requestedDate: date });
                               setShowCalendar(false);
