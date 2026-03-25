@@ -840,6 +840,14 @@ export default function HostDetail() {
                       </div>
                     </div>
 
+                    {/* Free Cancellation Clause */}
+                    <div className="bg-green-50 border border-green-200 rounded-md p-3 flex items-center gap-2">
+                      <CheckCircle size={20} className="text-green-600 flex-shrink-0" />
+                      <p className="text-sm text-green-700 font-medium">
+                        Free cancellation up to 7 days before your experience
+                      </p>
+                    </div>
+
                     {/* Submit Button */}
                     <Button
                       onClick={() => {
