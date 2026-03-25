@@ -65,7 +65,7 @@ function App() {
           {!isHomePage && <Navbar />}
           <Toaster />
           <Router />
-          <ChatWidget />
+          {isHomePage && <ChatWidget />}
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
