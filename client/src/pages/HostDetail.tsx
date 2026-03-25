@@ -235,8 +235,10 @@ export default function HostDetail() {
     );
   }
 
-  const images = host.images || [];
-  const foodPhotos = host.foodPhotos || [];
+  // Build slideshow images: profile photo first, then food photos
+  const profilePhoto = host.profilePhotoUrl ? [host.profilePhotoUrl] : [];
+  const foodPhotos = (host.foodPhotoUrls as string[]) || [];
+  const images = [...profilePhoto, ...foodPhotos];
   const availability = host.availability || {};
   const daysOrder = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
   const availableDays = daysOrder.filter(day => availability[day as keyof typeof availability]?.length > 0);
@@ -345,11 +347,12 @@ export default function HostDetail() {
         {/* Hero Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8">
           <div className="max-w-6xl mx-auto">
-            <h1 className="text-5xl font-light text-white mb-4">{host.hostName}</h1>
+            <h1 className="text-5xl font-light text-white mb-1">{host.hostName}</h1>
+            <p className="text-xl text-white/80 font-light mb-4">{host.cuisineStyle}</p>
             <div className="flex flex-wrap gap-6 text-white">
               <div className="flex items-center gap-2">
                 <MapPin size={20} />
-                <span>{host.location}</span>
+                <span>{host.district ? `${host.district}, Shanghai` : 'Shanghai'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Users size={20} />
