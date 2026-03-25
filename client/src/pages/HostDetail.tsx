@@ -42,6 +42,15 @@ import DateGridCalendar from "@/components/DateGridCalendar";
 import { useParams, useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
 
+const HOUSEHOLD_FEATURE_LABELS: Record<string, string> = {
+  "has-pets": "Has Pets",
+  "has-stairs": "Has Stairs",
+  "kids-present": "Kids at Home",
+  "elderly-present": "Elderly at Home",
+  "large-space": "Large Space",
+  "garden": "Has Garden",
+};
+
 const ACTIVITY_LABELS: Record<string, string> = {
   "cooking-class": "Cooking Class",
   "park-visit": "Park Visit",
@@ -165,25 +174,25 @@ export default function HostDetail() {
     localStorage.setItem(cacheKey, JSON.stringify(bookingData));
   }, [bookingData, host]);
 
-  // Image carousel handlers
+  // Image carousel handlers - images is derived from profilePhotoUrl + foodPhotoUrls
   const nextImage = () => {
-    if (!host?.images) return;
-    setCurrentImageIndex((prev) => (prev + 1) % host.images.length);
+    const imgs = [...(host?.profilePhotoUrl ? [host.profilePhotoUrl] : []), ...((host?.foodPhotoUrls as string[]) || [])];
+    setCurrentImageIndex((prev) => (prev + 1) % imgs.length);
   };
 
   const prevImage = () => {
-    if (!host?.images) return;
-    setCurrentImageIndex((prev) => (prev - 1 + host.images.length) % host.images.length);
+    const imgs = [...(host?.profilePhotoUrl ? [host.profilePhotoUrl] : []), ...((host?.foodPhotoUrls as string[]) || [])];
+    setCurrentImageIndex((prev) => (prev - 1 + imgs.length) % imgs.length);
   };
 
   const nextFoodImage = () => {
-    if (!host?.foodPhotos) return;
-    setCurrentFoodImageIndex((prev) => (prev + 1) % host.foodPhotos.length);
+    const fp = (host?.foodPhotoUrls as string[]) || [];
+    setCurrentFoodImageIndex((prev) => (prev + 1) % fp.length);
   };
 
   const prevFoodImage = () => {
-    if (!host?.foodPhotos) return;
-    setCurrentFoodImageIndex((prev) => (prev - 1 + host.foodPhotos.length) % host.foodPhotos.length);
+    const fp = (host?.foodPhotoUrls as string[]) || [];
+    setCurrentFoodImageIndex((prev) => (prev - 1 + fp.length) % fp.length);
   };
 
   // Touch handlers for carousel
@@ -264,7 +273,7 @@ export default function HostDetail() {
   return (
     <div className="min-h-screen bg-background">
       {/* HERO SECTION */}
-      <section className="relative w-full bg-black" style={{ height: '100vh', height: '100svh' }}>
+      <section className="relative w-full bg-black" style={{ height: '100svh' }}>
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-20">
           <button
@@ -393,6 +402,7 @@ export default function HostDetail() {
             {/* Food Photos Carousel */}
             {foodPhotos.length > 0 && (
               <section>
+                <h2 className="text-4xl font-light mb-6">At the Dining Table</h2>
                 <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
                   <img
                     src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
@@ -439,7 +449,7 @@ export default function HostDetail() {
                 {/* Profile Picture */}
                 {host.profilePhotoUrl && (
                   <div className="lg:col-span-1">
-                    <div className="rounded-lg overflow-hidden">
+                    <div className="rounded-2xl overflow-hidden shadow-md">
                       <img
                         src={getProxiedImageUrl(host.profilePhotoUrl)}
                         alt={host.hostName}
@@ -448,30 +458,83 @@ export default function HostDetail() {
                     </div>
                   </div>
                 )}
-                {/* Bio and Info */}
+                {/* Bio and Info Sub-sections */}
                 <div className={host.profilePhotoUrl ? "lg:col-span-2" : "lg:col-span-3"}>
-                  <p className="text-lg text-muted-foreground leading-relaxed mb-6 whitespace-pre-wrap">
-                    {expandedBio ? host.bio : bioPreview}
-                  </p>
-                  {host.bio && host.bio.length > 200 && (
-                    <Button
-                      variant="outline"
-                      onClick={() => setExpandedBio(!expandedBio)}
-                      className="mb-6"
-                    >
-                      {expandedBio ? "Show less" : "Show more"}
-                    </Button>
-                  )}
-                  
-                  {/* Household Info */}
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-semibold mb-2">Household</h3>
-                      <p className="text-muted-foreground">{host.householdDescription}</p>
-                    </div>
+                  <div className="space-y-6">
+
+                    {/* About Me */}
+                    {host.bio && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <BookOpen size={18} className="text-primary" /> About Me
+                        </h3>
+                        <div className="text-muted-foreground leading-relaxed space-y-2">
+                          {host.bio.split(/\n+/).map((para, i) => (
+                            para.trim() ? <p key={i}>{para.trim()}</p> : null
+                          ))}
+                        </div>
+                        {host.bio.length > 300 && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setExpandedBio(!expandedBio)}
+                            className="mt-2 px-0 text-primary hover:text-primary/80"
+                          >
+                            {expandedBio ? "Show less" : "Show more"}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Travel Experience */}
+                    {host.overseasExperience && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Compass size={18} className="text-primary" /> Travel Experience
+                        </h3>
+                        <p className="text-muted-foreground leading-relaxed">{host.overseasExperience}</p>
+                      </div>
+                    )}
+
+                    {/* Languages */}
+                    {host.languages && host.languages.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Globe size={18} className="text-primary" /> Languages
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {(host.languages as string[]).map((lang) => (
+                            <Badge key={lang} variant="secondary" className="text-sm">{lang}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Household Info */}
+                    {((host.householdFeatures && (host.householdFeatures as string[]).length > 0) || host.petDetails) && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Users size={18} className="text-primary" /> Household
+                        </h3>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {(host.householdFeatures as string[] || []).map((feature) => (
+                            <Badge key={feature} variant="outline" className="text-sm">
+                              {HOUSEHOLD_FEATURE_LABELS[feature] || feature}
+                            </Badge>
+                          ))}
+                        </div>
+                        {host.petDetails && (
+                          <p className="text-muted-foreground text-sm mt-2">🐾 {host.petDetails}</p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Activities */}
                     {host.activities && host.activities.length > 0 && (
                       <div>
-                        <h3 className="font-semibold mb-2">Activities</h3>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Sparkles size={18} className="text-primary" /> Activities
+                        </h3>
                         <div className="flex flex-wrap gap-2">
                           {host.activities.map((activity) => (
                             <Badge key={activity} variant="secondary">
@@ -481,6 +544,7 @@ export default function HostDetail() {
                         </div>
                       </div>
                     )}
+
                   </div>
                 </div>
               </div>
