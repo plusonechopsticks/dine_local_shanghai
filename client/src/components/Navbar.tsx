@@ -117,30 +117,13 @@ export function Navbar() {
 
           {!isLoading && (
             <>
-              {user ? (
-                <>
-                  <Link href="/host-dashboard">
-                    <a className="text-gray-700 hover:text-gray-900 font-medium transition">Host Dashboard</a>
-                  </Link>
-                  <Button
+              <Button
                     variant="outline"
                     className="border-red-600 text-red-600 hover:bg-red-50"
                     onClick={() => handleNavClick("/host-register")}
                   >
                     Become a Host
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    className="border-red-600 text-red-600 hover:bg-red-50"
-                    onClick={() => handleNavClick("/host-register")}
-                  >
-                    Become a Host
-                  </Button>
-                </>
-              )}
             </>
           )}
         </div>
@@ -198,14 +181,6 @@ export function Navbar() {
               <>
                 {user ? (
                   <>
-                    <Link href="/host-dashboard">
-                      <a
-                        onClick={handleMenuClose}
-                        className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition"
-                      >
-                        Host Dashboard
-                      </a>
-                    </Link>
                     <Button
                       variant="outline"
                       className="border-red-600 text-red-600 hover:bg-red-50 w-full"

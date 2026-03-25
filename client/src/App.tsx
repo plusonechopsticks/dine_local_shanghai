@@ -10,7 +10,6 @@ import HostRegister from "./pages/HostRegister";
 import HostListings from "./pages/HostListings";
 import HostDetail from "./pages/HostDetail";
 import AdminDashboard from "./pages/AdminDashboard";
-import HostDashboard from "./pages/HostDashboard";
 import HostLogin from "./pages/HostLogin";
 import HostPortal from "./pages/HostPortal";
 import GuestDashboard from "./pages/GuestDashboard";
@@ -34,7 +33,6 @@ function Router() {
       <Route path="/hosts/:id" component={HostDetail} />
       <Route path={"/host/login"} component={HostLogin} />
       <Route path={"/host/portal"} component={HostPortal} />
-      <Route path={"/host-dashboard"} component={HostDashboard} />
       <Route path={"/guest-dashboard"} component={GuestDashboard} />
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/admin/newsletter"} component={AdminNewsletter} />
