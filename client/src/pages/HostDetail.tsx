@@ -121,9 +121,18 @@ export default function HostDetail() {
     today.setHours(0, 0, 0, 0);
     const disabled = new Set<string>();
     
-    for (let i = 0; i < 90; i++) {
+    // Block today and all past dates
+    for (let i = -365; i < 0; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() + i);
+      const dateStr = date.toISOString().split("T")[0];
+      disabled.add(dateStr);
+    }
+    
+    // Block future dates that don't match host availability
+    for (let i = 0; i < 90; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() + i + 1); // Start from tomorrow
       const dateStr = date.toISOString().split("T")[0];
       const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
       
