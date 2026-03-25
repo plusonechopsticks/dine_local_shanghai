@@ -403,32 +403,32 @@ export default function HostDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
 
         {/* Content Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 z-20 text-white">
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-20 text-white">
           <div className="max-w-7xl mx-auto">
             {/* Location */}
-            <p className="text-sm font-semibold tracking-wide mb-4 text-gray-200">
+            <p className="text-sm font-semibold tracking-wide mb-2 text-gray-200">
               {host.district} · SHANGHAI
             </p>
 
             {/* Host Name */}
-            <h1 className="text-5xl md:text-6xl font-light mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-light mb-3 leading-tight">
               {host.hostName}
             </h1>
 
             {/* Cuisine */}
-            <p className="text-lg mb-8 text-gray-100">
+            <p className="text-lg mb-4 text-gray-100">
               {host.cuisineStyle}
             </p>
 
             {/* Info Grid */}
-            <div className="grid grid-cols-2 gap-6 max-w-md">
-              <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded">
-                <p className="text-xs font-semibold text-gray-300 mb-1">PRICE</p>
-                <p className="text-xl font-semibold">¥{host.pricePerPerson}/person</p>
+            <div className="grid grid-cols-2 gap-4 max-w-md">
+              <div className="bg-white/10 backdrop-blur-sm px-3 py-2 rounded">
+                <p className="text-xs font-semibold text-gray-300 mb-0.5">PRICE</p>
+                <p className="text-lg font-semibold">¥{host.pricePerPerson}/person</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm px-4 py-3 rounded">
-                <p className="text-xs font-semibold text-gray-300 mb-1">MAX GUESTS</p>
-                <p className="text-xl font-semibold">{host.maxGuests}</p>
+              <div className="bg-white/10 backdrop-blur-sm px-3 py-2 rounded">
+                <p className="text-xs font-semibold text-gray-300 mb-0.5">MAX GUESTS</p>
+                <p className="text-lg font-semibold">{host.maxGuests}</p>
               </div>
             </div>
           </div>
