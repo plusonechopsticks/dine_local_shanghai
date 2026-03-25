@@ -102,7 +102,7 @@ export default function HostDetail() {
         requestedDate: bookingData.requestedDate,
         mealType: bookingData.mealType,
         numberOfGuests: bookingData.numberOfGuests,
-        totalAmount: totalAmount.toString(),
+        amount: totalAmount.toString(),
         hostName: host.hostName,
         pricePerPerson: discountedPrice.toString(),
       });
