@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, hostName, bio, profilePhotoUrl, foodPhotoUrls FROM host_listings WHERE hostName LIKE '%Chuan%' OR id = 2;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, bio, profilePhotoUrl, foodPhotoUrls FROM host_listings WHERE hostName LIKE '%Chuan%' OR id = 2;",
+  "rows": [
+    {
+      "id": "180001",
+      "hostName": "Chuan 川",
+      "bio": "Hi! I'm Chuan, I'm a freelance designer. Since I moved to my current home, I've been hosting dinners every now and then! I enjoy interactions on dinner table. It’s one way we get close to our friends and loved ones.",
+      "profilePhotoUrl": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/yqAeFzoepWJBZJHc.jpg",
+      "foodPhotoUrls": "[\"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/vkfJYmdVVbfnfhhQ.jpg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/QZcEqDKnxwbOrnzM.jpg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/QcfUYovqTanhGHgC.JPG\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tbio\tprofilePhotoUrl\tfoodPhotoUrls\n180001\tChuan 川\tHi! I'm Chuan, I'm a freelance designer. Since I moved to my current home, I've been hosting dinners every now and then! I enjoy interactions on dinner table. It’s one way we get close to our friends and loved ones.\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/yqAeFzoepWJBZJHc.jpg\t[\"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/vkfJYmdVVbfnfhhQ.jpg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/QZcEqDKnxwbOrnzM.jpg\", \"https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/QcfUYovqTanhGHgC.JPG\"]\n",
+  "stderr": "",
+  "execution_time_ms": 384
+}
