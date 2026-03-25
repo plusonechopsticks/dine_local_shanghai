@@ -504,6 +504,70 @@ export default function HostDetail() {
           )}
         </section>
 
+        {/* Meet Host Section */}
+        <section className="mb-12">
+          <h2 className="text-4xl font-light mb-8">Meet {host.hostName}</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Profile Picture */}
+            <div className="lg:col-span-1">
+              {host.profilePhotoUrl && (
+                <div className="rounded-lg overflow-hidden">
+                  <img
+                    src={getProxiedImageUrl(host.profilePhotoUrl)}
+                    alt={host.hostName}
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              )}
+            </div>
+            
+            {/* Host Info */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Bio */}
+              {host.bio && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">About</h3>
+                  <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                    {host.bio}
+                  </div>
+                </div>
+              )}
+              
+              {/* Overseas Experience */}
+              {host.overseasExperience && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Travel Experience</h3>
+                  <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                    {host.overseasExperience}
+                  </div>
+                </div>
+              )}
+              
+              {/* Languages & Household Tags */}
+              <div className="flex flex-wrap gap-2">
+                {host.languages && host.languages.length > 0 && (
+                  host.languages.map((lang, index) => (
+                    <span key={index} className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                      {lang}
+                    </span>
+                  ))
+                )}
+                {host.kidsFriendly && (
+                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Kids Friendly
+                  </span>
+                )}
+                {host.hasPets && (
+                  <span className="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Has Pets
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Core Info */}
           <div className="lg:col-span-2 space-y-6">
