@@ -701,7 +701,7 @@ export default function HostDetail() {
                           {bookingData.requestedDate || "Select a date"}
                         </button>
                         {showCalendar && (
-                          <div className="mt-2 p-3 border border-input rounded-md bg-background">
+                          <div className="mt-2 p-3 border border-input rounded-md bg-background relative z-50">
                             <DateGridCalendar
                               onDateSelect={(date) => {
                                 setBookingData({

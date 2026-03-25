@@ -134,15 +134,15 @@ export default function DateGridCalendar({
                   onDateSelect(dateStr);
                 }
               }}
-              disabled={isDisabled}
+              type="button"
               className={`
                 aspect-square rounded flex items-center justify-center text-sm font-medium
                 transition-colors
                 ${
                   isSelected
-                    ? "bg-burgundy-600 text-white font-bold"
+                    ? "bg-burgundy-600 text-white font-bold cursor-pointer"
                     : isDisabled
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none"
                     : "bg-white border border-gray-200 text-gray-900 hover:bg-green-50 cursor-pointer"
                 }
               `}
