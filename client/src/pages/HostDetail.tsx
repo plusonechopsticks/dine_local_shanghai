@@ -733,22 +733,22 @@ export default function HostDetail() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {availableDays.length > 0 && (
+                          {availableDays.length > 0 && bookingData.requestedDate && (
                             <>
-                              {sortedAvailability[
-                                new Date(bookingData.requestedDate)
-                                  .toLocaleDateString("en-US", { weekday: "lowercase" })
-                                  .slice(0, -1)
-                              ]?.includes("lunch") && (
-                                <SelectItem value="lunch">Lunch</SelectItem>
-                              )}
-                              {sortedAvailability[
-                                new Date(bookingData.requestedDate)
-                                  .toLocaleDateString("en-US", { weekday: "lowercase" })
-                                  .slice(0, -1)
-                              ]?.includes("dinner") && (
-                                <SelectItem value="dinner">Dinner</SelectItem>
-                              )}
+                              {(() => {
+                                const date = new Date(bookingData.requestedDate + 'T00:00:00');
+                                const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+                                return (
+                                  <>
+                                    {sortedAvailability[dayName]?.includes("lunch") && (
+                                      <SelectItem value="lunch">Lunch</SelectItem>
+                                    )}
+                                    {sortedAvailability[dayName]?.includes("dinner") && (
+                                      <SelectItem value="dinner">Dinner</SelectItem>
+                                    )}
+                                  </>
+                                );
+                              })()}
                             </>
                           )}
                         </SelectContent>
