@@ -347,6 +347,20 @@ export default function HostDetail() {
                   >
                     <ChevronRight size={24} className="text-white" />
                   </button>
+                  {/* Dot indicators */}
+                  <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                    {images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`h-1.5 rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? "w-6 bg-white"
+                            : "w-1.5 bg-white/50 hover:bg-white/75"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </>
               )}
             </div>
@@ -354,21 +368,23 @@ export default function HostDetail() {
         </div>
 
         {/* Hero Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-8">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/60 to-transparent p-8">
           <div className="max-w-6xl mx-auto">
-            <h1 className="text-5xl font-light text-white mb-1">{host.hostName}</h1>
-            <p className="text-xl text-white/80 font-light mb-4">{host.cuisineStyle}</p>
-            <div className="flex flex-wrap gap-6 text-white">
-              <div className="flex items-center gap-2">
-                <MapPin size={20} />
+            <h1 className="text-5xl font-light text-white mb-1 tracking-tight">{host.hostName}</h1>
+            <p className="text-lg font-light mb-4" style={{ color: '#d4af37' }}>{host.cuisineStyle}</p>
+            {/* Gold separator */}
+            <div className="mb-4" style={{ height: '1px', background: 'linear-gradient(to right, rgba(212,175,55,0.6), rgba(212,175,55,0.1))' }} />
+            <div className="flex flex-wrap gap-6" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              <div className="flex items-center gap-2 text-sm">
+                <MapPin size={15} style={{ color: 'rgba(212,175,55,0.7)' }} />
                 <span>{host.district ? `${host.district}, Shanghai` : 'Shanghai'}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users size={20} />
+              <div className="flex items-center gap-2 text-sm">
+                <Users size={15} style={{ color: 'rgba(212,175,55,0.7)' }} />
                 <span>Up to {host.maxGuests} guests</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Wine size={20} />
+              <div className="flex items-center gap-2 text-sm">
+                <Wine size={15} style={{ color: 'rgba(212,175,55,0.7)' }} />
                 <span>¥{discountedPrice}/person</span>
               </div>
             </div>
@@ -384,30 +400,72 @@ export default function HostDetail() {
             {/* Welcome Section */}
             <section>
               <h2 className="text-4xl font-light mb-6">Welcome to {host.hostName}'s Home Dining Experience!</h2>
-              <div className="text-lg text-muted-foreground leading-relaxed max-w-3xl whitespace-pre-wrap">
+              <div className="max-w-3xl space-y-1.5">
                 {host.menuDescription
-                  .split(/[;\n]/)
-                  .map((line, index) => (
-                    <div key={index} className="mb-2">
-                      {line.trim() === "---" ? (
-                        <hr className="my-3 border-gray-300" />
-                      ) : (
-                        line.trim()
-                      )}
-                    </div>
-                  ))}
+                  .split(/\n/)
+                  .map((line, index) => {
+                    const trimmed = line.trim();
+                    if (!trimmed || trimmed === '---') return trimmed === '---'
+                      ? <hr key={index} className="my-4 border-gray-200" />
+                      : <div key={index} className="h-2" />;
+                    // Category headers: lines that are all caps or end with no period and look like headings
+                    const isCategoryHeader = /^[A-Z][A-Za-z &]+$/.test(trimmed) && trimmed.length < 40 && !trimmed.match(/^\d/);
+                    // Numbered dish lines
+                    const isDishLine = /^\d+\./.test(trimmed);
+                    // Dish description (indented follow-up after a numbered line)
+                    const isPrevDish = index > 0 && /^\d+\./.test(host.menuDescription.split(/\n/)[index - 1]?.trim() || '');
+                    if (isCategoryHeader) {
+                      return (
+                        <p key={index} className="text-xs tracking-[0.2em] uppercase font-semibold pt-4 pb-1" style={{ color: '#b8962e' }}>
+                          {trimmed}
+                        </p>
+                      );
+                    }
+                    if (isDishLine) {
+                      const match = trimmed.match(/^(\d+\.\s*)(.+)$/);
+                      return (
+                        <div key={index} className="flex gap-2 pt-1">
+                          <span className="text-sm font-medium shrink-0" style={{ color: 'rgba(0,0,0,0.3)', minWidth: '1.5rem' }}>{match?.[1]}</span>
+                          <span className="text-base font-medium text-foreground">{match?.[2]}</span>
+                        </div>
+                      );
+                    }
+                    if (isPrevDish) {
+                      return (
+                        <p key={index} className="text-sm text-muted-foreground leading-relaxed pl-8">{trimmed}</p>
+                      );
+                    }
+                    return (
+                      <p key={index} className="text-base text-muted-foreground leading-relaxed">{trimmed}</p>
+                    );
+                  })}
               </div>
             </section>
+
+            {/* Section Divider */}
+            <div className="flex items-center gap-4">
+              <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.12))' }} />
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(212,175,55,0.5)' }} />
+              <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to left, transparent, rgba(0,0,0,0.12))' }} />
+            </div>
 
             {/* Food Photos Carousel */}
             {foodPhotos.length > 0 && (
               <section>
                 <h2 className="text-4xl font-light mb-6">At the Dining Table</h2>
-                <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                <div className="relative w-full rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  {/* Blurred background */}
+                  <img
+                    src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-50"
+                  />
+                  {/* Main image */}
                   <img
                     src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
                     alt={`${host.hostName} food photo ${currentFoodImageIndex + 1}`}
-                    className="w-full h-full object-contain"
+                    className="relative w-full h-full object-contain z-10"
                   />
                   {foodPhotos.length > 1 && (
                     <>
@@ -442,6 +500,13 @@ export default function HostDetail() {
               </section>
             )}
 
+            {/* Section Divider */}
+            <div className="flex items-center gap-4">
+              <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.12))' }} />
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(212,175,55,0.5)' }} />
+              <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to left, transparent, rgba(0,0,0,0.12))' }} />
+            </div>
+
             {/* Meet Host Section */}
             <section>
               <h2 className="text-4xl font-light mb-8">Meet {host.hostName}</h2>
@@ -449,11 +514,11 @@ export default function HostDetail() {
                 {/* Profile Picture */}
                 {host.profilePhotoUrl && (
                   <div className="lg:col-span-1">
-                    <div className="rounded-2xl overflow-hidden shadow-md">
+                    <div className="rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
                       <img
                         src={getProxiedImageUrl(host.profilePhotoUrl)}
                         alt={host.hostName}
-                        className="w-full h-auto object-cover"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
@@ -466,7 +531,7 @@ export default function HostDetail() {
                     {host.bio && (
                       <div>
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <BookOpen size={18} className="text-primary" /> About Me
+                          <BookOpen size={18} style={{ color: '#b8962e' }} /> About Me
                         </h3>
                         <div className="text-muted-foreground leading-relaxed space-y-2">
                           {host.bio.split(/\n+/).map((para, i) => (
@@ -480,7 +545,7 @@ export default function HostDetail() {
                     {host.overseasExperience && (
                       <div>
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <Compass size={18} className="text-primary" /> Travel Experience
+                          <Compass size={18} style={{ color: '#b8962e' }} /> Travel Experience
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">{host.overseasExperience}</p>
                       </div>
@@ -490,7 +555,7 @@ export default function HostDetail() {
                     {host.languages && host.languages.length > 0 && (
                       <div>
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <Globe size={18} className="text-primary" /> Languages
+                          <Globe size={18} style={{ color: '#b8962e' }} /> Languages
                         </h3>
                         <div className="flex flex-wrap gap-2">
                           {(host.languages as string[]).map((lang) => (
@@ -504,7 +569,7 @@ export default function HostDetail() {
                     {((host.householdFeatures && (host.householdFeatures as string[]).length > 0) || host.petDetails) && (
                       <div>
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <Users size={18} className="text-primary" /> Household
+                          <Users size={18} style={{ color: '#b8962e' }} /> Household
                         </h3>
                         <div className="flex flex-wrap items-center gap-2">
                           {(host.householdFeatures as string[] || []).map((feature) => (
@@ -523,7 +588,7 @@ export default function HostDetail() {
                     {host.activities && host.activities.length > 0 && (
                       <div>
                         <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                          <Sparkles size={18} className="text-primary" /> Activities
+                          <Sparkles size={18} style={{ color: '#b8962e' }} /> Activities
                         </h3>
                         <div className="flex flex-wrap gap-2">
                           {host.activities.map((activity) => (
