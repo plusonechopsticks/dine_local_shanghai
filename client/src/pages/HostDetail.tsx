@@ -552,7 +552,7 @@ export default function HostDetail() {
               <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
                 <div className="flex items-baseline justify-between">
                   <div>
-                    <p className="text-xs tracking-[0.2em] uppercase mb-1" style={{ color: '#d4af37' }}>Private Dining</p>
+                    <p className="text-xs tracking-[0.2em] uppercase mb-1" style={{ color: '#d4af37' }}>Home Dining</p>
                     <h3 className="text-2xl font-bold text-white">Reserve a Seat</h3>
                   </div>
                   <div className="text-right">
@@ -793,7 +793,7 @@ export default function HostDetail() {
             {/* Header */}
             <div className="px-6 pt-3 pb-4 flex justify-between items-start" style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
               <div>
-                <p className="text-xs tracking-[0.2em] uppercase mb-0.5" style={{ color: '#d4af37' }}>Private Dining</p>
+                <p className="text-xs tracking-[0.2em] uppercase mb-0.5" style={{ color: '#d4af37' }}>Home Dining</p>
                 <h3 className="text-xl font-bold text-white">Reserve a Seat</h3>
               </div>
               <div className="flex items-start gap-4">
