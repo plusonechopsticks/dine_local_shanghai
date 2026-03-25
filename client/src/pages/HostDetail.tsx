@@ -401,22 +401,24 @@ export default function HostDetail() {
             <section>
               <h2 className="text-4xl font-light mb-6">Welcome to {host.hostName}'s Home Dining Experience!</h2>
               <div className="max-w-3xl space-y-1.5">
-                {host.menuDescription
-                  .split(/\n/)
-                  .map((line, index) => {
+                {(() => {
+                  const rawLines = host.menuDescription.split(/\n/);
+                  return rawLines.map((line, index) => {
                     const trimmed = line.trim();
-                    if (!trimmed || trimmed === '---') return trimmed === '---'
-                      ? <hr key={index} className="my-4 border-gray-200" />
-                      : <div key={index} className="h-2" />;
-                    // Category headers: lines that are all caps or end with no period and look like headings
-                    const isCategoryHeader = /^[A-Z][A-Za-z &]+$/.test(trimmed) && trimmed.length < 40 && !trimmed.match(/^\d/);
-                    // Numbered dish lines
+                    // Empty lines
+                    if (!trimmed) return <div key={index} className="h-1" />;
+                    if (trimmed === '---') return <hr key={index} className="my-4 border-gray-200" />;
+                    // Category headers: title-case words only, no digits, short
+                    const isCategoryHeader = /^[A-Z][A-Za-z &]+$/.test(trimmed) && trimmed.length < 40;
+                    // Numbered dish name lines
                     const isDishLine = /^\d+\./.test(trimmed);
-                    // Dish description (indented follow-up after a numbered line)
-                    const isPrevDish = index > 0 && /^\d+\./.test(host.menuDescription.split(/\n/)[index - 1]?.trim() || '');
+                    // Dish description: previous non-empty line was a numbered dish
+                    const prevNonEmpty = rawLines.slice(0, index).reverse().find(l => l.trim())?.trim() || '';
+                    const isDishDescription = !isDishLine && !isCategoryHeader && /^\d+\./.test(prevNonEmpty);
+
                     if (isCategoryHeader) {
                       return (
-                        <p key={index} className="text-xs tracking-[0.2em] uppercase font-semibold pt-4 pb-1" style={{ color: '#b8962e' }}>
+                        <p key={index} className="text-xs tracking-[0.2em] uppercase font-semibold pt-5 pb-1" style={{ color: '#b8962e' }}>
                           {trimmed}
                         </p>
                       );
@@ -425,20 +427,21 @@ export default function HostDetail() {
                       const match = trimmed.match(/^(\d+\.\s*)(.+)$/);
                       return (
                         <div key={index} className="flex gap-2 pt-1">
-                          <span className="text-sm font-medium shrink-0" style={{ color: 'rgba(0,0,0,0.3)', minWidth: '1.5rem' }}>{match?.[1]}</span>
-                          <span className="text-base font-medium text-foreground">{match?.[2]}</span>
+                          <span className="text-sm font-medium shrink-0" style={{ color: 'rgba(0,0,0,0.35)', minWidth: '1.5rem' }}>{match?.[1]}</span>
+                          <span className="text-base font-semibold text-foreground">{match?.[2]}</span>
                         </div>
                       );
                     }
-                    if (isPrevDish) {
+                    if (isDishDescription) {
                       return (
-                        <p key={index} className="text-sm text-muted-foreground leading-relaxed pl-8">{trimmed}</p>
+                        <p key={index} className="text-sm text-muted-foreground leading-relaxed pl-8 -mt-0.5">{trimmed}</p>
                       );
                     }
                     return (
                       <p key={index} className="text-base text-muted-foreground leading-relaxed">{trimmed}</p>
                     );
-                  })}
+                  });
+                })()}
               </div>
             </section>
 
