@@ -74,10 +74,25 @@ export default function DateGridCalendar({
   };
 
   const getAvailableDaysText = () => {
-    if (!availability || Object.keys(availability).length === 0) {
+    if (!availability) {
       return "No availability information";
     }
-    return Object.keys(availability)
+    
+    let availabilityObj = availability;
+    if (typeof availability === 'string') {
+      try {
+        availabilityObj = JSON.parse(availability);
+      } catch (e) {
+        return "No availability information";
+      }
+    }
+    
+    const keys = Object.keys(availabilityObj || {});
+    if (keys.length === 0) {
+      return "No availability information";
+    }
+    
+    return keys
       .map((day) => day.charAt(0).toUpperCase() + day.slice(1))
       .join(", ");
   };

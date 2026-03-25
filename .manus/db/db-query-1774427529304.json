@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, hostName, availability FROM host_listings WHERE hostName LIKE '%Chuan%' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, availability FROM host_listings WHERE hostName LIKE '%Chuan%' LIMIT 1;",
+  "rows": [
+    {
+      "id": "180001",
+      "hostName": "Chuan 川",
+      "availability": "{\"friday\": [\"lunch\", \"dinner\"], \"monday\": [\"lunch\", \"dinner\"], \"saturday\": [\"lunch\", \"dinner\"], \"sunday\": [\"lunch\", \"dinner\"]}"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tavailability\n180001\tChuan 川\t{\"friday\": [\"lunch\", \"dinner\"], \"monday\": [\"lunch\", \"dinner\"], \"saturday\": [\"lunch\", \"dinner\"], \"sunday\": [\"lunch\", \"dinner\"]}\n",
+  "stderr": "",
+  "execution_time_ms": 434
+}
