@@ -547,201 +547,199 @@ export default function HostDetail() {
 
           {/* RIGHT COLUMN: Booking Widget (Sticky) */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-20">
-              <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-6">Reserve a Seat</h3>
+            <div className="sticky top-20 rounded-2xl overflow-hidden shadow-2xl" style={{ background: 'linear-gradient(160deg, #1a1a1a 0%, #111111 100%)', border: '1px solid rgba(212,175,55,0.25)' }}>
+              {/* Widget Header */}
+              <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
+                <div className="flex items-baseline justify-between">
+                  <div>
+                    <p className="text-xs tracking-[0.2em] uppercase mb-1" style={{ color: '#d4af37' }}>Private Dining</p>
+                    <h3 className="text-2xl font-bold text-white">Reserve a Seat</h3>
+                  </div>
+                  <div className="text-right">
+                    {host.discountPercentage && host.discountPercentage > 0 ? (
+                      <>
+                        <p className="text-xs line-through" style={{ color: 'rgba(255,255,255,0.35)' }}>¥{host.pricePerPerson}</p>
+                        <p className="text-2xl font-bold" style={{ color: '#d4af37' }}>¥{discountedPrice}</p>
+                      </>
+                    ) : (
+                      <p className="text-2xl font-bold" style={{ color: '#d4af37' }}>¥{discountedPrice}</p>
+                    )}
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>per person</p>
+                  </div>
+                </div>
+              </div>
 
+              <div className="px-6 py-5">
                 {bookingSuccess ? (
                   <div className="text-center py-8">
-                    <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <h4 className="font-semibold mb-2">Booking Confirmed!</h4>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Booking ID: {createdBookingId}
-                    </p>
-                    <Button
+                    <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)' }}>
+                      <CheckCircle className="h-8 w-8" style={{ color: '#d4af37' }} />
+                    </div>
+                    <h4 className="font-semibold text-white mb-1">Booking Confirmed!</h4>
+                    <p className="text-xs mb-5" style={{ color: 'rgba(255,255,255,0.45)' }}>Booking ID: {createdBookingId}</p>
+                    <button
                       onClick={() => {
                         setBookingSuccess(false);
                         setCreatedBookingId(null);
-                        setBookingData({
-                          guestName: "",
-                          guestEmail: "",
-                          requestedDate: "",
-                          mealType: "dinner",
-                          numberOfGuests: "1",
-                          specialRequests: "",
-                        });
+                        setBookingData({ guestName: "", guestEmail: "", requestedDate: "", mealType: "dinner", numberOfGuests: "1", specialRequests: "" });
                       }}
-                      variant="outline"
-                      className="w-full"
+                      className="w-full py-2.5 rounded-lg text-sm font-medium transition-all"
+                      style={{ border: '1px solid rgba(212,175,55,0.4)', color: '#d4af37', background: 'transparent' }}
                     >
-                      New Booking
-                    </Button>
+                      Make Another Booking
+                    </button>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {/* Name */}
                     <div>
-                      <Label htmlFor="name" className="text-sm font-medium">
-                        Name *
-                      </Label>
-                      <Input
-                        id="name"
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Your Name *</label>
+                      <input
                         value={bookingData.guestName}
-                        onChange={(e) =>
-                          setBookingData({ ...bookingData, guestName: e.target.value })
-                        }
-                        placeholder="Enter your name"
-                        className="mt-1"
+                        onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
+                        placeholder="Full name"
+                        className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none transition-all focus:ring-1"
+                        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', focusRingColor: '#d4af37' }}
+                        onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
+                        onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
                       />
                     </div>
 
                     {/* Email */}
                     <div>
-                      <Label htmlFor="email" className="text-sm font-medium">
-                        Email *
-                      </Label>
-                      <Input
-                        id="email"
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Email Address *</label>
+                      <input
                         type="email"
                         value={bookingData.guestEmail}
-                        onChange={(e) =>
-                          setBookingData({ ...bookingData, guestEmail: e.target.value })
-                        }
+                        onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
                         placeholder="your@email.com"
-                        className="mt-1"
+                        className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none transition-all"
+                        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                        onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
+                        onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
                       />
                     </div>
 
-                    {/* Date */}
-                    <div>
-                      <Label htmlFor="date" className="text-sm font-medium">
-                        Preferred Date *
-                      </Label>
-                      <button
-                        onClick={() => setShowCalendar(!showCalendar)}
-                        className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm text-left hover:bg-accent transition-colors flex items-center gap-2"
-                      >
-                        <Calendar size={18} className="text-muted-foreground" />
-                        <span>
-                          {bookingData.requestedDate
-                            ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric'
-                              })
-                            : "Select a date"}
-                        </span>
-                      </button>
-                      {showCalendar && (
-                        <div className="mt-2 border border-input rounded-md p-3 bg-white z-50">
-                          <DateGridCalendar
-                            disabledDates={disabledDates}
-                            availability={host.availability}
-                            onDateSelect={(date) => {
-                              setBookingData({ ...bookingData, requestedDate: date });
-                              setShowCalendar(false);
-                            }}
-                            selectedDate={bookingData.requestedDate}
-                          />
-                        </div>
-                      )}
+                    {/* Date + Meal Type side by side */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Date *</label>
+                        <button
+                          onClick={() => setShowCalendar(!showCalendar)}
+                          className="w-full px-3 py-2.5 rounded-lg text-sm text-left transition-all flex items-center gap-2"
+                          style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: bookingData.requestedDate ? 'white' : 'rgba(255,255,255,0.3)' }}
+                        >
+                          <Calendar size={14} style={{ color: '#d4af37', flexShrink: 0 }} />
+                          <span className="truncate text-xs">
+                            {bookingData.requestedDate
+                              ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+                              : "Pick date"}
+                          </span>
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Meal</label>
+                        <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
+                          <SelectTrigger
+                            className="w-full px-3 py-2.5 rounded-lg text-sm text-white h-auto"
+                            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {bookingData.requestedDate ? (
+                              (() => {
+                                const date = new Date(bookingData.requestedDate + 'T00:00:00');
+                                const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                                const mealTypes = sortedAvailability[dayName] || [];
+                                return mealTypes.length > 0 ? (
+                                  mealTypes.map((meal) => (
+                                    <SelectItem key={meal} value={meal}>
+                                      {meal.charAt(0).toUpperCase() + meal.slice(1)}
+                                    </SelectItem>
+                                  ))
+                                ) : (
+                                  <div className="p-2 text-sm text-muted-foreground">No meals</div>
+                                );
+                              })()
+                            ) : (
+                              <div className="p-2 text-sm text-muted-foreground">Select date first</div>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
-                    {/* Meal Type */}
-                    <div>
-                      <Label htmlFor="meal" className="text-sm font-medium">
-                        Meal Type
-                      </Label>
-                      <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
-                        <SelectTrigger id="meal" className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {bookingData.requestedDate ? (
-                            (() => {
-                              const date = new Date(bookingData.requestedDate + 'T00:00:00');
-                              const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-                              const mealTypes = sortedAvailability[dayName] || [];
-                              return mealTypes.length > 0 ? (
-                                mealTypes.map((meal) => (
-                                  <SelectItem key={meal} value={meal}>
-                                    {meal.charAt(0).toUpperCase() + meal.slice(1)}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <div className="p-2 text-sm text-muted-foreground">No meals available</div>
-                              );
-                            })()
-                          ) : (
-                            <div className="p-2 text-sm text-muted-foreground">Select a date first</div>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {/* Calendar dropdown */}
+                    {showCalendar && (
+                      <div className="rounded-xl overflow-hidden z-50" style={{ border: '1px solid rgba(212,175,55,0.25)', background: '#1e1e1e' }}>
+                        <DateGridCalendar
+                          disabledDates={disabledDates}
+                          availability={host.availability}
+                          onDateSelect={(date) => {
+                            setBookingData({ ...bookingData, requestedDate: date });
+                            setShowCalendar(false);
+                          }}
+                          selectedDate={bookingData.requestedDate}
+                        />
+                      </div>
+                    )}
 
-                    {/* Number of Guests */}
+                    {/* Guests */}
                     <div>
-                      <Label htmlFor="guests" className="text-sm font-medium">
-                        Number of Guests *
-                      </Label>
-                      <Input
-                        id="guests"
-                        type="number"
-                        min="1"
-                        max={host.maxGuests}
-                        value={bookingData.numberOfGuests}
-                        onChange={(e) =>
-                          setBookingData({ ...bookingData, numberOfGuests: e.target.value })
-                        }
-                        className="mt-1"
-                      />
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Guests * <span style={{ color: 'rgba(255,255,255,0.3)', textTransform: 'none', letterSpacing: 0 }}>(max {host.maxGuests})</span></label>
+                      <div className="flex items-center gap-0 rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.07)' }}>
+                        <button
+                          onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.max(1, parseInt(bookingData.numberOfGuests) - 1)) })}
+                          className="px-4 py-2.5 text-white text-lg font-light transition-colors hover:bg-white/10"
+                        >−</button>
+                        <span className="flex-1 text-center text-sm font-medium text-white">{bookingData.numberOfGuests}</span>
+                        <button
+                          onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.min(host.maxGuests, parseInt(bookingData.numberOfGuests) + 1)) })}
+                          className="px-4 py-2.5 text-white text-lg font-light transition-colors hover:bg-white/10"
+                        >+</button>
+                      </div>
                     </div>
 
                     {/* Special Requests */}
                     <div>
-                      <Label htmlFor="requests" className="text-sm font-medium">
-                        Special Requests (Optional)
-                      </Label>
-                      <Textarea
-                        id="requests"
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Special Requests</label>
+                      <textarea
                         value={bookingData.specialRequests}
-                        onChange={(e) =>
-                          setBookingData({ ...bookingData, specialRequests: e.target.value })
-                        }
-                        placeholder="Any dietary restrictions, allergies, or special requests?"
-                        className="mt-1 resize-none"
-                        rows={3}
+                        onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
+                        placeholder="Dietary restrictions, allergies…"
+                        rows={2}
+                        className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none resize-none transition-all"
+                        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                        onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
+                        onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
                       />
                     </div>
 
                     {/* Price Summary */}
-                    <div className="bg-secondary p-4 rounded-md">
+                    <div className="rounded-xl px-4 py-3" style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm">
-                          ¥{discountedPrice} × {bookingData.numberOfGuests} guests
+                        <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                          ¥{discountedPrice} × {bookingData.numberOfGuests} {parseInt(bookingData.numberOfGuests) === 1 ? 'guest' : 'guests'}
                         </span>
-                        <span className="font-bold">
+                        <span className="text-lg font-bold" style={{ color: '#d4af37' }}>
                           ¥{discountedPrice * parseInt(bookingData.numberOfGuests)}
                         </span>
                       </div>
                     </div>
 
-                    {/* Free Cancellation Clause */}
-                    <div className="bg-green-50 border border-green-200 rounded-md p-3 flex items-center gap-2">
-                      <CheckCircle size={20} className="text-green-600 flex-shrink-0" />
-                      <p className="text-sm text-green-700 font-medium">
+                    {/* Free Cancellation */}
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle size={15} style={{ color: '#4ade80', flexShrink: 0 }} />
+                      <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
                         Free cancellation up to 7 days before your experience
                       </p>
                     </div>
 
                     {/* Submit Button */}
-                    <Button
+                    <button
                       onClick={() => {
-                        if (
-                          !bookingData.guestName ||
-                          !bookingData.guestEmail ||
-                          !bookingData.requestedDate
-                        ) {
+                        if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.requestedDate) {
                           toast.error("Please fill in all required fields");
                           return;
                         }
@@ -760,225 +758,181 @@ export default function HostDetail() {
                         });
                       }}
                       disabled={createBookingMutation.isPending}
-                      className="w-full"
+                      className="w-full py-3.5 rounded-xl text-sm font-semibold tracking-widest uppercase transition-all disabled:opacity-50"
+                      style={{ background: 'linear-gradient(135deg, #d4af37 0%, #b8962e 100%)', color: '#111111' }}
                     >
-                      {createBookingMutation.isPending ? "Booking..." : "Reserve a Seat"}
-                    </Button>
+                      {createBookingMutation.isPending ? "Reserving…" : "Reserve a Seat"}
+                    </button>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </main>
 
       {/* MOBILE FLOATING BOOKING BUTTON */}
-      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-gray-200 shadow-lg z-40 p-4">
+      <div className="fixed bottom-0 left-0 right-0 lg:hidden z-40 p-4" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%)' }}>
         <button
           onClick={() => setShowMobileBooking(true)}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+          className="w-full py-3.5 rounded-xl text-sm font-semibold tracking-widest uppercase transition-all"
+          style={{ background: 'linear-gradient(135deg, #d4af37 0%, #b8962e 100%)', color: '#111111' }}
         >
-          Book Now - ¥{discountedPrice}/person
+          Reserve a Seat — ¥{discountedPrice}/person
         </button>
       </div>
 
       {/* MOBILE BOOKING MODAL */}
       {showMobileBooking && (
-        <div className="fixed inset-0 lg:hidden bg-black/50 z-50 flex items-end">
-          <div className="w-full bg-white rounded-t-lg max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
-              <h3 className="text-xl font-bold">Reserve a Seat</h3>
-              <button
-                onClick={() => setShowMobileBooking(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X size={24} />
-              </button>
+        <div className="fixed inset-0 lg:hidden z-50 flex items-end" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="w-full max-h-[92vh] overflow-y-auto rounded-t-2xl" style={{ background: 'linear-gradient(160deg, #1a1a1a 0%, #111111 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
+            {/* Handle bar */}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.2)' }} />
             </div>
-            <div className="p-4 pb-24">
+            {/* Header */}
+            <div className="px-6 pt-3 pb-4 flex justify-between items-start" style={{ borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
+              <div>
+                <p className="text-xs tracking-[0.2em] uppercase mb-0.5" style={{ color: '#d4af37' }}>Private Dining</p>
+                <h3 className="text-xl font-bold text-white">Reserve a Seat</h3>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="text-right">
+                  <p className="text-xl font-bold" style={{ color: '#d4af37' }}>¥{discountedPrice}</p>
+                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>per person</p>
+                </div>
+                <button onClick={() => setShowMobileBooking(false)} className="mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  <X size={22} />
+                </button>
+              </div>
+            </div>
+
+            <div className="px-6 py-5 pb-28">
               {bookingSuccess ? (
                 <div className="text-center py-8">
-                  <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                  <h4 className="font-semibold mb-2">Booking Confirmed!</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Booking ID: {createdBookingId}
-                  </p>
-                  <Button
-                    onClick={() => {
-                      setBookingSuccess(false);
-                      setCreatedBookingId(null);
-                      setShowMobileBooking(false);
-                    }}
-                    variant="outline"
-                    className="w-full"
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)' }}>
+                    <CheckCircle className="h-8 w-8" style={{ color: '#d4af37' }} />
+                  </div>
+                  <h4 className="font-semibold text-white mb-1">Booking Confirmed!</h4>
+                  <p className="text-xs mb-5" style={{ color: 'rgba(255,255,255,0.45)' }}>Booking ID: {createdBookingId}</p>
+                  <button
+                    onClick={() => { setBookingSuccess(false); setCreatedBookingId(null); setShowMobileBooking(false); }}
+                    className="w-full py-2.5 rounded-lg text-sm font-medium"
+                    style={{ border: '1px solid rgba(212,175,55,0.4)', color: '#d4af37', background: 'transparent' }}
                   >
                     Close
-                  </Button>
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* Name */}
                   <div>
-                    <Label htmlFor="mobile-name" className="text-sm font-medium">
-                      Name *
-                    </Label>
-                    <Input
-                      id="mobile-name"
+                    <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Your Name *</label>
+                    <input
                       value={bookingData.guestName}
-                      onChange={(e) =>
-                        setBookingData({ ...bookingData, guestName: e.target.value })
-                      }
-                      placeholder="Enter your name"
-                      className="mt-1"
+                      onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
+                      placeholder="Full name"
+                      className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none"
+                      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
+                      onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
                     />
                   </div>
-
-                  {/* Email */}
                   <div>
-                    <Label htmlFor="mobile-email" className="text-sm font-medium">
-                      Email *
-                    </Label>
-                    <Input
-                      id="mobile-email"
+                    <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Email Address *</label>
+                    <input
                       type="email"
                       value={bookingData.guestEmail}
-                      onChange={(e) =>
-                        setBookingData({ ...bookingData, guestEmail: e.target.value })
-                      }
+                      onChange={(e) => setBookingData({ ...bookingData, guestEmail: e.target.value })}
                       placeholder="your@email.com"
-                      className="mt-1"
+                      className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none"
+                      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
+                      onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
                     />
                   </div>
-
-                  {/* Date */}
-                  <div>
-                    <Label htmlFor="mobile-date" className="text-sm font-medium">
-                      Preferred Date *
-                    </Label>
-                    <button
-                      onClick={() => setShowCalendar(!showCalendar)}
-                      className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm text-left hover:bg-accent transition-colors flex items-center gap-2"
-                    >
-                      <Calendar size={18} className="text-muted-foreground" />
-                      <span>
-                        {bookingData.requestedDate
-                          ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })
-                          : "Select a date"}
-                      </span>
-                    </button>
-                    {showCalendar && (
-                      <div className="mt-2 border border-input rounded-md p-3 bg-white z-50">
-                        <DateGridCalendar
-                          disabledDates={disabledDates}
-                          onDateSelect={(date) => {
-                            setBookingData({ ...bookingData, requestedDate: date });
-                            setShowCalendar(false);
-                          }}
-                          selectedDate={bookingData.requestedDate}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Meal Type */}
-                  <div>
-                    <Label htmlFor="mobile-meal" className="text-sm font-medium">
-                      Meal Type
-                    </Label>
-                    <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
-                      <SelectTrigger id="mobile-meal" className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {bookingData.requestedDate ? (
-                          (() => {
-                            const date = new Date(bookingData.requestedDate + 'T00:00:00');
-                            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-                            const mealTypes = sortedAvailability[dayName] || [];
-                            return mealTypes.length > 0 ? (
-                              mealTypes.map((meal) => (
-                                <SelectItem key={meal} value={meal}>
-                                  {meal.charAt(0).toUpperCase() + meal.slice(1)}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <div className="p-2 text-sm text-muted-foreground">No meals available</div>
-                            );
-                          })()
-                        ) : (
-                          <div className="p-2 text-sm text-muted-foreground">Select a date first</div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Number of Guests */}
-                  <div>
-                    <Label htmlFor="mobile-guests" className="text-sm font-medium">
-                      Number of Guests *
-                    </Label>
-                    <Input
-                      id="mobile-guests"
-                      type="number"
-                      min="1"
-                      max={host.maxGuests}
-                      value={bookingData.numberOfGuests}
-                      onChange={(e) =>
-                        setBookingData({ ...bookingData, numberOfGuests: e.target.value })
-                      }
-                      className="mt-1"
-                    />
-                  </div>
-
-                  {/* Special Requests */}
-                  <div>
-                    <Label htmlFor="mobile-requests" className="text-sm font-medium">
-                      Special Requests (Optional)
-                    </Label>
-                    <Textarea
-                      id="mobile-requests"
-                      value={bookingData.specialRequests}
-                      onChange={(e) =>
-                        setBookingData({ ...bookingData, specialRequests: e.target.value })
-                      }
-                      placeholder="Any dietary restrictions, allergies, or special requests?"
-                      className="mt-1 resize-none"
-                      rows={3}
-                    />
-                  </div>
-
-                  {/* Price Summary */}
-                  <div className="bg-secondary p-4 rounded-md">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">
-                        ¥{discountedPrice} × {bookingData.numberOfGuests} guests
-                      </span>
-                      <span className="font-bold">
-                        ¥{discountedPrice * parseInt(bookingData.numberOfGuests)}
-                      </span>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Date *</label>
+                      <button
+                        onClick={() => setShowCalendar(!showCalendar)}
+                        className="w-full px-3 py-2.5 rounded-lg text-xs text-left flex items-center gap-1.5"
+                        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: bookingData.requestedDate ? 'white' : 'rgba(255,255,255,0.3)' }}
+                      >
+                        <Calendar size={13} style={{ color: '#d4af37', flexShrink: 0 }} />
+                        <span className="truncate">
+                          {bookingData.requestedDate
+                            ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+                            : "Pick date"}
+                        </span>
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Meal</label>
+                      <Select value={bookingData.mealType} onValueChange={(value) => setBookingData({ ...bookingData, mealType: value })}>
+                        <SelectTrigger className="w-full px-3 py-2.5 rounded-lg text-sm text-white h-auto" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {bookingData.requestedDate ? (
+                            (() => {
+                              const date = new Date(bookingData.requestedDate + 'T00:00:00');
+                              const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                              const mealTypes = sortedAvailability[dayName] || [];
+                              return mealTypes.length > 0 ? (
+                                mealTypes.map((meal) => (
+                                  <SelectItem key={meal} value={meal}>{meal.charAt(0).toUpperCase() + meal.slice(1)}</SelectItem>
+                                ))
+                              ) : (<div className="p-2 text-sm text-muted-foreground">No meals</div>);
+                            })()
+                          ) : (<div className="p-2 text-sm text-muted-foreground">Select date first</div>)}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
-
-                  {/* Free Cancellation Clause */}
-                  <div className="bg-green-50 border border-green-200 rounded-md p-3 flex items-center gap-2">
-                    <CheckCircle size={20} className="text-green-600 flex-shrink-0" />
-                    <p className="text-sm text-green-700 font-medium">
-                      Free cancellation up to 7 days before your experience
-                    </p>
+                  {showCalendar && (
+                    <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(212,175,55,0.25)', background: '#1e1e1e' }}>
+                      <DateGridCalendar
+                        disabledDates={disabledDates}
+                        availability={host.availability}
+                        onDateSelect={(date) => { setBookingData({ ...bookingData, requestedDate: date }); setShowCalendar(false); }}
+                        selectedDate={bookingData.requestedDate}
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Guests * <span style={{ color: 'rgba(255,255,255,0.3)', textTransform: 'none', letterSpacing: 0 }}>(max {host.maxGuests})</span></label>
+                    <div className="flex items-center rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.07)' }}>
+                      <button onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.max(1, parseInt(bookingData.numberOfGuests) - 1)) })} className="px-4 py-2.5 text-white text-lg font-light hover:bg-white/10">−</button>
+                      <span className="flex-1 text-center text-sm font-medium text-white">{bookingData.numberOfGuests}</span>
+                      <button onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.min(host.maxGuests, parseInt(bookingData.numberOfGuests) + 1)) })} className="px-4 py-2.5 text-white text-lg font-light hover:bg-white/10">+</button>
+                    </div>
                   </div>
-
-                  {/* Submit Button */}
-                  <Button
+                  <div>
+                    <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Special Requests</label>
+                    <textarea
+                      value={bookingData.specialRequests}
+                      onChange={(e) => setBookingData({ ...bookingData, specialRequests: e.target.value })}
+                      placeholder="Dietary restrictions, allergies…"
+                      rows={2}
+                      className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none resize-none"
+                      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                      onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
+                      onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
+                    />
+                  </div>
+                  <div className="rounded-xl px-4 py-3" style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>¥{discountedPrice} × {bookingData.numberOfGuests} {parseInt(bookingData.numberOfGuests) === 1 ? 'guest' : 'guests'}</span>
+                      <span className="text-lg font-bold" style={{ color: '#d4af37' }}>¥{discountedPrice * parseInt(bookingData.numberOfGuests)}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle size={15} style={{ color: '#4ade80', flexShrink: 0 }} />
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>Free cancellation up to 7 days before your experience</p>
+                  </div>
+                  <button
                     onClick={() => {
-                      if (
-                        !bookingData.guestName ||
-                        !bookingData.guestEmail ||
-                        !bookingData.requestedDate
-                      ) {
+                      if (!bookingData.guestName || !bookingData.guestEmail || !bookingData.requestedDate) {
                         toast.error("Please fill in all required fields");
                         return;
                       }
@@ -997,10 +951,11 @@ export default function HostDetail() {
                       });
                     }}
                     disabled={createBookingMutation.isPending}
-                    className="w-full"
+                    className="w-full py-3.5 rounded-xl text-sm font-semibold tracking-widest uppercase transition-all disabled:opacity-50"
+                    style={{ background: 'linear-gradient(135deg, #d4af37 0%, #b8962e 100%)', color: '#111111' }}
                   >
-                    {createBookingMutation.isPending ? "Booking..." : "Reserve a Seat"}
-                  </Button>
+                    {createBookingMutation.isPending ? "Reserving…" : "Reserve a Seat"}
+                  </button>
                 </div>
               )}
             </div>
