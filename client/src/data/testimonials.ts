@@ -52,9 +52,9 @@ export const TESTIMONIALS = [
     hostDate: "Mar 22, 2026",
     experienceTitle: "Family dinner experience",
     previewText:
-      "Jiading Ayi made us feel so welcome! The home-cooked meal was absolutely delicious, and our little one loved playing with the other kids. It was warm, authentic, and exactly what we were looking for - a real local family experience...",
+      "Jiading Ayi made us feel so welcome! Thank you for such a full table of Shanghainese dishes! The home-cooked meal was absolutely delicious. We're an Australian couple with a 2-year-old, and we came to Shanghai to trace my family roots. And home dining is just perfect for this occasion.",
     fullText:
-      "Jiading Ayi made us feel so welcome from the moment we arrived! The home-cooked meal was absolutely delicious, with each dish prepared with such care and love. Our little one loved playing with the other kids, and we got to experience real Shanghainese hospitality. It was warm, authentic, and exactly what we were looking for - a real local family experience that we'll treasure forever.",
+      "Jiading Ayi made us feel so welcome! Thank you for such a full table of Shanghainese dishes! The home-cooked meal was absolutely delicious. We're an Australian couple with a 2-year-old, and we came to Shanghai to trace my family roots. And home dining is just perfect for this occasion.",
     images: [
       {
         url: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/mgLkOvTOKENajEas.webp",
