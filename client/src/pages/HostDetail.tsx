@@ -440,7 +440,19 @@ export default function HostDetail() {
         {/* Welcome Section with Menu Description and Food Carousel */}
         <section className="mb-12">
           <h2 className="text-4xl font-light mb-6">Welcome to {host.hostName}'s home dining table!</h2>
-          <p className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-3xl">{host.menuDescription}</p>
+          <div className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-3xl whitespace-pre-wrap">
+            {host.menuDescription
+              .split(/[;\n]/)
+              .map((line, index) => (
+                <div key={index} className="mb-2">
+                  {line.trim() === "---" ? (
+                    <hr className="my-3 border-gray-300" />
+                  ) : (
+                    line.trim()
+                  )}
+                </div>
+              ))}
+          </div>
           
           {/* Food Photos Carousel */}
           {foodPhotos.length > 0 && (

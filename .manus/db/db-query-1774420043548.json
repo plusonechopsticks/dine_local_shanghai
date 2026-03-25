@@ -1,0 +1,78 @@
+{
+  "query": "SELECT id, hostName, menuDescription FROM host_listings LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, menuDescription FROM host_listings LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "hostName": "Norika and Steven",
+      "menuDescription": "When the North meets the South (南北融合)"
+    },
+    {
+      "id": "30001",
+      "hostName": "Li Wei",
+      "menuDescription": "Traditional Shanghainese home cooking featuring xiaolongbao (soup dumplings), hongshaorou (red-braised pork), and seasonal vegetables. All ingredients are fresh from local markets, prepared with family recipes passed down through generations."
+    },
+    {
+      "id": "60001",
+      "hostName": "Test Host",
+      "menuDescription": "I prepare authentic Shanghai dishes including braised beef, noodle soups, and seasonal vegetables. Fresh ingredients daily."
+    },
+    {
+      "id": "90001",
+      "hostName": "G",
+      "menuDescription": "Abc and and and and and and and and and"
+    },
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "menuDescription": "My specialty is creating a warm, authentic \"Shanghai home\" dining experience, blending nutritious local flavors with comforting international dishes. "
+    }
+  ],
+  "messages": [
+    "Welcome to our table! This menu features Jiā Cháng Cài (Home-style Cooking)—the heart and soul of Chinese dining. Unlike restaurant food, these dishes are designed for comfort and balance. We bring together a mix of Northern heartiness and Southern delicacy, featuring savory stir-fries, tender braises, and classic family favorites.",
+    "---",
+    "Meat & Poultry (荤菜)",
+    "1. Flash-Fried Lamb with Scallions",
+    "   葱爆羊肉",
+    "   Tender slices of lamb wok-seared with aromatic green onions. A classic Northern dish full of flavor.",
+    "2. Honey Glazed Cumin Chicken Wings",
+    "   蜜汁孜然鸡翅",
+    "   Savory and sweet wings with a fragrant kick of cumin spice.",
+    "3. Steamed Chicken Wings with Shiitake Mushrooms",
+    "   香菇蒸鸡翅",
+    "   A lighter, healthier option where the savory juices of the mushrooms infuse the tender chicken.",
+    "4. Homestyle Stir-fried Beef",
+    "   小炒牛肉",
+    "   Slices of beef stir-fried with fresh peppers and spices for a rich, savory taste.",
+    "---",
+    "Vegetables & Tofu (素菜与豆腐)",
+    "5. Sautéed Green Beans with Minced Pork & Olive Veg",
+    "   榄菜肉末四季豆",
+    "   Crunchy green beans stir-fried with savory minced pork and \"Olive Vegetable\" (a classic savory preserve).",
+    "6. Stir-fried Snow Peas with Chinese Sausage",
+    "   荷兰豆炒香肠",
+    "   Crisp, sweet snow peas paired with the rich, smoky flavor of cured Chinese sausage.",
+    "7. Braised Tofu with Scallions",
+    "   葱烧豆腐",
+    "   Silky tofu braised in a savory sauce infused with the aroma of fried scallions.",
+    "8. Home-style Braised Tofu Puffs",
+    "   家常油豆腐",
+    "   Spongy tofu puffs that absorb all the delicious sauce of the dish.",
+    "---",
+    "Staples (主食)",
+    "9. Handmade Dumplings",
+    "   饺子",
+    "   The ultimate Chinese comfort food. Hand-wrapped and boiled to perfection.",
+    "I prepare fresh meals using market ingredients, featuring classics like:",
+    "1. Braised Beef Brisket with Daikon Radish (萝卜炖牛腩)",
+    "2. Spinach in Supreme Broth with Century Egg (上汤菠菜)",
+    "3. Signature Seafood Noodle Soup (海鲜汤面)",
+    "4. Foil-Baked Whole Fish with Lemongrass (香茅烤鱼)",
+    "5. Creamy Coconut Chicken Curry (椰香咖喱鸡)",
+    "6. Oven-Roasted Chicken Feast (烤鸡大餐)",
+    "The menu can be updated on the day depending on what’s fresh. Or let me know what you want to try :)"
+  ],
+  "stdout": "id\thostName\tmenuDescription\n1\tNorika and Steven\tWhen the North meets the South (南北融合)\n\nWelcome to our table! This menu features Jiā Cháng Cài (Home-style Cooking)—the heart and soul of Chinese dining. Unlike restaurant food, these dishes are designed for comfort and balance. We bring together a mix of Northern heartiness and Southern delicacy, featuring savory stir-fries, tender braises, and classic family favorites.\n\n---\n\nMeat & Poultry (荤菜)\n\n1. Flash-Fried Lamb with Scallions\n   葱爆羊肉\n   Tender slices of lamb wok-seared with aromatic green onions. A classic Northern dish full of flavor.\n\n2. Honey Glazed Cumin Chicken Wings\n   蜜汁孜然鸡翅\n   Savory and sweet wings with a fragrant kick of cumin spice.\n\n3. Steamed Chicken Wings with Shiitake Mushrooms\n   香菇蒸鸡翅\n   A lighter, healthier option where the savory juices of the mushrooms infuse the tender chicken.\n\n4. Homestyle Stir-fried Beef\n   小炒牛肉\n   Slices of beef stir-fried with fresh peppers and spices for a rich, savory taste.\n\n---\n\nVegetables & Tofu (素菜与豆腐)\n\n5. Sautéed Green Beans with Minced Pork & Olive Veg\n   榄菜肉末四季豆\n   Crunchy green beans stir-fried with savory minced pork and \"Olive Vegetable\" (a classic savory preserve).\n\n6. Stir-fried Snow Peas with Chinese Sausage\n   荷兰豆炒香肠\n   Crisp, sweet snow peas paired with the rich, smoky flavor of cured Chinese sausage.\n\n7. Braised Tofu with Scallions\n   葱烧豆腐\n   Silky tofu braised in a savory sauce infused with the aroma of fried scallions.\n\n8. Home-style Braised Tofu Puffs\n   家常油豆腐\n   Spongy tofu puffs that absorb all the delicious sauce of the dish.\n\n---\n\nStaples (主食)\n\n9. Handmade Dumplings\n   饺子\n   The ultimate Chinese comfort food. Hand-wrapped and boiled to perfection.\n30001\tLi Wei\tTraditional Shanghainese home cooking featuring xiaolongbao (soup dumplings), hongshaorou (red-braised pork), and seasonal vegetables. All ingredients are fresh from local markets, prepared with family recipes passed down through generations.\n60001\tTest Host\tI prepare authentic Shanghai dishes including braised beef, noodle soups, and seasonal vegetables. Fresh ingredients daily.\n90001\tG\tAbc and and and and and and and and and\n90002\tGrace Tong\tMy specialty is creating a warm, authentic \"Shanghai home\" dining experience, blending nutritious local flavors with comforting international dishes. \n\nI prepare fresh meals using market ingredients, featuring classics like:\n1. Braised Beef Brisket with Daikon Radish (萝卜炖牛腩)\n2. Spinach in Supreme Broth with Century Egg (上汤菠菜)\n3. Signature Seafood Noodle Soup (海鲜汤面)\n4. Foil-Baked Whole Fish with Lemongrass (香茅烤鱼)\n5. Creamy Coconut Chicken Curry (椰香咖喱鸡)\n6. Oven-Roasted Chicken Feast (烤鸡大餐)\n\nThe menu can be updated on the day depending on what’s fresh. Or let me know what you want to try :)\n \n",
+  "stderr": "",
+  "execution_time_ms": 352
+}
