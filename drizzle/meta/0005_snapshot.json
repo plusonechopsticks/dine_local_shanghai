@@ -1,8 +1,8 @@
 {
-  "id": "4ffacf6c-d2b5-4677-afaa-39d271d2e61b",
-  "prevId": "56f2aac7-c1bc-4c84-8bb3-db6acc11bbf3",
   "version": "5",
   "dialect": "mysql",
+  "id": "a483a072-a913-4998-a69b-89d5d0027ca1",
+  "prevId": "7468af6c-ddfe-4ac4-bf39-9a232b6c6cd0",
   "tables": {
     "announcements": {
       "name": "announcements",
@@ -43,8 +43,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -65,14 +65,14 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(255)",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": true
         },
         "blogPostId": {
           "name": "blogPostId",
-          "type": "varchar(255)",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -106,8 +106,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -115,15 +115,15 @@
         "blog_post_views_blogPostId_blog_posts_id_fk": {
           "name": "blog_post_views_blogPostId_blog_posts_id_fk",
           "tableFrom": "blog_post_views",
+          "tableTo": "blog_posts",
           "columnsFrom": [
             "blogPostId"
           ],
-          "tableTo": "blog_posts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -240,8 +240,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -405,8 +405,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -414,15 +414,15 @@
         "bookings_hostListingId_host_listings_id_fk": {
           "name": "bookings_hostListingId_host_listings_id_fk",
           "tableFrom": "bookings",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -488,15 +488,15 @@
         "chat_messages_sessionId_chat_sessions_id_fk": {
           "name": "chat_messages_sessionId_chat_sessions_id_fk",
           "tableFrom": "chat_messages",
+          "tableTo": "chat_sessions",
           "columnsFrom": [
             "sessionId"
           ],
-          "tableTo": "chat_sessions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -586,8 +586,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -683,8 +683,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -692,240 +692,33 @@
         "conversations_hostListingId_host_listings_id_fk": {
           "name": "conversations_hostListingId_host_listings_id_fk",
           "tableFrom": "conversations",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "conversations_bookingId_bookings_id_fk": {
           "name": "conversations_bookingId_bookings_id_fk",
           "tableFrom": "conversations",
+          "tableTo": "bookings",
           "columnsFrom": [
             "bookingId"
           ],
-          "tableTo": "bookings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "conversations_id": {
           "name": "conversations_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
-    "guest_testimonials": {
-      "name": "guest_testimonials",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "guestName": {
-          "name": "guestName",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "guestLocation": {
-          "name": "guestLocation",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "travelerType": {
-          "name": "travelerType",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "hostListingId": {
-          "name": "hostListingId",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "experienceDate": {
-          "name": "experienceDate",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "enum('direct_review','guest_story')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'direct_review'"
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "subtitle": {
-          "name": "subtitle",
-          "type": "varchar(500)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "attributionLine": {
-          "name": "attributionLine",
-          "type": "varchar(500)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "previewText": {
-          "name": "previewText",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "fullText": {
-          "name": "fullText",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "additionalText": {
-          "name": "additionalText",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "tertiaryText": {
-          "name": "tertiaryText",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "images": {
-          "name": "images",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "badge": {
-          "name": "badge",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "tags": {
-          "name": "tags",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "('[]')"
-        },
-        "ctaLabel": {
-          "name": "ctaLabel",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "ctaUrl": {
-          "name": "ctaUrl",
-          "type": "varchar(500)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "featured": {
-          "name": "featured",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": false
-        },
-        "displayOrder": {
-          "name": "displayOrder",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": 0
-        },
-        "published": {
-          "name": "published",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": true
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "guest_testimonials_hostListingId_host_listings_id_fk": {
-          "name": "guest_testimonials_hostListingId_host_listings_id_fk",
-          "tableFrom": "guest_testimonials",
-          "columnsFrom": [
-            "hostListingId"
-          ],
-          "tableTo": "host_listings",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {
-        "guest_testimonials_id": {
-          "name": "guest_testimonials_id",
           "columns": [
             "id"
           ]
@@ -986,8 +779,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -995,15 +788,15 @@
         "host_accounts_hostListingId_host_listings_id_fk": {
           "name": "host_accounts_hostListingId_host_listings_id_fk",
           "tableFrom": "host_accounts",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1097,8 +890,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -1106,15 +899,15 @@
         "host_availability_blocks_hostListingId_host_listings_id_fk": {
           "name": "host_availability_blocks_hostListingId_host_listings_id_fk",
           "tableFrom": "host_availability_blocks",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1468,8 +1261,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -1620,15 +1413,15 @@
         "messages_conversationId_conversations_id_fk": {
           "name": "messages_conversationId_conversations_id_fk",
           "tableFrom": "messages",
+          "tableTo": "conversations",
           "columnsFrom": [
             "conversationId"
           ],
-          "tableTo": "conversations",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1695,8 +1488,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -1704,15 +1497,15 @@
         "page_views_hostListingId_host_listings_id_fk": {
           "name": "page_views_hostListingId_host_listings_id_fk",
           "tableFrom": "page_views",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1786,8 +1579,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         },
         "lastSignedIn": {
           "name": "lastSignedIn",
@@ -1821,9 +1614,9 @@
   },
   "views": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
+    "tables": {},
+    "columns": {}
   },
   "internal": {
     "tables": {},

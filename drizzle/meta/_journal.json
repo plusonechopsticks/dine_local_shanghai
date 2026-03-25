@@ -1,12 +1,19 @@
 {
-  "version": "5",
+  "version": "7",
   "dialect": "mysql",
   "entries": [
     {
       "idx": 0,
       "version": "5",
-      "when": 1774422327645,
-      "tag": "0000_mean_shooting_star",
+      "when": 1774392044977,
+      "tag": "0000_create_guest_testimonials",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774393492657,
+      "tag": "0001_gifted_mandarin",
       "breakpoints": true
     }
   ]
