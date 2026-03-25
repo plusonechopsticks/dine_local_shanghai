@@ -3,6 +3,8 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HomeHeader } from "@/components/HomeHeader";
+import { GuestStories } from "@/components/GuestStories";
+import { TESTIMONIALS } from "@/data/testimonials";
 import {
   Accordion,
   AccordionContent,
@@ -318,6 +320,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Section 2.5: Guest Stories */}
+      <GuestStories testimonials={TESTIMONIALS} />
 
       {/* Section 3: Brand Identity & Story */}
       <section id="brand-story" className="py-16 bg-white">

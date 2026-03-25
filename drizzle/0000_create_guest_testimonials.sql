@@ -1,0 +1,28 @@
+-- Create guest_testimonials table
+CREATE TABLE IF NOT EXISTS `guest_testimonials` (
+  `id` int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  `guestName` varchar(255) NOT NULL,
+  `guestLocation` varchar(255) NOT NULL,
+  `travelerType` varchar(100) NOT NULL,
+  `hostListingId` int NOT NULL,
+  `experienceDate` date NOT NULL,
+  `type` enum('direct_review','guest_story') NOT NULL DEFAULT 'direct_review',
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(500),
+  `attributionLine` varchar(500) NOT NULL,
+  `previewText` text NOT NULL,
+  `fullText` text NOT NULL,
+  `additionalText` text,
+  `tertiaryText` text,
+  `images` json NOT NULL,
+  `badge` varchar(100),
+  `tags` json NOT NULL,
+  `ctaLabel` varchar(100),
+  `ctaUrl` varchar(500),
+  `featured` boolean NOT NULL DEFAULT false,
+  `displayOrder` int NOT NULL DEFAULT 0,
+  `published` boolean NOT NULL DEFAULT true,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT `guest_testimonials_hostListingId_host_listings_id_fk` FOREIGN KEY (`hostListingId`) REFERENCES `host_listings` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

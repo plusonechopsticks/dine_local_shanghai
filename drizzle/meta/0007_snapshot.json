@@ -1,8 +1,8 @@
 {
-  "id": "4ffacf6c-d2b5-4677-afaa-39d271d2e61b",
-  "prevId": "56f2aac7-c1bc-4c84-8bb3-db6acc11bbf3",
   "version": "5",
   "dialect": "mysql",
+  "id": "56f2aac7-c1bc-4c84-8bb3-db6acc11bbf3",
+  "prevId": "558fa048-5218-45a1-bc72-6222b3b73182",
   "tables": {
     "announcements": {
       "name": "announcements",
@@ -43,8 +43,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -106,8 +106,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -115,15 +115,15 @@
         "blog_post_views_blogPostId_blog_posts_id_fk": {
           "name": "blog_post_views_blogPostId_blog_posts_id_fk",
           "tableFrom": "blog_post_views",
+          "tableTo": "blog_posts",
           "columnsFrom": [
             "blogPostId"
           ],
-          "tableTo": "blog_posts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -240,8 +240,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -405,8 +405,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -414,15 +414,15 @@
         "bookings_hostListingId_host_listings_id_fk": {
           "name": "bookings_hostListingId_host_listings_id_fk",
           "tableFrom": "bookings",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -488,15 +488,15 @@
         "chat_messages_sessionId_chat_sessions_id_fk": {
           "name": "chat_messages_sessionId_chat_sessions_id_fk",
           "tableFrom": "chat_messages",
+          "tableTo": "chat_sessions",
           "columnsFrom": [
             "sessionId"
           ],
-          "tableTo": "chat_sessions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -586,8 +586,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -683,8 +683,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -692,28 +692,28 @@
         "conversations_hostListingId_host_listings_id_fk": {
           "name": "conversations_hostListingId_host_listings_id_fk",
           "tableFrom": "conversations",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "conversations_bookingId_bookings_id_fk": {
           "name": "conversations_bookingId_bookings_id_fk",
           "tableFrom": "conversations",
+          "tableTo": "bookings",
           "columnsFrom": [
             "bookingId"
           ],
-          "tableTo": "bookings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -903,8 +903,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -912,15 +912,15 @@
         "guest_testimonials_hostListingId_host_listings_id_fk": {
           "name": "guest_testimonials_hostListingId_host_listings_id_fk",
           "tableFrom": "guest_testimonials",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -986,8 +986,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -995,15 +995,15 @@
         "host_accounts_hostListingId_host_listings_id_fk": {
           "name": "host_accounts_hostListingId_host_listings_id_fk",
           "tableFrom": "host_accounts",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1097,8 +1097,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -1106,15 +1106,15 @@
         "host_availability_blocks_hostListingId_host_listings_id_fk": {
           "name": "host_availability_blocks_hostListingId_host_listings_id_fk",
           "tableFrom": "host_availability_blocks",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1468,8 +1468,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -1620,15 +1620,15 @@
         "messages_conversationId_conversations_id_fk": {
           "name": "messages_conversationId_conversations_id_fk",
           "tableFrom": "messages",
+          "tableTo": "conversations",
           "columnsFrom": [
             "conversationId"
           ],
-          "tableTo": "conversations",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1695,8 +1695,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},
@@ -1704,15 +1704,15 @@
         "page_views_hostListingId_host_listings_id_fk": {
           "name": "page_views_hostListingId_host_listings_id_fk",
           "tableFrom": "page_views",
+          "tableTo": "host_listings",
           "columnsFrom": [
             "hostListingId"
           ],
-          "tableTo": "host_listings",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -1786,8 +1786,8 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(now())",
-          "onUpdate": true
+          "onUpdate": true,
+          "default": "(now())"
         },
         "lastSignedIn": {
           "name": "lastSignedIn",
@@ -1821,9 +1821,9 @@
   },
   "views": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
+    "tables": {},
+    "columns": {}
   },
   "internal": {
     "tables": {},

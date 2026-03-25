@@ -1,69 +1,9 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "2910123d-385d-4d80-a709-7772319b8909",
-  "prevId": "141591f3-4b52-4062-88d6-2d3c4ba972ec",
+  "id": "283897e6-77ca-4a81-84c9-fda9a8704070",
+  "prevId": "56f2aac7-c1bc-4c84-8bb3-db6acc11bbf3",
   "tables": {
-    "interest_submissions": {
-      "name": "interest_submissions",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(320)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "interestType": {
-          "name": "interestType",
-          "type": "enum('traveler','host')",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "message": {
-          "name": "message",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "interest_submissions_id": {
-          "name": "interest_submissions_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraint": {}
-    },
     "users": {
       "name": "users",
       "columns": {
