@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,6 +24,8 @@ import {
   Sparkles,
   BookOpen,
   Compass,
+  Play,
+  Pause,
 } from "lucide-react";
 import {
   Dialog,
@@ -45,6 +47,7 @@ import {
 import { toast } from "sonner";
 import DateGridCalendar from "@/components/DateGridCalendar";
 import { useParams, useLocation } from "wouter";
+import { useState, useEffect, useRef } from "react";
 
 const ACTIVITY_LABELS: Record<string, string> = {
   "cooking-class": "Cooking Class",
@@ -76,6 +79,8 @@ export default function HostDetail() {
   });
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const hostId = params?.id ? parseInt(params.id) : null;
   const { data: host, isLoading, isError } = trpc.host.get.useQuery(
@@ -368,23 +373,39 @@ export default function HostDetail() {
         {/* Video or Slideshow */}
         <div className="w-full h-full flex items-center justify-center">
           {host.introVideoUrl ? (
-            <video
-              ref={(el) => {
-                if (el && el.requestFullscreen) {
-                  el.requestFullscreen().catch(() => {});
-                  el.addEventListener('fullscreenchange', () => {
-                    if (!document.fullscreenElement) {
-                      el.pause();
+            <>
+              <video
+                ref={videoRef}
+                src={host.introVideoUrl}
+                autoPlay
+                loop
+                playsInline
+                className="w-full h-full object-contain"
+              />
+              {/* Play/Pause Button */}
+              <button
+                onClick={() => {
+                  if (videoRef.current) {
+                    if (isVideoPlaying) {
+                      videoRef.current.pause();
+                    } else {
+                      videoRef.current.play();
                     }
-                  });
-                }
-              }}
-              src={host.introVideoUrl}
-              autoPlay
-              loop
-              playsInline
-              className="w-full h-full object-contain"
-            />
+                    setIsVideoPlaying(!isVideoPlaying);
+                  }
+                }}
+                className="absolute inset-0 flex items-center justify-center hover:bg-black/20 transition-colors z-10 group"
+                aria-label={isVideoPlaying ? "Pause video" : "Play video"}
+              >
+                <div className="bg-white/30 hover:bg-white/50 rounded-full p-4 transition-all group-hover:scale-110">
+                  {isVideoPlaying ? (
+                    <Pause size={48} className="text-white fill-white" />
+                  ) : (
+                    <Play size={48} className="text-white fill-white" />
+                  )}
+                </div>
+              </button>
+            </>
           ) : images.length > 0 ? (
             <>
               <img
