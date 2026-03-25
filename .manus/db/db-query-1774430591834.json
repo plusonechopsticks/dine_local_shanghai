@@ -1,0 +1,87 @@
+{
+  "query": "SELECT hostName, SUBSTRING(menuDescription, 1, 800) as menu_preview FROM host_listings WHERE status = 'approved' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT hostName, SUBSTRING(menuDescription, 1, 800) as menu_preview FROM host_listings WHERE status = 'approved' ORDER BY id;",
+  "rows": [
+    {
+      "hostName": "Norika and Steven",
+      "menu_preview": "When the North meets the South (南北融合)"
+    },
+    {
+      "hostName": "Grace Tong",
+      "menu_preview": "My specialty is creating a warm, authentic \"Shanghai home\" dining experience, blending nutritious local flavors with comforting international dishes. "
+    },
+    {
+      "hostName": "Jiading Ayi",
+      "menu_preview": "Step into Auntie’s cozy home (together with her daughter!) where the kitchen fills with the aroma of slow-braised Hong Shao Rou (red-braised pork belly) and simmering Egg Dumpling Soup—true Benbang comfort food."
+    },
+    {
+      "hostName": "Chuan 川",
+      "menu_preview": "Chuan's culinary journey began in childhood when she couldn't find delicious, lightly-oiled stir-fried eggplant in restaurants, so she decided to cook herself. Her passion for home cooking was ignited from that moment. Her philosophy of \"eating well\" means nutritious, balanced meals with clean flavors and authentic taste. Her dishes blend ingredients and flavors from Guangxi, Guangdong, and Southeast Asia."
+    },
+    {
+      "hostName": "Echo Ren",
+      "menu_preview": "I'm passionate about simple, comforting home-style Chinese cooking - the kind meant to be shared with family and friends around the table."
+    },
+    {
+      "hostName": "Sookie",
+      "menu_preview": "I love creating fusion food and experimenting with different cuisines. My specialties include authentic Cantonese dishes, Chaoshan delicacies, Shanghainese classics, and creative Western-Chinese fusion creations. I also make both Western and Chinese desserts."
+    },
+    {
+      "hostName": "Vivie",
+      "menu_preview": "* Spring roll appetizer with chinese cabbage, sliced pork and mushroom"
+    },
+    {
+      "hostName": "Bonnie",
+      "menu_preview": "Learn to make authentic Shanghai dumplings from scratch, including rolling dough, shaping wrappers, and mixing fillings. After the hands-on cooking class, enjoy a main dish of local cuisine with tea, beverages, and snacks. Menu includes dumplings and seasonal local dishes. Vegan options available upon request."
+    }
+  ],
+  "messages": [
+    "Welcome to our table! This menu features Jiā Cháng Cài (Home-style Cooking)—the heart and soul of Chinese dining. Unlike restaurant food, these dishes are designed for comfort and balance. We bring together a mix of Northern heartiness and Southern delicacy, featuring savory stir-fries, tender braises, and classic family favorites.",
+    "Meat & Poultry",
+    "1. Flash-Fried Lamb with Scallions",
+    "Tender slices of lamb wok-seared with aromatic green onions. A classic Northern dish full of flavor.",
+    "2. Honey Glazed Cumin Chicken Wings",
+    "Savory and sweet wings with a fragrant kick of cumin spice.",
+    "3. Steamed Chicken Wings with Shiitake Mushrooms",
+    "A lighter, healthier option where the savory juices of the mushrooms infuse the tender chicken.",
+    "4. Homestyle Stir-fried Beef",
+    "S",
+    "I prepare fresh meals using market ingredients, featuring classics like:",
+    "1. Braised Beef Brisket with Daikon Radish (萝卜炖牛腩)",
+    "2. Spinach in Supreme Broth with Century Egg (上汤菠菜)",
+    "3. Signature Seafood Noodle Soup (海鲜汤面)",
+    "4. Foil-Baked Whole Fish with Lemongrass (香茅烤鱼)",
+    "5. Creamy Coconut Chicken Curry (椰香咖喱鸡)",
+    "6. Oven-Roasted Chicken Feast (烤鸡大餐)",
+    "The menu can be updated on the day depending on what’s fresh. Or let me know what you want to try :)",
+    "The menu follows nature's calendar:",
+    "Spring: Fresh bamboo shoots dug from the backyard garden",
+    "Summer: Giant juicy grapes from Malu Town (famous local specialty)",
+    "Autumn: Osmanthus lattes made with flowers shaken from tree in the yard",
+    "Winter: Frost-kissed vegetables from the earth, transformed into hands-on Vegetable & Pork Wonton (Wrapping lessons also available) ",
+    "You'll dine family-style at auntie's sunny garden or indoor wooden roundtable (2-6 guests max), enjoying dishes you won't find in restaurants—just honest, seasonal home cooking.",
+    "Her Signature Dishes:",
+    "- Guangxi Sour-Spicy Tomato Noodles with Thai Basil",
+    "- Slow-Braised Radish Beef Brisket in Clear Broth",
+    "- Sizzling Chicken with Cantonese Clay Pot Magic",
+    "- Chuan's Signature Eggplants in Homemade Paste",
+    "Menu adjusts seasonally with fresh ingredients. Focus on nutritious home-style cooking with balanced flavors.",
+    "Here's my sample menu. As a proud Shanghainese, I'm all about making local Shanghainese dishes. We can always adjust based on your dietary requirements and preferences! (Can accommodate vegetarian)",
+    "- Sweet and sour pork ribs",
+    "- Roasted Gluten",
+    "- Steamed Yellow Croaker ",
+    "- Mapo tofu",
+    "- Cucumber Salad",
+    "When you visit, I can prepare whatever you'd like to try - just tell me your preferences and I'll research it, practice it, and add my own special twist to make it even better. Every meal is a unique culinary adventure tailored to your tastes.",
+    "* Chicken soup with Chinese pepper",
+    "* Kung pau chicken with peanuts, home-made chili paste and spring onion",
+    "* Mapo tofu (Sichuan style tofu in chili paste and pepper with minced pork)",
+    "* Stir-fried seasonal vegetable with soy sauce and garlic",
+    "* Home-made rice noodles with minced pork, home-made chili oil, Chinese pickles and tomato sauce",
+    "* Dessert of rice balls in a sweet rice wine with osmanthus sugar",
+    "This is just a sample menu to give you an idea of the types of dishes the host cooks. Your menu will vary according to seasonal availability."
+  ],
+  "stdout": "hostName\tmenu_preview\nNorika and Steven\tWhen the North meets the South (南北融合)\n\nWelcome to our table! This menu features Jiā Cháng Cài (Home-style Cooking)—the heart and soul of Chinese dining. Unlike restaurant food, these dishes are designed for comfort and balance. We bring together a mix of Northern heartiness and Southern delicacy, featuring savory stir-fries, tender braises, and classic family favorites.\n\nMeat & Poultry\n\n1. Flash-Fried Lamb with Scallions\nTender slices of lamb wok-seared with aromatic green onions. A classic Northern dish full of flavor.\n\n2. Honey Glazed Cumin Chicken Wings\nSavory and sweet wings with a fragrant kick of cumin spice.\n\n3. Steamed Chicken Wings with Shiitake Mushrooms\nA lighter, healthier option where the savory juices of the mushrooms infuse the tender chicken.\n\n4. Homestyle Stir-fried Beef\nS\nGrace Tong\tMy specialty is creating a warm, authentic \"Shanghai home\" dining experience, blending nutritious local flavors with comforting international dishes. \n\nI prepare fresh meals using market ingredients, featuring classics like:\n1. Braised Beef Brisket with Daikon Radish (萝卜炖牛腩)\n2. Spinach in Supreme Broth with Century Egg (上汤菠菜)\n3. Signature Seafood Noodle Soup (海鲜汤面)\n4. Foil-Baked Whole Fish with Lemongrass (香茅烤鱼)\n5. Creamy Coconut Chicken Curry (椰香咖喱鸡)\n6. Oven-Roasted Chicken Feast (烤鸡大餐)\n\nThe menu can be updated on the day depending on what’s fresh. Or let me know what you want to try :)\n \nJiading Ayi\tStep into Auntie’s cozy home (together with her daughter!) where the kitchen fills with the aroma of slow-braised Hong Shao Rou (red-braised pork belly) and simmering Egg Dumpling Soup—true Benbang comfort food.\n\nThe menu follows nature's calendar:\nSpring: Fresh bamboo shoots dug from the backyard garden\n\nSummer: Giant juicy grapes from Malu Town (famous local specialty)\n\nAutumn: Osmanthus lattes made with flowers shaken from tree in the yard\n\nWinter: Frost-kissed vegetables from the earth, transformed into hands-on Vegetable & Pork Wonton (Wrapping lessons also available) \n\nYou'll dine family-style at auntie's sunny garden or indoor wooden roundtable (2-6 guests max), enjoying dishes you won't find in restaurants—just honest, seasonal home cooking.\nChuan 川\tChuan's culinary journey began in childhood when she couldn't find delicious, lightly-oiled stir-fried eggplant in restaurants, so she decided to cook herself. Her passion for home cooking was ignited from that moment. Her philosophy of \"eating well\" means nutritious, balanced meals with clean flavors and authentic taste. Her dishes blend ingredients and flavors from Guangxi, Guangdong, and Southeast Asia.\n\nHer Signature Dishes:\n\n- Guangxi Sour-Spicy Tomato Noodles with Thai Basil\n- Slow-Braised Radish Beef Brisket in Clear Broth\n- Sizzling Chicken with Cantonese Clay Pot Magic\n- Chuan's Signature Eggplants in Homemade Paste\n\nMenu adjusts seasonally with fresh ingredients. Focus on nutritious home-style cooking with balanced flavors.\nEcho Ren\tI'm passionate about simple, comforting home-style Chinese cooking - the kind meant to be shared with family and friends around the table.\n\nHere's my sample menu. As a proud Shanghainese, I'm all about making local Shanghainese dishes. We can always adjust based on your dietary requirements and preferences! (Can accommodate vegetarian)\n\n- Sweet and sour pork ribs\n- Roasted Gluten\n- Steamed Yellow Croaker \n- Mapo tofu\n- Cucumber Salad\nSookie\tI love creating fusion food and experimenting with different cuisines. My specialties include authentic Cantonese dishes, Chaoshan delicacies, Shanghainese classics, and creative Western-Chinese fusion creations. I also make both Western and Chinese desserts.\n\nWhen you visit, I can prepare whatever you'd like to try - just tell me your preferences and I'll research it, practice it, and add my own special twist to make it even better. Every meal is a unique culinary adventure tailored to your tastes.\nVivie\t* Spring roll appetizer with chinese cabbage, sliced pork and mushroom \n* Chicken soup with Chinese pepper \n* Kung pau chicken with peanuts, home-made chili paste and spring onion \n* Mapo tofu (Sichuan style tofu in chili paste and pepper with minced pork) \n* Stir-fried seasonal vegetable with soy sauce and garlic \n* Home-made rice noodles with minced pork, home-made chili oil, Chinese pickles and tomato sauce \n* Dessert of rice balls in a sweet rice wine with osmanthus sugar\n\nThis is just a sample menu to give you an idea of the types of dishes the host cooks. Your menu will vary according to seasonal availability.\nBonnie\tLearn to make authentic Shanghai dumplings from scratch, including rolling dough, shaping wrappers, and mixing fillings. After the hands-on cooking class, enjoy a main dish of local cuisine with tea, beverages, and snacks. Menu includes dumplings and seasonal local dishes. Vegan options available upon request.\n",
+  "stderr": "",
+  "execution_time_ms": 358
+}

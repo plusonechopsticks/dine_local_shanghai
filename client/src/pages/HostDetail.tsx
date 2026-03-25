@@ -405,21 +405,35 @@ export default function HostDetail() {
                   const rawLines = host.menuDescription.split(/\n/);
                   return rawLines.map((line, index) => {
                     const trimmed = line.trim();
-                    // Empty lines
+
+                    // Empty lines → small spacer
                     if (!trimmed) return <div key={index} className="h-1" />;
                     if (trimmed === '---') return <hr key={index} className="my-4 border-gray-200" />;
-                    // Category headers: title-case words only, no digits, short
-                    const isCategoryHeader = /^[A-Z][A-Za-z &]+$/.test(trimmed) && trimmed.length < 40;
-                    // Numbered dish name lines
-                    const isDishLine = /^\d+\./.test(trimmed);
-                    // Dish description: previous non-empty line was a numbered dish
-                    const prevNonEmpty = rawLines.slice(0, index).reverse().find(l => l.trim())?.trim() || '';
-                    const isDishDescription = !isDishLine && !isCategoryHeader && /^\d+\./.test(prevNonEmpty);
 
-                    if (isCategoryHeader) {
+                    // 1. Numbered dish lines: "1. Dish name" or "1. Dish (Chinese)"
+                    const isDishLine = /^\d+\.\s+\S/.test(trimmed);
+
+                    // 2. Dash bullet: "- Dish name"
+                    const isDashBullet = /^-\s+\S/.test(trimmed);
+
+                    // 3. Asterisk bullet: "* Dish name"
+                    const isAsteriskBullet = /^\*\s+\S/.test(trimmed);
+
+                    // 4. Section header ending with colon: "Her Signature Dishes:" / "Spring:"
+                    const isColonHeader = /^[A-Z\u4e00-\u9fff][^\n]{0,50}:$/.test(trimmed);
+
+                    // 5. Pure title-case category header (no colon, no punctuation, no Chinese, short)
+                    const isTitleHeader = /^[A-Z][A-Za-z &]+$/.test(trimmed) && trimmed.length < 40;
+
+                    // 6. Dish description line: previous non-empty line was a numbered dish
+                    const prevNonEmpty = rawLines.slice(0, index).reverse().find(l => l.trim())?.trim() || '';
+                    const isDishDescription = !isDishLine && !isDashBullet && !isAsteriskBullet &&
+                      !isColonHeader && !isTitleHeader && /^\d+\.\s+\S/.test(prevNonEmpty);
+
+                    if (isTitleHeader || isColonHeader) {
                       return (
                         <p key={index} className="text-xs tracking-[0.2em] uppercase font-semibold pt-5 pb-1" style={{ color: '#b8962e' }}>
-                          {trimmed}
+                          {trimmed.replace(/:$/, '')}
                         </p>
                       );
                     }
@@ -432,11 +446,21 @@ export default function HostDetail() {
                         </div>
                       );
                     }
+                    if (isDashBullet || isAsteriskBullet) {
+                      const content = trimmed.replace(/^[-*]\s+/, '');
+                      return (
+                        <div key={index} className="flex gap-2.5 items-start pt-0.5">
+                          <span className="mt-2 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#b8962e', minWidth: '6px' }} />
+                          <span className="text-base text-foreground">{content}</span>
+                        </div>
+                      );
+                    }
                     if (isDishDescription) {
                       return (
                         <p key={index} className="text-sm text-muted-foreground leading-relaxed pl-8 -mt-0.5">{trimmed}</p>
                       );
                     }
+                    // Default: prose paragraph
                     return (
                       <p key={index} className="text-base text-muted-foreground leading-relaxed">{trimmed}</p>
                     );
