@@ -461,11 +461,43 @@ export const appRouter = router({
           mealDurationMinutes: 120,
         });
 
-        // Notify owner of new host application
+        // Notify owner of new host application (in-app notification)
         await notifyOwner({
           title: `New Host Application: ${input.name}`,
           content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}\nCuisine: ${input.cuisineStyle}\nPrice: ¥${input.pricePerPerson}/person\nMax Guests: ${input.maxGuests}\n\nBio: ${input.bio}`,
         });
+
+        // Also send email to owner
+        try {
+          await sendEmail({
+            to: "plusonechopsticks@gmail.com",
+            subject: `🍜 New Host Application: ${input.name}`,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #fff;">
+                <h2 style="color: #b8962e; margin-bottom: 4px;">New Host Application</h2>
+                <p style="color: #666; margin-top: 0;">Someone wants to join +1 Chopsticks as a host.</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px;">
+                  <tr style="background:#fafafa"><td style="padding: 10px 12px; font-weight: 600; width: 140px;">Name</td><td style="padding: 10px 12px;">${input.name}</td></tr>
+                  <tr><td style="padding: 10px 12px; font-weight: 600;">Email</td><td style="padding: 10px 12px;">${input.email}</td></tr>
+                  <tr style="background:#fafafa"><td style="padding: 10px 12px; font-weight: 600;">District</td><td style="padding: 10px 12px;">${input.district}</td></tr>
+                  <tr><td style="padding: 10px 12px; font-weight: 600;">Cuisine Style</td><td style="padding: 10px 12px;">${input.cuisineStyle}</td></tr>
+                  <tr style="background:#fafafa"><td style="padding: 10px 12px; font-weight: 600;">Price / Person</td><td style="padding: 10px 12px;">¥${input.pricePerPerson}</td></tr>
+                  <tr><td style="padding: 10px 12px; font-weight: 600;">Max Guests</td><td style="padding: 10px 12px;">${input.maxGuests}</td></tr>
+                </table>
+                <div style="margin-top: 20px; padding: 16px; background: #f9f9f9; border-left: 4px solid #b8962e; border-radius: 4px; font-size: 14px;">
+                  <strong>Bio:</strong><br/><span style="color:#444;">${input.bio}</span>
+                </div>
+                ${input.whyHost ? `<div style="margin-top: 12px; padding: 16px; background: #f9f9f9; border-left: 4px solid #b8962e; border-radius: 4px; font-size: 14px;"><strong>Why they want to host:</strong><br/><span style="color:#444;">${input.whyHost}</span></div>` : ''}
+                <div style="margin-top: 28px;">
+                  <a href="https://plus1chopsticks.com/admin" style="background: #b8962e; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">Review in Admin Dashboard →</a>
+                </div>
+                <p style="margin-top: 32px; color: #bbb; font-size: 12px;">+1 Chopsticks · plusonechopsticks@gmail.com</p>
+              </div>
+            `,
+          });
+        } catch (emailErr) {
+          console.error("[host.submit] Failed to send owner email notification:", emailErr);
+        }
 
         return { success: true };
       }),
@@ -589,6 +621,21 @@ export const appRouter = router({
         // TODO: Add role-based access control - for now allowing public access for testing
         const success = await updateHostListingStatus(input.id, input.status, input.adminNotes);
         return { success };
+      }),
+
+    // Admin: Update admin notes only
+    updateAdminNotes: publicProcedure
+      .input(z.object({
+        id: z.number(),
+        adminNotes: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        await db.update(hostListings)
+          .set({ adminNotes: input.adminNotes })
+          .where(eq(hostListings.id, input.id));
+        return { success: true };
       }),
 
     // Summarize title to max 3 lines using AI

@@ -15,6 +15,39 @@ import { AnnouncementEditor } from "@/components/AnnouncementEditor";
 import { LiveChatAdmin } from "@/components/LiveChatAdmin";
 import { AdminAnalyticsTab } from "@/components/AdminAnalyticsTab";
 
+// Inline admin notes editor component
+function AdminNotesEditor({ hostId, initialNotes }: { hostId: number; initialNotes: string }) {
+  const [notes, setNotes] = useState(initialNotes);
+  const [saved, setSaved] = useState(false);
+  const saveNotes = trpc.host.updateAdminNotes.useMutation({
+    onSuccess: () => {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    },
+    onError: (err) => toast.error(`Failed to save notes: ${err.message}`),
+  });
+  return (
+    <div className="space-y-2">
+      <h4 className="font-semibold text-sm">Admin Notes (internal only)</h4>
+      <Textarea
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        placeholder="Add internal notes about this application..."
+        rows={3}
+        className="text-sm"
+      />
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => saveNotes.mutate({ id: hostId, adminNotes: notes })}
+        disabled={saveNotes.isPending}
+      >
+        {saved ? '✓ Saved' : saveNotes.isPending ? 'Saving...' : 'Save Notes'}
+      </Button>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
   const { data: bookings = [], isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
@@ -578,7 +611,10 @@ export default function AdminDashboard() {
                             {host.hostName}
                             {getStatusBadge(host.status)}
                           </CardTitle>
-                          <CardDescription>{host.email}</CardDescription>
+                          <CardDescription className="flex items-center gap-3">
+                            <span>{host.email}</span>
+                            <span className="text-xs text-muted-foreground/70">Applied {new Date(host.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          </CardDescription>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -710,10 +746,13 @@ export default function AdminDashboard() {
                         </div>
                       </div>
 
+                      {/* Admin Notes */}
+                      <AdminNotesEditor hostId={host.id} initialNotes={host.adminNotes || ''} />
+
                       {/* Timestamps */}
                       <div className="text-xs text-muted-foreground">
-                        <div>Created: {new Date(host.createdAt).toLocaleString()}</div>
-                        <div>Updated: {new Date(host.updatedAt).toLocaleString()}</div>
+                        <div>Applied: {new Date(host.createdAt).toLocaleString()}</div>
+                        <div>Last Updated: {new Date(host.updatedAt).toLocaleString()}</div>
                       </div>
                     </CardContent>
                   )}
