@@ -42,8 +42,10 @@ export type InsertInterestSubmission = typeof interestSubmissions.$inferInsert;
 export const hostInterests = mysqlTable("host_interests", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull().default(""),
   district: varchar("district", { length: 100 }).notNull(),
-  contact: varchar("contact", { length: 255 }).notNull(), // Email or WeChat ID
+  contact: varchar("contact", { length: 255 }).notNull().default(""), // Email or WeChat ID
+  hidden: boolean("hidden").default(false),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

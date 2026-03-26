@@ -15,6 +15,13 @@
       "when": 1774423479065,
       "tag": "0001_stale_romulus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774568966747,
+      "tag": "0002_parched_iron_patriot",
+      "breakpoints": true
     }
   ]
 }

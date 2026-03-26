@@ -28,7 +28,7 @@ import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
 import { blogRouter } from "./routers/blog";
-import { bookings, hostListings } from "../drizzle/schema";
+import { bookings, hostListings, hostInterests } from "../drizzle/schema";
 import { sql, eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
@@ -272,21 +272,45 @@ export const appRouter = router({
     submit: publicProcedure
       .input(z.object({
         name: z.string().min(1, "Name is required"),
+        email: z.string().email("Valid email is required"),
         district: z.string().min(1, "District is required"),
-        contact: z.string().min(1, "Email or WeChat ID is required"),
+        contact: z.string().optional().default(""),
       }))
       .mutation(async ({ input }) => {
         const interest = await createHostInterest({
           name: input.name,
+          email: input.email,
           district: input.district,
-          contact: input.contact,
+          contact: input.contact || input.email,
         });
 
-        // Notify owner of new host interest
+        // Notify owner via in-app notification
         await notifyOwner({
           title: `New Host Interest: ${input.name}`,
-          content: `Name: ${input.name}\nDistrict: ${input.district}\nContact: ${input.contact}`,
+          content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}`,
         });
+
+        // Send owner email notification
+        try {
+          await sendEmail({
+            to: "plusonechopsticks@gmail.com",
+            subject: `[+1 Chopsticks] New Host Interest: ${input.name}`,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+                <h2 style="color: #8B2635;">New Host Interest Submission</h2>
+                <p>Someone started the host registration form:</p>
+                <table style="width:100%; border-collapse: collapse; margin-top: 16px;">
+                  <tr><td style="padding: 8px; font-weight: bold; color: #555;">Name</td><td style="padding: 8px;">${input.name}</td></tr>
+                  <tr style="background:#f9f9f9;"><td style="padding: 8px; font-weight: bold; color: #555;">Email</td><td style="padding: 8px;">${input.email}</td></tr>
+                  <tr><td style="padding: 8px; font-weight: bold; color: #555;">District</td><td style="padding: 8px;">${input.district}</td></tr>
+                </table>
+                <p style="margin-top: 24px; color: #888;">View all host interests in the <a href="https://plus1chopsticks.com/admin">Admin Dashboard</a> → Host Interest tab.</p>
+              </div>
+            `,
+          });
+        } catch (e) {
+          console.error("[hostInterest] Failed to send owner email:", e);
+        }
 
         return { success: true, interest };
       }),
@@ -298,6 +322,17 @@ export const appRouter = router({
       }
       return getAllHostInterests();
     }),
+
+    // Toggle hidden status
+    toggleHidden: protectedProcedure
+      .input(z.object({ id: z.number(), hidden: z.boolean() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        await db.update(hostInterests).set({ hidden: input.hidden }).where(eq(hostInterests.id, input.id));
+        return { success: true };
+      }),
   }),
 
   interest: router({

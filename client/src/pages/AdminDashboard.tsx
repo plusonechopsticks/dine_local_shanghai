@@ -52,6 +52,7 @@ export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
   const { data: bookings = [], isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
   const { data: interestSubmissions = [], isLoading: interestLoading } = trpc.interest.list.useQuery();
+  const { data: hostInterestSubmissions = [], isLoading: hostInterestLoading } = trpc.hostInterest.list.useQuery();
   const { data: successfulPayments = [], isLoading: paymentsLoading } = trpc.booking.listAll.useQuery();
   const utils = trpc.useUtils();
 
@@ -60,6 +61,7 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [showHiddenBookings, setShowHiddenBookings] = useState(false);
   const [showHiddenInterest, setShowHiddenInterest] = useState(false);
+  const [showHiddenHostInterest, setShowHiddenHostInterest] = useState(false);
 
   const updateHostMutation = trpc.host.updateListing.useMutation({
     onSuccess: () => {
@@ -91,6 +93,12 @@ export default function AdminDashboard() {
   const toggleInterestHidden = trpc.interest.toggleHidden.useMutation({
     onSuccess: () => {
       utils.interest.list.invalidate();
+    },
+  });
+
+  const toggleHostInterestHidden = trpc.hostInterest.toggleHidden.useMutation({
+    onSuccess: () => {
+      utils.hostInterest.list.invalidate();
     },
   });
 
@@ -230,6 +238,7 @@ export default function AdminDashboard() {
         <TabsList>
           <TabsTrigger value="applications">Host Applications</TabsTrigger>
           <TabsTrigger value="bookings">Guest Bookings</TabsTrigger>
+          <TabsTrigger value="hostinterest">Host Interest</TabsTrigger>
           <TabsTrigger value="interest">Traveler Interest</TabsTrigger>
           <TabsTrigger value="payments">Payment Successful</TabsTrigger>
           <TabsTrigger value="announcement">Announcement</TabsTrigger>
@@ -857,6 +866,65 @@ export default function AdminDashboard() {
                         size="sm"
                         onClick={() => toggleInterestHidden.mutate({ id: submission.id, hidden: !submission.hidden })}
                         disabled={toggleInterestHidden.isPending}
+                        className="mt-4"
+                      >
+                        {submission.hidden ? 'Unhide' : 'Hide'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="hostinterest" className="space-y-4">
+          <h2 className="text-xl font-semibold">Host Interest ({hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !s.hidden).length})</h2>
+          <p className="text-sm text-muted-foreground">People who started the host registration form — captured when they click "Next" on the first screen.</p>
+          {hostInterestLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={showHiddenHostInterest}
+                    onChange={(e) => setShowHiddenHostInterest(e.target.checked)}
+                    className="rounded"
+                  />
+                  Show hidden submissions
+                </label>
+              </div>
+              {hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !s.hidden).length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-center text-muted-foreground">No host interest submissions yet</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !s.hidden).map((submission: any) => (
+                  <Card key={submission.id}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <span>{submission.name}</span>
+                        <span className="text-xs font-normal text-muted-foreground">{new Date(submission.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      </CardTitle>
+                      <CardDescription>{submission.email}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm">
+                        <div><span className="font-medium">District:</span> {submission.district}</div>
+                        {submission.contact && submission.contact !== submission.email && (
+                          <div><span className="font-medium">WeChat/Other:</span> {submission.contact}</div>
+                        )}
+                        <div><span className="font-medium">Submitted:</span> {new Date(submission.createdAt).toLocaleString()}</div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toggleHostInterestHidden.mutate({ id: submission.id, hidden: !submission.hidden })}
+                        disabled={toggleHostInterestHidden.isPending}
                         className="mt-4"
                       >
                         {submission.hidden ? 'Unhide' : 'Hide'}

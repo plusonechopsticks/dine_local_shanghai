@@ -198,6 +198,7 @@ export default function HostRegister() {
   // tRPC mutations
   const submitMutation = trpc.host.submit.useMutation();
   const summarizeTitleMutation = trpc.host.summarizeTitle.useMutation();
+  const submitInterestMutation = trpc.hostInterest.submit.useMutation();
 
   // Generate AI title
   const handleGenerateTitle = async () => {
@@ -476,6 +477,11 @@ export default function HostRegister() {
                       toast.error("Please fill in all fields");
                       return;
                     }
+                    // Silently capture host interest before proceeding to full form
+                    submitInterestMutation.mutate(
+                      { name: data.name, email: data.email, district: data.district },
+                      { onError: (e) => console.error("[HostInterest] Failed to capture interest:", e) }
+                    );
                     setPhase("form");
                   }}
                   className="w-full h-14 text-lg text-white font-semibold hover:opacity-90 bg-[#8B2635]"
