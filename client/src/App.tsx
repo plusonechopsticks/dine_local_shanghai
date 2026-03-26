@@ -57,6 +57,7 @@ function App() {
   const [location] = useLocation();
   const isHomePage = location === "/";
   const isVideoPage = location === "/what-home-dining-exp-looks-like-in-china";
+  const isHostDetailPage = /^\/hosts\/\d+/.test(location);
 
   return (
     <ErrorBoundary>
@@ -65,7 +66,7 @@ function App() {
         // switchable
       >
         <TooltipProvider>
-          {!isHomePage && !isVideoPage && <Navbar />}
+          {!isHomePage && !isVideoPage && !isHostDetailPage && <Navbar />}
           <Toaster />
           <Router />
           {isHomePage && <ChatWidget />}

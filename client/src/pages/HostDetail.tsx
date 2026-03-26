@@ -314,7 +314,7 @@ export default function HostDetail() {
                 muted
                 className="w-full h-full object-cover"
               />
-              {/* Play/Pause Button */}
+              {/* Small tap-to-pause overlay — invisible until tapped */}
               <button
                 onClick={() => {
                   if (videoRef.current) {
@@ -327,16 +327,17 @@ export default function HostDetail() {
                     }
                   }
                 }}
-                className="absolute inset-0 flex items-center justify-center hover:bg-black/20 transition-colors group"
-              >
-                <div className="bg-white/30 hover:bg-white/50 rounded-full p-4 transition-all group-hover:scale-110">
-                  {isVideoPlaying ? (
-                    <Pause size={48} className="text-white" />
-                  ) : (
-                    <Play size={48} className="text-white fill-white" />
-                  )}
+                className="absolute inset-0"
+                style={{ background: 'transparent' }}
+              />
+              {/* Pause indicator — only shows briefly when paused */}
+              {!isVideoPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="bg-black/40 rounded-full p-4">
+                    <Play size={40} className="text-white fill-white" />
+                  </div>
                 </div>
-              </button>
+              )}
             </div>
           ) : images.length > 0 ? (
             <div
