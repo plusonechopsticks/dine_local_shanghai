@@ -71,7 +71,7 @@ export default function HostDetail() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [expandedBio, setExpandedBio] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showMobileBooking, setShowMobileBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -304,40 +304,53 @@ export default function HostDetail() {
         {/* Video or Slideshow */}
         <div className="w-full h-full flex items-center justify-center">
           {host.introVideoUrl ? (
-            <div className="relative w-full h-full">
+            <div className="relative w-full h-full overflow-hidden">
+              {/* Blurred background fill — handles portrait videos in landscape frame */}
+              <video
+                src={host.introVideoUrl}
+                className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl brightness-50"
+                muted
+                loop
+                playsInline
+                aria-hidden="true"
+                ref={(el) => {
+                  // Keep bg video in sync with main video
+                  if (el && videoRef.current) {
+                    if (isVideoPlaying) el.play(); else el.pause();
+                  }
+                }}
+              />
+              {/* Main video — object-contain so full frame is always visible */}
               <video
                 ref={videoRef}
                 src={host.introVideoUrl}
-                autoPlay
                 loop
                 playsInline
-                muted
-                className="w-full h-full object-cover"
+                className="relative z-10 w-full h-full object-contain"
+                onPlay={() => setIsVideoPlaying(true)}
+                onPause={() => setIsVideoPlaying(false)}
               />
-              {/* Small tap-to-pause overlay — invisible until tapped */}
+              {/* Click-to-play / click-to-pause overlay */}
               <button
                 onClick={() => {
                   if (videoRef.current) {
                     if (videoRef.current.paused) {
                       videoRef.current.play();
-                      setIsVideoPlaying(true);
                     } else {
                       videoRef.current.pause();
-                      setIsVideoPlaying(false);
                     }
                   }
                 }}
-                className="absolute inset-0"
+                className="absolute inset-0 z-20 flex items-center justify-center"
                 style={{ background: 'transparent' }}
-              />
-              {/* Pause indicator — only shows briefly when paused */}
-              {!isVideoPlaying && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="bg-black/40 rounded-full p-4">
-                    <Play size={40} className="text-white fill-white" />
+              >
+                {/* Big play button — only shown when paused */}
+                {!isVideoPlaying && (
+                  <div className="bg-black/50 backdrop-blur-sm rounded-full p-6 border border-white/20 transition-transform hover:scale-105">
+                    <Play size={52} className="text-white fill-white ml-1" />
                   </div>
-                </div>
-              )}
+                )}
+              </button>
             </div>
           ) : images.length > 0 ? (
             <div
@@ -385,8 +398,8 @@ export default function HostDetail() {
           ) : null}
         </div>
 
-        {/* Hero Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/60 to-transparent p-8">
+        {/* Hero Info Overlay — sits above click-to-play button */}
+        <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black via-black/60 to-transparent p-8 pointer-events-none">
           <div className="max-w-6xl mx-auto">
             <h1 className="text-5xl font-light text-white mb-1 tracking-tight">{host.hostName}</h1>
             <p className="text-lg font-light mb-4" style={{ color: '#d4af37' }}>{host.cuisineStyle}</p>
