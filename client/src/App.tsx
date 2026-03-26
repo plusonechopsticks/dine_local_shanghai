@@ -19,6 +19,7 @@ import AdminNewsletter from "./pages/AdminNewsletter";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import HostShowcaseV2 from "./pages/HostShowcaseV2";
+import HomeDiningVideo from "./pages/HomeDiningVideo";
 
 import { ChatWidget } from "./components/ChatWidget";
 
@@ -38,6 +39,7 @@ function Router() {
       <Route path={"/admin/newsletter"} component={AdminNewsletter} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
+      <Route path="/what-home-dining-exp-looks-like-in-china" component={HomeDiningVideo} />
       <Route path="/booking-success" component={BookingSuccess} />
       <Route path="/booking-confirmation" component={BookingConfirmation} />
       <Route path="/404" component={NotFound} />
@@ -54,6 +56,7 @@ function Router() {
 function App() {
   const [location] = useLocation();
   const isHomePage = location === "/";
+  const isVideoPage = location === "/what-home-dining-exp-looks-like-in-china";
 
   return (
     <ErrorBoundary>
@@ -62,7 +65,7 @@ function App() {
         // switchable
       >
         <TooltipProvider>
-          {!isHomePage && <Navbar />}
+          {!isHomePage && !isVideoPage && <Navbar />}
           <Toaster />
           <Router />
           {isHomePage && <ChatWidget />}

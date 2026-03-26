@@ -1635,3 +1635,4 @@
 - [x] Verify all tRPC mutations still work correctly
 - [x] Resolved guest feedback: no more red weekend coloring, clean date grid calendar
 - [x] Disable today and all past dates from calendar selection
+- [x] Create unlisted video page at /what-home-dining-exp-looks-like-in-china (not linked from nav/homepage)
