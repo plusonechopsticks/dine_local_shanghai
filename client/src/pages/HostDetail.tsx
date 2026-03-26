@@ -290,8 +290,8 @@ export default function HostDetail() {
     <div className="min-h-screen bg-background">
       {/* HERO SECTION */}
       <section className="relative w-full bg-black" style={{ height: '100svh' }}>
-        {/* Back Button */}
-        <div className="absolute top-6 left-6 z-20">
+        {/* Back Button — must be above click-to-play overlay (z-20) */}
+        <div className="absolute top-6 left-6 z-40">
           <button
             onClick={() => setLocation("/hosts")}
             className="inline-flex items-center gap-2 text-white hover:text-gray-300 transition text-sm font-medium"
