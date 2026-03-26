@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 
 const VIDEO_URL =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/home-dining-shanghai_0b31c8c9.mov";
+  "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/home-dining-shanghai_8956151c.mp4";
 
 export default function HomeDiningVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [hasStarted, setHasStarted] = useState(true);
 
   useEffect(() => {
     document.title = "What Home Dining Looks Like in China | +1 Chopsticks";
@@ -83,25 +83,26 @@ export default function HomeDiningVideo() {
           </p>
         </div>
 
-        {/* Video container */}
+        {/* Video container — vertical 9:16 */}
         <div
-          className="relative w-full max-w-4xl rounded-2xl overflow-hidden"
+          className="relative rounded-2xl overflow-hidden"
           style={{
-            boxShadow:
-              "0 0 0 1px rgba(212,175,55,0.15), 0 32px 80px rgba(0,0,0,0.7)",
+            width: "min(420px, 90vw)",
+            boxShadow: "0 0 0 1px rgba(212,175,55,0.15), 0 32px 80px rgba(0,0,0,0.7)",
           }}
         >
           <video
             ref={videoRef}
             src={VIDEO_URL}
             className="w-full block"
-            style={{ aspectRatio: "16/9", objectFit: "cover", background: "#111" }}
-            controls={hasStarted}
+            style={{ aspectRatio: "9/16", objectFit: "cover", background: "#111", maxHeight: "85vh" }}
+            controls
+            autoPlay
             playsInline
-            preload="metadata"
+            preload="auto"
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
-            onClick={hasStarted ? handleVideoClick : undefined}
+            onClick={handleVideoClick}
           />
 
           {/* Custom play button overlay — shown before first play */}

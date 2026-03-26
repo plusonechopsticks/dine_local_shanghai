@@ -1,0 +1,34 @@
+{
+  "query": "\nSELECT b.id, b.guestName, b.guestEmail, b.hostListingId, b.requestedDate, b.mealType, b.numberOfGuests, b.bookingStatus, b.paymentStatus, b.totalAmount\nFROM bookings b\nWHERE b.guestName LIKE '%Dustin%'\nORDER BY b.id DESC\nLIMIT 5;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute \nSELECT b.id, b.guestName, b.guestEmail, b.hostListingId, b.requestedDate, b.mealType, b.numberOfGuests, b.bookingStatus, b.paymentStatus, b.totalAmount\nFROM bookings b\nWHERE b.guestName LIKE '%Dustin%'\nORDER BY b.id DESC\nLIMIT 5;\n",
+  "rows": [
+    {
+      "id": "780007",
+      "guestName": "Dustin Miller",
+      "guestEmail": "dustin@8x.realestate",
+      "hostListingId": "210001",
+      "requestedDate": "2026-04-03",
+      "mealType": "dinner",
+      "numberOfGuests": "1",
+      "bookingStatus": "pending",
+      "paymentStatus": "paid",
+      "totalAmount": "250.00"
+    },
+    {
+      "id": "780006",
+      "guestName": "Dustin Miller",
+      "guestEmail": "dustin@8x.realestate",
+      "hostListingId": "210001",
+      "requestedDate": "2026-04-17",
+      "mealType": "dinner",
+      "numberOfGuests": "1",
+      "bookingStatus": "pending",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tguestName\tguestEmail\thostListingId\trequestedDate\tmealType\tnumberOfGuests\tbookingStatus\tpaymentStatus\ttotalAmount\n780007\tDustin Miller\tdustin@8x.realestate\t210001\t2026-04-03\tdinner\t1\tpending\tpaid\t250.00\n780006\tDustin Miller\tdustin@8x.realestate\t210001\t2026-04-17\tdinner\t1\tpending\tpending\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 352
+}
