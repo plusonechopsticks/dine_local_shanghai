@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, hostName, email FROM host_listings WHERE hostName LIKE '%Jiading%' OR hostName LIKE '%Ayi%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, email FROM host_listings WHERE hostName LIKE '%Jiading%' OR hostName LIKE '%Ayi%';",
+  "rows": [
+    {
+      "id": "150001",
+      "hostName": "Jiading Ayi",
+      "email": "weiwei-0124@163.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\temail\n150001\tJiading Ayi\tweiwei-0124@163.com\n",
+  "stderr": "",
+  "execution_time_ms": 342
+}

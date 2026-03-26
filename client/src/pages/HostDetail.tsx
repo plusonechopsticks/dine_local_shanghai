@@ -311,7 +311,8 @@ export default function HostDetail() {
                 autoPlay
                 loop
                 playsInline
-                className="w-full h-full object-contain"
+                muted
+                className="w-full h-full object-cover"
               />
               {/* Play/Pause Button */}
               <button
