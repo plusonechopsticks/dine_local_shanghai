@@ -50,14 +50,7 @@ export default function HomeDiningVideo() {
           >
             What Home Dining Looks Like in China
           </h1>
-          <p
-            className="text-base leading-relaxed"
-            style={{ color: "rgba(245,240,232,0.55)" }}
-          >
-            Step through the door of a local Shanghai family home — where the
-            kitchen fills with aroma, the table is set for strangers who leave
-            as friends, and every dish carries a story.
-          </p>
+
         </div>
 
         {/* Video — natural portrait dimensions, max height constrained */}
@@ -76,6 +69,7 @@ export default function HomeDiningVideo() {
             playsInline
             controls
             preload="auto"
+            muted={false}
             style={{
               display: "block",
               maxHeight: "80vh",
