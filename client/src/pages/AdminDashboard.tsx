@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload, CalendarX } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { getProxiedImageUrl } from "@/lib/imageUtils";
 import { AnnouncementEditor } from "@/components/AnnouncementEditor";
@@ -144,6 +145,30 @@ export default function AdminDashboard() {
     : listings.filter(h => h.status === statusFilter);
 
   const editingHost = listings.find(h => h.id === editingHostId);
+
+  // Date blocker state
+  const [newBlockDate, setNewBlockDate] = useState('');
+  const [newBlockReason, setNewBlockReason] = useState('');
+  const { data: availabilityBlocks = [], refetch: refetchBlocks } = trpc.host.getAvailabilityBlocks.useQuery(
+    { hostId: editingHostId || 0 },
+    { enabled: !!editingHostId }
+  );
+  const addBlockMutation = trpc.host.addAvailabilityBlock.useMutation({
+    onSuccess: () => {
+      refetchBlocks();
+      setNewBlockDate('');
+      setNewBlockReason('');
+      toast.success('Date blocked successfully');
+    },
+    onError: (err) => toast.error(`Failed to block date: ${err.message}`),
+  });
+  const removeBlockMutation = trpc.host.removeAvailabilityBlock.useMutation({
+    onSuccess: () => {
+      refetchBlocks();
+      toast.success('Date unblocked');
+    },
+    onError: (err) => toast.error(`Failed to remove block: ${err.message}`),
+  });
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -362,6 +387,75 @@ export default function AdminDashboard() {
                       <p className="text-sm text-muted-foreground mt-1">
                         Natural language description of unavailable dates
                       </p>
+                    </div>
+
+                    {/* Date Blocker UI */}
+                    <div className="border rounded-lg p-4 bg-muted/30">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CalendarX className="h-4 w-4 text-destructive" />
+                        <Label className="text-base font-semibold">Block Specific Dates</Label>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Blocked dates will appear greyed-out on the booking calendar and cannot be booked.
+                      </p>
+
+                      {/* Existing blocks */}
+                      {availabilityBlocks.filter(b => b.blockType === 'date').length > 0 && (
+                        <div className="mb-3 space-y-1">
+                          {availabilityBlocks.filter(b => b.blockType === 'date').map(block => (
+                            <div key={block.id} className="flex items-center justify-between bg-background rounded px-3 py-2 text-sm">
+                              <span className="font-medium">{block.blockDate}</span>
+                              {block.reason && <span className="text-muted-foreground mx-2 flex-1">{block.reason}</span>}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                                onClick={() => removeBlockMutation.mutate({ blockId: block.id })}
+                                disabled={removeBlockMutation.isPending}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Add new block */}
+                      <div className="flex gap-2">
+                        <Input
+                          type="date"
+                          value={newBlockDate}
+                          onChange={e => setNewBlockDate(e.target.value)}
+                          className="w-40"
+                          placeholder="YYYY-MM-DD"
+                        />
+                        <Input
+                          type="text"
+                          value={newBlockReason}
+                          onChange={e => setNewBlockReason(e.target.value)}
+                          placeholder="Reason (optional)"
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          disabled={!newBlockDate || addBlockMutation.isPending}
+                          onClick={() => {
+                            if (!editingHostId || !newBlockDate) return;
+                            addBlockMutation.mutate({
+                              hostListingId: editingHostId,
+                              blockType: 'date',
+                              blockDate: newBlockDate,
+                              mealType: 'both',
+                              reason: newBlockReason || undefined,
+                            });
+                          }}
+                        >
+                          Block Date
+                        </Button>
+                      </div>
                     </div>
 
                     <div>

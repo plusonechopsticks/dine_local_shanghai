@@ -19,7 +19,10 @@ import {
   getPageViewsAnalytics,
   getPageViewsByType,
   getHostAccountByListingId,
-  isHostAvailable
+  isHostAvailable,
+  getHostAvailabilityBlocks,
+  createAvailabilityBlock,
+  deleteAvailabilityBlock
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
@@ -507,6 +510,49 @@ export const appRouter = router({
         
         const blockedRanges = await getBlockedDatesForHost(listing.availabilityComments);
         return { blockedRanges };
+      }),
+
+    // Get specific date blocks for a host (from host_availability_blocks table)
+    getAvailabilityBlocks: publicProcedure
+      .input(z.object({ hostId: z.number() }))
+      .query(async ({ input }) => {
+        const blocks = await getHostAvailabilityBlocks(input.hostId);
+        return blocks.map(b => ({
+          ...b,
+          blockDate: b.blockDate
+            ? (b.blockDate instanceof Date ? b.blockDate.toISOString().split('T')[0] : String(b.blockDate).split('T')[0])
+            : null,
+        }));
+      }),
+
+    // Admin: Add a date block for a host
+    addAvailabilityBlock: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+        blockType: z.enum(["date", "weekday", "all_day"]),
+        blockDate: z.string().optional(),
+        blockWeekday: z.number().optional(),
+        mealType: z.enum(["lunch", "dinner", "both"]).default("both"),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const block = await createAvailabilityBlock({
+          hostListingId: input.hostListingId,
+          blockType: input.blockType,
+          blockDate: input.blockDate ? (new Date(input.blockDate + 'T00:00:00Z') as any) : null,
+          blockWeekday: input.blockWeekday ?? null,
+          mealType: input.mealType,
+          reason: input.reason ?? null,
+        });
+        return { success: !!block, block };
+      }),
+
+    // Admin: Remove a date block
+    removeAvailabilityBlock: publicProcedure
+      .input(z.object({ blockId: z.number() }))
+      .mutation(async ({ input }) => {
+        const success = await deleteAvailabilityBlock(input.blockId);
+        return { success };
       }),
 
     // Update host availability

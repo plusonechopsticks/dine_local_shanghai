@@ -123,7 +123,13 @@ export default function HostDetail() {
     },
   });
 
-  // Update disabled dates based on host availability
+  // Fetch specific date blocks from the database
+  const { data: availabilityBlocks } = trpc.host.getAvailabilityBlocks.useQuery(
+    { hostId: hostId || 0 },
+    { enabled: !!hostId }
+  );
+
+  // Update disabled dates based on host availability + explicit date blocks
   useEffect(() => {
     if (!host) return;
     const today = new Date();
@@ -141,7 +147,7 @@ export default function HostDetail() {
     // Check availability for today and future dates (90 days)
     for (let i = 0; i < 90; i++) {
       const date = new Date(today);
-      date.setDate(date.getDate() + i); // Start from today
+      date.setDate(date.getDate() + i);
       const dateStr = date.toISOString().split("T")[0];
       const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
       
@@ -150,8 +156,18 @@ export default function HostDetail() {
         disabled.add(dateStr);
       }
     }
+
+    // Also block any explicit date blocks from the database
+    if (availabilityBlocks) {
+      for (const block of availabilityBlocks) {
+        if (block.blockType === 'date' && block.blockDate) {
+          disabled.add(block.blockDate);
+        }
+      }
+    }
+
     setDisabledDates(disabled);
-  }, [host]);
+  }, [host, availabilityBlocks]);
 
   // Restore booking data from localStorage
   useEffect(() => {

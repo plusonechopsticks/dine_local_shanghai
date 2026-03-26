@@ -1,0 +1,42 @@
+{
+  "query": "SELECT id, hostListingId, blockType, blockDate, mealType, reason FROM host_availability_blocks WHERE hostListingId = 210001 ORDER BY blockDate;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostListingId, blockType, blockDate, mealType, reason FROM host_availability_blocks WHERE hostListingId = 210001 ORDER BY blockDate;",
+  "rows": [
+    {
+      "id": "1",
+      "hostListingId": "210001",
+      "blockType": "date",
+      "blockDate": "2026-04-03",
+      "mealType": "both",
+      "reason": "Unavailable"
+    },
+    {
+      "id": "2",
+      "hostListingId": "210001",
+      "blockType": "date",
+      "blockDate": "2026-04-04",
+      "mealType": "both",
+      "reason": "Unavailable"
+    },
+    {
+      "id": "3",
+      "hostListingId": "210001",
+      "blockType": "date",
+      "blockDate": "2026-04-05",
+      "mealType": "both",
+      "reason": "Unavailable"
+    },
+    {
+      "id": "4",
+      "hostListingId": "210001",
+      "blockType": "date",
+      "blockDate": "2026-04-06",
+      "mealType": "both",
+      "reason": "Unavailable"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostListingId\tblockType\tblockDate\tmealType\treason\n1\t210001\tdate\t2026-04-03\tboth\tUnavailable\n2\t210001\tdate\t2026-04-04\tboth\tUnavailable\n3\t210001\tdate\t2026-04-05\tboth\tUnavailable\n4\t210001\tdate\t2026-04-06\tboth\tUnavailable\n",
+  "stderr": "",
+  "execution_time_ms": 394
+}
