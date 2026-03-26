@@ -1,36 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 
 const VIDEO_URL =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/home-dining-shanghai_8956151c.mp4";
 
 export default function HomeDiningVideo() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [hasStarted, setHasStarted] = useState(true);
-
   useEffect(() => {
     document.title = "What Home Dining Looks Like in China | +1 Chopsticks";
   }, []);
-
-  const handlePlay = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
-      setIsPlaying(true);
-      setHasStarted(true);
-    }
-  };
-
-  const handleVideoClick = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
 
   return (
     <div
@@ -83,64 +60,29 @@ export default function HomeDiningVideo() {
           </p>
         </div>
 
-        {/* Video container — vertical 9:16 */}
+        {/* Video — natural portrait dimensions, max height constrained */}
         <div
-          className="relative rounded-2xl overflow-hidden"
           style={{
-            width: "min(420px, 90vw)",
+            borderRadius: 16,
+            overflow: "hidden",
             boxShadow: "0 0 0 1px rgba(212,175,55,0.15), 0 32px 80px rgba(0,0,0,0.7)",
+            maxHeight: "80vh",
+            display: "flex",
           }}
         >
           <video
-            ref={videoRef}
             src={VIDEO_URL}
-            className="w-full block"
-            style={{ aspectRatio: "9/16", objectFit: "cover", background: "#111", maxHeight: "85vh" }}
-            controls
             autoPlay
             playsInline
+            controls
             preload="auto"
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            onClick={handleVideoClick}
+            style={{
+              display: "block",
+              maxHeight: "80vh",
+              width: "auto",
+              maxWidth: "90vw",
+            }}
           />
-
-          {/* Custom play button overlay — shown before first play */}
-          {!hasStarted && (
-            <div
-              className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
-              style={{ background: "rgba(0,0,0,0.45)" }}
-              onClick={handlePlay}
-            >
-              {/* Play circle */}
-              <div
-                className="flex items-center justify-center rounded-full mb-4 transition-transform hover:scale-105"
-                style={{
-                  width: 80,
-                  height: 80,
-                  background: "rgba(212,175,55,0.9)",
-                  boxShadow: "0 0 40px rgba(212,175,55,0.4)",
-                }}
-              >
-                {/* Triangle play icon */}
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  style={{ marginLeft: 4 }}
-                >
-                  <path d="M6 4L24 14L6 24V4Z" fill="#1a1208" />
-                </svg>
-              </div>
-              <span
-                className="text-xs tracking-[0.2em] uppercase"
-                style={{ color: "rgba(245,240,232,0.7)" }}
-              >
-                Play video
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Footer note */}
