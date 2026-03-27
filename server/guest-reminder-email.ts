@@ -68,7 +68,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
           <!-- Main Content -->
           <tr>
             <td style="padding: 0 40px 30px 40px;">
-              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Hi ${data.guestName}! Your Dining Experience is Tomorrow! ${mealEmoji}</h2>
+              <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Hi ${data.guestName}! Your Dining Experience is in 2 Days! ${mealEmoji}</h2>
               <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
                 Get ready for an unforgettable evening of authentic Shanghai home cooking with ${data.hostName}!
               </p>

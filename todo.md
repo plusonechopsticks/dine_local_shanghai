@@ -1654,3 +1654,6 @@
   - Q5–Q6: Minor prose tightening
   - Q8 (NEW): "Everyone says Shanghai is great to live in but not worth it for tourists. Is that true?"
   - Old Q8 renumbered to Q9 (content unchanged)
+
+## Email Reminder Fix
+- [x] Update reminder email: change "Tomorrow" to "in 2 days" in subject lines and email body headings (emails are sent 48 hours before the experience, not 24 hours)

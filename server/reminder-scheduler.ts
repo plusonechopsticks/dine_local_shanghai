@@ -66,7 +66,7 @@ export async function scheduleGuestReminder(
         
         await sendEmail({
           to: guestEmail,
-          subject: "🎉 Your +1 Chopsticks Dining Experience is Tomorrow!",
+          subject: "🎉 Your +1 Chopsticks Dining Experience is in 2 Days!",
           html: guestHtmlContent,
         });
         
@@ -107,7 +107,7 @@ export async function scheduleGuestReminder(
                 
                 await sendEmail({
                   to: host.email,
-                  subject: "🎉 Your +1 Chopsticks Hosting Experience is Tomorrow!",
+                  subject: "🎉 Your +1 Chopsticks Hosting Experience is in 2 Days!",
                   html: hostHtmlContent,
                 });
                 
