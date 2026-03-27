@@ -536,7 +536,7 @@ export default function Home() {
                   <span className="text-3xl">💰</span>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Earn income doing what you love</h3>
-                    <p className="text-red-100">Set your own prices and keep 80% of earnings</p>
+                    <p className="text-red-100">Set your own prices and keep 70% of earnings</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 group">

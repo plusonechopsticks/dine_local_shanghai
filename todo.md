@@ -1657,3 +1657,6 @@
 
 ## Email Reminder Fix
 - [x] Update reminder email: change "Tomorrow" to "in 2 days" in subject lines and email body headings (emails are sent 48 hours before the experience, not 24 hours)
+
+## Earnings Percentage Fix
+- [x] Change host earnings from 80% to 70% in the Become a Host section (Home.tsx line 539)
