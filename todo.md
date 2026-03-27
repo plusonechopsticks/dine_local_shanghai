@@ -1644,3 +1644,13 @@
   - Restored: "A Tourist's 2026 'China App Stack': Essential Apps for Traveling in China"
   - Restored: "Your Cheat Sheet for a Chinese Home Dinner (No Experience Needed)"
   - Restored: "For first-time China travelers: Answers to The Itinerary Questions We Keep Seeing"
+
+## Blog Post Update - March 2026
+- [x] Update "first-time China travelers" blog post from PDF (March 2026 revision)
+  - Intro: "40+" → "70+" conversations
+  - Q2: Reworded "Under 10 days" and "3 weeks" paragraphs; updated 3-week route item
+  - Q3: "most impressive" → "most jaw-dropping"; minor rewording
+  - Q4: Ending changed to "most people find this out too late!"
+  - Q5–Q6: Minor prose tightening
+  - Q8 (NEW): "Everyone says Shanghai is great to live in but not worth it for tourists. Is that true?"
+  - Old Q8 renumbered to Q9 (content unchanged)
