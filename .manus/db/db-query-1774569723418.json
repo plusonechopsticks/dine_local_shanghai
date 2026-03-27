@@ -1,0 +1,19 @@
+{
+  "query": "SELECT * FROM host_interests ORDER BY createdAt DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT * FROM host_interests ORDER BY createdAt DESC;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Remy",
+      "email": "remykick0227@gmail.com",
+      "district": "Songjiang",
+      "contact": "remykick0227@gmail.com",
+      "hidden": "0",
+      "createdAt": "2026-03-26 23:56:50"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\temail\tdistrict\tcontact\thidden\tcreatedAt\n1\tRemy\tremykick0227@gmail.com\tSongjiang\tremykick0227@gmail.com\t0\t2026-03-26 23:56:50\n",
+  "stderr": "",
+  "execution_time_ms": 391
+}

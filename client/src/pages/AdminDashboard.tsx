@@ -48,6 +48,16 @@ function AdminNotesEditor({ hostId, initialNotes }: { hostId: number; initialNot
   );
 }
 
+// MySQL tinyint(1) can be returned as string "0" or "1", number 0/1, or boolean.
+// This helper normalizes all forms to a proper boolean.
+function isHidden(val: unknown): boolean {
+  if (val === null || val === undefined) return false;
+  if (typeof val === 'boolean') return val;
+  if (typeof val === 'number') return val !== 0;
+  if (typeof val === 'string') return val !== '0' && val !== '';
+  return Boolean(val);
+}
+
 export default function AdminDashboard() {
   const { data: listings = [], isLoading: listingsLoading } = trpc.host.listAll.useQuery();
   const { data: bookings = [], isLoading: bookingsLoading } = trpc.booking.listAll.useQuery();
@@ -787,7 +797,7 @@ export default function AdminDashboard() {
                   Show hidden bookings
                 </label>
               </div>
-              {bookings.filter(b => showHiddenBookings || !b.hidden).map((booking) => (
+              {bookings.filter(b => showHiddenBookings || !isHidden(b.hidden)).map((booking) => (
                 <Card key={booking.id}>
                   <CardHeader>
                     <CardTitle>Booking #{booking.id}</CardTitle>
@@ -801,16 +811,16 @@ export default function AdminDashboard() {
                       <div><span className="font-medium">Date:</span> {booking.requestedDate ? new Date(booking.requestedDate).toLocaleDateString() : 'Not specified'}</div>
                       <div><span className="font-medium">Meal:</span> {booking.mealType}</div>
                       <div><span className="font-medium">Guests:</span> {booking.numberOfGuests}</div>
-                      <div><span className="font-medium">Status:</span> {booking.status}</div>
+                      <div><span className="font-medium">Status:</span> {booking.bookingStatus}</div>
                       <div className="col-span-2"><span className="font-medium">Special Requests:</span> {booking.specialRequests || 'None'}</div>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => toggleBookingHidden.mutate({ id: booking.id, hidden: !booking.hidden })}
+                      onClick={() => toggleBookingHidden.mutate({ id: booking.id, hidden: !isHidden(booking.hidden) })}
                       disabled={toggleBookingHidden.isPending}
                     >
-                      {booking.hidden ? 'Unhide' : 'Hide'}
+                      {isHidden(booking.hidden) ? 'Unhide' : 'Hide'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -835,14 +845,14 @@ export default function AdminDashboard() {
                   Show hidden submissions
                 </label>
               </div>
-              {interestSubmissions.filter((s: any) => showHiddenInterest || !s.hidden).length === 0 ? (
+              {interestSubmissions.filter((s: any) => showHiddenInterest || !isHidden(s.hidden)).length === 0 ? (
                 <Card>
                   <CardContent className="pt-6">
                     <p className="text-center text-muted-foreground">No traveler interest submissions yet</p>
                   </CardContent>
                 </Card>
               ) : (
-                interestSubmissions.filter((s: any) => showHiddenInterest || !s.hidden).map((submission: any) => (
+                interestSubmissions.filter((s: any) => showHiddenInterest || !isHidden(s.hidden)).map((submission: any) => (
                   <Card key={submission.id}>
                     <CardHeader>
                       <CardTitle>{submission.name}</CardTitle>
@@ -864,11 +874,11 @@ export default function AdminDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleInterestHidden.mutate({ id: submission.id, hidden: !submission.hidden })}
+                        onClick={() => toggleInterestHidden.mutate({ id: submission.id, hidden: !isHidden(submission.hidden) })}
                         disabled={toggleInterestHidden.isPending}
                         className="mt-4"
                       >
-                        {submission.hidden ? 'Unhide' : 'Hide'}
+                        {isHidden(submission.hidden) ? 'Unhide' : 'Hide'}
                       </Button>
                     </CardContent>
                   </Card>
@@ -879,7 +889,7 @@ export default function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="hostinterest" className="space-y-4">
-          <h2 className="text-xl font-semibold">Host Interest ({hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !s.hidden).length})</h2>
+          <h2 className="text-xl font-semibold">Host Interest ({hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !isHidden(s.hidden)).length})</h2>
           <p className="text-sm text-muted-foreground">People who started the host registration form — captured when they click "Next" on the first screen.</p>
           {hostInterestLoading ? (
             <p>Loading...</p>
@@ -896,14 +906,14 @@ export default function AdminDashboard() {
                   Show hidden submissions
                 </label>
               </div>
-              {hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !s.hidden).length === 0 ? (
+              {hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !isHidden(s.hidden)).length === 0 ? (
                 <Card>
                   <CardContent className="pt-6">
                     <p className="text-center text-muted-foreground">No host interest submissions yet</p>
                   </CardContent>
                 </Card>
               ) : (
-                hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !s.hidden).map((submission: any) => (
+                hostInterestSubmissions.filter((s: any) => showHiddenHostInterest || !isHidden(s.hidden)).map((submission: any) => (
                   <Card key={submission.id}>
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
@@ -923,11 +933,11 @@ export default function AdminDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleHostInterestHidden.mutate({ id: submission.id, hidden: !submission.hidden })}
+                        onClick={() => toggleHostInterestHidden.mutate({ id: submission.id, hidden: !isHidden(submission.hidden) })}
                         disabled={toggleHostInterestHidden.isPending}
                         className="mt-4"
                       >
-                        {submission.hidden ? 'Unhide' : 'Hide'}
+                        {isHidden(submission.hidden) ? 'Unhide' : 'Hide'}
                       </Button>
                     </CardContent>
                   </Card>
@@ -936,7 +946,6 @@ export default function AdminDashboard() {
             </div>
           )}
         </TabsContent>
-
         <TabsContent value="payments" className="space-y-4">
           {paymentsLoading ? (
             <p>Loading...</p>
