@@ -1637,3 +1637,10 @@
 - [x] Disable today and all past dates from calendar selection
 - [x] Create unlisted video page at /what-home-dining-exp-looks-like-in-china (not linked from nav/homepage)
 - [x] Block specific dates on host calendar from admin panel (greyed-out, not bookable)
+
+## Blog Post Restoration - March 2026
+- [x] Restore 4 blog posts that disappeared from the site (database was wiped/reset)
+  - Restored: "From Goods to Gastronomy: The rise of China's tourism export boom"
+  - Restored: "A Tourist's 2026 'China App Stack': Essential Apps for Traveling in China"
+  - Restored: "Your Cheat Sheet for a Chinese Home Dinner (No Experience Needed)"
+  - Restored: "For first-time China travelers: Answers to The Itinerary Questions We Keep Seeing"
