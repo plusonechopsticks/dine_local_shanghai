@@ -1670,3 +1670,7 @@
 
 ## Danny's Testimonial Update
 - [x] Replace Danny's testimonial text with new version (previewText and fullText updated)
+
+## Host Guide PDF Page
+- [x] Upload Host Guide PDF to CDN
+- [x] Create /host-guide page with embedded PDF viewer and download button

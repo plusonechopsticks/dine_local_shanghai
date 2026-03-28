@@ -21,6 +21,7 @@ import BlogPost from "./pages/BlogPost";
 import HostShowcaseV2 from "./pages/HostShowcaseV2";
 import HomeDiningVideo from "./pages/HomeDiningVideo";
 import InfluencerPage from "./pages/InfluencerPage";
+import HostGuide from "./pages/HostGuide";
 
 import { ChatWidget } from "./components/ChatWidget";
 
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/what-home-dining-exp-looks-like-in-china" component={HomeDiningVideo} />
       <Route path="/for/:slug" component={InfluencerPage} />
+      <Route path="/host-guide" component={HostGuide} />
       <Route path="/booking-success" component={BookingSuccess} />
       <Route path="/booking-confirmation" component={BookingConfirmation} />
       <Route path="/404" component={NotFound} />
@@ -58,7 +60,7 @@ function Router() {
 function App() {
   const [location] = useLocation();
   const isHomePage = location === "/";
-  const isVideoPage = location === "/what-home-dining-exp-looks-like-in-china" || /^\/for\//.test(location);
+  const isVideoPage = location === "/what-home-dining-exp-looks-like-in-china" || /^\/for\//.test(location) || location === "/host-guide";
   const isHostDetailPage = /^\/hosts\/\d+/.test(location);
 
   return (
