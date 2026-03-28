@@ -28,7 +28,7 @@ import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
 import { blogRouter } from "./routers/blog";
-import { bookings, hostListings, hostInterests } from "../drizzle/schema";
+import { bookings, hostListings, hostInterests, influencerPages } from "../drizzle/schema";
 import { sql, eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
@@ -1322,5 +1322,89 @@ export const appRouter = router({
       }),
   }),
   blog: blogRouter,
+
+  influencer: router({
+    // Admin: create a new personalized influencer page
+    create: protectedProcedure
+      .input(z.object({
+        slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
+        name: z.string().min(1).max(255),
+        personalMessage: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        await db.insert(influencerPages).values({
+          slug: input.slug,
+          name: input.name,
+          personalMessage: input.personalMessage,
+        });
+        return { success: true };
+      }),
+
+    // Admin: list all influencer pages
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const pages = await db.select().from(influencerPages).orderBy(influencerPages.createdAt);
+        return pages;
+      }),
+
+    // Admin: update an existing influencer page
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).max(255).optional(),
+        personalMessage: z.string().min(1).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const { id, ...updates } = input;
+        await db.update(influencerPages).set(updates).where(eq(influencerPages.id, id));
+        return { success: true };
+      }),
+
+    // Admin: delete an influencer page
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        await db.delete(influencerPages).where(eq(influencerPages.id, input.id));
+        return { success: true };
+      }),
+
+    // Public: get a page by slug (for the /for/[slug] landing page)
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("DB unavailable");
+        const rows = await db.select().from(influencerPages).where(eq(influencerPages.slug, input.slug));
+        if (rows.length === 0) return null;
+        return rows[0];
+      }),
+
+    // Public: record a view (called on page load)
+    recordView: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { success: false };
+        await db.update(influencerPages)
+          .set({
+            viewCount: sql`${influencerPages.viewCount} + 1`,
+            lastViewedAt: new Date(),
+          })
+          .where(eq(influencerPages.slug, input.slug));
+        return { success: true };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;

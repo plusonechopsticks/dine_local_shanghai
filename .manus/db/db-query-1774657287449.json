@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO influencer_pages (slug, name, personalMessage, viewCount) VALUES\n('amy', 'Amy', 'I came across your Shanghai food content and loved how you capture the real, everyday side of the city — not just the tourist spots. What we''re building at +1 Chopsticks is exactly that: connecting visitors with local families who cook at home. I thought you''d appreciate seeing it from the inside.', 0),\n('sam', 'Sam', 'I watched your video on local food culture in China and it really resonated with what we''re doing at +1 Chopsticks. We connect travelers with Shanghai locals for home-cooked dinners — no restaurants, just real families and real food. I built this page specifically for you because I think your audience would genuinely love this experience.', 0);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute INSERT INTO influencer_pages (slug, name, personalMessage, viewCount) VALUES\n('amy', 'Amy', 'I came across your Shanghai food content and loved how you capture the real, everyday side of the city — not just the tourist spots. What we''re building at +1 Chopsticks is exactly that: connecting visitors with local families who cook at home. I thought you''d appreciate seeing it from the inside.', 0),\n('sam', 'Sam', 'I watched your video on local food culture in China and it really resonated with what we''re doing at +1 Chopsticks. We connect travelers with Shanghai locals for home-cooked dinners — no restaurants, just real families and real food. I built this page specifically for you because I think your audience would genuinely love this experience.', 0);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 386
+}

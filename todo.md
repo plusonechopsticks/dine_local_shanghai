@@ -1660,3 +1660,10 @@
 
 ## Earnings Percentage Fix
 - [x] Change host earnings from 80% to 70% in the Become a Host section (Home.tsx line 539)
+
+## Influencer Personalized Landing Pages
+- [x] Add influencer_pages table to drizzle schema
+- [x] Add tRPC procedures: create, list, getBySlug, recordView, update, delete
+- [x] Add admin dashboard tab for managing influencer pages
+- [x] Build public /for/[slug] page with personalized greeting, video, ask, CTAs
+- [x] Seed two sample pages: amy and sam

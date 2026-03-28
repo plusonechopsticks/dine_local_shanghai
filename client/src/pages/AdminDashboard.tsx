@@ -7,13 +7,141 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload, CalendarX } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload, CalendarX, Copy, ExternalLink, PlusCircle, Pencil, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { getProxiedImageUrl } from "@/lib/imageUtils";
 import { AnnouncementEditor } from "@/components/AnnouncementEditor";
 import { LiveChatAdmin } from "@/components/LiveChatAdmin";
 import { AdminAnalyticsTab } from "@/components/AdminAnalyticsTab";
+
+// Influencer Pages Tab
+function InfluencerPagesTab() {
+  const utils = trpc.useUtils();
+  const { data: pages = [], isLoading } = trpc.influencer.list.useQuery();
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState({ slug: "", name: "", personalMessage: "" });
+
+  const createMutation = trpc.influencer.create.useMutation({
+    onSuccess: () => { utils.influencer.list.invalidate(); setShowForm(false); setForm({ slug: "", name: "", personalMessage: "" }); toast.success("Page created!"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const updateMutation = trpc.influencer.update.useMutation({
+    onSuccess: () => { utils.influencer.list.invalidate(); setEditingId(null); toast.success("Page updated!"); },
+    onError: (e) => toast.error(e.message),
+  });
+  const deleteMutation = trpc.influencer.delete.useMutation({
+    onSuccess: () => { utils.influencer.list.invalidate(); toast.success("Page deleted."); },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const baseUrl = window.location.origin;
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Influencer Pages</CardTitle>
+            <CardDescription>Personalized /for/[slug] landing pages for influencer outreach</CardDescription>
+          </div>
+          <Button size="sm" onClick={() => { setShowForm(!showForm); setEditingId(null); }}>
+            <PlusCircle className="w-4 h-4 mr-2" /> New Page
+          </Button>
+        </CardHeader>
+        {showForm && (
+          <CardContent className="border-t pt-4 space-y-4">
+            <h3 className="font-semibold text-sm">Create New Influencer Page</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label>Slug (URL key)</Label>
+                <Input placeholder="e.g. mark-wiens" value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") }))} />
+                <p className="text-xs text-muted-foreground">{baseUrl}/for/{form.slug || "slug"}</p>
+              </div>
+              <div className="space-y-1">
+                <Label>First Name</Label>
+                <Input placeholder="e.g. Mark" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Personal Message (2-3 sentences from Steven)</Label>
+              <Textarea rows={4} placeholder="I came across your video on [X] and thought you'd love what we're building..." value={form.personalMessage} onChange={e => setForm(f => ({ ...f, personalMessage: e.target.value }))} />
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={() => createMutation.mutate(form)} disabled={createMutation.isPending || !form.slug || !form.name || !form.personalMessage}>
+                {createMutation.isPending ? "Creating..." : "Create Page"}
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      ) : pages.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No influencer pages yet. Create one above.</p>
+      ) : (
+        <div className="space-y-3">
+          {pages.map(page => (
+            <Card key={page.id}>
+              <CardContent className="pt-4">
+                {editingId === page.id ? (
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <Label>First Name</Label>
+                      <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Personal Message</Label>
+                      <Textarea rows={4} value={form.personalMessage} onChange={e => setForm(f => ({ ...f, personalMessage: e.target.value }))} />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => updateMutation.mutate({ id: page.id, name: form.name, personalMessage: form.personalMessage })} disabled={updateMutation.isPending}>
+                        {updateMutation.isPending ? "Saving..." : "Save"}
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>Cancel</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold">{page.name}</span>
+                        <Badge variant="outline" className="text-xs font-mono">/for/{page.slug}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{page.personalMessage}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span>👁 {page.viewCount} view{page.viewCount !== 1 ? "s" : ""}</span>
+                        {page.lastViewedAt && <span>Last viewed: {new Date(page.lastViewedAt).toLocaleDateString()}</span>}
+                        <span>Created: {new Date(page.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(`${baseUrl}/for/${page.slug}`); toast.success("Link copied!"); }}>
+                        <Copy className="w-3 h-3 mr-1" /> Copy Link
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => window.open(`${baseUrl}/for/${page.slug}`, "_blank")}>
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => { setEditingId(page.id); setForm({ slug: page.slug, name: page.name, personalMessage: page.personalMessage }); }}>
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => { if (confirm(`Delete page for ${page.name}?`)) deleteMutation.mutate({ id: page.id }); }}>
+                        <Trash className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Inline admin notes editor component
 function AdminNotesEditor({ hostId, initialNotes }: { hostId: number; initialNotes: string }) {
@@ -254,6 +382,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="announcement">Announcement</TabsTrigger>
           <TabsTrigger value="livechat">Live Chat</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="influencer">Influencer Pages</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -1001,6 +1130,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="analytics" className="space-y-4">
           <AdminAnalyticsTab />
+        </TabsContent>
+
+        <TabsContent value="influencer" className="space-y-4">
+          <InfluencerPagesTab />
         </TabsContent>
       </Tabs>
     </div>

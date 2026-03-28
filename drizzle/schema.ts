@@ -421,3 +421,31 @@ export const blogPostViews = mysqlTable("blog_post_views", {
 
 export type BlogPostView = typeof blogPostViews.$inferSelect;
 export type InsertBlogPostView = typeof blogPostViews.$inferInsert;
+
+/**
+ * Influencer personalized landing pages
+ * Each row is a unique /for/[slug] page with a custom greeting and view tracking
+ */
+export const influencerPages = mysqlTable("influencer_pages", {
+  id: int("id").autoincrement().primaryKey(),
+
+  // URL slug, e.g. "mark-wiens" → /for/mark-wiens
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+
+  // Influencer's first name shown in the headline
+  name: varchar("name", { length: 255 }).notNull(),
+
+  // 2-3 sentence personal message from Steven referencing their specific content
+  personalMessage: text("personalMessage").notNull(),
+
+  // View tracking
+  viewCount: int("viewCount").notNull().default(0),
+  lastViewedAt: timestamp("lastViewedAt"),
+
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type InfluencerPage = typeof influencerPages.$inferSelect;
+export type InsertInfluencerPage = typeof influencerPages.$inferInsert;
