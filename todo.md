@@ -1674,3 +1674,6 @@
 ## Host Guide PDF Page
 - [x] Upload Host Guide PDF to CDN
 - [x] Create /host-guide page with embedded PDF viewer and download button
+
+## Host Guide PDF Viewer Fix
+- [x] Replace iframe PDF viewer with image-based renderer (iOS Safari compatible — PDF converted to 3 PNG pages served from CDN)
