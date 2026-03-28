@@ -1,12 +1,13 @@
 import { useEffect } from "react";
-import { Link, useParams } from "wouter";
+import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 
 const VIDEO_URL =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/home-dining-shanghai_8956151c.mp4";
 
 export default function InfluencerPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const [location] = useLocation();
+  const slug = location.split("/for/")[1]?.split("/")[0] || "";
 
   const { data: page, isLoading } = trpc.influencer.getBySlug.useQuery(
     { slug: slug ?? "" },
