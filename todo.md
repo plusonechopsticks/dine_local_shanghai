@@ -1667,3 +1667,6 @@
 - [x] Add admin dashboard tab for managing influencer pages
 - [x] Build public /for/[slug] page with personalized greeting, video, ask, CTAs
 - [x] Seed two sample pages: amy and sam
+
+## Danny's Testimonial Update
+- [x] Replace Danny's testimonial text with new version (previewText and fullText updated)
