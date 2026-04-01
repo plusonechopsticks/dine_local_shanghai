@@ -23,7 +23,7 @@ import HomeDiningVideo from "./pages/HomeDiningVideo";
 import InfluencerPage from "./pages/InfluencerPage";
 import HostGuide from "./pages/HostGuide";
 
-import { ChatWidget } from "./components/ChatWidget";
+import { WhatsAppButton } from "./components/WhatsAppButton";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -73,7 +73,7 @@ function App() {
           {!isHomePage && !isVideoPage && !isHostDetailPage && <Navbar />}
           <Toaster />
           <Router />
-          {isHomePage && <ChatWidget />}
+          <WhatsAppButton />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

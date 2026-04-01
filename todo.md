@@ -1677,3 +1677,6 @@
 
 ## Host Guide PDF Viewer Fix
 - [x] Replace iframe PDF viewer with image-based renderer (iOS Safari compatible — PDF converted to 3 PNG pages served from CDN)
+
+## WhatsApp Floating Button
+- [x] Replace AI ChatWidget with WhatsApp floating button (+86 13426056438)
