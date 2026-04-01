@@ -315,21 +315,17 @@ export const appRouter = router({
         return { success: true, interest };
       }),
 
-    // Protected endpoint for admin to view all host interests
-    list: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") {
-        return [];
-      }
+    // Public endpoint for admin dashboard to view all host interests
+    list: publicProcedure.query(async () => {
       return getAllHostInterests();
     }),
 
     // Toggle hidden status
-    toggleHidden: protectedProcedure
+    toggleHidden: publicProcedure
       .input(z.object({ id: z.number(), hidden: z.boolean() }))
-      .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      .mutation(async ({ input }) => {
         const db = await getDb();
-        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        if (!db) throw new Error("Database connection failed");
         await db.update(hostInterests).set({ hidden: input.hidden }).where(eq(hostInterests.id, input.id));
         return { success: true };
       }),
