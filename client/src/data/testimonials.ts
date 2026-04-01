@@ -95,4 +95,24 @@ export const TESTIMONIALS = [
     ],
     cta: "Read more",
   },
+  {
+    id: "ethan-xu",
+    guestName: "Ethan Xu",
+    location: "Australia",
+    travelerType: "Friends group",
+    hostName: "Jiading Ayi (Auntie Shen)",
+    hostDate: "Mar 29, 2026",
+    experienceTitle: "Friends group dinner experience",
+    previewText:
+      "The experience was great, and exactly what we were expecting and looking for. The absolute standout was the food… flavours exactly as I remembered eating as a child in Shanghai.",
+    fullText:
+      "The experience was great, and exactly what we were expecting and looking for. The absolute standout was the food… flavours exactly as I remembered eating as a child in Shanghai.\n\nThe company and conversation was fantastic as well. It was good to talk about Shanghai as I remembered it, and as it is now. My friend got a lot out of it too; he really enjoyed the home-cooked meal after two weeks of eating street snacks and at restaurants.\n\nWe really appreciate the quick and clear communication, from you as well as Auntie Shen and her daughter. It made the process smooth and painless. Also appreciate getting picked up and dropped off at the metro station.",
+    images: [
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/ethan-xu-testimonial_05b95f78.jpeg",
+        alt: "Ethan Xu and friend dining with Jiading Ayi and her daughter",
+      },
+    ],
+    cta: "Read more",
+  },
 ];

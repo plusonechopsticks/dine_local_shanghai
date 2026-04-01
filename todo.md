@@ -1680,3 +1680,7 @@
 
 ## WhatsApp Floating Button
 - [x] Replace AI ChatWidget with WhatsApp floating button (+86 13426056438)
+
+## Ethan Xu Testimonial
+- [x] Upload Ethan's group photo to CDN
+- [x] Add Ethan Xu testimonial entry to testimonials.ts
