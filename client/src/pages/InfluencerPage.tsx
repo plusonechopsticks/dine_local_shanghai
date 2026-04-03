@@ -153,7 +153,7 @@ export default function InfluencerPage() {
             className="text-lg sm:text-xl font-light leading-relaxed mb-5"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            We'd love to host you for a free dinner on your next Shanghai visit.
+            We'd love to host you for a free dinner on your next China visit.
           </p>
           <a
             href="mailto:plusonechopsticks@gmail.com?subject=Free%20Dinner%20for%20Influencer&body=Hi%20Steven%2C%20I%27d%20love%20to%20take%20you%20up%20on%20the%20free%20dinner%20offer!"
@@ -201,7 +201,7 @@ export default function InfluencerPage() {
           style={{ color: "rgba(245,240,232,0.25)" }}
         >
           This is a private invitation shared with a select group of creators.
-          The hosts featured are part of our inaugural cohort in Shanghai.
+          The hosts featured are part of our inaugural cohort in China.
         </p>
       </main>
     </div>

@@ -1016,7 +1016,7 @@ export const appRouter = router({
         await createChatMessage({
           sessionId: session.id,
           senderType: "ai",
-          content: "Hello! I'm here to help you learn about +1 Chopsticks and answer any questions about booking authentic home dining experiences in Shanghai. How can I assist you today?",
+          content: "Hello! I'm here to help you learn about +1 Chopsticks and answer any questions about booking authentic home dining experiences in China. How can I assist you today?",
         });
         
         return { session };
@@ -1209,7 +1209,7 @@ export const appRouter = router({
           // Send test email
           await sendEmail({
             to: input.testEmail,
-            subject: "🥢 Your monthly dose of Shanghai home dining stories",
+            subject: "🥢 Your monthly dose of China home dining stories",
             html: htmlContent,
           });
           
@@ -1228,7 +1228,7 @@ export const appRouter = router({
             try {
               await sendEmail({
                 to: subscriber.email,
-                subject: "🥢 Your monthly dose of Shanghai home dining stories",
+                subject: "🥢 Your monthly dose of China home dining stories",
                 html: htmlContent,
               });
               successCount++;

@@ -158,10 +158,10 @@ export default function HostListings() {
         {/* Compact Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            Host Families in Shanghai
+            Host Families in China
           </h1>
           <p className="text-muted-foreground text-lg">
-            Experience authentic Shanghai cuisine with local families
+            Experience authentic Chinese home cuisine with local families
           </p>
         </div>
 

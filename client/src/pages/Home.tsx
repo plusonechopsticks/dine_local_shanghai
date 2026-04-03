@@ -109,12 +109,12 @@ export default function Home() {
       category: "Booking & Logistics",
       items: [
         {
-          question: "How do I book a local dining experience in Shanghai?",
+          question: "How do I book a local dining experience in China?",
           answer: "Browse our +1 Chopsticks hosts, select a profile, and submit a booking request. Your host will confirm availability for your selected date.",
         },
         {
           question: "How long does a typical home-cooked meal experience last?",
-          answer: "Most Shanghai home dining sessions last 2-3 hours, covering both the meal and local cultural conversation.",
+          answer: "Most home dining sessions last 2-3 hours, covering both the meal and local cultural conversation.",
         },
         {
           question: "What is the cost per person for a guest?",
@@ -142,8 +142,8 @@ export default function Home() {
           answer: "Yes. Our +1 Chopsticks hosts are local families and professionals who can usually cater to special dietary needs if mentioned during booking.",
         },
         {
-          question: "Are these dinners suitable for solo travelers in Shanghai?",
-          answer: "Yes! Many of our hosts are families, couples, and young professionals who enjoy hosting individuals. Most +1 Chopsticks hosts accommodate solo dining, making it a safe and authentic way for solo travelers to experience Shanghainese hospitality and home-cooked meals.",
+          question: "Are these dinners suitable for solo travelers in China?",
+          answer: "Yes! Many of our hosts are families, couples, and young professionals who enjoy hosting individuals. Most +1 Chopsticks hosts accommodate solo dining, making it a safe and authentic way for solo travelers to experience genuine Chinese hospitality and home-cooked meals.",
         },
       ],
     },
@@ -151,7 +151,7 @@ export default function Home() {
       category: "For Hosts & Partners",
       items: [
         {
-          question: "How do I apply to become a +1 Chopsticks host in Shanghai?",
+          question: "How do I apply to become a +1 Chopsticks host in China?",
           answer: "Click 'Become a Host' to start our application and verification process. We welcome locals passionate about authentic cooking.",
         },
         {
@@ -254,7 +254,7 @@ export default function Home() {
       <section id="featured-hosts" className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Meet your new friends in Shanghai - Authentic Home Dining Experiences
+            Meet your new friends in China - Authentic Home Dining Experiences
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 transition-all duration-500">
@@ -267,7 +267,7 @@ export default function Home() {
                 <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
                   <img
                     src={host.profilePhotoUrl || ""}
-                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'Shanghai'} for authentic home dining experience`}
+                    alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'China'} for authentic home dining experience`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
@@ -639,7 +639,7 @@ export default function Home() {
               <div className="relative overflow-hidden rounded-lg shadow-lg group cursor-pointer">
                 <img
                   src={IMAGES.aboutMain}
-                  alt="Steven completing the 7th continent with penguin - founder of +1 Chopsticks authentic home dining in Shanghai"
+                  alt="Steven completing the 7th continent with penguin - founder of +1 Chopsticks authentic home dining in China"
                   className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
@@ -743,7 +743,7 @@ export default function Home() {
                 <span className="text-lg font-bold text-white">+1 Chopsticks</span>
               </div>
               <p className="text-sm mb-5">
-                Connecting travelers with authentic home dining experiences in Shanghai and beyond.
+                Connecting travelers with authentic home dining experiences in China and beyond.
               </p>
               {/* Social & platform links in footer */}
               <div className="flex flex-wrap items-center gap-3 mt-1">

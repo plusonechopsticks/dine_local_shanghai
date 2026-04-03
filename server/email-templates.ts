@@ -163,7 +163,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
           <tr>
             <td style="padding: 0 40px 40px 40px; text-align: center;">
               <p style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                We're excited for you to experience authentic Shanghai home cooking!
+                We're excited for you to experience authentic Chinese home cooking!
               </p>
               <p style="margin: 0; color: #6b7280; font-size: 14px;">
                 Warm regards,<br>
@@ -176,7 +176,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
           <tr>
             <td style="background-color: #f9fafb; padding: 24px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experience
+                © 2026 +1 Chopsticks | Authentic Chinese Home Dining Experience
               </p>
             </td>
           </tr>
@@ -314,7 +314,7 @@ export function generatePaymentReminderEmail(data: PaymentReminderData): string 
                     <div style="background-color: #f0fdf4; padding: 16px; border-radius: 4px; text-align: center;">
                       <p style="margin: 0; color: #16a34a; font-size: 20px;">🏠</p>
                       <p style="margin: 8px 0 0 0; color: #166534; font-size: 14px; font-weight: 600;">Authentic Experience</p>
-                      <p style="margin: 4px 0 0 0; color: #15803d; font-size: 12px;">Real Shanghai home cooking</p>
+                      <p style="margin: 4px 0 0 0; color: #15803d; font-size: 12px;">Real Chinese home cooking</p>
                     </div>
                   </td>
                   <td width="50%" style="padding-left: 8px;">
@@ -345,7 +345,7 @@ export function generatePaymentReminderEmail(data: PaymentReminderData): string 
           <tr>
             <td style="padding: 0 40px 40px 40px; text-align: center;">
               <p style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: 600;">
-                We're excited to welcome you to an authentic Shanghai dining experience!
+                We're excited to welcome you to an authentic Chinese dining experience!
               </p>
               <p style="margin: 0; color: #6b7280; font-size: 14px;">
                 Warm regards,<br>
@@ -361,7 +361,7 @@ export function generatePaymentReminderEmail(data: PaymentReminderData): string 
                 Questions? Contact us at <a href="mailto:plusonechopsticks@gmail.com" style="color: #7c2d12; text-decoration: none;">plusonechopsticks@gmail.com</a>
               </p>
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experience
+                © 2026 +1 Chopsticks | Authentic Chinese Home Dining Experience
               </p>
             </td>
           </tr>
@@ -448,7 +448,7 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
                 Dear ${data.hostName},
               </p>
               <p style="margin: 16px 0 0 0; color: #1f2937; font-size: 16px; line-height: 1.6;">
-                Congratulations! You have a new confirmed booking. Payment has been received and the guest is excited to experience your authentic Shanghai home dining!
+                Congratulations! You have a new confirmed booking. Payment has been received and the guest is excited to experience your authentic Chinese home dining!
               </p>
             </td>
           </tr>
@@ -542,7 +542,7 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
                 <div style="background-color: #ffffff; padding: 16px; border-radius: 4px; font-family: monospace; font-size: 13px; line-height: 1.6; color: #1f2937;">
                   <p style="margin: 0;"><strong>Subject:</strong> Welcome to My Home! Details for Your ${formattedDate} ${data.mealType.charAt(0).toUpperCase() + data.mealType.slice(1)}</p>
                   <p style="margin: 16px 0 0 0;">Dear ${data.guestName},</p>
-                  <p style="margin: 12px 0 0 0;">I'm ${data.hostName}, and I'm thrilled to welcome you to my home for an authentic Shanghai ${data.mealType} experience on <strong>${formattedDate}</strong>!</p>
+                  <p style="margin: 12px 0 0 0;">I'm ${data.hostName}, and I'm thrilled to welcome you to my home for an authentic Chinese ${data.mealType} experience on <strong>${formattedDate}</strong>!</p>
                   <p style="margin: 12px 0 0 0;"><strong>Meeting Details:</strong></p>
                   <ul style="margin: 8px 0 0 0; padding-left: 20px;">
                     <li><strong>Address:</strong> [Please provide your full address here]</li>
@@ -556,7 +556,7 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
                   <ol style="margin: 8px 0 0 0; padding-left: 20px;">
                     <li>Are there any other foods or ingredients you'd like me to avoid?</li>
                     <li>Do you have any allergies I should know about?</li>
-                    <li>Is there anything specific you'd like to experience about Shanghai cuisine?</li>
+                    <li>Is there anything specific you'd like to experience about Chinese cuisine?</li>
                     <li>Would you like to participate in any cooking activities?</li>
                   </ol>
                   <p style="margin: 12px 0 0 0;">Please feel free to reach out if you have any questions. I'm looking forward to sharing my family's recipes and stories with you!</p>
@@ -614,7 +614,7 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
                 Questions? Contact us at <a href="mailto:plusonechopsticks@gmail.com" style="color: #7c2d12; text-decoration: none;">plusonechopsticks@gmail.com</a>
               </p>
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experience
+                © 2026 +1 Chopsticks | Authentic Chinese Home Dining Experience
               </p>
             </td>
           </tr>
