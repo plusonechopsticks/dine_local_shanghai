@@ -67,6 +67,9 @@ export default function HostListings() {
     trackPageView({ pageType: "browse_hosts" });
   }, [trackPageView]);
   
+  // City tab state
+  const [selectedCity, setSelectedCity] = useState<"all" | "shanghai" | "shenzhen">("all");
+
   // Filter state
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [selectedDay, setSelectedDay] = useState("any");
@@ -85,12 +88,34 @@ export default function HostListings() {
     return () => clearInterval(interval);
   }, [refetch]);
 
+  // Helper: determine city from district string
+  const getCity = (district: string | null): "shanghai" | "shenzhen" => {
+    if (!district) return "shanghai";
+    return district.toLowerCase().includes("shenzhen") ? "shenzhen" : "shanghai";
+  };
+
+  // Counts for tab labels
+  const cityCounts = useMemo(() => {
+    if (!listings) return { all: 0, shanghai: 0, shenzhen: 0 };
+    const approved = listings;
+    return {
+      all: approved.length,
+      shanghai: approved.filter(h => getCity(h.district) === "shanghai").length,
+      shenzhen: approved.filter(h => getCity(h.district) === "shenzhen").length,
+    };
+  }, [listings]);
+
   // Filter logic
   const filteredHosts = useMemo(() => {
     if (!listings) return [];
 
     // First filter, then sort by displayOrder (lower = higher priority)
     const filtered = listings.filter(host => {
+      // City tab filter
+      if (selectedCity !== "all" && getCity(host.district) !== selectedCity) {
+        return false;
+      }
+
       // District filter
       if (selectedDistrict !== "All Districts" && host.district !== selectedDistrict) {
         return false;
@@ -125,9 +150,10 @@ export default function HostListings() {
       }
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [listings, selectedDistrict, selectedDay, selectedMealType, minGuests, maxPrice]);
+  }, [listings, selectedCity, selectedDistrict, selectedDay, selectedMealType, minGuests, maxPrice]);
 
   const clearFilters = () => {
+    setSelectedCity("all");
     setSelectedDistrict("All Districts");
     setSelectedDay("any");
     setSelectedMealType("any");
@@ -156,13 +182,39 @@ export default function HostListings() {
           </div>
         )}
         {/* Compact Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             Host Families in China
           </h1>
           <p className="text-muted-foreground text-lg">
             Experience authentic Chinese home cuisine with local families
           </p>
+        </div>
+
+        {/* City Filter Tabs */}
+        <div className="flex gap-2 mb-8">
+          {([
+            { key: "all", label: "All Hosts", count: cityCounts.all },
+            { key: "shanghai", label: "Shanghai", count: cityCounts.shanghai },
+            { key: "shenzhen", label: "Shenzhen", count: cityCounts.shenzhen },
+          ] as const).map(({ key, label, count }) => (
+            <button
+              key={key}
+              onClick={() => setSelectedCity(key)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                selectedCity === key
+                  ? "bg-red-600 text-white border-red-600 shadow-sm"
+                  : "bg-background text-muted-foreground border-border hover:border-red-400 hover:text-red-600"
+              }`}
+            >
+              {label}
+              <span className={`ml-1.5 text-xs ${
+                selectedCity === key ? "text-red-100" : "text-muted-foreground"
+              }`}>
+                ({count})
+              </span>
+            </button>
+          ))}
         </div>
 
 
