@@ -408,7 +408,7 @@ export default function HostDetail() {
             <div className="flex flex-wrap gap-6" style={{ color: 'rgba(255,255,255,0.65)' }}>
               <div className="flex items-center gap-2 text-sm">
                 <MapPin size={15} style={{ color: 'rgba(212,175,55,0.7)' }} />
-                <span>{host.district ? `${host.district}, Shanghai` : 'Shanghai'}</span>
+                <span>{host.district || 'Shanghai'}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Users size={15} style={{ color: 'rgba(212,175,55,0.7)' }} />
