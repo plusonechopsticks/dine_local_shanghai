@@ -7,7 +7,7 @@ export const CHAT_KNOWLEDGE_BASE = `
 # +1 Chopsticks Platform Information
 
 ## About +1 Chopsticks (加一雙筷子)
-+1 Chopsticks is a platform connecting travelers with local families in Shanghai for authentic home dining experiences. The name means "add a pair of chopsticks" - representing the Chinese tradition of welcoming guests to family meals.
++1 Chopsticks is a platform connecting travelers with local families in China for authentic home dining experiences. The name means "add a pair of chopsticks" - representing the Chinese tradition of welcoming guests to family meals.
 
 ## How It Works
 
@@ -17,7 +17,7 @@ export const CHAT_KNOWLEDGE_BASE = `
 3. Submit a booking request with your preferred date, meal type, and number of guests
 4. Complete payment via Stripe (secure online payment)
 5. Receive booking confirmation and host contact details via email
-6. Enjoy an authentic home-cooked meal with a local Shanghai family
+6. Enjoy an authentic home-cooked meal with a local Chinese family
 
 ### For Hosts:
 1. Apply to become a host through the "Become a Host" page
@@ -55,14 +55,14 @@ export const CHAT_KNOWLEDGE_BASE = `
 ## Host Information
 
 ### What to Expect:
-- Home-cooked authentic Shanghai cuisine
+- Home-cooked authentic Chinese cuisine
 - 2-3 hour dining experience
 - Cultural exchange and conversation
 - Family-style atmosphere
 - Dietary accommodations available (vegetarian, vegan, gluten-free, etc.)
 
 ### Host Locations:
-- Hosts located across various Shanghai districts
+- Hosts located across various cities in China
 - Exact address provided after booking confirmation
 - Most hosts accessible by metro
 
@@ -94,7 +94,7 @@ export const CHAT_KNOWLEDGE_BASE = `
 - Include your booking reference number
 
 ## Current Status
-- Pilot program launching in Shanghai (2026)
+- Pilot program launching in China (2026)
 - Limited number of host families available
 - Actively recruiting new hosts
 
@@ -137,7 +137,7 @@ A: Yes! Check each host's maximum guest capacity. Most hosts accommodate 2-6 gue
 A: Full refund issued immediately. We'll help you find an alternative host if desired.
 `;
 
-export const SYSTEM_PROMPT = `You are a helpful customer support assistant for +1 Chopsticks (加一雙筷子), a platform connecting travelers with local Shanghai families for authentic home dining experiences.
+export const SYSTEM_PROMPT = `You are a helpful customer support assistant for +1 Chopsticks (加一雙筷子), a platform connecting travelers with local Chinese families for authentic home dining experiences.
 
 Your role:
 - Answer visitor questions about the platform, booking process, hosts, and policies

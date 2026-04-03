@@ -194,7 +194,7 @@ export function generateNewsletterHtml(content: NewsletterContent): string {
                   <td style="padding: 24px;">
                     <p style="margin: 0 0 16px 0; font-size: 12px; font-weight: 700; color: #818cf8; letter-spacing: 1px; text-transform: uppercase;">HELP US GROW</p>
                     <p style="margin: 0 0 12px 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">
-                      Know someone who'd love authentic home dining in Shanghai? Forward this email to them!
+                      Know someone who'd love authentic home dining in China? Forward this email to them!
                     </p>
                     <p style="margin: 0; font-size: 14px; color: #e5e7eb; line-height: 1.65;">
                       Or if you're a local who loves cooking and hosting, <a href="${baseUrl}/host-register" style="color: #818cf8; text-decoration: underline;">become a host</a>.

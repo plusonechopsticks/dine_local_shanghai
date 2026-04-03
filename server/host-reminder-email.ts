@@ -14,7 +14,7 @@ interface HostReminderData {
 }
 
 export function generateHostReminderEmail(data: HostReminderData): string {
-  // Parse the ISO date string - the date is already in Shanghai time format
+  // Parse the ISO date string - the date is already in local time format
   const dateStr = data.experienceDate.split('T')[0]; // Get YYYY-MM-DD part: "2026-03-23"
   const [year, month, day] = dateStr.split('-').map(Number);
   
@@ -149,7 +149,7 @@ export function generateHostReminderEmail(data: HostReminderData): string {
           <tr>
             <td style="padding: 20px 40px; text-align: center; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
               <p style="margin: 0; color: #9ca3af; font-size: 11px;">
-                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experiences
+                © 2026 +1 Chopsticks | Authentic Chinese Home Dining Experiences
               </p>
             </td>
           </tr>

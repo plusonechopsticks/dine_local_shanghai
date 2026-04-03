@@ -14,8 +14,8 @@ interface GuestReminderData {
 }
 
 export function generateGuestReminderEmail(data: GuestReminderData): string {
-  // Parse the ISO date string - the date is already in Shanghai time format
-  // data.experienceDate might be "2026-03-23T04:00:00.000Z" but the date part is Shanghai date
+  // Parse the ISO date string - the date is already in local time format
+  // data.experienceDate might be "2026-03-23T04:00:00.000Z" but the date part is local date
   const dateStr = data.experienceDate.split('T')[0]; // Get YYYY-MM-DD part: "2026-03-23"
   const [year, month, day] = dateStr.split('-').map(Number);
   
@@ -70,7 +70,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
             <td style="padding: 0 40px 30px 40px;">
               <h2 style="margin: 0 0 16px 0; color: #1f2937; font-size: 24px; font-weight: 600; text-align: center;">Hi ${data.guestName}! Your Dining Experience is in 2 Days! ${mealEmoji}</h2>
               <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 16px; line-height: 1.6; text-align: center;">
-                Get ready for an unforgettable evening of authentic Shanghai home cooking with ${data.hostName}!
+                Get ready for an unforgettable evening of authentic Chinese home cooking with ${data.hostName}!
               </p>
             </td>
           </tr>
@@ -135,7 +135,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
                 <li>Arrive on time to settle in and meet your host</li>
                 <li>Enjoy authentic home-cooked ${data.cuisine} dishes</li>
                 <li>Share stories and connect with your host and fellow guests</li>
-                <li>Experience genuine Shanghai hospitality</li>
+                <li>Experience genuine Chinese hospitality</li>
                 <li>Typical experience lasts 2-3 hours</li>
               </ul>
             </td>
@@ -146,7 +146,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
             <td style="padding: 0 40px 30px 40px;">
               <h3 style="margin: 0 0 20px 0; color: #1f2937; font-size: 18px; font-weight: 600; text-align: center;">📚 Your Home Dining Cheat Sheets</h3>
               <p style="margin: 0 0 24px 0; color: #6b7280; font-size: 14px; line-height: 1.6; text-align: center;">
-                First time dining in a Shanghai home? Don't worry! Here are three helpful guides to make your experience smooth and enjoyable:
+                First time dining in a local Chinese home? Don't worry! Here are three helpful guides to make your experience smooth and enjoyable:
               </p>
               
               <!-- Cheat Sheet 1: Getting There & Arriving -->
@@ -187,7 +187,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
           <tr>
             <td style="padding: 30px 40px; text-align: center;">
               <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px; font-weight: 600;">
-                We can't wait for you to experience authentic Shanghai home cooking!
+                We can't wait for you to experience authentic Chinese home cooking!
               </h3>
               <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
                 Warm regards,<br>
@@ -200,7 +200,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
           <tr>
             <td style="padding: 20px 40px; text-align: center; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
               <p style="margin: 0; color: #9ca3af; font-size: 11px;">
-                © 2026 +1 Chopsticks | Authentic Shanghai Home Dining Experiences
+                © 2026 +1 Chopsticks | Authentic Chinese Home Dining Experiences
               </p>
             </td>
           </tr>
