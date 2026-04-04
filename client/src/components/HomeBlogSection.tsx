@@ -147,7 +147,7 @@ export function HomeBlogSection() {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => setLocation("/blog")}
+            onClick={() => { setLocation("/blog"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
             className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-colors px-8"
           >
             Browse All Articles <ArrowRight className="ml-2 w-4 h-4" />

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,6 +62,11 @@ function NewsletterForm() {
 export default function Blog() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [, navigate] = useLocation();
+
+  // Scroll to top when the blog listing page mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
 
   // Fetch all published blog posts
   const { data: posts, isLoading } = trpc.blog.listPosts.useQuery({
