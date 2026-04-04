@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { trpc } from "@/lib/trpc";
+import { HomeBlogSection } from "@/components/HomeBlogSection";
 import { toast } from "sonner";
 
 // Image URLs from S3
@@ -47,7 +48,7 @@ export default function Home() {
   const { data: allHosts = [] } = trpc.host.listApproved.useQuery();
 
   // Filter featured hosts by current group
-  const getHostsByGroup = (groupIndex) => {
+  const getHostsByGroup = (groupIndex: number) => {
     const groupNames = FEATURED_HOST_GROUPS[groupIndex];
     return allHosts.filter((host) =>
       groupNames.some((name) => host.hostName?.toLowerCase().includes(name.toLowerCase()))
@@ -517,6 +518,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Section 5.5: Useful Food and Travel Advice */}
+      <HomeBlogSection />
 
       {/* Section 6: Become a Host */}
       <section id="become-host" className="py-16 bg-gradient-to-r from-red-600 to-red-700">
