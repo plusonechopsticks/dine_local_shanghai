@@ -157,6 +157,9 @@ export const bookings = mysqlTable("bookings", {
   // Reminders
   reminderEmailSent: boolean("reminderEmailSent").default(false), // Track if 48-hour reminder was sent
   
+  // Event reference (null for regular host bookings)
+  eventId: int("eventId").references(() => events.id),
+
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -449,3 +452,44 @@ export const influencerPages = mysqlTable("influencer_pages", {
 
 export type InfluencerPage = typeof influencerPages.$inferSelect;
 export type InsertInfluencerPage = typeof influencerPages.$inferInsert;
+
+/**
+ * Seasonal dining events - curated group meals with fixed dates, limited seats, and optional pricing overrides
+ * Events are attached to a host and appear on the homepage and host detail pages
+ */
+export const events = mysqlTable("events", {
+  id: int("id").autoincrement().primaryKey(),
+
+  // Link to host
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
+
+  // Event details
+  title: varchar("title", { length: 500 }).notNull(),
+  theme: varchar("theme", { length: 255 }),
+  description: text("description").notNull(),
+  featuredImageUrl: varchar("featuredImageUrl", { length: 500 }),
+
+  // Scheduling
+  eventDate: date("eventDate").notNull(),
+  mealType: mysqlEnum("mealType", ["lunch", "dinner"]).notNull(),
+
+  // Capacity
+  totalSeats: int("totalSeats").notNull().default(6),
+  seatsRemaining: int("seatsRemaining").notNull().default(6),
+
+  // Pricing
+  pricePerPerson: int("pricePerPerson").notNull(),
+  originalPrice: int("originalPrice"),
+  discountLabel: varchar("discountLabel", { length: 100 }),
+
+  // Status
+  isPublished: boolean("isPublished").default(true).notNull(),
+  isFeatured: boolean("isFeatured").default(false).notNull(),
+
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = typeof events.$inferInsert;

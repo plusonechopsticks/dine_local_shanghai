@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { HostEventSection } from "@/components/HostEventSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
 import { trpc } from "@/lib/trpc";
@@ -890,6 +891,10 @@ export default function HostDetail() {
                 )}
               </div>
             </div>
+
+            {/* Events Section — shown below booking widget for hosts with events */}
+            {hostId && <HostEventSection hostListingId={hostId} />}
+
           </div>
         </div>
       </main>

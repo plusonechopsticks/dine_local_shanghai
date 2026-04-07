@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/accordion";
 import { trpc } from "@/lib/trpc";
 import { HomeBlogSection } from "@/components/HomeBlogSection";
+import { HomeEventSection } from "@/components/HomeEventSection";
 import { toast } from "sonner";
 
 // Image URLs from S3
@@ -322,7 +323,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 2.5: Guest Stories */}
+      {/* Section 2.5: Seasonal Events */}
+      <HomeEventSection />
+
+      {/* Section 2.6: Guest Stories */}
       <GuestStories testimonials={TESTIMONIALS} />
 
       {/* Section 3: Brand Identity & Story */}

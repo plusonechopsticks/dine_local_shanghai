@@ -28,8 +28,8 @@ import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
 import { blogRouter } from "./routers/blog";
-import { bookings, hostListings, hostInterests, influencerPages } from "../drizzle/schema";
-import { sql, eq } from "drizzle-orm";
+import { bookings, hostListings, hostInterests, influencerPages, events } from "../drizzle/schema";
+import { sql, eq, and } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendEmail } from "./email";
@@ -1318,6 +1318,181 @@ export const appRouter = router({
       }),
   }),
   blog: blogRouter,
+
+  event: router({
+    // List all published events (optionally featured only, optionally filtered by host)
+    list: publicProcedure
+      .input(z.object({
+        featuredOnly: z.boolean().optional(),
+        hostListingId: z.number().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        const whereClause = input?.hostListingId
+          ? and(eq(events.isPublished, true), eq(events.hostListingId, input.hostListingId))
+          : eq(events.isPublished, true);
+        
+        const results = await db.select({
+          event: events,
+          hostName: hostListings.hostName,
+          hostDistrict: hostListings.district,
+          hostProfileImage: hostListings.profilePhotoUrl,
+          hostId: hostListings.id,
+        })
+        .from(events)
+        .leftJoin(hostListings, eq(events.hostListingId, hostListings.id))
+        .where(whereClause)
+        .orderBy(events.eventDate);
+        
+        // Filter featured if requested
+        const filtered = input?.featuredOnly 
+          ? results.filter(r => r.event.isFeatured)
+          : results;
+        
+        return filtered.map(r => ({
+          ...r.event,
+          hostName: r.hostName,
+          hostDistrict: r.hostDistrict,
+          hostProfileImage: r.hostProfileImage,
+          hostId: r.hostId,
+        }));
+      }),
+
+    // Get single event by ID
+    get: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        const results = await db.select({
+          event: events,
+          hostName: hostListings.hostName,
+          hostDistrict: hostListings.district,
+          hostProfileImage: hostListings.profilePhotoUrl,
+          hostId: hostListings.id,
+          hostPricePerPerson: hostListings.pricePerPerson,
+        })
+        .from(events)
+        .leftJoin(hostListings, eq(events.hostListingId, hostListings.id))
+        .where(eq(events.id, input.id))
+        .limit(1);
+        
+        if (!results[0]) return null;
+        const r = results[0];
+        return {
+          ...r.event,
+          hostName: r.hostName,
+          hostDistrict: r.hostDistrict,
+          hostProfileImage: r.hostProfileImage,
+          hostId: r.hostId,
+          hostPricePerPerson: r.hostPricePerPerson,
+        };
+      }),
+
+    // Book a seat at an event
+    bookSeat: publicProcedure
+      .input(z.object({
+        eventId: z.number(),
+        guestName: z.string().min(1),
+        guestEmail: z.string().email(),
+        guestPhone: z.string().optional(),
+        numberOfGuests: z.number().min(1),
+        specialRequests: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        
+        // Get event details
+        const eventResults = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
+        const event = eventResults[0];
+        if (!event) throw new Error("Event not found");
+        if (event.seatsRemaining < input.numberOfGuests) {
+          throw new Error(`Only ${event.seatsRemaining} seat(s) remaining`);
+        }
+        
+        // Get host details
+        const host = await getHostListingById(event.hostListingId);
+        if (!host) throw new Error("Host not found");
+        
+        // Convert event date to string
+        const eventDateStr = typeof event.eventDate === 'string' 
+          ? event.eventDate 
+          : new Date(event.eventDate).toISOString().split('T')[0];
+        
+        // Create booking linked to event
+        await db.insert(bookings).values({
+          hostListingId: event.hostListingId,
+          eventId: event.id,
+          guestName: input.guestName,
+          guestEmail: input.guestEmail,
+          guestPhone: input.guestPhone || null,
+          requestedDate: eventDateStr as any,
+          mealType: event.mealType,
+          numberOfGuests: input.numberOfGuests,
+          specialRequests: input.specialRequests || null,
+          bookingStatus: "pending",
+        });
+        
+        // Get booking ID
+        const lastIdResult: any = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+        let bookingId: number | undefined;
+        if (Array.isArray(lastIdResult) && lastIdResult.length >= 1) {
+          const rows = lastIdResult[0] as any[];
+          if (Array.isArray(rows) && rows.length > 0) {
+            bookingId = rows[0].id || rows[0]['LAST_INSERT_ID()'];
+          }
+        }
+        if (!bookingId || isNaN(Number(bookingId))) {
+          throw new Error('Failed to create booking');
+        }
+        
+        // Decrement seats remaining
+        await db.update(events)
+          .set({ seatsRemaining: event.seatsRemaining - input.numberOfGuests })
+          .where(eq(events.id, input.eventId));
+        
+        // Calculate total amount
+        const totalAmount = event.pricePerPerson * input.numberOfGuests;
+        
+        // Send notification
+        await notifyOwner({
+          title: `New Event Booking: ${event.title}`,
+          content: `Guest: ${input.guestName}\nEmail: ${input.guestEmail}\nEvent: ${event.title}\nDate: ${eventDateStr}\nGuests: ${input.numberOfGuests}\nTotal: \u00a5${totalAmount}`,
+        });
+        
+        // Generate payment link
+        const baseUrl = process.env.VITE_WEBSITE_URL || 'https://plus1chopsticks.manus.space';
+        const paymentLink = `${baseUrl}/booking-confirmation?bookingId=${bookingId}&guestName=${encodeURIComponent(input.guestName)}&guestEmail=${encodeURIComponent(input.guestEmail)}&requestedDate=${encodeURIComponent(eventDateStr)}&mealType=${event.mealType}&numberOfGuests=${input.numberOfGuests}&hostName=${encodeURIComponent(host.hostName)}&amount=${totalAmount}&dietaryRestrictions=${encodeURIComponent(input.specialRequests || "")}&hostListingId=${host.id}&eventId=${event.id}`;
+        
+        // Send payment reminder email
+        try {
+          const emailHtml = generatePaymentReminderEmail({
+            guestName: input.guestName,
+            bookingId: Number(bookingId),
+            hostName: host.hostName,
+            requestedDate: eventDateStr,
+            mealType: event.mealType,
+            numberOfGuests: input.numberOfGuests,
+            totalAmount: totalAmount.toFixed(2),
+            paymentLink,
+          });
+          
+          await sendEmail({
+            to: input.guestEmail,
+            subject: `Complete Your Event Booking - ${event.title} - +1 Chopsticks`,
+            html: emailHtml,
+          });
+        } catch (error) {
+          console.error('[Event Booking] Failed to send email:', error);
+        }
+        
+        return { success: true, id: bookingId, totalAmount };
+      }),
+  }),
 
   influencer: router({
     // Admin: create a new personalized influencer page

@@ -1684,3 +1684,26 @@
 ## Ethan Xu Testimonial
 - [x] Upload Ethan's group photo to CDN
 - [x] Add Ethan Xu testimonial entry to testimonials.ts
+
+
+## Seasonal Events Feature
+- [ ] Create events table in database schema
+- [ ] Create event tRPC procedures (listEvents, getEvent, bookEventSeat)
+- [ ] Integrate event bookings into existing centralized booking table
+- [ ] Build homepage Seasonal Events section below Featured Hosts
+- [ ] Build Event Detail page with seat counter and booking flow
+- [ ] Seed 谷雨 Grain Rain events (Apr 18 + Apr 19) for Jiading Ayi
+- [ ] Seed 4 influencer bookings for Apr 19 event
+- [ ] Trigger automated emails after event booking payment
+
+## Seasonal Events Feature - Completed ✅
+- [x] Create events table in database schema
+- [x] Create event tRPC procedures (listEvents, getEvent, bookEventSeat)
+- [x] Integrate event bookings into existing centralized booking table
+- [x] Build homepage Seasonal Events section below Featured Hosts
+- [x] Build Event Detail page with seat counter and booking flow
+- [x] Seed 谷雨 Grain Rain events (Apr 18 + Apr 19) for Jiading Ayi
+- [x] Seed 4 influencer bookings for Apr 19 event (Sophie, Sophie's Friend, Garrett, Garrett's Friend)
+- [x] Fix date display on event detail page (YYYY-MM-DD parsed as local date, not UTC)
+- [x] Add HostEventSection component to host detail pages (shows events below booking widget)
+- [x] Add hostListingId filter to event.list procedure for per-host event filtering

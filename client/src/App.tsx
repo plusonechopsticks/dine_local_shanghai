@@ -22,6 +22,7 @@ import HostShowcaseV2 from "./pages/HostShowcaseV2";
 import HomeDiningVideo from "./pages/HomeDiningVideo";
 import InfluencerPage from "./pages/InfluencerPage";
 import HostGuide from "./pages/HostGuide";
+import EventDetail from "./pages/EventDetail";
 
 import { WhatsAppButton } from "./components/WhatsAppButton";
 
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/what-home-dining-exp-looks-like-in-china" component={HomeDiningVideo} />
       <Route path="/for/:slug" component={InfluencerPage} />
+      <Route path="/events/:id" component={EventDetail} />
       <Route path="/host-guide" component={HostGuide} />
       <Route path="/booking-success" component={BookingSuccess} />
       <Route path="/booking-confirmation" component={BookingConfirmation} />
@@ -61,6 +63,7 @@ function App() {
   const [location] = useLocation();
   const isHomePage = location === "/";
   const isVideoPage = location === "/what-home-dining-exp-looks-like-in-china" || /^\/for\//.test(location) || location === "/host-guide";
+  const isEventPage = /^\/events\/\d+/.test(location);
   const isHostDetailPage = /^\/hosts\/\d+/.test(location);
 
   return (
@@ -70,7 +73,7 @@ function App() {
         // switchable
       >
         <TooltipProvider>
-          {!isHomePage && !isVideoPage && !isHostDetailPage && <Navbar />}
+          {!isHomePage && !isVideoPage && !isHostDetailPage && !isEventPage && <Navbar />}
           <Toaster />
           <Router />
           <WhatsAppButton />
