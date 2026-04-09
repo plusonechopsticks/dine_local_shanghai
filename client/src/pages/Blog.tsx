@@ -160,11 +160,11 @@ export default function Blog() {
                   onClick={() => navigate(`/blog/${post.slug}`)}
                 >
                   {post.featuredImageUrl && (
-                    <div className="h-64 overflow-hidden bg-muted">
+                    <div className="h-48 overflow-hidden bg-muted">
                       <img
                         src={post.featuredImageUrl}
                         alt={post.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                        className="w-full h-full object-cover object-center hover:scale-105 transition-transform"
                       />
                     </div>
                   )}
