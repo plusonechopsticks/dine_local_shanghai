@@ -1707,3 +1707,8 @@
 - [x] Fix date display on event detail page (YYYY-MM-DD parsed as local date, not UTC)
 - [x] Add HostEventSection component to host detail pages (shows events below booking widget)
 - [x] Add hostListingId filter to event.list procedure for per-host event filtering
+
+## Seasonal Events Section Redesign
+- [x] Redesign HomeEventSection cards to match mockup (dark card, green illustrated header, date badge, location pill, seat progress bar)
+- [x] Replace "Curated Dining Experiences" section on homepage with color-block "Seasonal Events" section
+- [x] Remove small "Seasonal Events" tag label — use direct heading instead
