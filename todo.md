@@ -1712,3 +1712,6 @@
 - [x] Redesign HomeEventSection cards to match mockup (dark card, green illustrated header, date badge, location pill, seat progress bar)
 - [x] Replace "Curated Dining Experiences" section on homepage with color-block "Seasonal Events" section
 - [x] Remove small "Seasonal Events" tag label — use direct heading instead
+
+## Blog Post Thumbnail Update
+- [x] Upload new thumbnail for "Eating in China with Food Sensitivities" blog post and update DB record
