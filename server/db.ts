@@ -741,6 +741,28 @@ export async function isHostAvailable(
       return false;
     }
 
+    // Check for confirmed bookings on this date/meal (double-booking prevention)
+    const confirmedBookings = await db
+      .select()
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.hostListingId, hostListingId),
+          eq(bookings.requestedDate, requestedDate as any),
+          eq(bookings.mealType, mealType),
+          // Block if there's any confirmed or pending booking (pending can become confirmed)
+          // Use sql`` to do an IN check
+        )
+      );
+    // Filter to only active (non-cancelled/rejected) bookings
+    const activeBookings = confirmedBookings.filter(
+      (b) => b.bookingStatus === "confirmed" || b.bookingStatus === "pending"
+    );
+    if (activeBookings.length > 0) {
+      console.log(`[Availability] Slot blocked by existing booking for host ${hostListingId} on ${requestedDate} ${mealType}`);
+      return false;
+    }
+
     return true; // Host is available
   } catch (error) {
     console.error("[Database] Failed to check availability:", error);
@@ -787,6 +809,40 @@ export async function getHostAvailableSlots(
     return slots;
   } catch (error) {
     console.error("[Database] Failed to get available slots:", error);
+    return [];
+  }
+}
+
+/**
+ * Get all booked (confirmed or pending) date+meal slots for a host listing.
+ * Used by the frontend to disable already-taken slots in the booking form.
+ */
+export async function getBookedSlots(
+  hostListingId: number
+): Promise<{ date: string; mealType: "lunch" | "dinner" }[]> {
+  const db = await getDb();
+  if (!db) return [];
+  try {
+    const rows = await db
+      .select({
+        requestedDate: bookings.requestedDate,
+        mealType: bookings.mealType,
+        bookingStatus: bookings.bookingStatus,
+      })
+      .from(bookings)
+      .where(eq(bookings.hostListingId, hostListingId));
+
+    // Only return active (non-cancelled, non-rejected) bookings
+    return rows
+      .filter((r) => r.bookingStatus === "confirmed" || r.bookingStatus === "pending")
+      .map((r) => ({
+        date: typeof r.requestedDate === "string"
+          ? r.requestedDate
+          : (r.requestedDate as Date).toISOString().split("T")[0],
+        mealType: r.mealType as "lunch" | "dinner",
+      }));
+  } catch (error) {
+    console.error("[Database] Failed to get booked slots:", error);
     return [];
   }
 }

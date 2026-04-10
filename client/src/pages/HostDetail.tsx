@@ -130,7 +130,18 @@ export default function HostDetail() {
     { enabled: !!hostId }
   );
 
-  // Update disabled dates based on host availability + explicit date blocks
+  // Fetch already-booked slots (confirmed or pending bookings) to prevent double-booking
+  const { data: bookedSlots } = trpc.booking.getBlockedSlots.useQuery(
+    { hostListingId: hostId || 0 },
+    { enabled: !!hostId }
+  );
+
+  // Build a lookup set of booked slot keys: "YYYY-MM-DD:mealType"
+  const bookedSlotKeys = new Set(
+    (bookedSlots || []).map((s: { date: string; mealType: string }) => `${s.date}:${s.mealType}`)
+  );
+
+  // Update disabled dates based on host availability + explicit date blocks + existing bookings
   useEffect(() => {
     if (!host) return;
     const today = new Date();
@@ -167,8 +178,25 @@ export default function HostDetail() {
       }
     }
 
+    // Block dates where ALL available meal slots are already booked
+    if (bookedSlots && host.availability) {
+      const bookedByDate: Record<string, Set<string>> = {};
+      for (const slot of bookedSlots) {
+        if (!bookedByDate[slot.date]) bookedByDate[slot.date] = new Set();
+        bookedByDate[slot.date].add(slot.mealType);
+      }
+      for (const [date, bookedMeals] of Object.entries(bookedByDate)) {
+        const d = new Date(date + 'T00:00:00');
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        const availableMeals: string[] = (host.availability as any)[dayName] || [];
+        if (availableMeals.length > 0 && availableMeals.every(m => bookedMeals.has(m))) {
+          disabled.add(date);
+        }
+      }
+    }
+
     setDisabledDates(disabled);
-  }, [host, availabilityBlocks]);
+  }, [host, availabilityBlocks, bookedSlots]);
 
   // Restore booking data from localStorage
   useEffect(() => {
@@ -777,11 +805,15 @@ export default function HostDetail() {
                                 const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                                 const mealTypes = sortedAvailability[dayName] || [];
                                 return mealTypes.length > 0 ? (
-                                  mealTypes.map((meal) => (
-                                    <SelectItem key={meal} value={meal}>
-                                      {meal.charAt(0).toUpperCase() + meal.slice(1)}
-                                    </SelectItem>
-                                  ))
+                                  mealTypes.map((meal) => {
+                                    const slotKey = `${bookingData.requestedDate}:${meal}`;
+                                    const isBooked = bookedSlotKeys.has(slotKey);
+                                    return (
+                                      <SelectItem key={meal} value={meal} disabled={isBooked}>
+                                        {meal.charAt(0).toUpperCase() + meal.slice(1)}{isBooked ? ' — Fully Booked' : ''}
+                                      </SelectItem>
+                                    );
+                                  })
                                 ) : (
                                   <div className="p-2 text-sm text-muted-foreground">No meals</div>
                                 );
@@ -1007,9 +1039,15 @@ export default function HostDetail() {
                               const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                               const mealTypes = sortedAvailability[dayName] || [];
                               return mealTypes.length > 0 ? (
-                                mealTypes.map((meal) => (
-                                  <SelectItem key={meal} value={meal}>{meal.charAt(0).toUpperCase() + meal.slice(1)}</SelectItem>
-                                ))
+                                mealTypes.map((meal) => {
+                                  const slotKey = `${bookingData.requestedDate}:${meal}`;
+                                  const isBooked = bookedSlotKeys.has(slotKey);
+                                  return (
+                                    <SelectItem key={meal} value={meal} disabled={isBooked}>
+                                      {meal.charAt(0).toUpperCase() + meal.slice(1)}{isBooked ? ' — Fully Booked' : ''}
+                                    </SelectItem>
+                                  );
+                                })
                               ) : (<div className="p-2 text-sm text-muted-foreground">No meals</div>);
                             })()
                           ) : (<div className="p-2 text-sm text-muted-foreground">Select date first</div>)}

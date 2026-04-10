@@ -22,7 +22,8 @@ import {
   isHostAvailable,
   getHostAvailabilityBlocks,
   createAvailabilityBlock,
-  deleteAvailabilityBlock
+  deleteAvailabilityBlock,
+  getBookedSlots
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
@@ -179,6 +180,11 @@ export const appRouter = router({
           .where(eq(bookings.id, input.id));
         
         return { success: true };
+      }),
+    getBlockedSlots: publicProcedure
+      .input(z.object({ hostListingId: z.number() }))
+      .query(async ({ input }) => {
+        return await getBookedSlots(input.hostListingId);
       }),
   }),
   messaging: router({

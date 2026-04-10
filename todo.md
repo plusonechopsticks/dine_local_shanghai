@@ -1715,3 +1715,11 @@
 
 ## Blog Post Thumbnail Update
 - [x] Upload new thumbnail for "Eating in China with Food Sensitivities" blog post and update DB record
+
+## Double-Booking Prevention Fix
+- [x] Add conflict check in isHostAvailable: rejects if confirmed/pending booking exists for same host + date + mealType
+- [x] Add getBookedSlots helper in db.ts
+- [x] Expose booking.getBlockedSlots procedure to return unavailable date/mealType combos per host
+- [x] Update HostDetail booking form to disable/grey out already-booked date+meal combinations
+- [x] Block calendar dates where ALL available meal slots are already booked
+- [x] Write vitest for conflict-check logic (10 tests passing)
