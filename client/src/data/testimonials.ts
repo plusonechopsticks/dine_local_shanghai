@@ -96,6 +96,46 @@ export const TESTIMONIALS = [
     cta: "Read more",
   },
   {
+    id: "dustin",
+    guestName: "Dustin",
+    location: "Canada",
+    travelerType: "Solo traveler · Realtor",
+    hostName: "Grace Tong",
+    hostDate: "Apr 3, 2026",
+    experienceTitle: "Solo traveler dinner with Grace",
+    previewText:
+      "Grace was nice. Very good English. Felt like I was visiting old friends from San Francisco. As a solo traveller was refreshing to have some companionship over dinner.",
+    fullText:
+      "Grace was nice. Very good English. Felt like I was visiting old friends from San Francisco. As a solo traveller was refreshing to have some companionship over dinner.",
+    images: [
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/dustin-grace_ef883a93.jpg",
+        alt: "Dustin with Grace after dinner in Shanghai",
+      },
+    ],
+    cta: "Read more",
+  },
+  {
+    id: "claire",
+    guestName: "Claire (@lost_with_claire)",
+    location: "Australia",
+    travelerType: "Solo traveler · Teacher & Influencer",
+    hostName: "Grace Tong",
+    hostDate: "Apr 4, 2026",
+    experienceTitle: "Solo traveler lunch with Grace",
+    previewText:
+      "Grace was very friendly and welcoming and cooked delicious food that was very different to the Chinese food that I had previously tried in restaurants and from street food vendors.",
+    fullText:
+      "Grace was very friendly and welcoming and cooked delicious food that was very different to the Chinese food that I had previously tried in restaurants and from street food vendors.\n\nI get to learn more about Shanghai from someone who lives there. I can recommend this experience to anyone who visits China!",
+    images: [
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/claire-grace_f64a8c0b.jpg",
+        alt: "Claire with Grace after their dining experience in Shanghai",
+      },
+    ],
+    cta: "Read more",
+  },
+  {
     id: "ethan-xu",
     guestName: "Ethan Xu",
     location: "Australia",

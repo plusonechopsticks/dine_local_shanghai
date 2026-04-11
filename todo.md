@@ -1723,3 +1723,9 @@
 - [x] Update HostDetail booking form to disable/grey out already-booked date+meal combinations
 - [x] Block calendar dates where ALL available meal slots are already booked
 - [x] Write vitest for conflict-check logic (10 tests passing)
+
+## Guest Testimonials - Dustin & Claire
+- [x] Upload Dustin photo (Apr 3, with Grace) to CDN
+- [x] Upload Claire photo (Apr 4, with Grace) to CDN
+- [x] Add Dustin testimonial to GuestStories carousel (Canadian realtor, solo traveler)
+- [x] Add Claire testimonial to GuestStories carousel (Australian teacher & influencer, @lost_with_claire)
