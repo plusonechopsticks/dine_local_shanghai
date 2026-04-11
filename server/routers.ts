@@ -864,7 +864,23 @@ export const appRouter = router({
         const success = await updateHostListing(id, updateData);
         return { success };
       }),
-
+    // Public: Get a random approved host that has an intro video
+    getRandomWithVideo: publicProcedure
+      .query(async () => {
+        const listings = await getAllHostListings();
+        const withVideo = listings.filter(
+          (l: any) => l.status === 'approved' && l.introVideoUrl && l.introVideoUrl.trim() !== ''
+        );
+        if (withVideo.length === 0) return null;
+        const random = withVideo[Math.floor(Math.random() * withVideo.length)];
+        return {
+          id: random.id,
+          hostName: random.hostName,
+          cuisineStyle: random.cuisineStyle,
+          district: random.district,
+          profilePhotoUrl: random.profilePhotoUrl || null,
+        };
+      }),
   }),
   
   payment: router({
@@ -923,17 +939,6 @@ export const appRouter = router({
           console.error("[Payment] Error creating checkout session:", error);
           throw new Error(error.message || "Failed to create payment session");
         }
-      }),
-    // Public: Get a random approved host that has an intro video
-    getRandomWithVideo: publicProcedure
-      .query(async () => {
-        const listings = await getAllHostListings();
-        const withVideo = listings.filter(
-          (l: any) => l.status === 'approved' && l.introVideoUrl && l.introVideoUrl.trim() !== ''
-        );
-        if (withVideo.length === 0) return null;
-        const random = withVideo[Math.floor(Math.random() * withVideo.length)];
-        return { id: random.id, hostName: random.hostName };
       }),
   }),
   

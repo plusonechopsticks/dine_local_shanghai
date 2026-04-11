@@ -14,6 +14,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import { HomeBlogSection } from "@/components/HomeBlogSection";
 import { HomeEventSection } from "@/components/HomeEventSection";
+import { SurpriseMeOverlay } from "@/components/SurpriseMeOverlay";
 import { toast } from "sonner";
 
 // Image URLs from S3
@@ -72,10 +73,11 @@ export default function Home() {
   ).slice(0, 6);
 
   const { data: randomHostData } = trpc.host.getRandomWithVideo.useQuery();
+  const [showSurpriseOverlay, setShowSurpriseOverlay] = useState(false);
 
   const handleSurpriseMe = () => {
     if (randomHostData) {
-      setLocation(`/hosts/${randomHostData.id}`);
+      setShowSurpriseOverlay(true);
     } else {
       toast.info("Host videos coming soon!");
     }
@@ -205,6 +207,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Surprise Me Overlay */}
+      {showSurpriseOverlay && randomHostData && (
+        <SurpriseMeOverlay
+          host={randomHostData}
+          onClose={() => setShowSurpriseOverlay(false)}
+        />
+      )}
       {/* Header & Navigation */}
       <HomeHeader />
 

@@ -1741,3 +1741,9 @@
 - [x] Add "✨ Surprise me" button to homepage hero section beside "Explore Local Hosts"
 - [x] Button navigates directly to the random host's detail page (which autoplays their video)
 - [x] Fallback toast shown if no hosts with videos exist
+
+## Surprise Me - Animated Overlay (Step 2)
+- [x] Build SurpriseMeOverlay component with animated host reveal
+- [x] Add getRandomWithVideo to host router (was in wrong payment router - fixed)
+- [x] Wire overlay into homepage Surprise Me button
+- [x] Overlay shows: YOU'RE GOING TO MEET, host photo, name, cuisine, district, Meet [Name] CTA, Maybe another time dismiss
