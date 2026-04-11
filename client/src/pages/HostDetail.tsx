@@ -27,6 +27,8 @@ import {
   Play,
   Pause,
   X,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,7 +74,8 @@ export default function HostDetail() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [expandedBio, setExpandedBio] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showMobileBooking, setShowMobileBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -341,6 +344,7 @@ export default function HostDetail() {
                 muted
                 loop
                 playsInline
+                autoPlay
                 aria-hidden="true"
                 ref={(el) => {
                   // Keep bg video in sync with main video
@@ -355,6 +359,8 @@ export default function HostDetail() {
                 src={host.introVideoUrl}
                 loop
                 playsInline
+                autoPlay
+                muted
                 className="relative z-10 w-full h-full object-contain"
                 onPlay={() => setIsVideoPlaying(true)}
                 onPause={() => setIsVideoPlaying(false)}
@@ -379,6 +385,23 @@ export default function HostDetail() {
                     <Play size={52} className="text-white fill-white ml-1" />
                   </div>
                 )}
+              </button>
+              {/* Mute/unmute button — bottom right, always visible when video is playing */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (videoRef.current) {
+                    const newMuted = !videoRef.current.muted;
+                    videoRef.current.muted = newMuted;
+                    setIsVideoMuted(newMuted);
+                  }
+                }}
+                className="absolute bottom-6 right-6 z-30 bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-black/70 transition"
+                title={isVideoMuted ? 'Unmute' : 'Mute'}
+              >
+                {isVideoMuted
+                  ? <VolumeX size={20} className="text-white" />
+                  : <Volume2 size={20} className="text-white" />}
               </button>
             </div>
           ) : images.length > 0 ? (

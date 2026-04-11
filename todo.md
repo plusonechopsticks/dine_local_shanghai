@@ -1729,3 +1729,9 @@
 - [x] Upload Claire photo (Apr 4, with Grace) to CDN
 - [x] Add Dustin testimonial to GuestStories carousel (Canadian realtor, solo traveler)
 - [x] Add Claire testimonial to GuestStories carousel (Australian teacher & influencer, @lost_with_claire)
+
+## Host Video Autoplay
+- [x] Add autoPlay + muted to main video element on HostDetail page
+- [x] Add autoPlay to background blur video element
+- [x] Add mute/unmute toggle button (bottom right, VolumeX/Volume2 icon)
+- [x] Set isVideoPlaying initial state to true so UI reflects autoplay state
