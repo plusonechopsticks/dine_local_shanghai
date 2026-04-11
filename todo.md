@@ -1735,3 +1735,9 @@
 - [x] Add autoPlay to background blur video element
 - [x] Add mute/unmute toggle button (bottom right, VolumeX/Volume2 icon)
 - [x] Set isVideoPlaying initial state to true so UI reflects autoplay state
+
+## Surprise Me Button
+- [x] Add host.getRandomWithVideo tRPC procedure (returns random approved host with introVideoUrl)
+- [x] Add "✨ Surprise me" button to homepage hero section beside "Explore Local Hosts"
+- [x] Button navigates directly to the random host's detail page (which autoplays their video)
+- [x] Fallback toast shown if no hosts with videos exist

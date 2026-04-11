@@ -71,6 +71,16 @@ export default function Home() {
     FEATURED_HOST_NAMES.some((name) => host.hostName?.includes(name))
   ).slice(0, 6);
 
+  const { data: randomHostData } = trpc.host.getRandomWithVideo.useQuery();
+
+  const handleSurpriseMe = () => {
+    if (randomHostData) {
+      setLocation(`/hosts/${randomHostData.id}`);
+    } else {
+      toast.info("Host videos coming soon!");
+    }
+  };
+
   const heroSlides = [
     {
       image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/311292277a75050e5280deb62d18ad37_1741789a.png",
@@ -228,12 +238,21 @@ export default function Home() {
           <h2 className="text-2xl md:text-3xl font-medium mb-10 leading-relaxed">
             Experience authentic, home-cooked meals hosted by locals.
           </h2>
-          <Button
-            className="btn-cta text-white px-10 py-4 text-lg font-semibold rounded-lg hover:shadow-lg bg-red-600 hover:bg-red-700"
-            onClick={() => setLocation("/hosts")}
-          >
-            Explore Local Hosts
-          </Button>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <Button
+              className="btn-cta text-white px-10 py-4 text-lg font-semibold rounded-lg hover:shadow-lg bg-red-600 hover:bg-red-700"
+              onClick={() => setLocation("/hosts")}
+            >
+              Explore Local Hosts
+            </Button>
+            <Button
+              variant="outline"
+              className="px-8 py-4 text-lg font-semibold rounded-lg border-2 border-white text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+              onClick={handleSurpriseMe}
+            >
+              ✨ Surprise me
+            </Button>
+          </div>
         </div>
 
         {/* Carousel Controls - Hidden, using auto-play instead */}
