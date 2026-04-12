@@ -76,6 +76,7 @@ export default function HostDetail() {
   const [expandedBio, setExpandedBio] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [showUnmuteHint, setShowUnmuteHint] = useState(true);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showMobileBooking, setShowMobileBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -89,6 +90,12 @@ export default function HostDetail() {
     numberOfGuests: "1",
     specialRequests: "",
   });
+
+  // Hide the unmute hint after 4 seconds
+  useEffect(() => {
+    const t = setTimeout(() => setShowUnmuteHint(false), 4000);
+    return () => clearTimeout(t);
+  }, []);
 
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -386,23 +393,33 @@ export default function HostDetail() {
                   </div>
                 )}
               </button>
-              {/* Mute/unmute button — bottom right, always visible when video is playing */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (videoRef.current) {
-                    const newMuted = !videoRef.current.muted;
-                    videoRef.current.muted = newMuted;
-                    setIsVideoMuted(newMuted);
-                  }
-                }}
-                className="absolute bottom-6 right-6 z-30 bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-black/70 transition"
-                title={isVideoMuted ? 'Unmute' : 'Mute'}
-              >
-                {isVideoMuted
-                  ? <VolumeX size={20} className="text-white" />
-                  : <Volume2 size={20} className="text-white" />}
-              </button>
+              {/* Mute/unmute button — bottom left to avoid WhatsApp button overlap */}
+              <div className="absolute bottom-24 left-6 z-30 flex items-center gap-3">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (videoRef.current) {
+                      const newMuted = !videoRef.current.muted;
+                      videoRef.current.muted = newMuted;
+                      setIsVideoMuted(newMuted);
+                      setShowUnmuteHint(false);
+                    }
+                  }}
+                  className="bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-black/70 transition"
+                  title={isVideoMuted ? 'Unmute' : 'Mute'}
+                >
+                  {isVideoMuted
+                    ? <VolumeX size={20} className="text-white" />
+                    : <Volume2 size={20} className="text-white" />}
+                </button>
+                {/* Fade-out hint shown for first 4 seconds */}
+                <span
+                  className="text-white/90 text-sm font-medium bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 transition-opacity duration-700"
+                  style={{ opacity: showUnmuteHint ? 1 : 0, pointerEvents: 'none' }}
+                >
+                  🔊 Tap to unmute
+                </span>
+              </div>
             </div>
           ) : images.length > 0 ? (
             <div
