@@ -136,6 +136,26 @@ export const TESTIMONIALS = [
     cta: "Read more",
   },
   {
+    id: "sandrine",
+    guestName: "Sandrine",
+    location: "France",
+    travelerType: "Family with teen · Air France Flight Attendant",
+    hostName: "Echo Ren",
+    hostDate: "Apr 11, 2026",
+    experienceTitle: "Mother & son wonton-making dinner with Echo",
+    previewText:
+      "What we didn't like: Leaving Echo and her family after the meal. Echo picked us up at the subway station, her whole family speaks English, and her husband taught my son how to make wontons. We all had a real, friendly meal together.",
+    fullText:
+      "What we liked:\n\n• The easiness of communication with Echo\n• She picked us up directly by foot at the subway station — we didn't have to worry about finding the place\n• The chatting was fluent and easy in English\n• Her family was perfect; they all speak English\n• The Chinese food was prepared with love (she told us the recipes of everything). She showed us pictures of the vegetables we didn't know\n• We prepared the wontons at the end. Her husband taught my son. It was nice to watch\n• We all had a real, friendly meal together\n• They were all very caring\n• The dog was nice\n\nWhat we didn't like:\n• Leaving Echo and her family after the meal\n\nIt is difficult to give points of improvement. I try to find some but I can't. Just giving a very big thumbs up, a big A+ and all my gratitude for this moment.",
+    images: [
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/a85279c7ef42090ceb02f3b5d2d2bdf0_2e6d9fbc.jpg",
+        alt: "Sandrine's son learning to make wontons with Echo's husband",
+      },
+    ],
+    cta: "Read more",
+  },
+  {
     id: "ethan-xu",
     guestName: "Ethan Xu",
     location: "Australia",
