@@ -107,6 +107,15 @@ export default function HostDetail() {
     { enabled: !!hostId }
   );
 
+  // Track page view when host page loads
+  const incrementViewMutation = trpc.host.incrementView.useMutation();
+  useEffect(() => {
+    if (hostId) {
+      incrementViewMutation.mutate({ id: hostId });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hostId]);
+
   // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({
     onSuccess: (data) => {
