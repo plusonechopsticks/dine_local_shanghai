@@ -271,7 +271,12 @@ export function GuestStories({ testimonials }: GuestStoriesProps) {
                 {selectedTestimonial.fullText.split(/\n\n+/).map((para, i, arr) => (
                   <p key={i}>
                     {i === 0 && <span className="text-gray-400">"</span>}
-                    {para}
+                    {para.split("\n").map((line, j) => (
+                      <span key={j}>
+                        {line}
+                        {j < para.split("\n").length - 1 && <br />}
+                      </span>
+                    ))}
                     {i === arr.length - 1 && <span className="text-gray-400">"</span>}
                   </p>
                 ))}

@@ -176,10 +176,22 @@ export async function initializeExistingReminders() {
       return;
     }
 
-    // Get all paid bookings that haven't had reminders sent
+    // Get all paid bookings that haven't had reminders sent, joined with host info
     const paidBookings = await db
-      .select()
+      .select({
+        id: bookings.id,
+        requestedDate: bookings.requestedDate,
+        guestName: bookings.guestName,
+        guestEmail: bookings.guestEmail,
+        mealType: bookings.mealType,
+        numberOfGuests: bookings.numberOfGuests,
+        paymentStatus: bookings.paymentStatus,
+        reminderEmailSent: bookings.reminderEmailSent,
+        hostName: hostListings.hostName,
+        cuisineStyle: hostListings.cuisineStyle,
+      })
       .from(bookings)
+      .leftJoin(hostListings, eq(bookings.hostListingId, hostListings.id))
       .where(eq(bookings.paymentStatus, "paid"));
 
     console.log(`[Reminder Scheduler] Found ${paidBookings.length} paid bookings`);
@@ -203,10 +215,10 @@ export async function initializeExistingReminders() {
           booking.requestedDate,
           booking.guestName,
           booking.guestEmail,
-          "", // hostName will be fetched from DB if needed
+          booking.hostName || "", // real host name from join
           booking.mealType as "lunch" | "dinner",
           booking.numberOfGuests,
-          "", // cuisine
+          booking.cuisineStyle || "", // real cuisine from join
           booking.paymentStatus
         );
         scheduledCount++;
