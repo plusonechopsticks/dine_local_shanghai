@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/accordion";
 import { trpc } from "@/lib/trpc";
 import { HomeBlogSection } from "@/components/HomeBlogSection";
-import { HomeEventSection } from "@/components/HomeEventSection";
 import { SurpriseMeOverlay } from "@/components/SurpriseMeOverlay";
 import { toast } from "sonner";
 
@@ -350,9 +349,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Section 2.5: Seasonal Events */}
-      <HomeEventSection />
 
       {/* Section 2.6: Guest Stories */}
       <GuestStories testimonials={TESTIMONIALS} />
