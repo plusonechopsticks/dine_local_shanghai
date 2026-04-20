@@ -369,7 +369,7 @@ export default function HostDetail() {
                   }
                 }}
               />
-              {/* Main video — object-contain so full frame is always visible */}
+              {/* Main video — object-cover on mobile to fill full width, object-contain on larger screens */}
               <video
                 ref={videoRef}
                 src={host.introVideoUrl}
@@ -377,7 +377,7 @@ export default function HostDetail() {
                 playsInline
                 autoPlay
                 muted
-                className="relative z-10 w-full h-full object-contain"
+                className="relative z-10 w-full h-full object-cover sm:object-contain"
                 onPlay={() => setIsVideoPlaying(true)}
                 onPause={() => setIsVideoPlaying(false)}
               />
@@ -402,8 +402,8 @@ export default function HostDetail() {
                   </div>
                 )}
               </button>
-              {/* Mute/unmute button — bottom left to avoid WhatsApp button overlap */}
-              <div className="absolute bottom-24 left-6 z-30 flex items-center gap-3">
+              {/* Mute/unmute button — top right, clear of host name overlay at bottom */}
+              <div className="absolute top-6 right-6 z-40 flex flex-row-reverse items-center gap-3">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
