@@ -1,0 +1,22 @@
+{
+  "@context": "https://www.w3.org/ns/hydra/core#",
+  "title": "+1 Chopsticks API",
+  "description": "API for discovering and booking authentic home dining experiences with local Shanghai families.",
+  "apis": [
+    {
+      "title": "tRPC API",
+      "description": "Type-safe RPC API for browsing host listings, checking availability, and managing bookings.",
+      "url": "/api/trpc",
+      "type": "application/json"
+    }
+  ],
+  "contact": {
+    "name": "+1 Chopsticks",
+    "url": "https://plus1chopsticks.com",
+    "email": "plusonechopsticks@gmail.com"
+  },
+  "license": {
+    "name": "Proprietary",
+    "url": "https://plus1chopsticks.com"
+  }
+}
