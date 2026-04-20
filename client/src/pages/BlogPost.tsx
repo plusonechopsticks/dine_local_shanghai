@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eye } from "lucide-react";
 import { Streamdown } from "streamdown";
 
 export default function BlogPost() {
@@ -16,7 +16,13 @@ export default function BlogPost() {
     { enabled: !!slug }
   ) as any;
 
-  // View count tracking removed
+  // Increment view count on page load (once per slug)
+  const incrementView = trpc.blog.incrementView.useMutation();
+  useEffect(() => {
+    if (slug) {
+      incrementView.mutate({ slug });
+    }
+  }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (
@@ -90,6 +96,15 @@ export default function BlogPost() {
                     })
                   : ""}
               </span>
+              {post.viewCount !== undefined && post.viewCount > 0 && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5" />
+                    {post.viewCount.toLocaleString()} {post.viewCount === 1 ? "view" : "views"}
+                  </span>
+                </>
+              )}
             </div>
           </header>
 

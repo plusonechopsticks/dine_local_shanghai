@@ -2,7 +2,7 @@ import { router, publicProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
 import { blogPosts, blogPostViews } from "../../drizzle/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 
 type BlogPost = typeof blogPosts.$inferSelect;
 
@@ -119,5 +119,20 @@ export const blogRouter = router({
         .limit(1);
 
       return view[0]?.viewCount || 0;
+    }),
+
+  // Increment view count directly on the blog_posts table (mirrors host.incrementView)
+  incrementView: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { success: false };
+
+      await db
+        .update(blogPosts)
+        .set({ viewCount: sql`viewCount + 1` })
+        .where(eq(blogPosts.slug, input.slug));
+
+      return { success: true };
     }),
 });

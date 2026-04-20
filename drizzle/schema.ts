@@ -396,6 +396,9 @@ export const blogPosts = mysqlTable("blog_posts", {
   published: boolean("published").default(false), // Draft or published
   publishedAt: timestamp("publishedAt"), // When the post was published
   
+  // Analytics
+  viewCount: int("viewCount").notNull().default(0),
+
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
