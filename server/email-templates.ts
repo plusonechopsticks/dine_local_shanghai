@@ -15,7 +15,8 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'Asia/Shanghai'
   });
   
   const formattedPaymentDate = data.paymentDate.toLocaleDateString('en-US', {
@@ -23,7 +24,8 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    timeZone: 'Asia/Shanghai'
   });
 
   return `
@@ -206,7 +208,8 @@ export function generatePaymentReminderEmail(data: PaymentReminderData): string 
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'Asia/Shanghai'
   });
 
   return `
@@ -395,7 +398,8 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
+    timeZone: 'Asia/Shanghai'
   });
   
   const mealDate = new Date(data.requestedDate);
@@ -404,11 +408,11 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
   const payoutEndDate = new Date(mealDate);
   payoutEndDate.setDate(payoutEndDate.getDate() + 14);
   
-  const formattedPayoutRange = `${payoutStartDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}-${payoutEndDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+  const formattedPayoutRange = `${payoutStartDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'Asia/Shanghai' })}-${payoutEndDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'Asia/Shanghai' })}`;
   
   const cancelDeadline = new Date(mealDate);
   cancelDeadline.setDate(cancelDeadline.getDate() - 7);
-  const formattedCancelDeadline = cancelDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  const formattedCancelDeadline = cancelDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'Asia/Shanghai' });
   
   const dietaryInfo = data.dietaryRestrictions || "No special dietary restrictions";
 

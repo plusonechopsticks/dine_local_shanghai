@@ -14,20 +14,15 @@ interface GuestReminderData {
 }
 
 export function generateGuestReminderEmail(data: GuestReminderData): string {
-  // Parse the ISO date string - the date is already in local time format
-  // data.experienceDate might be "2026-03-23T04:00:00.000Z" but the date part is local date
-  const dateStr = data.experienceDate.split('T')[0]; // Get YYYY-MM-DD part: "2026-03-23"
-  const [year, month, day] = dateStr.split('-').map(Number);
-  
-  // Create a date object using UTC to avoid timezone conversion
-  const shanghaiDate = new Date(Date.UTC(year, month - 1, day));
+  // Format date in China Standard Time (UTC+8)
+  const shanghaiDate = new Date(data.experienceDate);
   
   const formattedDate = shanghaiDate.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    timeZone: 'UTC' // Use UTC to prevent timezone conversion
+    timeZone: 'Asia/Shanghai'
   });
 
   // Determine meal time
