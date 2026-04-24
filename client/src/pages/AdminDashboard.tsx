@@ -7,13 +7,269 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload, CalendarX, Copy, ExternalLink, PlusCircle, Pencil, Trash } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, X, Clock, Trash2, Upload, CalendarX, Copy, ExternalLink, PlusCircle, Pencil, Trash, Share2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { getProxiedImageUrl } from "@/lib/imageUtils";
 import { AnnouncementEditor } from "@/components/AnnouncementEditor";
 import { LiveChatAdmin } from "@/components/LiveChatAdmin";
 import { AdminAnalyticsTab } from "@/components/AdminAnalyticsTab";
+
+// Blog Management Tab
+const EMPTY_BLOG_FORM = {
+  title: "",
+  slug: "",
+  excerpt: "",
+  content: "",
+  authorName: "+1 Chopsticks",
+  featuredImageUrl: "",
+  tags: "",
+  metaDescription: "",
+  published: false,
+  postToFacebook: false,
+};
+
+function BlogTab() {
+  const utils = trpc.useUtils();
+  const { data: posts = [], isLoading } = trpc.blog.listAllPosts.useQuery();
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState(EMPTY_BLOG_FORM);
+
+  const createMutation = trpc.blog.createPost.useMutation({
+    onSuccess: () => {
+      utils.blog.listAllPosts.invalidate();
+      setShowForm(false);
+      setForm(EMPTY_BLOG_FORM);
+      toast.success("Blog post created!");
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const updateMutation = trpc.blog.updatePost.useMutation({
+    onSuccess: () => {
+      utils.blog.listAllPosts.invalidate();
+      setEditingId(null);
+      toast.success("Blog post updated!");
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const deleteMutation = trpc.blog.deletePost.useMutation({
+    onSuccess: () => {
+      utils.blog.listAllPosts.invalidate();
+      toast.success("Blog post deleted.");
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const facebookMutation = trpc.blog.postToFacebook.useMutation({
+    onSuccess: (data) => toast.success(`Posted to Facebook! Post ID: ${data.id}`),
+    onError: (e) => toast.error(`Facebook error: ${e.message}`),
+  });
+
+  function slugify(title: string) {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+  }
+
+  function startEdit(post: (typeof posts)[0]) {
+    setEditingId(post.id);
+    setForm({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
+      authorName: post.authorName,
+      featuredImageUrl: post.featuredImageUrl ?? "",
+      tags: Array.isArray(post.tags) ? post.tags.join(", ") : "",
+      metaDescription: post.metaDescription ?? "",
+      published: post.published ?? false,
+      postToFacebook: false,
+    });
+    setShowForm(false);
+  }
+
+  function handleSubmitCreate() {
+    createMutation.mutate({
+      ...form,
+      tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      featuredImageUrl: form.featuredImageUrl || undefined,
+      metaDescription: form.metaDescription || undefined,
+    });
+  }
+
+  function handleSubmitUpdate() {
+    if (editingId === null) return;
+    updateMutation.mutate({
+      id: editingId,
+      ...form,
+      tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      featuredImageUrl: form.featuredImageUrl || undefined,
+      metaDescription: form.metaDescription || undefined,
+    });
+  }
+
+  const postForm = (isNew: boolean) => (
+    <CardContent className="border-t pt-4 space-y-4">
+      <h3 className="font-semibold text-sm">{isNew ? "Create New Blog Post" : "Edit Blog Post"}</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <Label>Title</Label>
+          <Input
+            placeholder="Post title"
+            value={form.title}
+            onChange={(e) => {
+              const title = e.target.value;
+              setForm((f) => ({ ...f, title, slug: isNew ? slugify(title) : f.slug }));
+            }}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label>Slug (URL)</Label>
+          <Input
+            placeholder="url-friendly-slug"
+            value={form.slug}
+            onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") }))}
+          />
+        </div>
+      </div>
+      <div className="space-y-1">
+        <Label>Excerpt</Label>
+        <Textarea rows={2} placeholder="Short summary shown in listings" value={form.excerpt} onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))} />
+      </div>
+      <div className="space-y-1">
+        <Label>Content (HTML)</Label>
+        <Textarea rows={10} placeholder="Full HTML content of the post" value={form.content} onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))} />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <Label>Author Name</Label>
+          <Input value={form.authorName} onChange={(e) => setForm((f) => ({ ...f, authorName: e.target.value }))} />
+        </div>
+        <div className="space-y-1">
+          <Label>Featured Image URL</Label>
+          <Input placeholder="https://..." value={form.featuredImageUrl} onChange={(e) => setForm((f) => ({ ...f, featuredImageUrl: e.target.value }))} />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <Label>Tags (comma separated)</Label>
+          <Input placeholder="food-culture, travel-tips" value={form.tags} onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))} />
+        </div>
+        <div className="space-y-1">
+          <Label>Meta Description (SEO)</Label>
+          <Input placeholder="Search engine description" value={form.metaDescription} onChange={(e) => setForm((f) => ({ ...f, metaDescription: e.target.value }))} />
+        </div>
+      </div>
+      <div className="flex items-center gap-6">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <Checkbox checked={form.published} onCheckedChange={(v) => setForm((f) => ({ ...f, published: !!v }))} />
+          <span className="text-sm">Published</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <Checkbox checked={form.postToFacebook} onCheckedChange={(v) => setForm((f) => ({ ...f, postToFacebook: !!v }))} />
+          <span className="text-sm flex items-center gap-1"><Share2 className="w-3 h-3" /> Post to Facebook on save</span>
+        </label>
+      </div>
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          onClick={isNew ? handleSubmitCreate : handleSubmitUpdate}
+          disabled={createMutation.isPending || updateMutation.isPending || !form.title || !form.slug || !form.excerpt || !form.content}
+        >
+          {createMutation.isPending || updateMutation.isPending ? "Saving..." : isNew ? "Create Post" : "Save Changes"}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => { setShowForm(false); setEditingId(null); setForm(EMPTY_BLOG_FORM); }}
+        >
+          Cancel
+        </Button>
+      </div>
+    </CardContent>
+  );
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Blog Posts</CardTitle>
+            <CardDescription>Create and manage blog posts. Published posts can be auto-shared to Facebook.</CardDescription>
+          </div>
+          <Button size="sm" onClick={() => { setShowForm(!showForm); setEditingId(null); setForm(EMPTY_BLOG_FORM); }}>
+            <PlusCircle className="w-4 h-4 mr-2" /> New Post
+          </Button>
+        </CardHeader>
+        {showForm && postForm(true)}
+      </Card>
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading posts...</p>
+      ) : posts.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No blog posts yet. Create one above.</p>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((post) => (
+            <Card key={post.id}>
+              <CardContent className="pt-4 space-y-3">
+                {editingId === post.id ? (
+                  postForm(false)
+                ) : (
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-semibold text-sm">{post.title}</span>
+                        <Badge variant={post.published ? "default" : "secondary"}>
+                          {post.published ? <><Eye className="w-3 h-3 mr-1" />Published</> : <><EyeOff className="w-3 h-3 mr-1" />Draft</>}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                      <div className="flex gap-3 mt-1 text-xs text-muted-foreground">
+                        <span>/blog/{post.slug}</span>
+                        {post.publishedAt && <span>Published {new Date(post.publishedAt).toLocaleDateString()}</span>}
+                        <span>{post.viewCount} views</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 flex-shrink-0">
+                      {post.published && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Post to Facebook"
+                          onClick={() => facebookMutation.mutate({ id: post.id })}
+                          disabled={facebookMutation.isPending}
+                        >
+                          <Share2 className="w-4 h-4 text-blue-600" />
+                        </Button>
+                      )}
+                      <Button size="icon" variant="ghost" onClick={() => startEdit(post)}>
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => { if (confirm("Delete this post?")) deleteMutation.mutate({ id: post.id }); }}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Influencer Pages Tab
 function InfluencerPagesTab() {
@@ -383,6 +639,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="livechat">Live Chat</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="influencer">Influencer Pages</TabsTrigger>
+          <TabsTrigger value="blog">Blog</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -1134,6 +1391,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="influencer" className="space-y-4">
           <InfluencerPagesTab />
+        </TabsContent>
+
+        <TabsContent value="blog" className="space-y-4">
+          <BlogTab />
         </TabsContent>
       </Tabs>
     </div>

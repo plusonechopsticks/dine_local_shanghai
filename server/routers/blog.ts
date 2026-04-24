@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getDb } from "../db";
 import { blogPosts, blogPostViews } from "../../drizzle/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
+import { postBlogToFacebook } from "../facebook";
 
 type BlogPost = typeof blogPosts.$inferSelect;
 
@@ -25,6 +26,16 @@ export const blogRouter = router({
 
       return posts;
     }),
+
+  listAllPosts: publicProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    return db
+      .select()
+      .from(blogPosts)
+      .orderBy(desc(blogPosts.createdAt));
+  }),
 
   getPostBySlug: publicProcedure
     .input(
@@ -62,6 +73,148 @@ export const blogRouter = router({
         .limit(1);
 
       return post[0] || null;
+    }),
+
+  createPost: publicProcedure
+    .input(
+      z.object({
+        title: z.string().min(1),
+        slug: z.string().min(1),
+        excerpt: z.string().min(1),
+        content: z.string().min(1),
+        authorName: z.string().default("+1 Chopsticks"),
+        featuredImageUrl: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        metaDescription: z.string().optional(),
+        metaKeywords: z.string().optional(),
+        published: z.boolean().default(false),
+        postToFacebook: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+
+      const { postToFacebook: shouldPostToFacebook, ...postData } = input;
+
+      await db.insert(blogPosts).values({
+        ...postData,
+        publishedAt: postData.published ? new Date() : undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const [created] = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.slug, postData.slug))
+        .limit(1);
+
+      if (shouldPostToFacebook && postData.published) {
+        await postBlogToFacebook({
+          title: postData.title,
+          excerpt: postData.excerpt,
+          slug: postData.slug,
+          tags: postData.tags,
+        });
+      }
+
+      return created;
+    }),
+
+  updatePost: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        title: z.string().min(1).optional(),
+        slug: z.string().min(1).optional(),
+        excerpt: z.string().min(1).optional(),
+        content: z.string().min(1).optional(),
+        authorName: z.string().optional(),
+        featuredImageUrl: z.string().optional().nullable(),
+        tags: z.array(z.string()).optional(),
+        metaDescription: z.string().optional().nullable(),
+        metaKeywords: z.string().optional().nullable(),
+        published: z.boolean().optional(),
+        postToFacebook: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+
+      const { id, postToFacebook: shouldPostToFacebook, ...updates } = input;
+
+      const [existing] = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.id, id))
+        .limit(1);
+
+      if (!existing) throw new Error("Post not found");
+
+      const isPublishing = updates.published === true && !existing.published;
+
+      await db
+        .update(blogPosts)
+        .set({
+          ...updates,
+          publishedAt: isPublishing ? new Date() : existing.publishedAt,
+          updatedAt: new Date(),
+        })
+        .where(eq(blogPosts.id, id));
+
+      const [updated] = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.id, id))
+        .limit(1);
+
+      if (shouldPostToFacebook && updated.published) {
+        await postBlogToFacebook({
+          title: updated.title,
+          excerpt: updated.excerpt,
+          slug: updated.slug,
+          tags: updated.tags,
+        });
+      }
+
+      return updated;
+    }),
+
+  deletePost: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+
+      await db.delete(blogPosts).where(eq(blogPosts.id, input.id));
+      return { success: true };
+    }),
+
+  postToFacebook: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+
+      const [post] = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.id, input.id))
+        .limit(1);
+
+      if (!post) throw new Error("Post not found");
+      if (!post.published) throw new Error("Cannot share an unpublished post");
+
+      const result = await postBlogToFacebook({
+        title: post.title,
+        excerpt: post.excerpt,
+        slug: post.slug,
+        tags: post.tags,
+      });
+
+      return result;
     }),
 
   recordView: publicProcedure

@@ -10,4 +10,7 @@ export const ENV = {
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY ?? "",
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET ?? "",
+  facebookPageId: process.env.FACEBOOK_PAGE_ID ?? "",
+  facebookPageAccessToken: process.env.FACEBOOK_PAGE_ACCESS_TOKEN ?? "",
+  websiteUrl: process.env.VITE_WEBSITE_URL ?? "https://plus1chopsticks.com",
 };
