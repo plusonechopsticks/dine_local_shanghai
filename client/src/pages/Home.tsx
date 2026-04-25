@@ -350,6 +350,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Section 2.5: As Seen In Press Bar */}
+      <section className="py-10 bg-white border-y border-gray-100">
+        <div className="container mx-auto px-4">
+          <p className="text-center text-xs font-semibold tracking-widest uppercase text-gray-400 mb-6">As seen in</p>
+          <div className="flex flex-col items-center gap-4">
+            <a
+              href="https://www.sophieservesup.com/articles/shanghais-first-home-dining-platform-launches-as-1-chopsticks/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col items-center gap-2 text-center transition-opacity hover:opacity-75"
+            >
+              <span className="font-serif text-2xl font-bold text-gray-900 tracking-tight group-hover:text-red-700 transition-colors">
+                Sophie Serves Up
+              </span>
+              <span className="text-sm text-gray-500 leading-relaxed">
+                American food writer based in Shanghai since 2015 &nbsp;·&nbsp; Contributor to <span className="font-medium text-gray-700">Michelin Guide</span> &amp; <span className="font-medium text-gray-700">World's 50 Best</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-full px-3 py-1 mt-1 group-hover:bg-red-50 transition-colors">
+                Read the article
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Section 2.6: Guest Stories */}
       <GuestStories testimonials={TESTIMONIALS} />
 
