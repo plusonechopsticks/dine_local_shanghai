@@ -29,6 +29,7 @@ import {
   X,
   Volume2,
   VolumeX,
+  Maximize,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -408,6 +409,27 @@ export default function HostDetail() {
               </button>
               {/* Mute/unmute button — top right, clear of host name overlay at bottom */}
               <div className="absolute top-6 right-6 z-40 flex flex-row-reverse items-center gap-3">
+                {/* Fullscreen button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (videoRef.current) {
+                      if (videoRef.current.requestFullscreen) {
+                        videoRef.current.requestFullscreen();
+                      } else if ((videoRef.current as any).webkitEnterFullscreen) {
+                        // iOS Safari uses webkitEnterFullscreen on video elements
+                        (videoRef.current as any).webkitEnterFullscreen();
+                      } else if ((videoRef.current as any).webkitRequestFullscreen) {
+                        (videoRef.current as any).webkitRequestFullscreen();
+                      }
+                    }
+                  }}
+                  className="bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-black/70 transition"
+                  title="Fullscreen"
+                >
+                  <Maximize size={20} className="text-white" />
+                </button>
+                {/* Mute/unmute button */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
