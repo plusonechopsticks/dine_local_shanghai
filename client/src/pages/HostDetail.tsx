@@ -355,7 +355,6 @@ export default function HostDetail() {
             <div className="relative w-full h-full overflow-hidden">
               {/* Blurred background fill — handles portrait videos in landscape frame */}
               <video
-                src={host.introVideoUrl}
                 className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl brightness-50"
                 muted
                 loop
@@ -368,11 +367,13 @@ export default function HostDetail() {
                     if (isVideoPlaying) el.play(); else el.pause();
                   }
                 }}
-              />
+              >
+                {/* type="video/mp4" forces Chrome/Android to attempt H.264 decode even for .mov files served as video/quicktime */}
+                <source src={host.introVideoUrl} type="video/mp4" />
+              </video>
               {/* Main video — object-cover on mobile to fill full width, object-contain on larger screens */}
               <video
                 ref={videoRef}
-                src={host.introVideoUrl}
                 loop
                 playsInline
                 autoPlay
@@ -380,7 +381,10 @@ export default function HostDetail() {
                 className="relative z-10 w-full h-full object-cover sm:object-contain"
                 onPlay={() => setIsVideoPlaying(true)}
                 onPause={() => setIsVideoPlaying(false)}
-              />
+              >
+                {/* type="video/mp4" forces Chrome/Android to attempt H.264 decode even for .mov files served as video/quicktime */}
+                <source src={host.introVideoUrl} type="video/mp4" />
+              </video>
               {/* Click-to-play / click-to-pause overlay */}
               <button
                 onClick={() => {
