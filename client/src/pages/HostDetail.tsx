@@ -76,7 +76,7 @@ export default function HostDetail() {
   const [touchEnd, setTouchEnd] = useState(0);
   const [expandedBio, setExpandedBio] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [showUnmuteHint, setShowUnmuteHint] = useState(true);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showMobileBooking, setShowMobileBooking] = useState(false);
@@ -127,10 +127,15 @@ export default function HostDetail() {
     setIsVideoPlaying(true);
     const t = setTimeout(() => {
       if (videoRef.current) {
-        videoRef.current.muted = true;
+        videoRef.current.muted = false;
         videoRef.current.play().catch(() => {
-          // Autoplay blocked — show play button so user can tap to start
+          // Autoplay with sound blocked by browser — fall back to muted autoplay
+          videoRef.current!.muted = true;
+          setIsVideoMuted(true);
+          videoRef.current!.play().catch(() => {
+          // Muted autoplay also blocked — show play button
           setIsVideoPlaying(false);
+          });
         });
       }
     }, 100); // small delay to let the src settle after navigation
@@ -398,7 +403,7 @@ export default function HostDetail() {
                 loop
                 playsInline
                 autoPlay
-                muted
+                muted={isVideoMuted}
                 className="relative z-10 w-full h-full object-contain"
                 onPlay={() => setIsVideoPlaying(true)}
                 onPause={() => setIsVideoPlaying(false)}
@@ -472,7 +477,7 @@ export default function HostDetail() {
                   className="text-white/90 text-sm font-medium bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 transition-opacity duration-700"
                   style={{ opacity: showUnmuteHint ? 1 : 0, pointerEvents: 'none' }}
                 >
-                  🔊 Tap to unmute
+                  🔊 Video has sound
                 </span>
               </div>
             </div>
