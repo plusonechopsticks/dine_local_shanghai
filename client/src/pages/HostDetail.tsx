@@ -117,6 +117,26 @@ export default function HostDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostId]);
 
+  // Explicitly play video when host changes (autoPlay attribute alone doesn't re-trigger
+  // on client-side navigation since the component may not fully remount)
+  useEffect(() => {
+    if (!host?.introVideoUrl) return;
+    // Reset mute state and hint for new host
+    setIsVideoMuted(true);
+    setShowUnmuteHint(true);
+    setIsVideoPlaying(true);
+    const t = setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.muted = true;
+        videoRef.current.play().catch(() => {
+          // Autoplay blocked — show play button so user can tap to start
+          setIsVideoPlaying(false);
+        });
+      }
+    }, 100); // small delay to let the src settle after navigation
+    return () => clearTimeout(t);
+  }, [host?.introVideoUrl]);
+
   // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({
     onSuccess: (data) => {
