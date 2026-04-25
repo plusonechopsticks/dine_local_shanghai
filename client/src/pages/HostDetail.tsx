@@ -378,7 +378,7 @@ export default function HostDetail() {
                 playsInline
                 autoPlay
                 muted
-                className="relative z-10 w-full h-full object-cover sm:object-contain"
+                className="relative z-10 w-full h-full object-contain"
                 onPlay={() => setIsVideoPlaying(true)}
                 onPause={() => setIsVideoPlaying(false)}
               >
