@@ -110,9 +110,11 @@ export default function HostDetail() {
 
   // Track page view when host page loads
   const incrementViewMutation = trpc.host.incrementView.useMutation();
+  const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
   useEffect(() => {
     if (hostId) {
       incrementViewMutation.mutate({ id: hostId });
+      trackPageView({ pageType: "host_detail", hostListingId: hostId });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostId]);

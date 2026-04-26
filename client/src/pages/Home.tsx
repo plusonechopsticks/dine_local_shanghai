@@ -45,6 +45,13 @@ export default function Home() {
   // Newsletter submission mutation
   const submitInterestMutation = trpc.interest.submit.useMutation();
 
+  // Track homepage view
+  const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
+  useEffect(() => {
+    trackPageView({ pageType: "home" });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Fetch all approved hosts
   const { data: allHosts = [] } = trpc.host.listApproved.useQuery();
 
