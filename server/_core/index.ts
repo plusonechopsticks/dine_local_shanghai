@@ -290,6 +290,19 @@ async function startServer(): Promise<any> {
 
   // Image proxy endpoint removed - Cloudinary URLs are publicly accessible
 
+  // Scheduled task: daily traffic report
+  app.post("/api/scheduled/daily-traffic-report", async (req: any, res: any) => {
+    try {
+      const { sendDailyTrafficReport } = await import("../daily-traffic-report");
+      const targetDate = req.body?.date; // optional: YYYY-MM-DD override
+      await sendDailyTrafficReport(targetDate);
+      return res.json({ success: true, message: "Daily traffic report sent" });
+    } catch (error: any) {
+      console.error("[TrafficReport] Failed to send daily traffic report:", error);
+      return res.status(500).json({ success: false, error: error?.message || "Unknown error" });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
