@@ -1312,7 +1312,7 @@ export const appRouter = router({
   analytics: router({
     trackPageView: publicProcedure
       .input(z.object({
-        pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail"]),
+        pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail", "blog"]),
         hostListingId: z.number().optional(),
       }))
       .mutation(async ({ input }) => {
@@ -1331,7 +1331,7 @@ export const appRouter = router({
     
     getPageTypeAnalytics: publicProcedure
       .input(z.object({
-        pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail"]),
+        pageType: z.enum(["home", "browse_hosts", "become_host", "host_detail", "blog"]),
         days: z.number().default(30),
       }))
       .query(async ({ input }) => {

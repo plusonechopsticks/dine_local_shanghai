@@ -58,6 +58,13 @@ export default function Blog() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [, navigate] = useLocation();
 
+  // Track page view for analytics
+  const trackPageView = trpc.analytics.trackPageView.useMutation();
+  useEffect(() => {
+    trackPageView.mutate({ pageType: "blog" });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Scroll to top when the blog listing page mounts
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });

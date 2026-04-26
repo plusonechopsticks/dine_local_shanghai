@@ -137,6 +137,7 @@ async function gatherTrafficData(targetDateStr?: string): Promise<TrafficReportD
     { pageType: 'home', label: 'Homepage', emoji: '🏠' },
     { pageType: 'browse_hosts', label: 'Browse Hosts', emoji: '🔍' },
     { pageType: 'host_detail', label: 'Host Detail Pages', emoji: '🍽' },
+    { pageType: 'blog', label: 'Blog Listing', emoji: '📝' },
     { pageType: 'become_host', label: 'Become a Host', emoji: '🏡' },
   ];
 
