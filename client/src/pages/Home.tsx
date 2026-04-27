@@ -357,27 +357,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 2.5: As Seen In Press Bar */}
-      <section className="py-10 bg-white border-y border-gray-100">
+      {/* Section 2.5: As Seen In Press */}
+      <section className="py-16 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
-          <p className="text-center text-xs font-semibold tracking-widest uppercase text-gray-400 mb-6">As seen in</p>
-          <div className="flex flex-col items-center gap-4">
+          <p className="text-center text-xs font-semibold tracking-widest uppercase text-gray-400 mb-10">As seen in</p>
+          <div className="flex justify-center">
             <a
               href="https://www.sophieservesup.com/articles/shanghais-first-home-dining-platform-launches-as-1-chopsticks/"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-2 text-center transition-opacity hover:opacity-75"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer max-w-sm w-full"
             >
-              <span className="font-serif text-2xl font-bold text-gray-900 tracking-tight group-hover:text-red-700 transition-colors">
-                Sophie Serves Up
-              </span>
-              <span className="text-sm text-gray-500 leading-relaxed">
-                American food writer based in Shanghai since 2015 &nbsp;·&nbsp; Contributor to <span className="font-medium text-gray-700">Michelin Guide</span> &amp; <span className="font-medium text-gray-700">World's 50 Best</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-full px-3 py-1 mt-1 group-hover:bg-red-50 transition-colors">
-                Read the article
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </span>
+              {/* Color patch header */}
+              <div className="h-32 bg-gradient-to-br from-amber-500 to-orange-600 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '12px 12px'}} />
+                <span className="font-serif text-3xl font-bold text-white tracking-tight drop-shadow-sm">Sophie Serves Up</span>
+                <span className="text-amber-100 text-xs mt-1 font-medium tracking-wide">sophieservesup.com</span>
+              </div>
+              {/* Card body */}
+              <div className="p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">
+                  Shanghai's First Home Dining Platform Launches as +1 Chopsticks
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  American food writer based in Shanghai since 2015 — contributor to <span className="font-medium text-gray-800">Michelin Guide</span> &amp; <span className="font-medium text-gray-800">World's 50 Best</span>.
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-full px-3 py-1 group-hover:bg-red-50 transition-colors">
+                  Read the article
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+              </div>
             </a>
           </div>
         </div>
