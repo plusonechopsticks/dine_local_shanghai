@@ -369,8 +369,13 @@ export default function Home() {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer max-w-sm w-full"
             >
               {/* Color patch header */}
-              <div className="h-32 bg-gradient-to-br from-amber-500 to-orange-600 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+              <div className="h-36 bg-gradient-to-br from-amber-500 to-orange-600 flex flex-col items-center justify-center px-6 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '12px 12px'}} />
+                {/* Verified press badge */}
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Editorial
+                </span>
                 <span className="font-serif text-3xl font-bold text-white tracking-tight drop-shadow-sm">Sophie Serves Up</span>
                 <span className="text-amber-100 text-xs mt-1 font-medium tracking-wide">sophieservesup.com</span>
               </div>
@@ -379,8 +384,14 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">
                   Shanghai's First Home Dining Platform Launches as +1 Chopsticks
                 </h3>
-                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                  American food writer based in Shanghai since 2015 — contributor to <span className="font-medium text-gray-800">Michelin Guide</span> &amp; <span className="font-medium text-gray-800">World's 50 Best</span>.
+                {/* Pull-quote */}
+                <blockquote className="border-l-4 border-amber-400 pl-4 mb-4">
+                  <p className="text-sm text-gray-700 italic leading-relaxed">
+                    &ldquo;&hellip;some of the most bona fide benbang cai we&rsquo;ve had in, well, as long as we can remember.&rdquo;
+                  </p>
+                </blockquote>
+                <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+                  American food writer based in Shanghai since 2015 — contributor to <span className="font-medium text-gray-700">Michelin Guide</span> &amp; <span className="font-medium text-gray-700">World's 50 Best</span>.
                 </p>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-full px-3 py-1 group-hover:bg-red-50 transition-colors">
                   Read the article
