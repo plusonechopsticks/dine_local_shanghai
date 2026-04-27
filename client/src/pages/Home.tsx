@@ -392,7 +392,7 @@ export default function Home() {
                 </blockquote>
                 <div className="flex items-center gap-3 mb-4">
                   <img
-                    src="https://plus1chopsticks.manus.space/manus-storage/sophie-serves-up_ce591338.png"
+                    src="https://plus1chopsticks.manus.space/manus-storage/sophie-avatar_325f7304.png"
                     alt="Sophie — Sophie Serves Up"
                     className="w-10 h-10 rounded-full object-cover object-top flex-shrink-0 border-2 border-amber-200"
                   />
