@@ -174,6 +174,15 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
             </td>
           </tr>
 
+          <!-- Disclaimer Section -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 16px 0 8px 0; color: #9ca3af; font-size: 11px; line-height: 1.7;">
+                By confirming this booking, you acknowledge that +1 Chopsticks is a marketplace platform connecting you with an independent host. We do not prepare or serve food and are not liable for the meal, the host's conduct, or any incidents at the host's residence. Please communicate any food allergies or dietary restrictions directly to your host. In an emergency: <strong style="color: #9ca3af;">Police 110 &middot; Medical 120 &middot; Fire 119</strong>. <a href="https://plus1chopsticks.com/disclaimer" style="color: #9ca3af; text-decoration: underline;">Full disclaimer at plus1chopsticks.com/disclaimer</a>
+              </p>
+            </td>
+          </tr>
+
           <!-- Footer -->
           <tr>
             <td style="background-color: #f9fafb; padding: 24px 40px; text-align: center; border-top: 1px solid #e5e7eb;">

@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, MapPin, Clock, Users, AlertCircle, UtensilsCrossed } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "wouter";
 
 export default function BookingConfirmation() {
   const [location, setLocation] = useLocation();
   const [bookingId, setBookingId] = useState<number | null>(null);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
 
   useEffect(() => {
     // Get booking details from URL query params
@@ -173,6 +175,31 @@ export default function BookingConfirmation() {
         </CardContent>
       </Card>
 
+      {/* Disclaimer notice */}
+      <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600 leading-relaxed">
+        <p className="mb-3">
+          By confirming this booking, you acknowledge that +1 Chopsticks is a marketplace platform
+          connecting you with an independent host. We do not prepare or serve food and are not liable
+          for the meal, the host's conduct, or any incidents at the host's residence. Please communicate
+          any food allergies or dietary restrictions directly to your host. In an emergency:{" "}
+          <strong>Police 110 · Medical 120 · Fire 119</strong>.{" "}
+          <Link href="/disclaimer" className="text-red-600 hover:underline font-medium">
+            Full disclaimer at plus1chopsticks.com/disclaimer
+          </Link>
+        </p>
+        <label className="flex items-start gap-3 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={disclaimerAccepted}
+            onChange={(e) => setDisclaimerAccepted(e.target.checked)}
+            className="mt-0.5 h-4 w-4 accent-red-600 cursor-pointer flex-shrink-0"
+          />
+          <span className="text-gray-700 font-medium">
+            I have read and agree to the +1 Chopsticks disclaimer
+          </span>
+        </label>
+      </div>
+
       <div className="flex gap-3">
         <Button
           variant="outline"
@@ -189,8 +216,8 @@ export default function BookingConfirmation() {
         </Button>
         <Button
           onClick={handlePayment}
-          disabled={createCheckoutSessionMutation.isPending}
-          className="flex-1 bg-primary hover:bg-primary/90"
+          disabled={createCheckoutSessionMutation.isPending || !disclaimerAccepted}
+          className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50"
           size="lg"
         >
           {createCheckoutSessionMutation.isPending ? "Redirecting..." : "Proceed to Payment"}

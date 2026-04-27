@@ -23,6 +23,7 @@ import HomeDiningVideo from "./pages/HomeDiningVideo";
 import InfluencerPage from "./pages/InfluencerPage";
 import HostGuide from "./pages/HostGuide";
 import EventDetail from "./pages/EventDetail";
+import Disclaimer from "./pages/Disclaimer";
 
 import { WhatsAppButton } from "./components/WhatsAppButton";
 
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/host-guide" component={HostGuide} />
       <Route path="/booking-success" component={BookingSuccess} />
       <Route path="/booking-confirmation" component={BookingConfirmation} />
+      <Route path="/disclaimer" component={Disclaimer} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />    </Switch>

@@ -900,6 +900,14 @@ export default function Home() {
 
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
             <p>&copy; 2026 +1 Chopsticks. All rights reserved.</p>
+            <p className="mt-2">
+              <button
+                onClick={() => setLocation("/disclaimer")}
+                className="text-gray-500 hover:text-gray-300 transition underline underline-offset-2"
+              >
+                Disclaimer
+              </button>
+            </p>
           </div>
         </div>
       </footer>
