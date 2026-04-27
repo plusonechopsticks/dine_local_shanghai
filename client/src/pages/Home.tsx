@@ -381,7 +381,7 @@ export default function Home() {
               </div>
               {/* Card body */}
               <div className="p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 group-hover:underline underline-offset-2 transition-colors duration-200">
                   Shanghai's First Home Dining Platform Launches as +1 Chopsticks
                 </h3>
                 {/* Pull-quote */}
@@ -390,9 +390,16 @@ export default function Home() {
                     &ldquo;&hellip;some of the most bona fide benbang cai we&rsquo;ve had in, well, as long as we can remember.&rdquo;
                   </p>
                 </blockquote>
-                <p className="text-sm text-gray-500 mb-4 leading-relaxed">
-                  American food writer based in Shanghai since 2015 — contributor to <span className="font-medium text-gray-700">Michelin Guide</span> &amp; <span className="font-medium text-gray-700">World's 50 Best</span>.
-                </p>
+                <div className="flex items-center gap-3 mb-4">
+                  <img
+                    src="https://plus1chopsticks.manus.space/manus-storage/sophie-serves-up_ce591338.png"
+                    alt="Sophie — Sophie Serves Up"
+                    className="w-10 h-10 rounded-full object-cover object-top flex-shrink-0 border-2 border-amber-200"
+                  />
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    American food writer based in Shanghai since 2015 — contributor to <span className="font-medium text-gray-700">Michelin Guide</span> &amp; <span className="font-medium text-gray-700">World's 50 Best</span>.
+                  </p>
+                </div>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-full px-3 py-1 group-hover:bg-red-50 transition-colors">
                   Read the article
                   <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
