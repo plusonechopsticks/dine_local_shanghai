@@ -24,6 +24,15 @@ export function HostDetailsHero({
   const [videoPlaying, setVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Derive a static poster image from the Cloudinary video URL
+  // e.g. https://res.cloudinary.com/.../video/upload/v.../file.mp4
+  //   → https://res.cloudinary.com/.../video/upload/so_0,f_jpg/v.../file.jpg
+  const videoPoster = introVideoUrl
+    ? introVideoUrl
+        .replace('/video/upload/', '/video/upload/so_0,f_jpg/')
+        .replace(/\.mp4$/, '.jpg')
+    : undefined;
+
   // Auto-advance slideshow every 5 seconds when not playing video
   useEffect(() => {
     if (!videoPlaying && foodPhotoUrls.length > 1) {
@@ -108,6 +117,7 @@ export function HostDetailsHero({
           <video
             ref={videoRef}
             src={introVideoUrl}
+            poster={videoPoster}
             controls
             playsInline
             className="w-full h-full object-contain"
