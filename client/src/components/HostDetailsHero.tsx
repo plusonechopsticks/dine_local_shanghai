@@ -24,14 +24,15 @@ export function HostDetailsHero({
   const [videoPlaying, setVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Derive a static poster image from the Cloudinary video URL
+  // Derive a static poster image from the Cloudinary video URL (only works for Cloudinary-hosted videos)
   // e.g. https://res.cloudinary.com/.../video/upload/v.../file.mp4
   //   → https://res.cloudinary.com/.../video/upload/so_0,f_jpg/v.../file.jpg
-  const videoPoster = introVideoUrl
-    ? introVideoUrl
-        .replace('/video/upload/', '/video/upload/so_0,f_jpg/')
-        .replace(/\.mp4$/, '.jpg')
-    : undefined;
+  const videoPoster =
+    introVideoUrl && introVideoUrl.includes('res.cloudinary.com')
+      ? introVideoUrl
+          .replace('/video/upload/', '/video/upload/so_0,f_jpg/')
+          .replace(/\.mp4$/, '.jpg')
+      : undefined;
 
   // Auto-advance slideshow every 5 seconds when not playing video
   useEffect(() => {
@@ -78,11 +79,12 @@ export function HostDetailsHero({
       </div>
 
       {/* Background: photo slideshow (always visible) */}
+      {/* If no food photos but there is a video, use the video thumbnail as background */}
       <div className="w-full h-full flex items-center justify-center">
-        {foodPhotoUrls.length > 0 ? (
+        {foodPhotoUrls.length > 0 || videoPoster ? (
           <>
             <img
-              src={foodPhotoUrls[currentPhotoIndex]}
+              src={foodPhotoUrls.length > 0 ? foodPhotoUrls[currentPhotoIndex] : videoPoster}
               alt={`${hostName} photo ${currentPhotoIndex + 1}`}
               className="w-full h-full object-cover"
             />
