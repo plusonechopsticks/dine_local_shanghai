@@ -45,6 +45,16 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
             Browse Hosts
           </button>
           <a
+            href="#reviews"
+            onClick={(e) => {
+              e.preventDefault();
+              handleAnchorClick("reviews");
+            }}
+            className="text-gray-700 hover:text-gray-900 font-medium transition cursor-pointer"
+          >
+            Reviews
+          </a>
+          <a
             href="#how-it-works"
             onClick={(e) => {
               e.preventDefault();
@@ -113,6 +123,16 @@ export function HomeHeader({ onNavigate }: HomeHeaderProps) {
             >
               Browse Hosts
             </button>
+            <a
+              href="#reviews"
+              onClick={(e) => {
+                e.preventDefault();
+                handleAnchorClick("reviews");
+              }}
+              className="text-left text-gray-700 hover:text-gray-900 font-medium py-2 transition cursor-pointer"
+            >
+              Reviews
+            </a>
             <a
               href="#how-it-works"
               onClick={(e) => {

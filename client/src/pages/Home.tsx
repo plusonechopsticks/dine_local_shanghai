@@ -411,7 +411,9 @@ export default function Home() {
       </section>
 
       {/* Section 2.6: Guest Stories */}
-      <GuestStories testimonials={TESTIMONIALS} />
+      <div id="reviews">
+        <GuestStories testimonials={TESTIMONIALS} />
+      </div>
 
       {/* Section 3: Brand Identity & Story */}
       <section id="brand-story" className="py-16 bg-white">
