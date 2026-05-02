@@ -298,7 +298,7 @@ export const pageViews = mysqlTable("page_views", {
   id: int("id").autoincrement().primaryKey(),
   
   // Page information
-  pageType: mysqlEnum("pageType", ["home", "browse_hosts", "become_host", "host_detail"]).notNull(),
+  pageType: mysqlEnum("pageType", ["home", "browse_hosts", "become_host", "host_detail", "blog"]).notNull(),
   hostListingId: int("hostListingId").references(() => hostListings.id, { onDelete: "cascade" }), // Only for host_detail pages
   
   // Date (stored as DATE for grouping by day)

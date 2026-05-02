@@ -1,0 +1,1 @@
+ALTER TABLE `page_views` MODIFY COLUMN `pageType` enum('home','browse_hosts','become_host','host_detail','blog') NOT NULL;
