@@ -8,6 +8,8 @@ import { trpc } from '../lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { HostDetailsHero } from '@/components/HostDetailsHero';
+import { GuestStories } from '@/components/GuestStories';
+import { TESTIMONIALS } from '@/data/testimonials';
 
 export default function HostDetailPageV2() {
   const params = useParams();
@@ -360,6 +362,19 @@ export default function HostDetailPageV2() {
               </div>
             </div>
           </section>
+
+          {/* What Guests Say */}
+          {(() => {
+            const hostReviews = TESTIMONIALS.filter((t) => (t as any).hostId === hostId);
+            if (hostReviews.length === 0) return null;
+            return (
+              <div className="max-w-4xl mx-auto px-8 pt-16">
+                <h2 className="text-4xl font-bold mb-2">What Guests Say</h2>
+                <p className="text-gray-500 mb-0">Real reviews from guests who dined here</p>
+                <GuestStories testimonials={hostReviews as any} />
+              </div>
+            );
+          })()}
 
           {/* Things to Know */}
           <section className="py-16 px-8 bg-gray-50">

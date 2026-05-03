@@ -1,6 +1,7 @@
 export const TESTIMONIALS = [
   {
     id: "en-kai",
+    hostId: 180001,
     guestName: "En Kai",
     location: "Singapore",
     travelerType: "Solo Traveler",
@@ -45,6 +46,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "danny",
+    hostId: 150001,
     guestName: "Danny",
     location: "Australia",
     travelerType: "Family with kid",
@@ -97,6 +99,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "dustin",
+    hostId: 90002,
     guestName: "Dustin",
     location: "Canada",
     travelerType: "Solo traveler · Realtor",
@@ -117,6 +120,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "claire",
+    hostId: 90002,
     guestName: "Claire (@lost_with_claire)",
     location: "Australia",
     travelerType: "Solo traveler · Teacher & Influencer",
@@ -137,6 +141,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "sandrine",
+    hostId: 210001,
     guestName: "Sandrine",
     location: "France",
     travelerType: "Family with teen · Air France Flight Attendant",
@@ -157,6 +162,7 @@ export const TESTIMONIALS = [
   },
   {
     id: "ethan-xu",
+    hostId: 150001,
     guestName: "Ethan Xu",
     location: "Australia",
     travelerType: "Friends group",
