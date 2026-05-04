@@ -43,6 +43,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import DateGridCalendar from "@/components/DateGridCalendar";
+import { HostReviewsCarousel } from "@/components/HostReviewsCarousel";
+import { TESTIMONIALS } from "@/data/testimonials";
 import { useParams, useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
 
@@ -1032,6 +1034,13 @@ export default function HostDetail() {
           </div>
         </div>
       </main>
+
+      {/* What Guests Say — reviews carousel */}
+      {(() => {
+        const hostReviews = TESTIMONIALS.filter((t) => t.hostId === hostId);
+        if (hostReviews.length === 0) return null;
+        return <HostReviewsCarousel testimonials={hostReviews} />;
+      })()}
 
       {/* MOBILE FLOATING BOOKING BUTTON */}
       <div className="fixed bottom-0 left-0 right-0 lg:hidden z-40 p-4" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%)' }}>
