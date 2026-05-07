@@ -389,6 +389,7 @@ export const blogPosts = mysqlTable("blog_posts", {
   tags: json("tags").$type<string[]>().notNull(), // e.g., ["entrepreneurship", "travel-policy", "food-culture"]
   
   // SEO
+  metaTitle: varchar("metaTitle", { length: 255 }), // Custom SEO title (overrides post title in <title> tag)
   metaDescription: text("metaDescription"), // For search results
   metaKeywords: varchar("metaKeywords", { length: 500 }), // For search engines
   

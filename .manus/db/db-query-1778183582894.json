@@ -1,0 +1,35 @@
+{
+  "query": "SELECT slug, metaTitle, LEFT(metaDescription, 60) as metaDesc FROM blog_posts WHERE slug IN ('eating-in-china-with-food-sensitivities','china-app-stack-essential-apps-traveling','planning-first-china-trip-itinerary-questions','home-dining-cheat-sheet-steven-to','chinas-overlooked-export-boom-home-dining');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT slug, metaTitle, LEFT(metaDescription, 60) as metaDesc FROM blog_posts WHERE slug IN ('eating-in-china-with-food-sensitivities','china-app-stack-essential-apps-traveling','planning-first-china-trip-itinerary-questions','home-dining-cheat-sheet-steven-to','chinas-overlooked-export-boom-home-dining');",
+  "rows": [
+    {
+      "slug": "china-app-stack-essential-apps-traveling",
+      "metaTitle": "Essential Apps for Traveling in China in 2026: The Complete Stack",
+      "metaDesc": "WeChat, Didi, VPN, maps — the exact apps you need before arr"
+    },
+    {
+      "slug": "chinas-overlooked-export-boom-home-dining",
+      "metaTitle": "China's Home Dining Scene: The Experience Tourists Are Missing",
+      "metaDesc": "Beyond restaurants, a quiet revolution in home dining is ope"
+    },
+    {
+      "slug": "eating-in-china-with-food-sensitivities",
+      "metaTitle": "Eating in China with Food Allergies & Sensitivities: What Travelers Need to Know",
+      "metaDesc": "MSG, gluten, halal, vegetarian — practical guide for travele"
+    },
+    {
+      "slug": "home-dining-cheat-sheet-steven-to",
+      "metaTitle": "The Home Dining Cheat Sheet: How to Eat Like a Local in China",
+      "metaDesc": "Everything you need to know before sitting down at a Chinese"
+    },
+    {
+      "slug": "planning-first-china-trip-itinerary-questions",
+      "metaTitle": "First-Time China Trip Itinerary: Questions We Keep Getting Asked (2026)",
+      "metaDesc": "Planning your first trip to China? We answer the most common"
+    }
+  ],
+  "messages": [],
+  "stdout": "slug\tmetaTitle\tmetaDesc\nchina-app-stack-essential-apps-traveling\tEssential Apps for Traveling in China in 2026: The Complete Stack\tWeChat, Didi, VPN, maps — the exact apps you need before arr\nchinas-overlooked-export-boom-home-dining\tChina's Home Dining Scene: The Experience Tourists Are Missing\tBeyond restaurants, a quiet revolution in home dining is ope\neating-in-china-with-food-sensitivities\tEating in China with Food Allergies & Sensitivities: What Travelers Need to Know\tMSG, gluten, halal, vegetarian — practical guide for travele\nhome-dining-cheat-sheet-steven-to\tThe Home Dining Cheat Sheet: How to Eat Like a Local in China\tEverything you need to know before sitting down at a Chinese\nplanning-first-china-trip-itinerary-questions\tFirst-Time China Trip Itinerary: Questions We Keep Getting Asked (2026)\tPlanning your first trip to China? We answer the most common\n",
+  "stderr": "",
+  "execution_time_ms": 1774
+}

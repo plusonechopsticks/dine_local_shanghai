@@ -1,0 +1,1 @@
+ALTER TABLE `blog_posts` ADD `metaTitle` varchar(255);

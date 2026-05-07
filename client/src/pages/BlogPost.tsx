@@ -24,6 +24,81 @@ export default function BlogPost() {
     }
   }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Inject per-post SEO meta tags into <head>
+  useEffect(() => {
+    if (!post) return;
+    const seoTitle = (post as any).metaTitle || post.title;
+    const seoDesc = (post as any).metaDescription || post.excerpt || "";
+    const canonicalUrl = `https://plus1chopsticks.com/blog/${post.slug}`;
+
+    // Title
+    document.title = `${seoTitle} | +1 Chopsticks`;
+
+    // Meta description
+    let descTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!descTag) {
+      descTag = document.createElement("meta");
+      descTag.setAttribute("name", "description");
+      document.head.appendChild(descTag);
+    }
+    descTag.setAttribute("content", seoDesc);
+
+    // OG title
+    let ogTitle = document.querySelector('meta[property="og:title"]') as HTMLMetaElement | null;
+    if (!ogTitle) {
+      ogTitle = document.createElement("meta");
+      ogTitle.setAttribute("property", "og:title");
+      document.head.appendChild(ogTitle);
+    }
+    ogTitle.setAttribute("content", `${seoTitle} | +1 Chopsticks`);
+
+    // OG description
+    let ogDesc = document.querySelector('meta[property="og:description"]') as HTMLMetaElement | null;
+    if (!ogDesc) {
+      ogDesc = document.createElement("meta");
+      ogDesc.setAttribute("property", "og:description");
+      document.head.appendChild(ogDesc);
+    }
+    ogDesc.setAttribute("content", seoDesc);
+
+    // OG URL
+    let ogUrl = document.querySelector('meta[property="og:url"]') as HTMLMetaElement | null;
+    if (!ogUrl) {
+      ogUrl = document.createElement("meta");
+      ogUrl.setAttribute("property", "og:url");
+      document.head.appendChild(ogUrl);
+    }
+    ogUrl.setAttribute("content", canonicalUrl);
+
+    // Canonical link
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", canonicalUrl);
+
+    // OG image (featured image if available)
+    if (post.featuredImageUrl) {
+      let ogImage = document.querySelector('meta[property="og:image"]') as HTMLMetaElement | null;
+      if (!ogImage) {
+        ogImage = document.createElement("meta");
+        ogImage.setAttribute("property", "og:image");
+        document.head.appendChild(ogImage);
+      }
+      ogImage.setAttribute("content", post.featuredImageUrl);
+    }
+
+    // Restore defaults on unmount
+    return () => {
+      document.title = "+1 Chopsticks | Authentic Home Dining Experiences in Shanghai";
+      document.querySelector('meta[name="description"]')?.setAttribute("content",
+        "Dine with local families in Shanghai. Authentic home-cooked meals, real cultural exchange, and unforgettable experiences with +1 Chopsticks."
+      );
+    };
+  }, [post]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
