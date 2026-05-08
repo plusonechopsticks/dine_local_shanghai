@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, slug, featuredImageUrl FROM blog_posts WHERE slug = 'shanghais-first-home-dining-platform-plus1chopsticks';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, slug, featuredImageUrl FROM blog_posts WHERE slug = 'shanghais-first-home-dining-platform-plus1chopsticks';",
+  "rows": [
+    {
+      "id": "60001",
+      "slug": "shanghais-first-home-dining-platform-plus1chopsticks",
+      "featuredImageUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_9405_7316cca3.PNG"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tslug\tfeaturedImageUrl\n60001\tshanghais-first-home-dining-platform-plus1chopsticks\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_9405_7316cca3.PNG\n",
+  "stderr": "",
+  "execution_time_ms": 1850
+}
