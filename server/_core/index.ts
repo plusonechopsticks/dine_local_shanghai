@@ -13,6 +13,7 @@ import multer from "multer";
 import { storagePut } from "../storage";
 import { nanoid } from "nanoid";
 import { scheduleGuestReminder, initializeExistingReminders } from "../reminder-scheduler";
+import { processPendingReminders } from "../process-reminders";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -290,7 +291,20 @@ async function startServer(): Promise<any> {
 
   // Image proxy endpoint removed - Cloudinary URLs are publicly accessible
 
-  // Scheduled task: daily traffic report (platform cron cookie gateway)
+  // Heartbeat cron: process pending booking reminders (called hourly by manus-heartbeat)
+  // Auth: platform cron cookie via /api/scheduled/* gateway
+  app.post("/api/scheduled/process-reminders", async (req: any, res: any) => {
+    try {
+      const result = await processPendingReminders();
+      return res.json({ success: true, ...result });
+    } catch (error: any) {
+      console.error("[Reminders] Failed to process reminders:", error);
+      return res.status(500).json({ success: false, error: error?.message || "Unknown error", stack: error?.stack, timestamp: new Date().toISOString() });
+    }
+  });
+
+  // Heartbeat cron: daily traffic report (called daily at 8am CST by manus-heartbeat)
+  // Auth: platform cron cookie via /api/scheduled/* gateway
   app.post("/api/scheduled/daily-traffic-report", async (req: any, res: any) => {
     try {
       const { sendDailyTrafficReport } = await import("../daily-traffic-report");
@@ -299,25 +313,7 @@ async function startServer(): Promise<any> {
       return res.json({ success: true, message: "Daily traffic report sent" });
     } catch (error: any) {
       console.error("[TrafficReport] Failed to send daily traffic report:", error);
-      return res.status(500).json({ success: false, error: error?.message || "Unknown error" });
-    }
-  });
-
-  // Token-protected daily traffic report endpoint (used by Manus scheduled task)
-  app.post("/api/report/daily", async (req: any, res: any) => {
-    const token = req.headers["x-report-token"] || req.body?.token;
-    const expected = process.env.REPORT_SECRET;
-    if (!expected || token !== expected) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    try {
-      const { sendDailyTrafficReport } = await import("../daily-traffic-report");
-      const targetDate = req.body?.date; // optional: YYYY-MM-DD override
-      await sendDailyTrafficReport(targetDate);
-      return res.json({ success: true, message: "Daily traffic report sent" });
-    } catch (error: any) {
-      console.error("[TrafficReport] Failed to send daily traffic report:", error);
-      return res.status(500).json({ success: false, error: error?.message || "Unknown error" });
+      return res.status(500).json({ success: false, error: error?.message || "Unknown error", stack: error?.stack, timestamp: new Date().toISOString() });
     }
   });
 

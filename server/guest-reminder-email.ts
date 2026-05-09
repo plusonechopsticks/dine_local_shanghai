@@ -29,7 +29,7 @@ export function generateGuestReminderEmail(data: GuestReminderData): string {
   const mealTime = data.mealType === 'lunch' ? '12:00 PM (Noon)' : '7:00 PM';
   const mealEmoji = data.mealType === 'lunch' ? '🍜' : '🍽️';
   
-  console.log('[Email Template] Date string:', data.experienceDate, 'Parsed date:', dateStr, 'Formatted:', formattedDate);
+  console.log('[Email Template] Date string:', data.experienceDate, 'Parsed date:', shanghaiDate, 'Formatted:', formattedDate);
 
   return `
 <!DOCTYPE html>
