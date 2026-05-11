@@ -91,20 +91,28 @@ export default function Home() {
 
   const heroSlides = [
     {
-      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/311292277a75050e5280deb62d18ad37_1741789a.png",
-      alt: "Host and guest toasting with authentic home-cooked meal",
+      image: "/manus-storage/hero-food-spread_b25b92f7.jpg",
+      alt: "Authentic Shanghai home-cooked feast spread on a round table at a +1 Chopsticks dinner",
     },
     {
-      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/cdd3f0ddce48007e5e6fb050f470cbf3_cd7ab9b4.jpeg",
-      alt: "Guests enjoying a home-cooked meal together",
+      image: "/manus-storage/hero-dinner-grace-guests_56fc363b.jpg",
+      alt: "Guests and host smiling together over a home-cooked meal at a +1 Chopsticks experience in Shanghai",
     },
     {
-      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_9266_47731ff3.jpeg",
-      alt: "Friends sharing dumplings and authentic home cooking",
+      image: "/manus-storage/hero-dinner-family-selfie_de17816f.jpg",
+      alt: "International guests and local hosts sharing a family dinner at home in Shanghai",
     },
     {
-      image: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/IMG_0940(1)_1cd227a6.jpeg",
-      alt: "Guests toasting and celebrating at a local home dinner",
+      image: "/manus-storage/hero-group-kitchen_8885dbb6.jpg",
+      alt: "Happy group of guests and hosts celebrating after a home dining experience in Shanghai",
+    },
+    {
+      image: "/manus-storage/hero-dumpling-making_b5bbdbad.jpg",
+      alt: "Guest and host making dumplings together at a +1 Chopsticks home cooking experience",
+    },
+    {
+      image: "/manus-storage/hero-host-guest-selfie_522c563e.jpg",
+      alt: "Host and guest taking a selfie after a memorable home dining experience in Shanghai",
     },
   ];
 
