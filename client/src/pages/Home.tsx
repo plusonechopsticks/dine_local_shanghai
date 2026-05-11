@@ -65,11 +65,11 @@ export default function Home() {
 
   const currentGroupHosts = getHostsByGroup(currentHostGroup);
 
-  // Auto-rotate carousel every 5 seconds
+  // Auto-rotate carousel every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentHostGroup((prev) => (prev + 1) % FEATURED_HOST_GROUPS.length);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -194,17 +194,17 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-rotate host card images
+  // Auto-advancehost card images
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveHostCard((prev) => (prev + 1) % 2);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentSlide]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
