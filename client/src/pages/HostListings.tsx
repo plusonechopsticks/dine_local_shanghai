@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import { ChopsticksLogo } from "@/components/ChopsticksLogo";
-import { getProxiedImageUrl } from "@/lib/imageUtils";
+import { getProxiedImageUrl, getThumbnailUrl } from "@/lib/imageUtils";
 import {
   MapPin,
   Filter,
@@ -250,10 +250,11 @@ function HostCard({ host }: { host: any }) {
   const foodPhotos = host.foodPhotoUrls as string[];
 
   // Use profile photo as the main thumbnail, with food photos as additional carousel images
+  // getThumbnailUrl applies Cloudinary w_600,h_600,c_fill,f_auto,q_auto for optimized delivery
   const images = [
     host.profilePhotoUrl,
     ...(foodPhotos || []),
-  ].filter(Boolean).map(url => getProxiedImageUrl(url));
+  ].filter(Boolean).map(url => getThumbnailUrl(url, 600, 600));
 
   const nextImage = (e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -305,6 +306,7 @@ function HostCard({ host }: { host: any }) {
                 src={images[currentImageIndex]}
                 alt={host.hostName}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
               />
               
 
@@ -356,9 +358,10 @@ function HostCard({ host }: { host: any }) {
                 <div className="flex items-end gap-3 flex-1 min-w-0">
                   {host.profilePhotoUrl && (
                     <img
-                      src={getProxiedImageUrl(host.profilePhotoUrl)}
+                      src={getThumbnailUrl(host.profilePhotoUrl, 96, 96)}
                       alt={host.hostName}
                       className="w-12 h-12 rounded-full object-cover border-2 border-white flex-shrink-0"
+                      loading="lazy"
                     />
                   )}
                   <div className="min-w-0 flex-1">

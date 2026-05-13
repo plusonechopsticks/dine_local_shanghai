@@ -167,6 +167,7 @@ export default function Blog() {
                         src={post.featuredImageUrl}
                         alt={post.title}
                         className="w-full h-full object-cover object-center hover:scale-105 transition-transform"
+                        loading="lazy"
                       />
                     </div>
                   )}

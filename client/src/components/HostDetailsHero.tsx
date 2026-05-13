@@ -96,6 +96,8 @@ export function HostDetailsHero({
                 src={backgroundSrc}
                 alt={`${hostName} photo`}
                 className="w-full h-full object-cover"
+                loading="eager"
+                fetchPriority="high"
               />
             ) : (
               <div className="w-full h-full bg-gray-900" />

@@ -96,6 +96,7 @@ export function GuestStories({ testimonials }: GuestStoriesProps) {
                         src={testimonial.images[currentImageIndex].url}
                         alt={testimonial.images[currentImageIndex].alt}
                         className="w-full h-full object-contain"
+                        loading="lazy"
                       />
 
                       {/* Image Navigation Dots */}
@@ -217,6 +218,7 @@ export function GuestStories({ testimonials }: GuestStoriesProps) {
                       src={selectedTestimonial.images[selectedImageIndex].url}
                       alt={selectedTestimonial.images[selectedImageIndex].alt}
                       className="w-full h-full object-contain"
+                      loading="lazy"
                     />
 
                     {/* Navigation Controls */}

@@ -390,6 +390,7 @@ export default function HostDetail() {
                 loop
                 playsInline
                 autoPlay
+                preload="metadata"
                 aria-hidden="true"
                 ref={(el) => {
                   // Keep bg video in sync with main video
@@ -407,6 +408,7 @@ export default function HostDetail() {
                 loop
                 playsInline
                 autoPlay
+                preload="metadata"
                 muted={isVideoMuted}
                 className="relative z-10 w-full h-full object-contain"
                 onPlay={() => setIsVideoPlaying(true)}
@@ -651,12 +653,14 @@ export default function HostDetail() {
                     alt=""
                     aria-hidden="true"
                     className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-50"
+                    loading="lazy"
                   />
                   {/* Main image */}
                   <img
                     src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
                     alt={`${host.hostName} food photo ${currentFoodImageIndex + 1}`}
                     className="relative w-full h-full object-contain z-10"
+                    loading="lazy"
                   />
                   {foodPhotos.length > 1 && (
                     <>
@@ -710,6 +714,7 @@ export default function HostDetail() {
                         src={getProxiedImageUrl(host.profilePhotoUrl)}
                         alt={host.hostName}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                   </div>

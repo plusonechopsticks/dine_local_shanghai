@@ -114,6 +114,7 @@ export function HostReviewsCarousel({ testimonials }: HostReviewsCarouselProps) 
                     src={t.images[0].url}
                     alt={t.images[0].alt}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
               )}

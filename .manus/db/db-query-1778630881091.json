@@ -1,0 +1,35 @@
+{
+  "query": "SELECT hostName, introVideoUrl, profilePhotoUrl FROM host_listings WHERE introVideoUrl IS NOT NULL AND introVideoUrl != '' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT hostName, introVideoUrl, profilePhotoUrl FROM host_listings WHERE introVideoUrl IS NOT NULL AND introVideoUrl != '' LIMIT 5;",
+  "rows": [
+    {
+      "hostName": "Norika and Steven",
+      "introVideoUrl": "/manus-storage/norika_intro_cbb03406.mov",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1769882356/host-images/ifdaljpfkzdovtrq3pbj.jpg"
+    },
+    {
+      "hostName": "Jiading Ayi",
+      "introVideoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/jiading-ayi-intro_9dcba43c.mp4",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1769882814/host-images/m953al1omf5zczdkum7h.jpg"
+    },
+    {
+      "hostName": "Chuan 川",
+      "introVideoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/copy_EC27B9BC-1CE3-47F6-B23B-116E4807FDF5_54cf5ce7.mov",
+      "profilePhotoUrl": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/yqAeFzoepWJBZJHc.jpg"
+    },
+    {
+      "hostName": "Echo Ren",
+      "introVideoUrl": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/hKGrTkrkNXEowxWF.mov",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1770539824/host-images/iadduzwjbtcbouk2huxe.jpg"
+    },
+    {
+      "hostName": "Filbert Kang",
+      "introVideoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/filbert-hero_565c64e1.mov",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1775102608/host-images/gu02cr8ae1uowt9b4s50.jpg"
+    }
+  ],
+  "messages": [],
+  "stdout": "hostName\tintroVideoUrl\tprofilePhotoUrl\nNorika and Steven\t/manus-storage/norika_intro_cbb03406.mov\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1769882356/host-images/ifdaljpfkzdovtrq3pbj.jpg\nJiading Ayi\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/jiading-ayi-intro_9dcba43c.mp4\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1769882814/host-images/m953al1omf5zczdkum7h.jpg\nChuan 川\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/copy_EC27B9BC-1CE3-47F6-B23B-116E4807FDF5_54cf5ce7.mov\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/yqAeFzoepWJBZJHc.jpg\nEcho Ren\thttps://files.manuscdn.com/user_upload_by_module/session_file/310519663228681359/hKGrTkrkNXEowxWF.mov\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1770539824/host-images/iadduzwjbtcbouk2huxe.jpg\nFilbert Kang\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/filbert-hero_565c64e1.mov\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1775102608/host-images/gu02cr8ae1uowt9b4s50.jpg\n",
+  "stderr": "",
+  "execution_time_ms": 1868
+}

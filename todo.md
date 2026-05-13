@@ -1747,3 +1747,22 @@
 - [x] Add getRandomWithVideo to host router (was in wrong payment router - fixed)
 - [x] Wire overlay into homepage Surprise Me button
 - [x] Overlay shows: YOU'RE GOING TO MEET, host photo, name, cuisine, district, Meet [Name] CTA, Maybe another time dismiss
+
+## Image & Video Performance Optimizations - Completed ✅
+- [x] Fix storage proxy Cache-Control from no-store to public, max-age=31536000, immutable
+- [x] Add DNS preconnect hints for res.cloudinary.com, CloudFront, files.manuscdn.com in index.html
+- [x] Add <link rel="preload"> for first hero carousel image (LCP element) in index.html
+- [x] Add fetchPriority="high" + loading="eager" to first hero slide; loading="lazy" to slides 2-6
+- [x] Add Cloudinary f_auto,q_auto auto-format/quality to getProxiedImageUrl in imageUtils.ts
+- [x] Add getThumbnailUrl helper with Cloudinary w/h/c_fill/f_auto/q_auto for host card images
+- [x] Add loading="lazy" to host group carousel images in Home.tsx
+- [x] Add loading="lazy" to about section images in Home.tsx
+- [x] Add preload="metadata" to both video elements in HostDetail.tsx to prevent eager video download
+- [x] Add loading="lazy" to food photos and profile photo in HostDetail.tsx
+- [x] Use getThumbnailUrl for host card images in HostListings.tsx (600x600 optimized)
+- [x] Add loading="lazy" to host card main image and avatar in HostListings.tsx
+- [x] Add loading="lazy" to blog post thumbnails in Blog.tsx
+- [x] Add fetchPriority="high" + loading="eager" to BlogPost featured image (LCP)
+- [x] Add loading="lazy" to review card images in HostReviewsCarousel.tsx
+- [x] Add fetchPriority="high" + loading="eager" to HostDetailsHero background image
+- [x] Add loading="lazy" to testimonial card and modal images in GuestStories.tsx

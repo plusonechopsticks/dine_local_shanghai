@@ -140,6 +140,8 @@ export default function BlogPost() {
             src={post.featuredImageUrl}
             alt={post.title}
             className="w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
       )}

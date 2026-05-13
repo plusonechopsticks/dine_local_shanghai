@@ -15,6 +15,7 @@ import { trpc } from "@/lib/trpc";
 import { HomeBlogSection } from "@/components/HomeBlogSection";
 import { SurpriseMeOverlay } from "@/components/SurpriseMeOverlay";
 import { toast } from "sonner";
+import { getThumbnailUrl } from "@/lib/imageUtils";
 
 // Image URLs from S3
 const IMAGES = {
@@ -246,6 +247,8 @@ export default function Home() {
                 src={slide.image}
                 alt={slide.alt}
                 className="w-full h-full object-cover md:object-center object-top"
+                loading={idx === 0 ? "eager" : "lazy"}
+                fetchPriority={idx === 0 ? "high" : "low"}
               />
             </div>
           ))}
@@ -310,9 +313,10 @@ export default function Home() {
                 {/* Image */}
                 <div className="relative h-64 bg-gray-200 overflow-hidden cursor-pointer" onClick={() => setLocation(`/hosts/${host.id}`)}>
                   <img
-                    src={host.profilePhotoUrl || ""}
+                    src={getThumbnailUrl(host.profilePhotoUrl, 600, 480)}
                     alt={`${host.hostName} - ${host.cuisineStyle || 'Local cuisine'} host in ${host.district || 'China'} for authentic home dining experience`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
                   />
                   <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
                     ✓ Verified
@@ -669,9 +673,10 @@ export default function Home() {
             <div className="relative order-1 md:order-2">
               <div className="rounded-lg overflow-hidden shadow-2xl group cursor-pointer">
                 <img
-                  src="https://res.cloudinary.com/drxfcfayd/image/upload/v1771181302/plus1chopsticks/hosts/sookie/sookie_profile.jpg"
+                  src="https://res.cloudinary.com/drxfcfayd/image/upload/f_auto,q_auto/v1771181302/plus1chopsticks/hosts/sookie/sookie_profile.jpg"
                   alt="Sookie hosting"
                   className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -743,6 +748,7 @@ export default function Home() {
                   src={IMAGES.aboutMain}
                   alt="Steven completing the 7th continent with penguin - founder of +1 Chopsticks authentic home dining in China"
                   className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                   <p className="text-white text-center px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
@@ -764,6 +770,7 @@ export default function Home() {
                       src={item.image}
                       alt={`${item.caption} - authentic home dining experience with local family`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
                       <p className="text-white text-center px-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">
@@ -785,6 +792,7 @@ export default function Home() {
                       src={item.image}
                       alt={`${item.caption} - authentic home dining experience with local family`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
                       <p className="text-white text-center px-3 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-italic">

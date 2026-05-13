@@ -32,8 +32,9 @@ export function registerStorageProxy(app: Express) {
         res.status(502).send("Empty signed URL from backend");
         return;
       }
-      res.set("Cache-Control", "no-store");
-      res.redirect(307, url);
+      // Files are content-hashed (e.g. _cb9ae434) so they are immutable — safe to cache for 1 year
+      res.set("Cache-Control", "public, max-age=31536000, immutable");
+      res.redirect(301, url);
     } catch (err) {
       console.error("[StorageProxy] failed:", err);
       res.status(502).send("Storage proxy error");
