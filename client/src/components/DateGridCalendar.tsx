@@ -7,6 +7,8 @@ interface DateGridCalendarProps {
   selectedDate: string;
   onDateSelect: (date: string) => void;
   availability?: Record<string, string[]>;
+  /** YYYY-MM-DD string. Any date strictly before this is disabled. */
+  minDate?: string;
 }
 
 export default function DateGridCalendar({
@@ -14,6 +16,7 @@ export default function DateGridCalendar({
   selectedDate,
   onDateSelect,
   availability,
+  minDate,
 }: DateGridCalendarProps) {
   const [currentDate, setCurrentDate] = React.useState(new Date());
 
@@ -58,6 +61,8 @@ export default function DateGridCalendar({
 
   const isDateDisabled = (day: number) => {
     const dateStr = getDateString(day);
+    // Block past dates by direct string comparison (YYYY-MM-DD sorts lexicographically)
+    if (minDate && dateStr < minDate) return true;
     return disabledDates.has(dateStr);
   };
 

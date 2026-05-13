@@ -85,6 +85,13 @@ export default function HostDetail() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
   const [disabledDates, setDisabledDates] = useState<Set<string>>(new Set());
+  const [todayStr, setTodayStr] = useState<string>(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  });
   const [bookingData, setBookingData] = useState({
     guestName: "",
     guestEmail: "",
@@ -205,15 +212,11 @@ export default function HostDetail() {
       return `${y}-${m}-${day}`;
     };
 
-    // Block today and all past dates
-    for (let i = -365; i < 0; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() + i);
-      const dateStr = toLocalDateStr(date);
-      disabled.add(dateStr);
-    }
+    // Store today's local date string so the calendar can block past dates by direct comparison
+    const todayStr = toLocalDateStr(today);
     
     // Check availability for today and future dates (90 days)
+    // Past dates are blocked in the calendar itself via comparison with todayStr
     for (let i = 0; i < 90; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() + i);
@@ -225,6 +228,10 @@ export default function HostDetail() {
         disabled.add(dateStr);
       }
     }
+    
+    // Pass todayStr into disabled set with a sentinel so DateGridCalendar can use it
+    // Instead, we store it separately and pass as minDate prop
+    setTodayStr(todayStr);
 
     // Also block any explicit date blocks from the database
     if (availabilityBlocks) {
@@ -955,6 +962,7 @@ export default function HostDetail() {
                         <DateGridCalendar
                           disabledDates={disabledDates}
                           availability={host.availability}
+                          minDate={todayStr}
                           onDateSelect={(date) => {
                             setBookingData({ ...bookingData, requestedDate: date });
                             setShowCalendar(false);
@@ -1183,6 +1191,7 @@ export default function HostDetail() {
                       <DateGridCalendar
                         disabledDates={disabledDates}
                         availability={host.availability}
+                        minDate={todayStr}
                         onDateSelect={(date) => { setBookingData({ ...bookingData, requestedDate: date }); setShowCalendar(false); }}
                         selectedDate={bookingData.requestedDate}
                       />
