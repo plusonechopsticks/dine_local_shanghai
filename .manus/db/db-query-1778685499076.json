@@ -1,0 +1,25 @@
+{
+  "query": "SELECT menuDescription, title, bio FROM host_listings WHERE id = 210001;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT menuDescription, title, bio FROM host_listings WHERE id = 210001;",
+  "rows": [
+    {
+      "menuDescription": "- Cucumber Salad",
+      "title": "Shanghai Home Dining by Local Shanghainese Family (of 3 and a dog!)",
+      "bio": "Hi! I’m a Shanghai local and I love home cooking."
+    }
+  ],
+  "messages": [
+    "I'm passionate about simple, comforting home-style Chinese cooking - the kind meant to be shared with family and friends around the table.",
+    "Here's my sample menu. As a proud Shanghainese, I'm all about making local Shanghainese dishes. We can always adjust based on your dietary requirements and preferences! (Can accommodate vegetarian)",
+    "- Sweet and sour pork ribs",
+    "- Roasted Gluten",
+    "- Steamed Yellow Croaker ",
+    "- Mapo tofu",
+    "I cook for my family every day and often host relatives during holidays. My cooking is typical Chinese home-style food-simple, comforting and meant to be shared.",
+    "This would be my first time hosting international guests, but I’d love to open my home and share a real family- style Chinese meal and everyday stories about life in Shanghai.",
+    "We live in a beautiful apartment in Pudong, not too far away from Huangpu River. We are a family of three - my husband, my daughter, and our friendly dog."
+  ],
+  "stdout": "menuDescription\ttitle\tbio\nI'm passionate about simple, comforting home-style Chinese cooking - the kind meant to be shared with family and friends around the table.\n\nHere's my sample menu. As a proud Shanghainese, I'm all about making local Shanghainese dishes. We can always adjust based on your dietary requirements and preferences! (Can accommodate vegetarian)\n\n- Sweet and sour pork ribs\n- Roasted Gluten\n- Steamed Yellow Croaker \n- Mapo tofu\n- Cucumber Salad\tShanghai Home Dining by Local Shanghainese Family (of 3 and a dog!)\tHi! I’m a Shanghai local and I love home cooking.\n\nI cook for my family every day and often host relatives during holidays. My cooking is typical Chinese home-style food-simple, comforting and meant to be shared.\n\nThis would be my first time hosting international guests, but I’d love to open my home and share a real family- style Chinese meal and everyday stories about life in Shanghai.\n\nWe live in a beautiful apartment in Pudong, not too far away from Huangpu River. We are a family of three - my husband, my daughter, and our friendly dog.\n",
+  "stderr": "",
+  "execution_time_ms": 1812
+}

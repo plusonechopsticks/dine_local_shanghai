@@ -1,0 +1,15 @@
+{
+  "query": "SELECT id, hostName, profilePhotoUrl FROM host_listings WHERE hostName LIKE '%Eating%' OR hostName LIKE '%eating%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, profilePhotoUrl FROM host_listings WHERE hostName LIKE '%Eating%' OR hostName LIKE '%eating%';",
+  "rows": [
+    {
+      "id": "360001",
+      "hostName": "Eating (Yiting)",
+      "profilePhotoUrl": "https://res.cloudinary.com/drxfcfayd/image/upload/v1777395417/hosts/molly/profile.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tprofilePhotoUrl\n360001\tEating (Yiting)\thttps://res.cloudinary.com/drxfcfayd/image/upload/v1777395417/hosts/molly/profile.png\n",
+  "stderr": "",
+  "execution_time_ms": 1713
+}

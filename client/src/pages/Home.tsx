@@ -673,8 +673,8 @@ export default function Home() {
             <div className="relative order-1 md:order-2">
               <div className="rounded-lg overflow-hidden shadow-2xl group cursor-pointer">
                 <img
-                  src="https://res.cloudinary.com/drxfcfayd/image/upload/f_auto,q_auto/v1771181302/plus1chopsticks/hosts/sookie/sookie_profile.jpg"
-                  alt="Sookie hosting"
+                  src="https://res.cloudinary.com/drxfcfayd/image/upload/f_auto,q_auto/v1777395417/hosts/molly/profile.png"
+                  alt="Eating (Yiting) hosting"
                   className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                 />
