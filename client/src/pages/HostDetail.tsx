@@ -914,7 +914,7 @@ export default function HostDetail() {
                           <Calendar size={14} style={{ color: '#d4af37', flexShrink: 0 }} />
                           <span className="truncate text-xs">
                             {bookingData.requestedDate
-                              ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+                              ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                               : "Pick date"}
                           </span>
                         </button>
@@ -1152,7 +1152,7 @@ export default function HostDetail() {
                         <Calendar size={13} style={{ color: '#d4af37', flexShrink: 0 }} />
                         <span className="truncate">
                           {bookingData.requestedDate
-                            ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+                            ? new Date(bookingData.requestedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                             : "Pick date"}
                         </span>
                       </button>
