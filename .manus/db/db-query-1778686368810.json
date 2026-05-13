@@ -1,0 +1,13 @@
+{
+  "query": "SELECT foodPhotoUrls FROM host_listings WHERE id = '210001';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT foodPhotoUrls FROM host_listings WHERE id = '210001';",
+  "rows": [
+    {
+      "foodPhotoUrls": "[\"/manus-storage/IMG_9478_8d92638b.JPG\", \"/manus-storage/IMG_9479_2fa4dff6.JPG\", \"/manus-storage/IMG_9481_e5be2bf8.JPG\", \"/manus-storage/f5162efbde44032257719973afacb804_5d1fe2ae.jpg\", \"/manus-storage/c5ee2f95bec6f41c69f9222cbda25678_3b0675c0.jpg\", \"/manus-storage/ecba1ad1d6f82c48d2aba3fb6339dc28_73ff3253.jpg\", \"/manus-storage/a85279c7ef42090ceb02f3b5d2d2bdf0_0567f5f1.jpg\", \"/manus-storage/35be9e140a3b468bdf7a247f68312920_60ba5f85.jpg\", \"/manus-storage/55238750538f6b94e338075ff0be8719_001945ab.jpg\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "foodPhotoUrls\n[\"/manus-storage/IMG_9478_8d92638b.JPG\", \"/manus-storage/IMG_9479_2fa4dff6.JPG\", \"/manus-storage/IMG_9481_e5be2bf8.JPG\", \"/manus-storage/f5162efbde44032257719973afacb804_5d1fe2ae.jpg\", \"/manus-storage/c5ee2f95bec6f41c69f9222cbda25678_3b0675c0.jpg\", \"/manus-storage/ecba1ad1d6f82c48d2aba3fb6339dc28_73ff3253.jpg\", \"/manus-storage/a85279c7ef42090ceb02f3b5d2d2bdf0_0567f5f1.jpg\", \"/manus-storage/35be9e140a3b468bdf7a247f68312920_60ba5f85.jpg\", \"/manus-storage/55238750538f6b94e338075ff0be8719_001945ab.jpg\"]\n",
+  "stderr": "",
+  "execution_time_ms": 1763
+}

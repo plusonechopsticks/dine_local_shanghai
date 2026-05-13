@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE host_listings SET foodPhotoUrls = '[\"/manus-storage/echo_food_01_family_table_6b9940e5.jpg\", \"/manus-storage/echo_food_02_restaurant_group_b7fc01d2.jpg\", \"/manus-storage/echo_food_03_dumplings_plate_9f99ff14.jpg\", \"/manus-storage/echo_food_04_food_spread_2c734df5.jpg\", \"/manus-storage/echo_food_05_raw_dumplings_tray_821f396b.jpg\", \"/manus-storage/echo_food_06_white_cut_chicken_125e3c06.jpg\", \"/manus-storage/echo_food_07_dumpling_making_7f66e160.jpg\", \"/manus-storage/echo_food_08_red_braised_pork_d14477f3.jpg\", \"/manus-storage/echo_food_09_tomato_egg_d14697fb.jpg\"]' WHERE id = '210001';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE host_listings SET foodPhotoUrls = '[\"/manus-storage/echo_food_01_family_table_6b9940e5.jpg\", \"/manus-storage/echo_food_02_restaurant_group_b7fc01d2.jpg\", \"/manus-storage/echo_food_03_dumplings_plate_9f99ff14.jpg\", \"/manus-storage/echo_food_04_food_spread_2c734df5.jpg\", \"/manus-storage/echo_food_05_raw_dumplings_tray_821f396b.jpg\", \"/manus-storage/echo_food_06_white_cut_chicken_125e3c06.jpg\", \"/manus-storage/echo_food_07_dumpling_making_7f66e160.jpg\", \"/manus-storage/echo_food_08_red_braised_pork_d14477f3.jpg\", \"/manus-storage/echo_food_09_tomato_egg_d14697fb.jpg\"]' WHERE id = '210001';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1772
+}
