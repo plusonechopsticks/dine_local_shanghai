@@ -28,12 +28,11 @@ const IMAGES = {
 
 // Define featured host groups in order
 const FEATURED_HOST_GROUPS = [
-  ["Jiading Ayi", "Norika and Steven", "Chuan"], // Group 1 (first 3)
-  ["Sookie", "Echo Ren", "Grace Tong"], // Group 2
-  ["Eating", "Echo Ren", "Jiading Ayi"], // Group 3
+  ["Jiading Ayi", "Norika and Steven", "Chuan"], // Group 1
+  ["Eating", "Echo Ren", "Grace Tong"], // Group 2
 ];
 
-const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven", "Echo", "Grace", "Sookie", "Eating"];
+const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven", "Echo", "Grace", "Eating"];
 
 export default function Home() {
   const [, setLocation] = useLocation();
