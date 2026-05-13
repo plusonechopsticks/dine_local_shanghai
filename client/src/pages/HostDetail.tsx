@@ -197,11 +197,19 @@ export default function HostDetail() {
     today.setHours(0, 0, 0, 0);
     const disabled = new Set<string>();
     
+    // Helper: format a Date as YYYY-MM-DD using local components (avoids UTC timezone shift)
+    const toLocalDateStr = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
     // Block today and all past dates
     for (let i = -365; i < 0; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() + i);
-      const dateStr = date.toISOString().split("T")[0];
+      const dateStr = toLocalDateStr(date);
       disabled.add(dateStr);
     }
     
@@ -209,7 +217,7 @@ export default function HostDetail() {
     for (let i = 0; i < 90; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() + i);
-      const dateStr = date.toISOString().split("T")[0];
+      const dateStr = toLocalDateStr(date);
       const dayName = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
       
       if (!host.availability || !host.availability[dayName as keyof typeof host.availability] || 

@@ -70,7 +70,7 @@ const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "frida
 
 export default function HostCalendarTab({ hostId, language }: { hostId: number; language: Language }) {
   const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(() => { const now = new Date(); const y = now.getFullYear(); const m = String(now.getMonth() + 1).padStart(2, "0"); const d = String(now.getDate()).padStart(2, "0"); return `${y}-${m}-${d}`; });
   const [selectedMealType, setSelectedMealType] = useState<"full_day" | "lunch" | "dinner">("full_day");
   const [selectedWeekday, setSelectedWeekday] = useState<number>(1); // 1 = Monday
 

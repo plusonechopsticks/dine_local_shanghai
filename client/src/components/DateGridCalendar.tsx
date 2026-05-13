@@ -47,8 +47,13 @@ export default function DateGridCalendar({
   }, [firstDay, daysInMonth]);
 
   const getDateString = (day: number) => {
-    const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    return date.toISOString().split("T")[0];
+    // Use local date components to avoid UTC timezone shift.
+    // toISOString() converts to UTC, which can roll back a day for UTC+ timezones
+    // (e.g. Shanghai UTC+8: midnight local = 16:00 previous day UTC).
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const dayStr = String(day).padStart(2, "0");
+    return `${year}-${month}-${dayStr}`;
   };
 
   const isDateDisabled = (day: number) => {
