@@ -25,11 +25,7 @@ import {
   BookOpen,
   Compass,
   Play,
-  Pause,
   X,
-  Volume2,
-  VolumeX,
-  Maximize,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -77,9 +73,7 @@ export default function HostDetail() {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [expandedBio, setExpandedBio] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-  const [isVideoMuted, setIsVideoMuted] = useState(false);
-  const [showUnmuteHint, setShowUnmuteHint] = useState(true);
+  const [_meetVideoPlaying, setMeetVideoPlaying] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showMobileBooking, setShowMobileBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -101,14 +95,8 @@ export default function HostDetail() {
     specialRequests: "",
   });
 
-  // Hide the unmute hint after 4 seconds
-  useEffect(() => {
-    const t = setTimeout(() => setShowUnmuteHint(false), 4000);
-    return () => clearTimeout(t);
-  }, []);
-
   // Refs
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const meetVideoRef = useRef<HTMLVideoElement>(null);
 
   // Data fetching
   const hostId = params?.id ? parseInt(params.id) : null;
@@ -128,30 +116,6 @@ export default function HostDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostId]);
 
-  // Explicitly play video when host changes (autoPlay attribute alone doesn't re-trigger
-  // on client-side navigation since the component may not fully remount)
-  useEffect(() => {
-    if (!host?.introVideoUrl) return;
-    // Reset mute state and hint for new host
-    setIsVideoMuted(true);
-    setShowUnmuteHint(true);
-    setIsVideoPlaying(true);
-    const t = setTimeout(() => {
-      if (videoRef.current) {
-        videoRef.current.muted = false;
-        videoRef.current.play().catch(() => {
-          // Autoplay with sound blocked by browser — fall back to muted autoplay
-          videoRef.current!.muted = true;
-          setIsVideoMuted(true);
-          videoRef.current!.play().catch(() => {
-          // Muted autoplay also blocked — show play button
-          setIsVideoPlaying(false);
-          });
-        });
-      }
-    }, 100); // small delay to let the src settle after navigation
-    return () => clearTimeout(t);
-  }, [host?.introVideoUrl]);
 
   // Booking mutation
   const createBookingMutation = trpc.booking.create.useMutation({
@@ -394,115 +358,9 @@ export default function HostDetail() {
           </button>
         </div>
 
-        {/* Video or Slideshow */}
+        {/* Photo Slideshow — profile photo + food photos */}
         <div className="w-full h-full flex items-center justify-center">
-          {host.introVideoUrl ? (
-            <div className="relative w-full h-full overflow-hidden">
-              {/* Blurred background fill — handles portrait videos in landscape frame */}
-              <video
-                className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl brightness-50"
-                muted
-                loop
-                playsInline
-                autoPlay
-                preload="metadata"
-                aria-hidden="true"
-                ref={(el) => {
-                  // Keep bg video in sync with main video
-                  if (el && videoRef.current) {
-                    if (isVideoPlaying) el.play(); else el.pause();
-                  }
-                }}
-              >
-                {/* type="video/mp4" forces Chrome/Android to attempt H.264 decode even for .mov files served as video/quicktime */}
-                <source src={host.introVideoUrl} type="video/mp4" />
-              </video>
-              {/* Main video — object-cover on mobile to fill full width, object-contain on larger screens */}
-              <video
-                ref={videoRef}
-                loop
-                playsInline
-                autoPlay
-                preload="metadata"
-                muted={isVideoMuted}
-                className="relative z-10 w-full h-full object-contain"
-                onPlay={() => setIsVideoPlaying(true)}
-                onPause={() => setIsVideoPlaying(false)}
-              >
-                {/* type="video/mp4" forces Chrome/Android to attempt H.264 decode even for .mov files served as video/quicktime */}
-                <source src={host.introVideoUrl} type="video/mp4" />
-              </video>
-              {/* Click-to-play / click-to-pause overlay */}
-              <button
-                onClick={() => {
-                  if (videoRef.current) {
-                    if (videoRef.current.paused) {
-                      videoRef.current.play();
-                    } else {
-                      videoRef.current.pause();
-                    }
-                  }
-                }}
-                className="absolute inset-0 z-20 flex items-center justify-center"
-                style={{ background: 'transparent' }}
-              >
-                {/* Big play button — only shown when paused */}
-                {!isVideoPlaying && (
-                  <div className="bg-black/50 backdrop-blur-sm rounded-full p-6 border border-white/20 transition-transform hover:scale-105">
-                    <Play size={52} className="text-white fill-white ml-1" />
-                  </div>
-                )}
-              </button>
-              {/* Mute/unmute button — top right, clear of host name overlay at bottom */}
-              <div className="absolute top-6 right-6 z-40 flex flex-row-reverse items-center gap-3">
-                {/* Fullscreen button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (videoRef.current) {
-                      if (videoRef.current.requestFullscreen) {
-                        videoRef.current.requestFullscreen();
-                      } else if ((videoRef.current as any).webkitEnterFullscreen) {
-                        // iOS Safari uses webkitEnterFullscreen on video elements
-                        (videoRef.current as any).webkitEnterFullscreen();
-                      } else if ((videoRef.current as any).webkitRequestFullscreen) {
-                        (videoRef.current as any).webkitRequestFullscreen();
-                      }
-                    }
-                  }}
-                  className="bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-black/70 transition"
-                  title="Fullscreen"
-                >
-                  <Maximize size={20} className="text-white" />
-                </button>
-                {/* Mute/unmute button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (videoRef.current) {
-                      const newMuted = !videoRef.current.muted;
-                      videoRef.current.muted = newMuted;
-                      setIsVideoMuted(newMuted);
-                      setShowUnmuteHint(false);
-                    }
-                  }}
-                  className="bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-black/70 transition"
-                  title={isVideoMuted ? 'Unmute' : 'Mute'}
-                >
-                  {isVideoMuted
-                    ? <VolumeX size={20} className="text-white" />
-                    : <Volume2 size={20} className="text-white" />}
-                </button>
-                {/* Fade-out hint shown for first 4 seconds */}
-                <span
-                  className="text-white/90 text-sm font-medium bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 transition-opacity duration-700"
-                  style={{ opacity: showUnmuteHint ? 1 : 0, pointerEvents: 'none' }}
-                >
-                  🔊 Video has sound
-                </span>
-              </div>
-            </div>
-          ) : images.length > 0 ? (
+          {images.length > 0 ? (
             <div
               className="relative w-full h-full"
               onTouchStart={handleTouchStart}
@@ -513,6 +371,8 @@ export default function HostDetail() {
                 src={getProxiedImageUrl(images[currentImageIndex])}
                 alt={`${host.hostName} image ${currentImageIndex + 1}`}
                 className="w-full h-full object-cover"
+                loading="eager"
+                fetchPriority="high"
               />
               {images.length > 1 && (
                 <>
@@ -721,21 +581,80 @@ export default function HostDetail() {
             <section>
               <h2 className="text-4xl font-light mb-8">Meet {host.hostName}</h2>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Profile Picture */}
-                {host.profilePhotoUrl && (
+                {/* Video thumbnail (if available) or Profile Picture */}
+                {(host.introVideoUrl || host.profilePhotoUrl) && (
                   <div className="lg:col-span-1">
-                    <div className="rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
-                      <img
-                        src={getProxiedImageUrl(host.profilePhotoUrl)}
-                        alt={host.hostName}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    {host.introVideoUrl ? (
+                      /* Video player — lazy loaded, click to play with sound + fullscreen */
+                      <div className="relative rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
+                        {/* Hidden video element — only src-loaded after user clicks play */}
+                        <video
+                          ref={meetVideoRef}
+                          src={_meetVideoPlaying ? host.introVideoUrl : undefined}
+                          className={`w-full h-full object-cover transition-opacity duration-300 ${_meetVideoPlaying ? 'opacity-100' : 'opacity-0 absolute inset-0'}`}
+                          playsInline
+                          controls
+                          onEnded={() => setMeetVideoPlaying(false)}
+                        />
+                        {/* Poster / thumbnail shown until play is clicked */}
+                        {!_meetVideoPlaying && (
+                          <>
+                            <img
+                              src={host.profilePhotoUrl ? getProxiedImageUrl(host.profilePhotoUrl) : undefined}
+                              alt={host.hostName}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            {/* Dark overlay */}
+                            <div className="absolute inset-0 bg-black/30" />
+                            {/* Play button */}
+                            <button
+                              onClick={() => {
+                                setMeetVideoPlaying(true);
+                                // Give React a tick to set src, then play with sound
+                                setTimeout(() => {
+                                  if (meetVideoRef.current) {
+                                    meetVideoRef.current.muted = false;
+                                    meetVideoRef.current.play().catch(() => {
+                                      // fallback: muted if browser blocks sound
+                                      meetVideoRef.current!.muted = true;
+                                      meetVideoRef.current!.play().catch(() => {});
+                                    });
+                                    // Request fullscreen
+                                    if (meetVideoRef.current.requestFullscreen) {
+                                      meetVideoRef.current.requestFullscreen();
+                                    } else if ((meetVideoRef.current as any).webkitEnterFullscreen) {
+                                      (meetVideoRef.current as any).webkitEnterFullscreen();
+                                    } else if ((meetVideoRef.current as any).webkitRequestFullscreen) {
+                                      (meetVideoRef.current as any).webkitRequestFullscreen();
+                                    }
+                                  }
+                                }, 80);
+                              }}
+                              className="absolute inset-0 flex items-center justify-center group"
+                              aria-label="Play intro video"
+                            >
+                              <div className="w-16 h-16 rounded-full bg-black/60 group-hover:bg-black/80 backdrop-blur-sm flex items-center justify-center transition-all group-hover:scale-110 shadow-2xl border border-white/20">
+                                <Play size={28} fill="white" className="text-white ml-1" />
+                              </div>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
+                        <img
+                          src={getProxiedImageUrl(host.profilePhotoUrl!)}
+                          alt={host.hostName}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
                 {/* Bio and Info Sub-sections */}
-                <div className={host.profilePhotoUrl ? "lg:col-span-2" : "lg:col-span-3"}>
+                <div className={(host.introVideoUrl || host.profilePhotoUrl) ? "lg:col-span-2" : "lg:col-span-3"}>
                   <div className="space-y-6">
 
                     {/* About Me */}
