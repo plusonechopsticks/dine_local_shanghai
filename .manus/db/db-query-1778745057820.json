@@ -1,0 +1,23 @@
+{
+  "query": "SELECT b.id, b.guestName, b.guestEmail, b.requestedDate, b.mealType, b.numberOfGuests, b.bookingStatus, b.paymentStatus, b.totalAmount, b.hostListingId, h.hostName FROM bookings b LEFT JOIN host_listings h ON b.hostListingId = h.id WHERE (b.guestName LIKE '%Ari%' OR b.guestEmail LIKE '%ari%') ORDER BY b.createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT b.id, b.guestName, b.guestEmail, b.requestedDate, b.mealType, b.numberOfGuests, b.bookingStatus, b.paymentStatus, b.totalAmount, b.hostListingId, h.hostName FROM bookings b LEFT JOIN host_listings h ON b.hostListingId = h.id WHERE (b.guestName LIKE '%Ari%' OR b.guestEmail LIKE '%ari%') ORDER BY b.createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "1080001",
+      "guestName": "Arie",
+      "guestEmail": "arie@ptl-group.com",
+      "requestedDate": "2026-06-06",
+      "mealType": "dinner",
+      "numberOfGuests": "1",
+      "bookingStatus": "pending",
+      "paymentStatus": "pending",
+      "totalAmount": "NULL",
+      "hostListingId": "90002",
+      "hostName": "Grace Tong"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tguestName\tguestEmail\trequestedDate\tmealType\tnumberOfGuests\tbookingStatus\tpaymentStatus\ttotalAmount\thostListingId\thostName\n1080001\tArie\tarie@ptl-group.com\t2026-06-06\tdinner\t1\tpending\tpending\tNULL\t90002\tGrace Tong\n",
+  "stderr": "",
+  "execution_time_ms": 1826
+}

@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, hostName, pricePerPerson, email FROM host_listings WHERE id = '90002';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT id, hostName, pricePerPerson, email FROM host_listings WHERE id = '90002';",
+  "rows": [
+    {
+      "id": "90002",
+      "hostName": "Grace Tong",
+      "pricePerPerson": "300",
+      "email": "gracetong89@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thostName\tpricePerPerson\temail\n90002\tGrace Tong\t300\tgracetong89@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 1781
+}

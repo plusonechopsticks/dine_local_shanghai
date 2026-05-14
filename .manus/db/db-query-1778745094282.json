@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE bookings SET requestedDate = '2026-06-07', bookingStatus = 'confirmed', paymentStatus = 'paid', totalAmount = 300.00, paymentDate = NOW(), stripeSessionId = 'wechat_manual_payment' WHERE id = '1080001';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute UPDATE bookings SET requestedDate = '2026-06-07', bookingStatus = 'confirmed', paymentStatus = 'paid', totalAmount = 300.00, paymentDate = NOW(), stripeSessionId = 'wechat_manual_payment' WHERE id = '1080001';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1806
+}

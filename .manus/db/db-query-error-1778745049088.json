@@ -1,0 +1,8 @@
+{
+  "query": "SELECT b.*, h.hostName, h.email as hostEmail, h.contactEmail FROM bookings b LEFT JOIN host_listings h ON b.hostListingId = h.id WHERE (b.guestName LIKE '%Ari%' OR b.guestEmail LIKE '%ari%') ORDER BY b.createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JF4SDJ8UQnAgkD3.root --database mkW6ExSEHJcqGWsa6M4fqn --execute SELECT b.*, h.hostName, h.email as hostEmail, h.contactEmail FROM bookings b LEFT JOIN host_listings h ON b.hostListingId = h.id WHERE (b.guestName LIKE '%Ari%' OR b.guestEmail LIKE '%ari%') ORDER BY b.createdAt DESC LIMIT 5;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'h.contactemail' in 'field list'"
+  ]
+}
