@@ -34,7 +34,7 @@ import { sql, eq, and } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { storagePut } from "./storage";
 import { sendGuestConfirmationEmail, sendHostConfirmationEmail, sendGuestRejectionEmail, sendEmail } from "./email";
-import { generatePaymentReminderEmail } from "./email-templates";
+import { generatePaymentReminderEmail, generateHostInterestOutreachEmail } from "./email-templates";
 import { generateNewsletterHtml } from "./newsletter-template";
 import { nanoid } from "nanoid";
 
@@ -295,6 +295,18 @@ export const appRouter = router({
           title: `New Host Interest: ${input.name}`,
           content: `Name: ${input.name}\nEmail: ${input.email}\nDistrict: ${input.district}`,
         });
+
+        // Send outreach email to the potential host
+        try {
+          await sendEmail({
+            to: input.email,
+            subject: `Hosting with +1 Chopsticks — let's chat!`,
+            html: generateHostInterestOutreachEmail({ name: input.name }),
+          });
+          console.log(`[hostInterest] Outreach email sent to ${input.email}`);
+        } catch (e) {
+          console.error("[hostInterest] Failed to send outreach email:", e);
+        }
 
         // Send owner email notification
         try {
