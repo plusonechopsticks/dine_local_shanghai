@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { Link } from "wouter";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { TravelerSegment } from "@/data/testimonials";
 
@@ -68,14 +69,27 @@ function ReviewCard({ review, className = "", onOpen }: ReviewCardProps) {
         <span className="inline-block self-start bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mb-1.5">
           {review.travelerType}
         </span>
-        {/* Dined with host tag */}
+        {/* Dined with host tag — clickable link to host detail page */}
         {review.hostName && (
-          <span className="inline-flex items-center gap-1 self-start bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full mb-2">
-            <svg className="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-            </svg>
-            Dined with {review.hostName}
-          </span>
+          review.hostId ? (
+            <Link
+              href={`/hosts/${review.hostId}`}
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1 self-start bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full mb-2 transition-colors"
+            >
+              <svg className="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+              </svg>
+              Dined with {review.hostName}
+            </Link>
+          ) : (
+            <span className="inline-flex items-center gap-1 self-start bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full mb-2">
+              <svg className="w-3 h-3 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+              </svg>
+              Dined with {review.hostName}
+            </span>
+          )
         )}
         {/* Quote */}
         <div className="flex-1">
