@@ -129,10 +129,7 @@ function Segment({ title, reviews, onOpen }: SegmentProps) {
             · {reviews.length} {reviews.length === 1 ? "story" : "stories"}
           </span>
         </h3>
-        {/* "View all" — placeholder until filtered page is built */}
-        <span className="text-[13px] text-gray-400 cursor-default select-none">
-          View all →
-        </span>
+
       </div>
 
       {/* Grid (desktop) / horizontal scroll (mobile) */}
