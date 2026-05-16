@@ -37,12 +37,12 @@ function ReviewCard({ review, className = "", onOpen }: ReviewCardProps) {
   return (
     <div
       data-review-card
-      className={`bg-[#faf8f4] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col ${className}`}
+      className={`bg-[#faf8f4] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col max-md:max-h-[72vh] ${className}`}
       onClick={() => onOpen(review)}
     >
       {/* Photo */}
       {review.images.length > 0 && (
-        <div className="w-full aspect-square overflow-hidden bg-gray-200 shrink-0">
+        <div className="w-full h-44 max-md:h-36 overflow-hidden bg-gray-200 shrink-0">
           <img
             src={review.images[0].url}
             alt={review.images[0].alt}
@@ -52,32 +52,32 @@ function ReviewCard({ review, className = "", onOpen }: ReviewCardProps) {
         </div>
       )}
       {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
+      <div className="p-4 max-md:p-3 flex flex-col flex-1">
         {/* Stars */}
-        <div className="flex gap-0.5 mb-3">
+        <div className="flex gap-0.5 mb-2">
           {[1, 2, 3, 4, 5].map((s) => (
-            <svg key={s} className="w-4 h-4 text-amber-500 fill-amber-500" viewBox="0 0 20 20">
+            <svg key={s} className="w-3.5 h-3.5 max-md:w-3 max-md:h-3 text-amber-500 fill-amber-500" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
           ))}
         </div>
         {/* Name + location */}
-        <p className="font-bold text-gray-900 text-base leading-tight">{review.guestName}</p>
-        <p className="text-gray-500 text-xs mt-0.5 mb-2">{review.location}</p>
+        <p className="font-bold text-gray-900 text-sm max-md:text-xs leading-tight">{review.guestName}</p>
+        <p className="text-gray-500 text-xs mt-0.5 mb-1.5">{review.location}</p>
         {/* Traveler type badge */}
-        <span className="inline-block self-start bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-1 rounded-full mb-3">
+        <span className="inline-block self-start bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mb-2">
           {review.travelerType}
         </span>
         {/* Quote */}
         <div className="flex-1">
-          <span className="text-amber-500 text-3xl font-serif leading-none mr-1">"</span>
-          <p className="text-gray-700 text-sm leading-relaxed italic line-clamp-4 inline">
+          <span className="text-amber-500 text-2xl max-md:text-xl font-serif leading-none mr-1">"</span>
+          <p className="text-gray-700 text-xs max-md:text-[11px] leading-relaxed italic line-clamp-3 inline">
             {review.previewText}
           </p>
         </div>
         {/* CTA */}
         <button
-          className="mt-4 text-amber-700 hover:text-amber-800 font-semibold text-sm underline text-left"
+          className="mt-2 text-amber-700 hover:text-amber-800 font-semibold text-xs underline text-left"
           onClick={(e) => {
             e.stopPropagation();
             onOpen(review);
@@ -152,7 +152,7 @@ function Segment({ title, reviews, onOpen }: SegmentProps) {
             key={review.id}
             review={review}
             onOpen={onOpen}
-            className="max-md:min-w-[calc(100vw-56px)] max-md:snap-start max-md:shrink-0"
+            className="max-md:min-w-[calc(85vw)] max-md:snap-start max-md:shrink-0"
           />
         ))}
 
@@ -163,7 +163,7 @@ function Segment({ title, reviews, onOpen }: SegmentProps) {
               key={review.id}
               review={review}
               onOpen={onOpen}
-              className="hidden max-md:flex max-md:min-w-[calc(100vw-56px)] max-md:snap-start max-md:shrink-0"
+              className="hidden max-md:flex max-md:min-w-[calc(85vw)] max-md:snap-start max-md:shrink-0"
             />
           ))}
       </div>
@@ -334,9 +334,9 @@ export function ReviewsSection({ testimonials, useSegments = true }: ReviewsSect
   return (
     <section className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <div className="mb-8 max-md:mb-6">
-          <h2 className="text-[28px] max-md:text-[22px] font-medium leading-tight mb-1.5 text-gray-900">
+        {/* Section header — matches other homepage sections */}
+        <div className="mb-10 max-md:mb-6 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
             What guests say after their experience
           </h2>
           <p className="text-sm text-gray-500">Real stories from travelers like you</p>

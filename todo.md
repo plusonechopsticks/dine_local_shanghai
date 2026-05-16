@@ -1778,3 +1778,12 @@
 - [x] Click-to-open modal with full review text
 - [x] Replace GuestStories with ReviewsSection on Homepage
 - [x] Replace HostReviewsCarousel with ReviewsSection on HostDetail page
+
+## Mobile Reviews Section Fix
+- [x] Reduce mobile card image height from aspect-square to h-36 (144px)
+- [x] Reduce mobile card padding from p-5 to p-3
+- [x] Reduce mobile text sizes (name xs, quote 11px, badge smaller)
+- [x] Cap quote to 3 lines on mobile (was 4)
+- [x] Add max-h-[72vh] cap on mobile cards
+- [x] Narrow card width to 85vw (was calc(100vw-56px)) for better peek-through
+- [x] Align section header to match other homepage sections (text-3xl font-bold text-center)
