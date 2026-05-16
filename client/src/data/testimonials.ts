@@ -260,4 +260,26 @@ export const TESTIMONIALS = [
     ],
     cta: "Read more",
   },
+  {
+    id: "sophie-friend",
+    hostId: 150001,
+    guestName: "Sophie & friend",
+    location: "France",
+    travelerType: "Friends",
+    travelerSegment: "couples" as TravelerSegment,
+    hostName: "Jiading Ayi (Auntie Shen)",
+    hostDate: "May 2026",
+    experienceTitle: "Friends' lunch with Jiading Ayi",
+    previewText:
+      "The best restaurant in Shanghai that isn't a restaurant. This is real home cooking — where the wok has been seasoned by use for decades, homegrown ingredients come straight from the garden, and the interactions are genuine.",
+    fullText:
+      "The best restaurant in Shanghai that isn't a restaurant. This is real home cooking — where the wok has been seasoned by use for decades, homegrown ingredients come straight from the garden, and the interactions are genuine. An experience that lets you connect with local culture on a deeper, more meaningful level.",
+    images: [
+      {
+        url: "/manus-storage/sophie-friend-jiading_d59a30d7.jpg",
+        alt: "Sophie and friend with Jiading Ayi and family at their home in Shanghai",
+      },
+    ],
+    cta: "Read more",
+  },
 ];
