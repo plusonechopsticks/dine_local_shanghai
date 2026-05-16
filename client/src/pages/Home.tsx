@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HomeHeader } from "@/components/HomeHeader";
-import { GuestStories } from "@/components/GuestStories";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { TESTIMONIALS } from "@/data/testimonials";
 import {
   Accordion,
@@ -424,7 +424,7 @@ export default function Home() {
 
       {/* Section 2.6: Guest Stories */}
       <div id="reviews">
-        <GuestStories testimonials={TESTIMONIALS} />
+        <ReviewsSection testimonials={TESTIMONIALS} />
       </div>
 
       {/* Section 3: Brand Identity & Story */}

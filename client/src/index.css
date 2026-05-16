@@ -236,3 +236,6 @@
     color: inherit !important;
   }
 }
+/* Scrollbar hide utility for horizontal scroll carousels */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }

@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import DateGridCalendar from "@/components/DateGridCalendar";
-import { HostReviewsCarousel } from "@/components/HostReviewsCarousel";
+import { ReviewsSection } from "@/components/ReviewsSection";
 import { TESTIMONIALS } from "@/data/testimonials";
 import { useParams, useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
@@ -741,7 +741,7 @@ export default function HostDetail() {
             {(() => {
               const hostReviews = TESTIMONIALS.filter((t) => t.hostId === hostId);
               if (hostReviews.length === 0) return null;
-              return <HostReviewsCarousel testimonials={hostReviews} />;
+              return <ReviewsSection testimonials={hostReviews} useSegments={false} />;
             })()}
 
           </div>

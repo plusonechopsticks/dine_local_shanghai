@@ -1766,3 +1766,15 @@
 - [x] Add loading="lazy" to review card images in HostReviewsCarousel.tsx
 - [x] Add fetchPriority="high" + loading="eager" to HostDetailsHero background image
 - [x] Add loading="lazy" to testimonial card and modal images in GuestStories.tsx
+
+## Reviews Section Revamp — Segmented Layout
+- [x] Add travelerSegment field (solo/family/couples) to all 6 existing testimonials
+- [x] Add Momo Vu review (Business traveler · Scientist, Seattle) with CDN photo
+- [x] Add Danil & Katerina review (Couple, UK) with CDN photo
+- [x] Add Josh & friend review (Friends · First time in China, USA) with CDN photo
+- [x] Build new ReviewsSection component with 3 segments: Solo & business, Families, Friends & couples
+- [x] Desktop: 3-column grid per segment with "Show more" expand button for 4th+ cards
+- [x] Mobile: horizontal scroll-snap carousel per segment
+- [x] Click-to-open modal with full review text
+- [x] Replace GuestStories with ReviewsSection on Homepage
+- [x] Replace HostReviewsCarousel with ReviewsSection on HostDetail page

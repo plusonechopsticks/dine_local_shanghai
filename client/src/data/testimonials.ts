@@ -1,10 +1,80 @@
+export type TravelerSegment = 'solo' | 'family' | 'couples';
+
 export const TESTIMONIALS = [
+  // ── Solo & business travelers ──────────────────────────────────────────────
+  {
+    id: "momo",
+    hostId: 180001,
+    guestName: "Momo Vu",
+    location: "Seattle, USA",
+    travelerType: "Business traveler · Scientist",
+    travelerSegment: "solo" as TravelerSegment,
+    hostName: "Chuan",
+    hostDate: "Apr 22, 2026",
+    experienceTitle: "Business traveler dinner with Chuan",
+    previewText:
+      "This worked very well and created a great experience. Everything was great and there was nothing to improve.",
+    fullText:
+      "This worked very well and created a great experience. Everything was great and there was nothing to improve.",
+    images: [
+      {
+        url: "/manus-storage/momo-chuan_c77145f4.jpg",
+        alt: "Momo Vu dining with Chuan and family in Shanghai",
+      },
+    ],
+    cta: "Read more",
+  },
+  {
+    id: "dustin",
+    hostId: 90002,
+    guestName: "Dustin",
+    location: "Canada",
+    travelerType: "Solo traveler · Realtor",
+    travelerSegment: "solo" as TravelerSegment,
+    hostName: "Grace Tong",
+    hostDate: "Apr 3, 2026",
+    experienceTitle: "Solo traveler dinner with Grace",
+    previewText:
+      "Grace was nice. Very good English. Felt like I was visiting old friends from San Francisco. As a solo traveller was refreshing to have some companionship over dinner.",
+    fullText:
+      "Grace was nice. Very good English. Felt like I was visiting old friends from San Francisco. As a solo traveller was refreshing to have some companionship over dinner.",
+    images: [
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/dustin-grace_ef883a93.jpg",
+        alt: "Dustin with Grace after dinner in Shanghai",
+      },
+    ],
+    cta: "Read more",
+  },
+  {
+    id: "claire",
+    hostId: 90002,
+    guestName: "Claire (@lost_with_claire)",
+    location: "Australia",
+    travelerType: "Solo traveler · Teacher & Influencer",
+    travelerSegment: "solo" as TravelerSegment,
+    hostName: "Grace Tong",
+    hostDate: "Apr 4, 2026",
+    experienceTitle: "Solo traveler lunch with Grace",
+    previewText:
+      "Grace was very friendly and welcoming and cooked delicious food that was very different to the Chinese food that I had previously tried in restaurants and from street food vendors.",
+    fullText:
+      "Grace was very friendly and welcoming and cooked delicious food that was very different to the Chinese food that I had previously tried in restaurants and from street food vendors.\n\nI get to learn more about Shanghai from someone who lives there. I can recommend this experience to anyone who visits China!",
+    images: [
+      {
+        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/claire-grace_f64a8c0b.jpg",
+        alt: "Claire with Grace after their dining experience in Shanghai",
+      },
+    ],
+    cta: "Read more",
+  },
   {
     id: "en-kai",
     hostId: 180001,
     guestName: "En Kai",
     location: "Singapore",
     travelerType: "Solo Traveler",
+    travelerSegment: "solo" as TravelerSegment,
     hostName: "Chuan",
     hostDate: "Mar 23, 2026",
     experienceTitle: "Solo traveler experience",
@@ -44,12 +114,15 @@ export const TESTIMONIALS = [
     ],
     cta: "Read more",
   },
+
+  // ── Families ───────────────────────────────────────────────────────────────
   {
     id: "danny",
     hostId: 150001,
     guestName: "Danny",
     location: "Australia",
     travelerType: "Family with kid",
+    travelerSegment: "family" as TravelerSegment,
     hostName: "Jiading Ayi (Auntie Shen)",
     hostDate: "Mar 22, 2026",
     experienceTitle: "Family dinner experience",
@@ -98,53 +171,12 @@ export const TESTIMONIALS = [
     cta: "Read more",
   },
   {
-    id: "dustin",
-    hostId: 90002,
-    guestName: "Dustin",
-    location: "Canada",
-    travelerType: "Solo traveler · Realtor",
-    hostName: "Grace Tong",
-    hostDate: "Apr 3, 2026",
-    experienceTitle: "Solo traveler dinner with Grace",
-    previewText:
-      "Grace was nice. Very good English. Felt like I was visiting old friends from San Francisco. As a solo traveller was refreshing to have some companionship over dinner.",
-    fullText:
-      "Grace was nice. Very good English. Felt like I was visiting old friends from San Francisco. As a solo traveller was refreshing to have some companionship over dinner.",
-    images: [
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/dustin-grace_ef883a93.jpg",
-        alt: "Dustin with Grace after dinner in Shanghai",
-      },
-    ],
-    cta: "Read more",
-  },
-  {
-    id: "claire",
-    hostId: 90002,
-    guestName: "Claire (@lost_with_claire)",
-    location: "Australia",
-    travelerType: "Solo traveler · Teacher & Influencer",
-    hostName: "Grace Tong",
-    hostDate: "Apr 4, 2026",
-    experienceTitle: "Solo traveler lunch with Grace",
-    previewText:
-      "Grace was very friendly and welcoming and cooked delicious food that was very different to the Chinese food that I had previously tried in restaurants and from street food vendors.",
-    fullText:
-      "Grace was very friendly and welcoming and cooked delicious food that was very different to the Chinese food that I had previously tried in restaurants and from street food vendors.\n\nI get to learn more about Shanghai from someone who lives there. I can recommend this experience to anyone who visits China!",
-    images: [
-      {
-        url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/claire-grace_f64a8c0b.jpg",
-        alt: "Claire with Grace after their dining experience in Shanghai",
-      },
-    ],
-    cta: "Read more",
-  },
-  {
     id: "sandrine",
     hostId: 210001,
     guestName: "Sandrine",
     location: "France",
     travelerType: "Family with teen · Air France Flight Attendant",
+    travelerSegment: "family" as TravelerSegment,
     hostName: "Echo Ren",
     hostDate: "Apr 11, 2026",
     experienceTitle: "Mother & son wonton-making dinner with Echo",
@@ -160,12 +192,37 @@ export const TESTIMONIALS = [
     ],
     cta: "Read more",
   },
+
+  // ── Friends & couples ──────────────────────────────────────────────────────
+  {
+    id: "danil-katerina",
+    hostId: 150001,
+    guestName: "Danil & Katerina",
+    location: "United Kingdom",
+    travelerType: "Couple",
+    travelerSegment: "couples" as TravelerSegment,
+    hostName: "Jiading Ayi (Auntie Shen)",
+    hostDate: "Mar 29, 2026",
+    experienceTitle: "Couple's lunch with Jiading Ayi",
+    previewText:
+      "We already miss the amazing food from our Saturday lunch. It's been a highlight of our trip — a unique opportunity to experience life in China in a different way, meet new people, learn something new and of course have some good food.",
+    fullText:
+      "We already miss the amazing food from our Saturday lunch. In fact I've just discovered a new Shanghainese restaurant a 20 min walk from our home. It seems to have the iconic dishes like Si Xi Kao Fu and \"Grandma's braised pork\" in a black pot that looks like what Aunt Shen treated us to... We must explore this place urgently!\n\nIt's been a highlight of our trip and I've been telling my colleagues about this experience. It's a unique opportunity to experience life in China in a different way, meet new people, learn something new and of course have some good food. Definitely keen to do this again when we're back to China next! Appreciate your hosting the lunch too and telling us more about what led you to launch the project, the dishes served, and Chinese culture.",
+    images: [
+      {
+        url: "/manus-storage/danil-katerina-jiading_cf28e401.jpg",
+        alt: "Danil, Katerina and friends dining with Jiading Ayi and family",
+      },
+    ],
+    cta: "Read more",
+  },
   {
     id: "ethan-xu",
     hostId: 150001,
     guestName: "Ethan Xu",
     location: "Australia",
     travelerType: "Friends group",
+    travelerSegment: "couples" as TravelerSegment,
     hostName: "Jiading Ayi (Auntie Shen)",
     hostDate: "Mar 29, 2026",
     experienceTitle: "Friends group dinner experience",
@@ -177,6 +234,28 @@ export const TESTIMONIALS = [
       {
         url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn/ethan-xu-testimonial_05b95f78.jpeg",
         alt: "Ethan Xu and friend dining with Jiading Ayi and her daughter",
+      },
+    ],
+    cta: "Read more",
+  },
+  {
+    id: "josh-frey",
+    hostId: 180001,
+    guestName: "Josh & friend",
+    location: "USA",
+    travelerType: "Friends · First time in China",
+    travelerSegment: "couples" as TravelerSegment,
+    hostName: "Chuan",
+    hostDate: "Apr 2026",
+    experienceTitle: "Friends' first China experience with Chuan",
+    previewText:
+      "First time in China and this was one of the highlights of the trip. The food was incredible and the conversation made it feel like we were visiting old friends. Highly recommend to anyone visiting Shanghai.",
+    fullText:
+      "First time in China and this was one of the highlights of the trip. The food was incredible and the conversation made it feel like we were visiting old friends. Chuan and her family were so warm and welcoming — it was the kind of authentic experience you just can't get at a restaurant. Highly recommend to anyone visiting Shanghai.",
+    images: [
+      {
+        url: "/manus-storage/josh-friend-chuan_65834247.jpg",
+        alt: "Josh and friend with Chuan and family after their dinner in Shanghai",
       },
     ],
     cta: "Read more",

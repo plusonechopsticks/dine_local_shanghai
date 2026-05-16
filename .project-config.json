@@ -1,0 +1,55 @@
+{
+  "build_command": "pnpm run build",
+  "capabilities": [
+    "db",
+    "server",
+    "user"
+  ],
+  "dev_command": "pnpm run dev",
+  "env_vars": {
+    "DATABASE_URL": "mysql://JF4SDJ8UQnAgkD3.root:UJ67YvoC4g55W5DrROCq@gateway03.us-east-1.prod.aws.tidbcloud.com:4000/mkW6ExSEHJcqGWsa6M4fqn?ssl={\"rejectUnauthorized\":true}"
+  },
+  "experiments": null,
+  "git_remote": {
+    "repo_url": "s3://vida-prod-gitrepo/webdev-git/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn",
+    "access_key_id": "ASIAZV3A2ECZFENZB5CC",
+    "secret_access_key": "Qjlk3jX7/IFzqFJziX+yjHf6FPU8YagMV1vTo8x9",
+    "session_token": "IQoJb3JpZ2luX2VjELz//////////wEaCXVzLWVhc3QtMSJHMEUCIHn8sAdekBalk/h3RqIUdWnQ0RGiyymhqoAvnBrQFpWOAiEAjxN2N68DcmgniKYNkbbGmoiS4GgNvUfx1piHt9UFXkkq/wMIhf//////////ARAEGgw2NjUzODYwOTg4NjYiDPH7n6JIrAkzBXKazyrTA5mnsDteR5H+PUkQaZdTm1EnCjr518+jSSUPR+P5DGAt5jG5Sa+Wgt2RjzvsHLq/DbJEi6YNyW6Meykjc0yw+SYBPckpfPEYAwWNU0kwtZTU6Fnf/BbOjI9rXwkjnpAhlsLjYJ8NjMmNYOhTsCmcSV4MNniQ667OOzfMnTxPcqAzUUIZhaQQBWHLyTy8ijydTkEBSwbn+9pNv93yiyVE6OiL8u5y7lsX/Uh1scXukhs7Keh6i9AcHjvcq1YGnHYSSCVnwS6eyiy8ZAUog7z1qErF43TvEYTUM5Ucmv/BN8hUXgLXClYeM+hyxsLeD1UTZvQWrkrDQkxNrYQA0ob2gVOcj61tWL63MkutJSRUkJs7Y4A3ZHqdbs+Gql219xJS0QgtfAA0ldEDgJhLAKEGZSklNq8hLcHlYrBfT2s9vAN68OYkitPOfJ64v7uY4pbjXJnoVXnH7yVF7s+ASPoOoGBrcU8IA4BYYGBJOtZIiEUBM4UqgBwpVKFU1SFB+7yhyByoRvz2nLVGeykJBQ9TzIATxzoW1FjVzDxPRqK1AEwW7LtQUyFYzcFB8y/wmwhrtUiyMJoZbIJeTpDHQPFGxm6pF9ajK3+cvhUavA56/M1jrjNjMLXVn9AGOp0BNJKh1iswhnONLjoI/tniaRAYl2wOQqXC4nWwTRcRwM3CxsVyE+6MHScVLJFB7g4Fm1sbY8/fMsFb/YIBeoImRGVwaOpCQZjW+8wsy/XpjKeFfoppDhYgERtI29zOWq2T4GEC6z3vtRmK3+fMxlvhHZHu2x60E9AAyD4GeMiIyqqJGRQPkohS5QoMNstXd+JED8CJ76f8bDfEC7aC0A==",
+    "expiration": "2026-05-16T15:55:33.000Z"
+  },
+  "name": "dine_local_shanghai",
+  "path": "/home/ubuntu/dine_local_shanghai",
+  "port": 3000,
+  "secrets": {
+    "BUILT_IN_FORGE_API_KEY": "7UxabBGuL9ky4wrUSfvPmh",
+    "BUILT_IN_FORGE_API_URL": "https://forge.manus.ai",
+    "CLOUDINARY_API_KEY": "528495825245253",
+    "CLOUDINARY_API_SECRET": "4J5qOwihrupMrXpDsSzvTt2bD5E",
+    "CLOUDINARY_CLOUD_NAME": "drxfcfayd",
+    "EMAIL_FROM": "foodie@plus1chopsticks.com",
+    "EMAIL_PASSWORD": "wuapvzsisehlfldc",
+    "EMAIL_USER": "plusonechopsticks@gmail.com",
+    "JWT_SECRET": "QFwam2vPDbiLLmEnEQrSqw",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "OWNER_NAME": "jiejieshugen",
+    "OWNER_OPEN_ID": "M6FaQNPHcZVpJRxfHQyqEt",
+    "REPORT_SECRET": "d2aed8886d6846e2af393fdb1b9ba36df997d0af92bcd7aebba9c59cd9f0f75c",
+    "RESEND_API_KEY": "re_85unqJW4_EeKwhgU9Fa2wj4ukb1Ty9Wzp",
+    "STRIPE_SECRET_KEY": "sk_test_51SzEtJRXBFn1vBX0L3PJgeyyaDHROHqcd8MG9J9m5XjBazESlUjtRKcPb5IFHtezWbJsSPxZsLKrAiaerAzBfUU400ZAy5Wp8w",
+    "STRIPE_WEBHOOK_SECRET": "whsec_PFkt36g7udVSwNTzDMWedpnBuwx13cP3",
+    "Stripe_secretkey": "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",
+    "VITE_ANALYTICS_ENDPOINT": "https://manus-analytics.com",
+    "VITE_ANALYTICS_WEBSITE_ID": "1b331d02-316c-4cbc-8c14-9598c38dcd00",
+    "VITE_APP_ID": "mkW6ExSEHJcqGWsa6M4fqn",
+    "VITE_APP_LOGO": "https://files.manuscdn.com/user_upload_by_module/web_dev_logo/310519663228681359/yHicunxUbuFIXmmB.png",
+    "VITE_APP_TITLE": "Dine at Local Family Homes - Shanghai",
+    "VITE_FRONTEND_FORGE_API_KEY": "KuLdCkbdTRdWLAa7xb43AC",
+    "VITE_FRONTEND_FORGE_API_URL": "https://forge.manus.ai",
+    "VITE_OAUTH_PORTAL_URL": "https://manus.im",
+    "VITE_STRIPE_PUBLIC_KEY": "pk_test_51Sz7HuJrTXLVSPf0g2g8UNDV9Mi2g7TVuYHw4OFAXQIPCNguWCqVTwNyuppQhu9dI6JUE9xOAEODl1htt9y2sos000oeKr3IeJ",
+    "VITE_STRIPE_PUBLISHABLE_KEY": "pk_test_51SzEtJRXBFn1vBX0alSg0z97B5vDzeRD94LZ74G1hs9b5m44MPv4bz2jHlZTSj772rHwigB0U4Z6suDxY0EVhQCa00oje0Bf5j",
+    "VITE_WEBSITE_URL": "https://plus1chopsticks.manus.space"
+  },
+  "template_id": "web-db-user",
+  "test_command": "pnpm test"
+}
