@@ -37,12 +37,12 @@ function ReviewCard({ review, className = "", onOpen }: ReviewCardProps) {
   return (
     <div
       data-review-card
-      className={`bg-[#faf8f4] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col max-md:max-h-[72vh] ${className}`}
+      className={`bg-[#faf8f4] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col ${className}`}
       onClick={() => onOpen(review)}
     >
-      {/* Photo */}
+      {/* Photo — 4:3 ratio matching host cards */}
       {review.images.length > 0 && (
-        <div className="w-full h-44 max-md:h-36 overflow-hidden bg-gray-200 shrink-0">
+        <div className="w-full aspect-[4/3] overflow-hidden bg-gray-200 shrink-0">
           <img
             src={review.images[0].url}
             alt={review.images[0].alt}
@@ -152,7 +152,7 @@ function Segment({ title, reviews, onOpen }: SegmentProps) {
             key={review.id}
             review={review}
             onOpen={onOpen}
-            className="max-md:min-w-[calc(85vw)] max-md:snap-start max-md:shrink-0"
+            className="max-md:w-[calc(100vw-48px)] max-md:min-w-[calc(100vw-48px)] max-md:snap-start max-md:shrink-0"
           />
         ))}
 
@@ -163,7 +163,7 @@ function Segment({ title, reviews, onOpen }: SegmentProps) {
               key={review.id}
               review={review}
               onOpen={onOpen}
-              className="hidden max-md:flex max-md:min-w-[calc(85vw)] max-md:snap-start max-md:shrink-0"
+              className="hidden max-md:flex max-md:w-[calc(100vw-48px)] max-md:min-w-[calc(100vw-48px)] max-md:snap-start max-md:shrink-0"
             />
           ))}
       </div>
