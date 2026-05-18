@@ -83,7 +83,7 @@ export default function HostLogin() {
                 disabled={isLoading}
               />
               <p className="text-xs text-muted-foreground">
-                Default password: food2connect
+                Default password: foodie@plus1chopsticks
               </p>
             </div>
 

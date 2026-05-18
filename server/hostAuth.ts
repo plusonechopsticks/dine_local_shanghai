@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { getHostAccountByEmail, getHostAccountByListingId, createHostAccount, updateHostAccountPassword, updateHostLastLogin, getHostListingById } from "./db";
 
 const SALT_ROUNDS = 10;
-const DEFAULT_PASSWORD = "food2connect";
+const DEFAULT_PASSWORD = "foodie@plus1chopsticks";
 
 /**
  * Hash a password using bcrypt

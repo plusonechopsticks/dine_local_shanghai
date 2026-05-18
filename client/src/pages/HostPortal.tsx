@@ -21,6 +21,8 @@ const translations = {
     listing: "房源",
     account: "账户",
     loading: "加载中...",
+    confirmedBookings: "已确认预订",
+    totalProceeds: "总收入（扣除30%平台费）",
   },
   en: {
     dashboard: "Host Dashboard",
@@ -30,6 +32,8 @@ const translations = {
     listing: "Listing",
     account: "Account",
     loading: "Loading...",
+    confirmedBookings: "Confirmed Bookings",
+    totalProceeds: "Total Proceeds (after 30% fee)",
   },
 };
 
@@ -110,8 +114,33 @@ export default function HostPortal() {
         </div>
       </div>
 
+      {/* Stats Summary */}
+      <div className="container mx-auto px-4 pt-6 pb-2">
+        {(() => {
+          const confirmedBookings = bookings.filter((b: any) => b.bookingStatus === "confirmed");
+          const confirmedCount = confirmedBookings.length;
+          const totalProceeds = confirmedBookings.reduce((sum: number, b: any) => sum + (Number(b.totalAmount) || 0), 0) * 0.7;
+          return (
+            <div className="grid grid-cols-2 gap-4">
+              <Card>
+                <CardContent className="pt-5 pb-4">
+                  <p className="text-sm text-muted-foreground">{t.confirmedBookings}</p>
+                  <p className="text-3xl font-bold mt-1">{confirmedCount}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-5 pb-4">
+                  <p className="text-sm text-muted-foreground">{t.totalProceeds}</p>
+                  <p className="text-3xl font-bold mt-1 text-green-600">¥{totalProceeds.toFixed(0)}</p>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })()}
+      </div>
+
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
           <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="calendar">{t.calendar}</TabsTrigger>

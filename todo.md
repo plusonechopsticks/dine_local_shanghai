@@ -1787,3 +1787,15 @@
 - [x] Add max-h-[72vh] cap on mobile cards
 - [x] Narrow card width to 85vw (was calc(100vw-56px)) for better peek-through
 - [x] Align section header to match other homepage sections (text-3xl font-bold text-center)
+
+## Host Portal Improvements — May 2026
+- [ ] Goal 1: Change DEFAULT_PASSWORD to foodie@plus1chopsticks in hostAuth.ts
+- [ ] Goal 1: Update login hint text in HostLogin.tsx
+- [ ] Goal 1: Run one-time password reset script for all existing host accounts
+- [ ] Goal 2: Add confirmed bookings count + total proceeds stats bar to HostPortal.tsx
+- [ ] Goal 3: Wire HostCalendarTab to database (load blocks, add, delete)
+- [x] Goal 1: Change DEFAULT_PASSWORD to foodie@plus1chopsticks in hostAuth.ts
+- [x] Goal 1: Update login hint text in HostLogin.tsx
+- [x] Goal 1: Run one-time password reset script for all existing host accounts (0 found, none needed)
+- [x] Goal 2: Add confirmed bookings count + total proceeds stats bar to HostPortal.tsx
+- [x] Goal 3: Wire HostCalendarTab to database (load blocks, add, delete)
