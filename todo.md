@@ -1799,3 +1799,7 @@
 - [x] Goal 1: Run one-time password reset script for all existing host accounts (0 found, none needed)
 - [x] Goal 2: Add confirmed bookings count + total proceeds stats bar to HostPortal.tsx
 - [x] Goal 3: Wire HostCalendarTab to database (load blocks, add, delete)
+
+## Host Portal — Welcome Email & Account Init (May 2026)
+- [x] Add welcome email (EN + ZH) to initializeHostAccount() in server/hostAuth.ts
+- [x] Initialize test host account: Steven & Norika (listingId=1, globe.stevento@gmail.com)
