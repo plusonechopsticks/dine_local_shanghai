@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 
 
 export default function HostLogin() {
@@ -18,7 +19,7 @@ export default function HostLogin() {
     e.preventDefault();
     
     if (!email || !password) {
-      alert("Please enter both email and password");
+        toast.error("Please enter both email and password");
       return;
     }
 
@@ -31,15 +32,15 @@ export default function HostLogin() {
         localStorage.setItem("hostId", result.hostId.toString());
         localStorage.setItem("hostEmail", result.email);
         
-        alert("Logged in successfully");
+        toast.success("Logged in successfully");
         
-        // Navigate to host dashboard
-        setLocation("/host/dashboard");
+        // Navigate to host portal
+        setLocation("/host/portal");
       } else {
-        alert(result.error || "Invalid credentials");
+        toast.error(result.error || "Invalid credentials");
       }
     } catch (error) {
-        alert("An error occurred during login");
+        toast.error("An error occurred during login");
     } finally {
       setIsLoading(false);
     }
