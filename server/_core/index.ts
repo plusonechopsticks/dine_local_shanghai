@@ -96,6 +96,7 @@ async function startServer(): Promise<any> {
               await db.update(bookings)
                 .set({
                   paymentStatus: "paid",
+                  bookingStatus: "confirmed",
                   totalAmount: (session.amount_total! / 100).toString(),
                   paymentDate: new Date(),
                   stripeSessionId: session.id,
