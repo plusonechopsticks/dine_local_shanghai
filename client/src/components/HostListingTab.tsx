@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,11 +63,37 @@ export default function HostListingTab({
   language: Language;
 }) {
   const t = translations[language];
+
+  // Local display state — mirrors listing prop but updates immediately on save
+  const [display, setDisplay] = useState<Listing | undefined>(listing);
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<Partial<Listing>>({});
 
+  // Keep display in sync when the prop changes (e.g. initial load)
+  useEffect(() => {
+    if (listing && !isEditing) {
+      setDisplay(listing);
+    }
+  }, [listing, isEditing]);
+
   const updateMutation = trpc.host.updateListing.useMutation({
     onSuccess: () => {
+      // Immediately apply form values to the display state so changes show at once
+      setDisplay((prev) =>
+        prev
+          ? {
+              ...prev,
+              hostName: form.hostName ?? prev.hostName,
+              cuisineStyle: form.cuisineStyle ?? prev.cuisineStyle,
+              pricePerPerson:
+                form.pricePerPerson !== undefined ? Number(form.pricePerPerson) : prev.pricePerPerson,
+              maxGuests:
+                form.maxGuests !== undefined ? Number(form.maxGuests) : prev.maxGuests,
+              district: form.district ?? prev.district,
+              bio: form.bio ?? prev.bio,
+            }
+          : prev
+      );
       toast.success(t.saveSuccess);
       setIsEditing(false);
     },
@@ -77,14 +103,14 @@ export default function HostListingTab({
   });
 
   const handleEdit = () => {
-    if (!listing) return;
+    if (!display) return;
     setForm({
-      hostName: listing.hostName,
-      cuisineStyle: listing.cuisineStyle,
-      pricePerPerson: listing.pricePerPerson,
-      maxGuests: listing.maxGuests,
-      district: listing.district,
-      bio: listing.bio,
+      hostName: display.hostName,
+      cuisineStyle: display.cuisineStyle,
+      pricePerPerson: display.pricePerPerson,
+      maxGuests: display.maxGuests,
+      district: display.district,
+      bio: display.bio,
     });
     setIsEditing(true);
   };
@@ -95,9 +121,9 @@ export default function HostListingTab({
   };
 
   const handleSave = () => {
-    if (!listing) return;
+    if (!display) return;
     updateMutation.mutate({
-      id: listing.id,
+      id: display.id,
       hostName: form.hostName,
       cuisineStyle: form.cuisineStyle,
       pricePerPerson: form.pricePerPerson ? Number(form.pricePerPerson) : undefined,
@@ -107,7 +133,7 @@ export default function HostListingTab({
     });
   };
 
-  if (!listing) {
+  if (!display) {
     return (
       <Card>
         <CardHeader>
@@ -138,9 +164,9 @@ export default function HostListingTab({
             <div className="flex gap-2">
               <Button onClick={handleSave} disabled={updateMutation.isPending} size="sm">
                 <Save className="w-4 h-4 mr-2" />
-                {t.save}
+                {updateMutation.isPending ? "Saving..." : t.save}
               </Button>
-              <Button onClick={handleCancel} variant="outline" size="sm">
+              <Button onClick={handleCancel} variant="outline" size="sm" disabled={updateMutation.isPending}>
                 <X className="w-4 h-4 mr-2" />
                 {t.cancel}
               </Button>
@@ -153,28 +179,28 @@ export default function HostListingTab({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm text-muted-foreground">{t.name}</p>
-                  <p className="font-semibold text-lg">{listing.hostName}</p>
+                  <p className="font-semibold text-lg">{display.hostName}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t.cuisine}</p>
-                  <p className="font-semibold text-lg">{listing.cuisineStyle}</p>
+                  <p className="font-semibold text-lg">{display.cuisineStyle}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t.price}</p>
-                  <p className="font-semibold text-lg">¥{listing.pricePerPerson}</p>
+                  <p className="font-semibold text-lg">¥{display.pricePerPerson}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t.maxGuests}</p>
-                  <p className="font-semibold text-lg">{listing.maxGuests}</p>
+                  <p className="font-semibold text-lg">{display.maxGuests}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">{t.district}</p>
-                  <p className="font-semibold text-lg">{listing.district}</p>
+                  <p className="font-semibold text-lg">{display.district}</p>
                 </div>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{t.bio}</p>
-                <p className="mt-2 text-base">{listing.bio}</p>
+                <p className="mt-2 text-base">{display.bio}</p>
               </div>
             </>
           ) : (
