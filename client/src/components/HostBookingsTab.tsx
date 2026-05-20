@@ -10,8 +10,8 @@ interface Booking {
   requestedDate: string;
   numberOfGuests: number;
   mealType: string;
-  status: string;
-  totalPrice?: number;
+  bookingStatus: string;
+  totalAmount?: number | string | null;
 }
 
 const translations = {
@@ -39,6 +39,12 @@ const translations = {
   },
 };
 
+const statusColors: Record<string, string> = {
+  confirmed: "bg-green-100 text-green-800",
+  pending: "bg-yellow-100 text-yellow-800",
+  cancelled: "bg-red-100 text-red-800",
+};
+
 export default function HostBookingsTab({
   bookings,
   language,
@@ -49,7 +55,7 @@ export default function HostBookingsTab({
   const t = translations[language];
 
   const calculateEarnings = (booking: Booking) => {
-    const gross = booking.totalPrice || 0;
+    const gross = Number(booking.totalAmount) || 0;
     const net = gross * 0.7; // After 30% platform fee
     return { gross, net };
   };
@@ -68,6 +74,7 @@ export default function HostBookingsTab({
             <div className="space-y-4">
               {bookings.map((booking) => {
                 const { gross, net } = calculateEarnings(booking);
+                const statusClass = statusColors[booking.bookingStatus] || "bg-gray-100 text-gray-800";
                 return (
                   <div
                     key={booking.id}
@@ -78,7 +85,7 @@ export default function HostBookingsTab({
                         <p className="font-semibold text-lg">{booking.guestName}</p>
                         <p className="text-sm text-muted-foreground">{booking.guestEmail}</p>
                       </div>
-                      <Badge>{booking.status}</Badge>
+                      <Badge className={statusClass}>{booking.bookingStatus}</Badge>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -94,17 +101,17 @@ export default function HostBookingsTab({
                       </div>
                       <div>
                         <p className="text-muted-foreground">{t.mealType}</p>
-                        <p className="font-medium">{booking.mealType}</p>
+                        <p className="font-medium capitalize">{booking.mealType}</p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">{t.grossEarnings}</p>
-                        <p className="font-medium">¥{gross.toFixed(2)}</p>
+                        <p className="font-medium">¥{gross.toFixed(0)}</p>
                       </div>
                     </div>
 
                     <div className="pt-2 border-t">
                       <p className="text-sm text-muted-foreground">{t.netEarnings}</p>
-                      <p className="text-lg font-semibold text-green-600">¥{net.toFixed(2)}</p>
+                      <p className="text-lg font-semibold text-green-600">¥{net.toFixed(0)}</p>
                     </div>
                   </div>
                 );

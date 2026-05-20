@@ -42,13 +42,13 @@ export default function HostPortal() {
   const [activeTab, setActiveTab] = useState<TabType>("calendar");
   const [hostId, setHostId] = useState<number | null>(null);
   const [hostEmail, setHostEmail] = useState<string>("");
-  const [language, setLanguage] = useState<Language>("zh");
+  const [language, setLanguage] = useState<Language>("en");
 
   useEffect(() => {
     // Get host ID from localStorage
     const storedHostId = localStorage.getItem("hostId");
     const storedEmail = localStorage.getItem("hostEmail");
-    const storedLang = (localStorage.getItem("hostLanguage") as Language) || "zh";
+    const storedLang = (localStorage.getItem("hostLanguage") as Language) || "en";
     
     if (!storedHostId) {
       // Redirect to login if not authenticated
