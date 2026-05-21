@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,16 @@ interface Listing {
   cuisineStyle: string;
   pricePerPerson: number;
   maxGuests: number;
+  district: string;
+  bio: string;
+}
+
+// Form state uses strings for numeric fields so the input can be empty without showing "0"
+interface FormState {
+  hostName: string;
+  cuisineStyle: string;
+  pricePerPerson: string;
+  maxGuests: string;
   district: string;
   bio: string;
 }
@@ -67,7 +77,17 @@ export default function HostListingTab({
   // Local display state — mirrors listing prop but updates immediately on save
   const [display, setDisplay] = useState<Listing | undefined>(listing);
   const [isEditing, setIsEditing] = useState(false);
-  const [form, setForm] = useState<Partial<Listing>>({});
+  const [form, setForm] = useState<FormState>({
+    hostName: "",
+    cuisineStyle: "",
+    pricePerPerson: "",
+    maxGuests: "",
+    district: "",
+    bio: "",
+  });
+
+  // Ref so onSuccess always reads the latest submitted values (avoids stale closure)
+  const submittedFormRef = useRef<FormState>(form);
 
   // Keep display in sync when the prop changes (e.g. initial load)
   useEffect(() => {
@@ -78,19 +98,18 @@ export default function HostListingTab({
 
   const updateMutation = trpc.host.updateListing.useMutation({
     onSuccess: () => {
-      // Immediately apply form values to the display state so changes show at once
+      const submitted = submittedFormRef.current;
+      // Immediately apply submitted values to the display state so changes show at once
       setDisplay((prev) =>
         prev
           ? {
               ...prev,
-              hostName: form.hostName ?? prev.hostName,
-              cuisineStyle: form.cuisineStyle ?? prev.cuisineStyle,
-              pricePerPerson:
-                form.pricePerPerson !== undefined ? Number(form.pricePerPerson) : prev.pricePerPerson,
-              maxGuests:
-                form.maxGuests !== undefined ? Number(form.maxGuests) : prev.maxGuests,
-              district: form.district ?? prev.district,
-              bio: form.bio ?? prev.bio,
+              hostName: submitted.hostName || prev.hostName,
+              cuisineStyle: submitted.cuisineStyle || prev.cuisineStyle,
+              pricePerPerson: submitted.pricePerPerson !== "" ? Number(submitted.pricePerPerson) : prev.pricePerPerson,
+              maxGuests: submitted.maxGuests !== "" ? Number(submitted.maxGuests) : prev.maxGuests,
+              district: submitted.district || prev.district,
+              bio: submitted.bio || prev.bio,
             }
           : prev
       );
@@ -104,32 +123,34 @@ export default function HostListingTab({
 
   const handleEdit = () => {
     if (!display) return;
-    setForm({
+    const initialForm: FormState = {
       hostName: display.hostName,
       cuisineStyle: display.cuisineStyle,
-      pricePerPerson: display.pricePerPerson,
-      maxGuests: display.maxGuests,
+      pricePerPerson: String(display.pricePerPerson),
+      maxGuests: String(display.maxGuests),
       district: display.district,
       bio: display.bio,
-    });
+    };
+    setForm(initialForm);
     setIsEditing(true);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setForm({});
   };
 
   const handleSave = () => {
     if (!display) return;
+    // Snapshot the current form into the ref before mutating
+    submittedFormRef.current = form;
     updateMutation.mutate({
       id: display.id,
-      hostName: form.hostName,
-      cuisineStyle: form.cuisineStyle,
-      pricePerPerson: form.pricePerPerson ? Number(form.pricePerPerson) : undefined,
-      maxGuests: form.maxGuests ? Number(form.maxGuests) : undefined,
-      district: form.district,
-      bio: form.bio,
+      hostName: form.hostName || undefined,
+      cuisineStyle: form.cuisineStyle || undefined,
+      pricePerPerson: form.pricePerPerson !== "" ? Number(form.pricePerPerson) : undefined,
+      maxGuests: form.maxGuests !== "" ? Number(form.maxGuests) : undefined,
+      district: form.district || undefined,
+      bio: form.bio || undefined,
     });
   };
 
@@ -209,37 +230,49 @@ export default function HostListingTab({
                 <div className="space-y-1">
                   <Label>{t.name}</Label>
                   <Input
-                    value={form.hostName || ""}
+                    value={form.hostName}
                     onChange={(e) => setForm({ ...form, hostName: e.target.value })}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label>{t.cuisine}</Label>
                   <Input
-                    value={form.cuisineStyle || ""}
+                    value={form.cuisineStyle}
                     onChange={(e) => setForm({ ...form, cuisineStyle: e.target.value })}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label>{t.price}</Label>
                   <Input
-                    type="number"
-                    value={form.pricePerPerson ?? ""}
-                    onChange={(e) => setForm({ ...form, pricePerPerson: Number(e.target.value) })}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="e.g. 280"
+                    value={form.pricePerPerson}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      setForm({ ...form, pricePerPerson: val });
+                    }}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label>{t.maxGuests}</Label>
                   <Input
-                    type="number"
-                    value={form.maxGuests ?? ""}
-                    onChange={(e) => setForm({ ...form, maxGuests: Number(e.target.value) })}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="e.g. 4"
+                    value={form.maxGuests}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      setForm({ ...form, maxGuests: val });
+                    }}
                   />
                 </div>
                 <div className="space-y-1">
                   <Label>{t.district}</Label>
                   <Input
-                    value={form.district || ""}
+                    value={form.district}
                     onChange={(e) => setForm({ ...form, district: e.target.value })}
                   />
                 </div>
@@ -248,7 +281,7 @@ export default function HostListingTab({
                 <Label>{t.bio}</Label>
                 <Textarea
                   rows={5}
-                  value={form.bio || ""}
+                  value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 />
               </div>

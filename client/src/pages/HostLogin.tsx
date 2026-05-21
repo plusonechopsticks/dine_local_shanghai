@@ -83,9 +83,6 @@ export default function HostLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
-              <p className="text-xs text-muted-foreground">
-                Default password: foodie@plus1chopsticks
-              </p>
             </div>
 
             <Button 
