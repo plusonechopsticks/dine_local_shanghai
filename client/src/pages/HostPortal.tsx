@@ -162,7 +162,7 @@ export default function HostPortal() {
           </TabsContent>
 
           <TabsContent value="account">
-            <HostAccountTab hostEmail={hostEmail} language={language} />
+            <HostAccountTab hostEmail={hostEmail} hostId={hostId} language={language} />
           </TabsContent>
         </Tabs>
       </div>

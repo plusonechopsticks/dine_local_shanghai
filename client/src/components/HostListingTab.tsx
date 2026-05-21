@@ -46,6 +46,7 @@ const translations = {
     noListing: "还没有房源信息",
     saveSuccess: "房源信息已更新",
     saveError: "更新失败，请重试",
+    saving: "保存中...",
   },
   en: {
     listing: "Listing Information",
@@ -62,6 +63,7 @@ const translations = {
     noListing: "No listing information yet",
     saveSuccess: "Listing updated successfully",
     saveError: "Failed to update. Please try again.",
+    saving: "Saving...",
   },
 };
 
@@ -74,7 +76,7 @@ export default function HostListingTab({
 }) {
   const t = translations[language];
 
-  // Local display state — mirrors listing prop but updates immediately on save
+  // Local display state — starts from listing prop, updated optimistically on save
   const [display, setDisplay] = useState<Listing | undefined>(listing);
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<FormState>({
@@ -86,30 +88,35 @@ export default function HostListingTab({
     bio: "",
   });
 
-  // Ref so onSuccess always reads the latest submitted values (avoids stale closure)
-  const submittedFormRef = useRef<FormState>(form);
+  // Track whether we've applied an optimistic update so useEffect doesn't overwrite it
+  const optimisticApplied = useRef(false);
 
-  // Keep display in sync when the prop changes (e.g. initial load)
+  // Sync display from prop only on initial load (not after optimistic updates)
   useEffect(() => {
-    if (listing && !isEditing) {
+    if (listing && !optimisticApplied.current) {
       setDisplay(listing);
     }
-  }, [listing, isEditing]);
+  }, [listing]);
 
   const updateMutation = trpc.host.updateListing.useMutation({
-    onSuccess: () => {
-      const submitted = submittedFormRef.current;
-      // Immediately apply submitted values to the display state so changes show at once
+    onSuccess: (data, variables) => {
+      if (!data.success) {
+        toast.error(t.saveError);
+        return;
+      }
+      // Mark that we've applied an optimistic update so useEffect won't overwrite it
+      optimisticApplied.current = true;
+      // Apply the submitted values directly from the mutation variables
       setDisplay((prev) =>
         prev
           ? {
               ...prev,
-              hostName: submitted.hostName || prev.hostName,
-              cuisineStyle: submitted.cuisineStyle || prev.cuisineStyle,
-              pricePerPerson: submitted.pricePerPerson !== "" ? Number(submitted.pricePerPerson) : prev.pricePerPerson,
-              maxGuests: submitted.maxGuests !== "" ? Number(submitted.maxGuests) : prev.maxGuests,
-              district: submitted.district || prev.district,
-              bio: submitted.bio || prev.bio,
+              hostName: variables.hostName ?? prev.hostName,
+              cuisineStyle: variables.cuisineStyle ?? prev.cuisineStyle,
+              pricePerPerson: variables.pricePerPerson !== undefined ? variables.pricePerPerson : prev.pricePerPerson,
+              maxGuests: variables.maxGuests !== undefined ? variables.maxGuests : prev.maxGuests,
+              district: variables.district ?? prev.district,
+              bio: variables.bio ?? prev.bio,
             }
           : prev
       );
@@ -123,15 +130,14 @@ export default function HostListingTab({
 
   const handleEdit = () => {
     if (!display) return;
-    const initialForm: FormState = {
+    setForm({
       hostName: display.hostName,
       cuisineStyle: display.cuisineStyle,
       pricePerPerson: String(display.pricePerPerson),
       maxGuests: String(display.maxGuests),
       district: display.district,
       bio: display.bio,
-    };
-    setForm(initialForm);
+    });
     setIsEditing(true);
   };
 
@@ -141,14 +147,14 @@ export default function HostListingTab({
 
   const handleSave = () => {
     if (!display) return;
-    // Snapshot the current form into the ref before mutating
-    submittedFormRef.current = form;
+    const priceNum = form.pricePerPerson !== "" ? Number(form.pricePerPerson) : undefined;
+    const guestsNum = form.maxGuests !== "" ? Number(form.maxGuests) : undefined;
     updateMutation.mutate({
       id: display.id,
       hostName: form.hostName || undefined,
       cuisineStyle: form.cuisineStyle || undefined,
-      pricePerPerson: form.pricePerPerson !== "" ? Number(form.pricePerPerson) : undefined,
-      maxGuests: form.maxGuests !== "" ? Number(form.maxGuests) : undefined,
+      pricePerPerson: priceNum,
+      maxGuests: guestsNum,
       district: form.district || undefined,
       bio: form.bio || undefined,
     });
@@ -185,7 +191,7 @@ export default function HostListingTab({
             <div className="flex gap-2">
               <Button onClick={handleSave} disabled={updateMutation.isPending} size="sm">
                 <Save className="w-4 h-4 mr-2" />
-                {updateMutation.isPending ? "Saving..." : t.save}
+                {updateMutation.isPending ? t.saving : t.save}
               </Button>
               <Button onClick={handleCancel} variant="outline" size="sm" disabled={updateMutation.isPending}>
                 <X className="w-4 h-4 mr-2" />

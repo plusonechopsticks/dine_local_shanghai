@@ -1301,6 +1301,16 @@ export const appRouter = router({
         };
       }),
 
+    changePassword: publicProcedure
+      .input(z.object({
+        hostId: z.number(),
+        currentPassword: z.string().min(1),
+        newPassword: z.string().min(6),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await changeHostPassword(input.hostId, input.currentPassword, input.newPassword);
+        return result;
+      }),
     getDashboard: publicProcedure
       .input(z.object({
         hostId: z.number(),
