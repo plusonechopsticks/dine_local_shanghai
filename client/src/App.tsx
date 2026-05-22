@@ -25,7 +25,6 @@ import HostGuide from "./pages/HostGuide";
 import EventDetail from "./pages/EventDetail";
 import Disclaimer from "./pages/Disclaimer";
 
-import { WhatsAppButton } from "./components/WhatsAppButton";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -78,7 +77,6 @@ function App() {
           {!isHomePage && !isVideoPage && !isHostDetailPage && !isEventPage && <Navbar />}
           <Toaster />
           <Router />
-          <WhatsAppButton />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
