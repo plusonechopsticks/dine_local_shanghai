@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { HomeHeader } from "@/components/HomeHeader";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { TESTIMONIALS } from "@/data/testimonials";
+import { useAllDbReviews } from "@/hooks/useReviews";
 import {
   Accordion,
   AccordionContent,
@@ -33,6 +34,18 @@ const FEATURED_HOST_GROUPS = [
 ];
 
 const FEATURED_HOST_NAMES = ["Jiading Ayi", "Chuan", "Norika", "Steven", "Echo", "Grace", "Eating"];
+
+/** Merges live DB reviews with static testimonials and renders the reviews section */
+function MergedReviewsSection() {
+  const { testimonials: dbReviews } = useAllDbReviews();
+  // Merge: DB reviews first (newest), then static testimonials that don't duplicate a DB entry
+  const dbGuestNames = new Set(dbReviews.map((r) => r.guestName.toLowerCase()));
+  const filteredStatic = TESTIMONIALS.filter(
+    (t) => !dbGuestNames.has(t.guestName.toLowerCase())
+  );
+  const merged = [...dbReviews, ...filteredStatic];
+  return <ReviewsSection testimonials={merged} />;
+}
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -424,7 +437,7 @@ export default function Home() {
 
       {/* Section 2.6: Guest Stories */}
       <div id="reviews">
-        <ReviewsSection testimonials={TESTIMONIALS} />
+        <MergedReviewsSection />
       </div>
 
       {/* Section 3: Brand Identity & Story */}

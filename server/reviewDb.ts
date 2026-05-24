@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { getDb } from "./db";
-import { reviews, reviewTokens, bookings } from "../drizzle/schema";
-import type { InsertReview, InsertReviewToken } from "../drizzle/schema";
+import { reviews, reviewTokens, bookings, hostListings } from "../drizzle/schema";
+import type { InsertReview } from "../drizzle/schema";
 import crypto from "crypto";
 
 /** Generate a secure random token */
@@ -20,99 +20,65 @@ export function getTravellerCategory(numberOfGuests: number): "solo" | "friends_
 export async function createReviewToken(bookingId: number): Promise<string | null> {
   const db = await getDb();
   if (!db) return null;
-
-  // Check if token already exists for this booking
   const existing = await db
     .select()
     .from(reviewTokens)
     .where(eq(reviewTokens.bookingId, bookingId))
     .limit(1);
-
-  if (existing.length > 0) {
-    return existing[0].token;
-  }
-
+  if (existing.length > 0) return existing[0].token;
   const token = generateReviewToken();
   const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 30); // 30 days
-
-  await db.insert(reviewTokens).values({
-    bookingId,
-    token,
-    used: false,
-    expiresAt,
-  });
-
+  expiresAt.setDate(expiresAt.getDate() + 30);
+  await db.insert(reviewTokens).values({ bookingId, token, used: false, expiresAt });
   return token;
-}
-
-/** Get booking info from a review token */
-export async function getBookingByReviewToken(token: string) {
-  const db = await getDb();
-  if (!db) return null;
-
-  const result = await db
-    .select({
-      token: reviewTokens.token,
-      used: reviewTokens.used,
-      expiresAt: reviewTokens.expiresAt,
-      bookingId: reviewTokens.bookingId,
-      guestName: bookings.guestName,
-      guestEmail: bookings.guestEmail,
-      numberOfGuests: bookings.numberOfGuests,
-      hostListingId: bookings.hostListingId,
-      requestedDate: bookings.requestedDate,
-      mealType: bookings.mealType,
-      bookingStatus: bookings.bookingStatus,
-    })
-    .from(reviewTokens)
-    .innerJoin(bookings, eq(reviewTokens.bookingId, bookings.id))
-    .where(eq(reviewTokens.token, token))
-    .limit(1);
-
-  return result[0] ?? null;
 }
 
 /** Check if a review already exists for a booking */
 export async function getReviewByBookingId(bookingId: number) {
   const db = await getDb();
   if (!db) return null;
-
   const result = await db
     .select()
     .from(reviews)
     .where(eq(reviews.bookingId, bookingId))
     .limit(1);
-
   return result[0] ?? null;
 }
 
-/** Submit a review and mark the token as used */
-export async function submitReview(data: InsertReview, token: string): Promise<number | null> {
+/** Submit a review */
+export async function submitReview(data: InsertReview): Promise<number | null> {
   const db = await getDb();
   if (!db) return null;
-
   const [result] = await db.insert(reviews).values(data);
-  const reviewId = (result as any).insertId as number;
-
-  // Mark token as used
-  await db
-    .update(reviewTokens)
-    .set({ used: true })
-    .where(eq(reviewTokens.token, token));
-
-  return reviewId;
+  return (result as any).insertId as number;
 }
 
-/** Get all published reviews, optionally filtered by hostListingId */
+/** Get published reviews with host name, optionally filtered by hostListingId */
 export async function getPublishedReviews(hostListingId?: number) {
   const db = await getDb();
   if (!db) return [];
-
-  const query = db
-    .select()
+  const rows = await db
+    .select({
+      id: reviews.id,
+      bookingId: reviews.bookingId,
+      hostListingId: reviews.hostListingId,
+      hostName: hostListings.hostName,
+      guestName: reviews.guestName,
+      numberOfGuests: reviews.numberOfGuests,
+      rating: reviews.rating,
+      comment: reviews.comment,
+      photoUrls: reviews.photoUrls,
+      travellerCategory: reviews.travellerCategory,
+      isPublished: reviews.isPublished,
+      createdAt: reviews.createdAt,
+    })
     .from(reviews)
-    .where(eq(reviews.isPublished, true));
-
-  return query;
+    .innerJoin(hostListings, eq(reviews.hostListingId, hostListings.id))
+    .where(
+      hostListingId
+        ? and(eq(reviews.isPublished, true), eq(reviews.hostListingId, hostListingId))
+        : eq(reviews.isPublished, true)
+    )
+    .orderBy(desc(reviews.createdAt));
+  return rows;
 }

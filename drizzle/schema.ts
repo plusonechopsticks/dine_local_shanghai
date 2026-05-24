@@ -156,6 +156,7 @@ export const bookings = mysqlTable("bookings", {
   
   // Reminders
   reminderEmailSent: boolean("reminderEmailSent").default(false), // Track if 48-hour reminder was sent
+  reviewEmailSent: boolean("reviewEmailSent").default(false), // Track if post-dining review request was sent
   
   // Event reference (null for regular host bookings)
   eventId: int("eventId").references(() => events.id),

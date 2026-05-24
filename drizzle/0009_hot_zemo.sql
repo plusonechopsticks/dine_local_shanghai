@@ -1,0 +1,1 @@
+ALTER TABLE `bookings` ADD `reviewEmailSent` boolean DEFAULT false;

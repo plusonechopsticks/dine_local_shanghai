@@ -41,6 +41,7 @@ import { toast } from "sonner";
 import DateGridCalendar from "@/components/DateGridCalendar";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { TESTIMONIALS } from "@/data/testimonials";
+import { useHostReviews } from "@/hooks/useReviews";
 import { useParams, useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
 
@@ -62,6 +63,19 @@ const ACTIVITY_LABELS: Record<string, string> = {
   "market": "Local Market Tour",
   "traditional-craft": "Traditional Craft",
 };
+
+/** Merges DB reviews for this host with static testimonials for the same host */
+function HostReviewsSection({ hostListingId }: { hostListingId: number }) {
+  const { testimonials: dbReviews } = useHostReviews(hostListingId);
+  const staticReviews = TESTIMONIALS.filter((t) => t.hostId === hostListingId);
+  const dbGuestNames = new Set(dbReviews.map((r) => r.guestName.toLowerCase()));
+  const filteredStatic = staticReviews.filter(
+    (t) => !dbGuestNames.has(t.guestName.toLowerCase())
+  );
+  const merged = [...dbReviews, ...filteredStatic];
+  if (merged.length === 0) return null;
+  return <ReviewsSection testimonials={merged} useSegments={false} />;
+}
 
 export default function HostDetail() {
   const params = useParams<{ id: string }>();
@@ -738,11 +752,7 @@ export default function HostDetail() {
             </section>
 
             {/* What Guests Say — reviews carousel, shown before booking widget */}
-            {(() => {
-              const hostReviews = TESTIMONIALS.filter((t) => t.hostId === hostId);
-              if (hostReviews.length === 0) return null;
-              return <ReviewsSection testimonials={hostReviews} useSegments={false} />;
-            })()}
+            <HostReviewsSection hostListingId={hostId} />
 
           </div>
 

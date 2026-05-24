@@ -1675,7 +1675,7 @@ export const appRouter = router({
           photoUrls: input.photoUrls ? JSON.stringify(input.photoUrls) : null,
           travellerCategory,
           isPublished: true,
-        }, input.token);
+        });
         if (!reviewId) return { success: false, error: "Failed to save review" };
         // Send confirmation email to guest (cc owner)
         const stars = "★".repeat(input.rating) + "☆".repeat(5 - input.rating);
@@ -1710,6 +1710,12 @@ export const appRouter = router({
     getPublished: publicProcedure
       .query(async () => {
         return getPublishedReviews();
+      }),
+    /** Get published reviews for a specific host listing */
+    getByHostListing: publicProcedure
+      .input(z.object({ hostListingId: z.number() }))
+      .query(async ({ input }) => {
+        return getPublishedReviews(input.hostListingId);
       }),
   }),
 });

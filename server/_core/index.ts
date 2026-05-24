@@ -304,6 +304,20 @@ async function startServer(): Promise<any> {
     }
   });
 
+  // Heartbeat cron: send review request emails to guests the day after their dining date
+  // Auth: platform cron cookie via /api/scheduled/* gateway
+  app.post("/api/scheduled/send-review-emails", async (req: any, res: any) => {
+    try {
+      const { sendReviewEmails } = await import("../send-review-emails");
+      const dateOverride = req.body?.date; // optional: YYYY-MM-DD override for testing
+      const result = await sendReviewEmails(dateOverride);
+      return res.json({ success: true, ...result });
+    } catch (error: any) {
+      console.error("[ReviewEmails] Failed to send review emails:", error);
+      return res.status(500).json({ success: false, error: error?.message || "Unknown error" });
+    }
+  });
+
   // Heartbeat cron: daily traffic report (called daily at 8am CST by manus-heartbeat)
   // Auth: platform cron cookie via /api/scheduled/* gateway
   app.post("/api/scheduled/daily-traffic-report", async (req: any, res: any) => {

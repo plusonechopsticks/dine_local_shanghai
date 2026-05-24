@@ -264,7 +264,7 @@ export default function ReviewPage() {
               </label>
               <Textarea
                 placeholder="What did you enjoy most? How was the food, the conversation, the atmosphere?"
-                rows={5}
+                rows={10}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 maxLength={2000}

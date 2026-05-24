@@ -64,6 +64,13 @@
       "when": 1779635068356,
       "tag": "0008_silent_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1779640378816,
+      "tag": "0009_hot_zemo",
+      "breakpoints": true
     }
   ]
 }
