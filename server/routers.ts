@@ -26,10 +26,10 @@ import {
   getBookedSlots
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
-import { createReviewToken, getBookingByReviewToken, getReviewByBookingId, submitReview, getPublishedReviews, getTravellerCategory } from "./reviewDb";
+import { getReviewByBookingId, submitReview, getPublishedReviews, getTravellerCategory } from "./reviewDb";
+import { getBookingById, getDb } from "./db";
 import { sendEmail } from "./email";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
-import { getDb } from "./db";
 import { blogRouter } from "./routers/blog";
 import { bookings, hostListings, hostInterests, influencerPages, events } from "../drizzle/schema";
 import { sql, eq, and } from "drizzle-orm";
@@ -1624,15 +1624,18 @@ export const appRouter = router({
       }),
   }),
   review: router({
-    /** Validate a review token and return booking info */
+    /** Get booking info by booking ID for review page */
     getByToken: publicProcedure
       .input(z.object({ token: z.string() }))
       .query(async ({ input }) => {
-        const data = await getBookingByReviewToken(input.token);
+        const bookingId = parseInt(input.token, 10);
+        if (isNaN(bookingId)) return { valid: false, reason: "not_found" };
+        const data = await getBookingById(bookingId);
         if (!data) return { valid: false, reason: "not_found" };
-        if (data.used) return { valid: false, reason: "already_used" };
-        if (new Date(data.expiresAt) < new Date()) return { valid: false, reason: "expired" };
         if (data.bookingStatus !== "confirmed") return { valid: false, reason: "not_confirmed" };
+        // Check if already reviewed
+        const existing = await getReviewByBookingId(bookingId);
+        if (existing) return { valid: false, reason: "already_used" };
         return {
           valid: true,
           guestName: data.guestName,
@@ -1641,7 +1644,7 @@ export const appRouter = router({
           hostListingId: data.hostListingId,
           requestedDate: data.requestedDate,
           mealType: data.mealType,
-          bookingId: data.bookingId,
+          bookingId: data.id,
         };
       }),
     /** Submit a review */
@@ -1653,17 +1656,17 @@ export const appRouter = router({
         photoUrls: z.array(z.string()).optional(),
       }))
       .mutation(async ({ input }) => {
-        const data = await getBookingByReviewToken(input.token);
-        if (!data) return { success: false, error: "Invalid token" };
-        if (data.used) return { success: false, error: "Review already submitted" };
-        if (new Date(data.expiresAt) < new Date()) return { success: false, error: "Token expired" };
+        const bookingId = parseInt(input.token, 10);
+        if (isNaN(bookingId)) return { success: false, error: "Invalid booking" };
+        const data = await getBookingById(bookingId);
+        if (!data) return { success: false, error: "Booking not found" };
         if (data.bookingStatus !== "confirmed") return { success: false, error: "Booking not confirmed" };
         // Check duplicate
-        const existing = await getReviewByBookingId(data.bookingId);
+        const existing = await getReviewByBookingId(bookingId);
         if (existing) return { success: false, error: "Review already submitted" };
         const travellerCategory = getTravellerCategory(data.numberOfGuests);
         const reviewId = await submitReview({
-          bookingId: data.bookingId,
+          bookingId: data.id,
           hostListingId: data.hostListingId,
           guestName: data.guestName,
           numberOfGuests: data.numberOfGuests,

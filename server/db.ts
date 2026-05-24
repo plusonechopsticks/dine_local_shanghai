@@ -846,3 +846,19 @@ export async function getBookedSlots(
     return [];
   }
 }
+
+export async function getBookingById(id: number): Promise<Booking | null> {
+  const db = await getDb();
+  if (!db) return null;
+  try {
+    const result = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.id, id))
+      .limit(1);
+    return result[0] ?? null;
+  } catch (error) {
+    console.error("[Database] Failed to get booking by id:", error);
+    return null;
+  }
+}
