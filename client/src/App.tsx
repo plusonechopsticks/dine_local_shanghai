@@ -24,6 +24,7 @@ import InfluencerPage from "./pages/InfluencerPage";
 import HostGuide from "./pages/HostGuide";
 import EventDetail from "./pages/EventDetail";
 import Disclaimer from "./pages/Disclaimer";
+import ReviewPage from "./pages/ReviewPage";
 
 
 function Router() {
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/booking-success" component={BookingSuccess} />
       <Route path="/booking-confirmation" component={BookingConfirmation} />
       <Route path="/disclaimer" component={Disclaimer} />
+      <Route path="/review/:token" component={ReviewPage} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />    </Switch>
@@ -65,6 +67,7 @@ function App() {
   const isHomePage = location === "/";
   const isVideoPage = location === "/what-home-dining-exp-looks-like-in-china" || /^\/for\//.test(location) || location === "/host-guide";
   const isEventPage = /^\/events\/\d+/.test(location);
+  const isReviewPage = /^\/review\//.test(location);
   const isHostDetailPage = /^\/hosts\/\d+/.test(location);
 
   return (
@@ -74,7 +77,7 @@ function App() {
         // switchable
       >
         <TooltipProvider>
-          {!isHomePage && !isVideoPage && !isHostDetailPage && !isEventPage && <Navbar />}
+          {!isHomePage && !isVideoPage && !isHostDetailPage && !isEventPage && !isReviewPage && <Navbar />}
           <Toaster />
           <Router />
         </TooltipProvider>

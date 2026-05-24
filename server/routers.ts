@@ -26,6 +26,8 @@ import {
   getBookedSlots
 } from "./db";
 import { authenticateHost, changeHostPassword } from "./hostAuth";
+import { createReviewToken, getBookingByReviewToken, getReviewByBookingId, submitReview, getPublishedReviews, getTravellerCategory } from "./reviewDb";
+import { sendEmail } from "./email";
 import { getOrCreateConversation, sendMessage, getConversationMessages, getHostConversations, getGuestConversations, markMessagesAsRead } from "./messaging";
 import { getDb } from "./db";
 import { blogRouter } from "./routers/blog";
@@ -1619,6 +1621,92 @@ export const appRouter = router({
           })
           .where(eq(influencerPages.slug, input.slug));
         return { success: true };
+      }),
+  }),
+  review: router({
+    /** Validate a review token and return booking info */
+    getByToken: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .query(async ({ input }) => {
+        const data = await getBookingByReviewToken(input.token);
+        if (!data) return { valid: false, reason: "not_found" };
+        if (data.used) return { valid: false, reason: "already_used" };
+        if (new Date(data.expiresAt) < new Date()) return { valid: false, reason: "expired" };
+        if (data.bookingStatus !== "confirmed") return { valid: false, reason: "not_confirmed" };
+        return {
+          valid: true,
+          guestName: data.guestName,
+          guestEmail: data.guestEmail,
+          numberOfGuests: data.numberOfGuests,
+          hostListingId: data.hostListingId,
+          requestedDate: data.requestedDate,
+          mealType: data.mealType,
+          bookingId: data.bookingId,
+        };
+      }),
+    /** Submit a review */
+    submit: publicProcedure
+      .input(z.object({
+        token: z.string(),
+        rating: z.number().int().min(1).max(5),
+        comment: z.string().min(1).max(2000),
+        photoUrls: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const data = await getBookingByReviewToken(input.token);
+        if (!data) return { success: false, error: "Invalid token" };
+        if (data.used) return { success: false, error: "Review already submitted" };
+        if (new Date(data.expiresAt) < new Date()) return { success: false, error: "Token expired" };
+        if (data.bookingStatus !== "confirmed") return { success: false, error: "Booking not confirmed" };
+        // Check duplicate
+        const existing = await getReviewByBookingId(data.bookingId);
+        if (existing) return { success: false, error: "Review already submitted" };
+        const travellerCategory = getTravellerCategory(data.numberOfGuests);
+        const reviewId = await submitReview({
+          bookingId: data.bookingId,
+          hostListingId: data.hostListingId,
+          guestName: data.guestName,
+          numberOfGuests: data.numberOfGuests,
+          rating: input.rating,
+          comment: input.comment,
+          photoUrls: input.photoUrls ? JSON.stringify(input.photoUrls) : null,
+          travellerCategory,
+          isPublished: true,
+        }, input.token);
+        if (!reviewId) return { success: false, error: "Failed to save review" };
+        // Send confirmation email to guest (cc owner)
+        const stars = "★".repeat(input.rating) + "☆".repeat(5 - input.rating);
+        const photoSection = input.photoUrls && input.photoUrls.length > 0
+          ? `<p><strong>Photos attached:</strong> ${input.photoUrls.length} photo(s) uploaded</p>`
+          : "";
+        try {
+          await sendEmail({
+            to: data.guestEmail,
+            subject: "Your +1 Chopsticks review — thank you! 🥢",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+                <h2 style="color: #c0392b;">+1 Chopsticks — Thank You for Your Review!</h2>
+                <p>Hi ${data.guestName},</p>
+                <p>Thank you for sharing your experience. Here's a copy of your review:</p>
+                <div style="background: #fafafa; border-left: 4px solid #c0392b; padding: 16px; margin: 16px 0;">
+                  <p style="font-size: 20px; margin: 0 0 8px;">${stars}</p>
+                  <p style="margin: 0; font-style: italic;">&ldquo;${input.comment}&rdquo;</p>
+                  ${photoSection}
+                </div>
+                <p>We hope to welcome you back to a Shanghai home table soon!</p>
+                <p style="color: #888; font-size: 12px;">+1 Chopsticks &mdash; Authentic Home Dining in Shanghai</p>
+              </div>
+            `,
+          });
+        } catch (err) {
+          console.error("[Review] Failed to send confirmation email:", err);
+        }
+        return { success: true, reviewId };
+      }),
+    /** Get all published reviews */
+    getPublished: publicProcedure
+      .query(async () => {
+        return getPublishedReviews();
       }),
   }),
 });

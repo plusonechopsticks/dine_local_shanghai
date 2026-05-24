@@ -497,3 +497,37 @@ export const events = mysqlTable("events", {
 
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = typeof events.$inferInsert;
+
+/**
+ * Guest reviews — submitted via a unique token link sent the day after a confirmed booking
+ */
+export const reviews = mysqlTable("reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  bookingId: int("bookingId").notNull().references(() => bookings.id),
+  hostListingId: int("hostListingId").notNull().references(() => hostListings.id),
+  guestName: varchar("guestName", { length: 255 }).notNull(),
+  numberOfGuests: int("numberOfGuests").notNull().default(1),
+  rating: int("rating").notNull(), // 1–5
+  comment: text("comment").notNull(),
+  photoUrls: text("photoUrls"), // JSON-encoded array of image URLs
+  travellerCategory: mysqlEnum("travellerCategory", ["solo", "friends_couples", "families"]).notNull(),
+  isPublished: boolean("isPublished").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = typeof reviews.$inferInsert;
+
+/**
+ * Review tokens — one-time tokens for guest review links
+ */
+export const reviewTokens = mysqlTable("review_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  bookingId: int("bookingId").notNull().references(() => bookings.id),
+  token: varchar("token", { length: 64 }).notNull().unique(),
+  used: boolean("used").default(false).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ReviewToken = typeof reviewTokens.$inferSelect;
+export type InsertReviewToken = typeof reviewTokens.$inferInsert;
