@@ -109,6 +109,16 @@ export default function HostDetail() {
     specialRequests: "",
   });
 
+  // Refs
+  const meetVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Data fetching
+  const hostId = params?.id ? parseInt(params.id) : null;
+  const { data: host, isLoading, isError } = trpc.host.get.useQuery(
+    { id: hostId || 0 },
+    { enabled: !!hostId }
+  );
+
   // Once host loads, ensure numberOfGuests respects minGuests
   useEffect(() => {
     if (!host) return;
@@ -119,16 +129,6 @@ export default function HostDetail() {
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [host?.id]);
-
-  // Refs
-  const meetVideoRef = useRef<HTMLVideoElement>(null);
-
-  // Data fetching
-  const hostId = params?.id ? parseInt(params.id) : null;
-  const { data: host, isLoading, isError } = trpc.host.get.useQuery(
-    { id: hostId || 0 },
-    { enabled: !!hostId }
-  );
 
   // Track page view when host page loads
   const incrementViewMutation = trpc.host.incrementView.useMutation();
