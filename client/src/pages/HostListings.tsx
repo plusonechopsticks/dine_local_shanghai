@@ -68,7 +68,7 @@ export default function HostListings() {
   }, [trackPageView]);
   
   // City tab state
-  const [selectedCity, setSelectedCity] = useState<"all" | "shanghai" | "shenzhen">("all");
+  const [selectedCity, setSelectedCity] = useState<"all" | "shanghai" | "shenzhen" | "chengdu">("all");
 
   // Filter state
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
@@ -89,19 +89,23 @@ export default function HostListings() {
   }, [refetch]);
 
   // Helper: determine city from district string
-  const getCity = (district: string | null): "shanghai" | "shenzhen" => {
+  const getCity = (district: string | null): "shanghai" | "shenzhen" | "chengdu" => {
     if (!district) return "shanghai";
-    return district.toLowerCase().includes("shenzhen") ? "shenzhen" : "shanghai";
+    const d = district.toLowerCase();
+    if (d.includes("shenzhen") || d.includes("深圳")) return "shenzhen";
+    if (d.includes("chengdu") || d.includes("成都")) return "chengdu";
+    return "shanghai";
   };
 
   // Counts for tab labels
   const cityCounts = useMemo(() => {
-    if (!listings) return { all: 0, shanghai: 0, shenzhen: 0 };
+    if (!listings) return { all: 0, shanghai: 0, shenzhen: 0, chengdu: 0 };
     const approved = listings;
     return {
       all: approved.length,
       shanghai: approved.filter(h => getCity(h.district) === "shanghai").length,
       shenzhen: approved.filter(h => getCity(h.district) === "shenzhen").length,
+      chengdu: approved.filter(h => getCity(h.district) === "chengdu").length,
     };
   }, [listings]);
 
@@ -196,6 +200,7 @@ export default function HostListings() {
           {([
             { key: "all", label: "All Hosts", count: cityCounts.all },
             { key: "shanghai", label: "Shanghai", count: cityCounts.shanghai },
+            { key: "chengdu", label: "Chengdu", count: cityCounts.chengdu },
             { key: "shenzhen", label: "Shenzhen", count: cityCounts.shenzhen },
           ] as const).map(({ key, label, count }) => (
             <button
