@@ -296,8 +296,7 @@ function HostCard({ host }: { host: any }) {
   };
 
   return (
-    <Link href={`/hosts/${host.id}`}>
-      <a className="group cursor-pointer block">
+    <Link href={`/hosts/${host.id}`} className="group cursor-pointer block">
         {/* Image Container with Overlay */}
         <div 
           className="relative aspect-square rounded-2xl overflow-hidden bg-secondary shadow-lg hover:shadow-xl transition-shadow"
@@ -437,7 +436,6 @@ function HostCard({ host }: { host: any }) {
             </div>
           )}
         </div>
-      </a>
     </Link>
   );
 }
