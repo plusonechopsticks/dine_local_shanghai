@@ -1,0 +1,1 @@
+ALTER TABLE `host_listings` ADD `minGuests` int DEFAULT 1 NOT NULL;

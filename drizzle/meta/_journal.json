@@ -71,6 +71,13 @@
       "when": 1779640378816,
       "tag": "0009_hot_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1779722956686,
+      "tag": "0010_minor_shooting_star",
+      "breakpoints": true
     }
   ]
 }

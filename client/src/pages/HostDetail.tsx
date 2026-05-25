@@ -109,6 +109,17 @@ export default function HostDetail() {
     specialRequests: "",
   });
 
+  // Once host loads, ensure numberOfGuests respects minGuests
+  useEffect(() => {
+    if (!host) return;
+    const min = host.minGuests ?? 1;
+    setBookingData(prev => ({
+      ...prev,
+      numberOfGuests: String(Math.max(min, parseInt(prev.numberOfGuests) || min)),
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [host?.id]);
+
   // Refs
   const meetVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -792,7 +803,7 @@ export default function HostDetail() {
                       onClick={() => {
                         setBookingSuccess(false);
                         setCreatedBookingId(null);
-                        setBookingData({ guestName: "", guestEmail: "", requestedDate: "", mealType: "dinner", numberOfGuests: "1", specialRequests: "" });
+                        setBookingData({ guestName: "", guestEmail: "", requestedDate: "", mealType: "dinner", numberOfGuests: String(host?.minGuests ?? 1), specialRequests: "" });
                       }}
                       className="w-full py-2.5 rounded-lg text-sm font-medium transition-all"
                       style={{ border: '1px solid rgba(212,175,55,0.4)', color: '#d4af37', background: 'transparent' }}
@@ -903,10 +914,10 @@ export default function HostDetail() {
 
                     {/* Guests */}
                     <div>
-                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Guests * <span style={{ color: 'rgba(255,255,255,0.3)', textTransform: 'none', letterSpacing: 0 }}>(max {host.maxGuests})</span></label>
+                      <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Guests * <span style={{ color: 'rgba(255,255,255,0.3)', textTransform: 'none', letterSpacing: 0 }}>(min {host.minGuests ?? 1}, max {host.maxGuests})</span></label>
                       <div className="flex items-center gap-0 rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.07)' }}>
                         <button
-                          onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.max(1, parseInt(bookingData.numberOfGuests) - 1)) })}
+                          onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.max(host.minGuests ?? 1, parseInt(bookingData.numberOfGuests) - 1)) })}
                           className="px-4 py-2.5 text-white text-lg font-light transition-colors hover:bg-white/10"
                         >−</button>
                         <span className="flex-1 text-center text-sm font-medium text-white">{bookingData.numberOfGuests}</span>
@@ -961,6 +972,10 @@ export default function HostDetail() {
                         }
                         if (parseInt(bookingData.numberOfGuests) > host.maxGuests) {
                           toast.error(`Maximum ${host.maxGuests} guests allowed`);
+                          return;
+                        }
+                        if (parseInt(bookingData.numberOfGuests) < (host.minGuests ?? 1)) {
+                          toast.error(`Minimum ${host.minGuests ?? 1} guests required`);
                           return;
                         }
                         createBookingMutation.mutate({
@@ -1127,9 +1142,9 @@ export default function HostDetail() {
                     </div>
                   )}
                   <div>
-                    <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Guests * <span style={{ color: 'rgba(255,255,255,0.3)', textTransform: 'none', letterSpacing: 0 }}>(max {host.maxGuests})</span></label>
+                    <label className="block text-xs tracking-widest uppercase mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>Guests * <span style={{ color: 'rgba(255,255,255,0.3)', textTransform: 'none', letterSpacing: 0 }}>(min {host.minGuests ?? 1}, max {host.maxGuests})</span></label>
                     <div className="flex items-center rounded-lg overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.07)' }}>
-                      <button onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.max(1, parseInt(bookingData.numberOfGuests) - 1)) })} className="px-4 py-2.5 text-white text-lg font-light hover:bg-white/10">−</button>
+                      <button onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.max(host.minGuests ?? 1, parseInt(bookingData.numberOfGuests) - 1)) })} className="px-4 py-2.5 text-white text-lg font-light hover:bg-white/10">−</button>
                       <span className="flex-1 text-center text-sm font-medium text-white">{bookingData.numberOfGuests}</span>
                       <button onClick={() => setBookingData({ ...bookingData, numberOfGuests: String(Math.min(host.maxGuests, parseInt(bookingData.numberOfGuests) + 1)) })} className="px-4 py-2.5 text-white text-lg font-light hover:bg-white/10">+</button>
                     </div>
@@ -1165,6 +1180,10 @@ export default function HostDetail() {
                       }
                       if (parseInt(bookingData.numberOfGuests) > host.maxGuests) {
                         toast.error(`Maximum ${host.maxGuests} guests allowed`);
+                        return;
+                      }
+                      if (parseInt(bookingData.numberOfGuests) < (host.minGuests ?? 1)) {
+                        toast.error(`Minimum ${host.minGuests ?? 1} guests required`);
                         return;
                       }
                       createBookingMutation.mutate({

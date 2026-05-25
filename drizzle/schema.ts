@@ -87,6 +87,7 @@ export const hostListings = mysqlTable("host_listings", {
   
   // Dining Details
   maxGuests: int("maxGuests").notNull().default(2),
+  minGuests: int("minGuests").notNull().default(1),
   cuisineStyle: varchar("cuisineStyle", { length: 255 }).notNull(),
   title: varchar("title", { length: 500 }), // AI-generated or custom title for the experience
   menuDescription: text("menuDescription").notNull(),

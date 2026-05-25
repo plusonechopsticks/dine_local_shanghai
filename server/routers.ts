@@ -861,6 +861,7 @@ export const appRouter = router({
         discountPercentage: z.number().min(0).max(100).optional(),
         displayOrder: z.number().min(0).optional(),
         maxGuests: z.number().optional(),
+        minGuests: z.number().min(1).max(20).optional(),
         mealDurationMinutes: z.number().optional(),
         kidsFriendly: z.boolean().optional(),
         hasPets: z.boolean().optional(),
