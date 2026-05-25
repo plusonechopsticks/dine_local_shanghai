@@ -1332,6 +1332,44 @@ export const appRouter = router({
           bookings: hostBookings || [],
         };
       }),
+    updateWeeklyAvailability: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+        availability: z.record(z.string(), z.array(z.string())),
+      }))
+      .mutation(async ({ input }) => {
+        const success = await updateHostListing(input.hostListingId, { availability: input.availability });
+        return { success };
+      }),
+    getAvailabilityBlocks: publicProcedure
+      .input(z.object({ hostListingId: z.number() }))
+      .query(async ({ input }) => {
+        const blocks = await getHostAvailabilityBlocks(input.hostListingId);
+        return blocks;
+      }),
+    addBlockDate: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+        blockDate: z.string(),
+        mealType: z.enum(["lunch", "dinner", "both"]).default("both"),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const block = await createAvailabilityBlock({
+          hostListingId: input.hostListingId,
+          blockType: "date",
+          blockDate: new Date(input.blockDate) as any,
+          mealType: input.mealType,
+          reason: input.reason,
+        });
+        return { success: !!block, block };
+      }),
+    removeBlockDate: publicProcedure
+      .input(z.object({ blockId: z.number() }))
+      .mutation(async ({ input }) => {
+        const success = await deleteAvailabilityBlock(input.blockId);
+        return { success };
+      }),
   }),
   analytics: router({
     trackPageView: publicProcedure

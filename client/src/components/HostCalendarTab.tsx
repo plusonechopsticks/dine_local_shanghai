@@ -1,294 +1,267 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Trash2, CalendarX, Save } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
 type Language = "zh" | "en";
 
-const translations = {
-  zh: {
-    calendar: "日历与可用性",
-    description: "管理您的可用性 - 阻止日期、工作日或特定用餐时间",
-    blockDate: "阻止日期",
-    blockWeekday: "阻止工作日",
-    selectDate: "选择日期",
-    selectDay: "选择日期",
-    selectMealTime: "选择用餐时间",
-    fullDay: "整天",
-    lunch: "午餐",
-    dinner: "晚餐",
-    sunday: "周日",
-    monday: "周一",
-    tuesday: "周二",
-    wednesday: "周三",
-    thursday: "周四",
-    friday: "周五",
-    saturday: "周六",
-    add: "添加",
-    delete: "删除",
-    blockedDates: "已阻止的日期",
-    noBlockedDates: "没有已阻止的日期",
-    addedSuccess: "已添加",
-    deletedSuccess: "已删除",
-    errorAdding: "添加失败，请重试",
-    errorDeleting: "删除失败，请重试",
-    loading: "加载中...",
-  },
-  en: {
-    calendar: "Calendar & Availability",
-    description: "Manage your availability — block dates, weekdays, or specific meal times",
-    blockDate: "Block Date",
-    blockWeekday: "Block Weekday",
-    selectDate: "Select Date",
-    selectDay: "Select Day",
-    selectMealTime: "Select Meal Time",
-    fullDay: "Full Day",
-    lunch: "Lunch",
-    dinner: "Dinner",
-    sunday: "Sunday",
-    monday: "Monday",
-    tuesday: "Tuesday",
-    wednesday: "Wednesday",
-    thursday: "Thursday",
-    friday: "Friday",
-    saturday: "Saturday",
-    add: "Add",
-    delete: "Delete",
-    blockedDates: "Blocked Dates",
-    noBlockedDates: "No blocked dates",
-    addedSuccess: "Block added",
-    deletedSuccess: "Block removed",
-    errorAdding: "Failed to add block, please try again",
-    errorDeleting: "Failed to remove block, please try again",
-    loading: "Loading...",
-  },
-};
+const DAYS = [
+  { key: "monday",    label: "Monday" },
+  { key: "tuesday",   label: "Tuesday" },
+  { key: "wednesday", label: "Wednesday" },
+  { key: "thursday",  label: "Thursday" },
+  { key: "friday",    label: "Friday" },
+  { key: "saturday",  label: "Saturday" },
+  { key: "sunday",    label: "Sunday" },
+];
 
-export default function HostCalendarTab({ hostId, language }: { hostId: number; language: Language }) {
-  const [selectedDate, setSelectedDate] = useState<string>(() => {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, "0");
-    const d = String(now.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  });
-  const [selectedDateMealType, setSelectedDateMealType] = useState<"full_day" | "lunch" | "dinner">("full_day");
-  const [selectedWeekday, setSelectedWeekday] = useState<number>(1);
-  const [selectedWeekdayMealType, setSelectedWeekdayMealType] = useState<"full_day" | "lunch" | "dinner">("full_day");
+const MEALS = ["lunch", "dinner"] as const;
 
-  const t = translations[language];
+type AvailabilityGrid = Record<string, { lunch: boolean; dinner: boolean }>;
 
-  // Load existing blocks from DB
-  const blocksQuery = trpc.host.getAvailabilityBlocks.useQuery(
-    { hostId },
-    { enabled: !!hostId }
+function parseAvailability(raw: Record<string, string[]>): AvailabilityGrid {
+  const grid: AvailabilityGrid = {};
+  for (const day of DAYS) {
+    const meals = raw?.[day.key] || [];
+    grid[day.key] = {
+      lunch: meals.includes("lunch"),
+      dinner: meals.includes("dinner"),
+    };
+  }
+  return grid;
+}
+
+function gridToAvailability(grid: AvailabilityGrid): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
+  for (const day of DAYS) {
+    const meals: string[] = [];
+    if (grid[day.key]?.lunch) meals.push("lunch");
+    if (grid[day.key]?.dinner) meals.push("dinner");
+    if (meals.length > 0) result[day.key] = meals;
+  }
+  return result;
+}
+
+function formatBlockDate(d: string | Date | null | undefined): string {
+  if (!d) return "";
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toLocaleDateString("en-US", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+}
+
+function todayStr(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+export default function HostCalendarTab({
+  hostId,
+  listing,
+  language,
+}: {
+  hostId: number;
+  listing: { id: number; availability: Record<string, string[]> } | undefined;
+  language: Language;
+}) {
+  const hostListingId = listing?.id ?? hostId;
+
+  // ── Weekly availability grid ──
+  const [grid, setGrid] = useState<AvailabilityGrid>(() =>
+    parseAvailability(listing?.availability || {})
   );
+  const [gridDirty, setGridDirty] = useState(false);
 
-  // Add block mutation
-  const addBlockMutation = trpc.host.addAvailabilityBlock.useMutation({
+  const updateAvailability = trpc.hostAuth.updateWeeklyAvailability.useMutation({
     onSuccess: () => {
-      utils.host.getAvailabilityBlocks.invalidate({ hostId });
-      toast.success(t.addedSuccess);
+      toast.success("Availability saved");
+      setGridDirty(false);
     },
-    onError: () => {
-      toast.error(t.errorAdding);
-    },
+    onError: () => toast.error("Failed to save availability"),
   });
 
-  // Remove block mutation
-  const removeBlockMutation = trpc.host.removeAvailabilityBlock.useMutation({
+  function toggleCell(day: string, meal: "lunch" | "dinner") {
+    setGrid(prev => ({
+      ...prev,
+      [day]: { ...prev[day], [meal]: !prev[day]?.[meal] },
+    }));
+    setGridDirty(true);
+  }
+
+  function handleSaveGrid() {
+    updateAvailability.mutate({ hostListingId, availability: gridToAvailability(grid) });
+  }
+
+  // ── Blocked dates ──
+  const blocksQuery = trpc.hostAuth.getAvailabilityBlocks.useQuery(
+    { hostListingId },
+    { enabled: !!hostListingId }
+  );
+  const utils = trpc.useUtils();
+
+  const [blockDate, setBlockDate] = useState<string>(todayStr);
+  const [blockMeal, setBlockMeal] = useState<"lunch" | "dinner" | "both">("both");
+
+  const addBlock = trpc.hostAuth.addBlockDate.useMutation({
     onSuccess: () => {
-      utils.host.getAvailabilityBlocks.invalidate({ hostId });
-      toast.success(t.deletedSuccess);
+      toast.success("Date blocked");
+      utils.hostAuth.getAvailabilityBlocks.invalidate({ hostListingId });
     },
-    onError: () => {
-      toast.error(t.errorDeleting);
-    },
+    onError: () => toast.error("Failed to block date"),
   });
 
-  const handleAddBlockedDate = () => {
-    addBlockMutation.mutate({
-      hostListingId: hostId,
-      blockType: "date",
-      blockDate: selectedDate,
-      mealType: selectedDateMealType === "full_day" ? "both" : selectedDateMealType,
-    });
-  };
+  const removeBlock = trpc.hostAuth.removeBlockDate.useMutation({
+    onSuccess: () => {
+      toast.success("Block removed");
+      utils.hostAuth.getAvailabilityBlocks.invalidate({ hostListingId });
+    },
+    onError: () => toast.error("Failed to remove block"),
+  });
 
-  const handleAddBlockedWeekday = () => {
-    addBlockMutation.mutate({
-      hostListingId: hostId,
-      blockType: "weekday",
-      blockWeekday: selectedWeekday,
-      mealType: selectedWeekdayMealType === "full_day" ? "both" : selectedWeekdayMealType,
-    });
-  };
-
-  const handleDeleteBlock = (blockId: number) => {
-    removeBlockMutation.mutate({ blockId });
-  };
-
-  const weekdayNames = [
-    t.sunday,
-    t.monday,
-    t.tuesday,
-    t.wednesday,
-    t.thursday,
-    t.friday,
-    t.saturday,
-  ];
-
-  const mealTypeLabel = (mt: string) => {
-    if (mt === "both") return t.fullDay;
-    if (mt === "lunch") return t.lunch;
-    if (mt === "dinner") return t.dinner;
-    return mt;
-  };
-
-  const blocks = blocksQuery.data || [];
-  const isAdding = addBlockMutation.isPending;
+  const dateBlocks = useMemo(
+    () => (blocksQuery.data || []).filter((b: any) => b.blockType === "date"),
+    [blocksQuery.data]
+  );
 
   return (
     <div className="space-y-6">
-      {/* Block Date Card */}
+      {/* ── Section 1: Weekly availability grid ── */}
       <Card>
         <CardHeader>
-          <CardTitle>{t.blockDate}</CardTitle>
-          <CardDescription>{t.selectDate}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium block mb-2">{t.selectDate}</label>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium block mb-2">{t.selectMealTime}</label>
-              <select
-                value={selectedDateMealType}
-                onChange={(e) => setSelectedDateMealType(e.target.value as any)}
-                className="w-full px-3 py-2 border rounded-md"
-              >
-                <option value="full_day">{t.fullDay}</option>
-                <option value="lunch">{t.lunch}</option>
-                <option value="dinner">{t.dinner}</option>
-              </select>
-            </div>
-            <div className="flex items-end">
-              <Button
-                onClick={handleAddBlockedDate}
-                className="w-full"
-                disabled={isAdding || !selectedDate}
-              >
-                {isAdding ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Plus className="w-4 h-4 mr-2" />
-                )}
-                {t.add}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Block Weekday Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.blockWeekday}</CardTitle>
-          <CardDescription>{t.selectDay}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium block mb-2">{t.selectDay}</label>
-              <select
-                value={selectedWeekday}
-                onChange={(e) => setSelectedWeekday(parseInt(e.target.value))}
-                className="w-full px-3 py-2 border rounded-md"
-              >
-                {weekdayNames.map((day, idx) => (
-                  <option key={idx} value={idx}>
-                    {day}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium block mb-2">{t.selectMealTime}</label>
-              <select
-                value={selectedWeekdayMealType}
-                onChange={(e) => setSelectedWeekdayMealType(e.target.value as any)}
-                className="w-full px-3 py-2 border rounded-md"
-              >
-                <option value="full_day">{t.fullDay}</option>
-                <option value="lunch">{t.lunch}</option>
-                <option value="dinner">{t.dinner}</option>
-              </select>
-            </div>
-            <div className="flex items-end">
-              <Button
-                onClick={handleAddBlockedWeekday}
-                className="w-full"
-                disabled={isAdding}
-              >
-                {isAdding ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Plus className="w-4 h-4 mr-2" />
-                )}
-                {t.add}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Blocked Dates List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.blockedDates}</CardTitle>
+          <CardTitle className="text-base">Weekly Schedule</CardTitle>
+          <CardDescription>
+            Check the meals you are available for each day. Uncheck to mark as unavailable.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          {blocksQuery.isLoading ? (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>{t.loading}</span>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr>
+                  <th className="text-left py-2 pr-4 font-medium text-muted-foreground w-32">Day</th>
+                  <th className="text-center py-2 px-4 font-medium text-muted-foreground">Lunch</th>
+                  <th className="text-center py-2 px-4 font-medium text-muted-foreground">Dinner</th>
+                </tr>
+              </thead>
+              <tbody>
+                {DAYS.map((day, i) => (
+                  <tr key={day.key} className={i % 2 === 0 ? "bg-muted/30" : ""}>
+                    <td className="py-3 pr-4 font-medium">{day.label}</td>
+                    {MEALS.map(meal => (
+                      <td key={meal} className="py-3 px-4 text-center">
+                        <Checkbox
+                          checked={!!grid[day.key]?.[meal]}
+                          onCheckedChange={() => toggleCell(day.key, meal)}
+                          className="mx-auto"
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 flex justify-end">
+            <Button
+              onClick={handleSaveGrid}
+              disabled={!gridDirty || updateAvailability.isPending}
+              size="sm"
+            >
+              {updateAvailability.isPending ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Saving…</>
+              ) : (
+                <><Save className="h-4 w-4 mr-2" />Save Schedule</>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Section 2: Block specific dates ── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Block Specific Dates</CardTitle>
+          <CardDescription>
+            Override your weekly schedule by blocking individual dates (e.g. holidays, travel).
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Add block form */}
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+            <div className="flex flex-col gap-1 flex-1">
+              <label className="text-xs font-medium text-muted-foreground">Date</label>
+              <input
+                type="date"
+                value={blockDate}
+                onChange={e => setBlockDate(e.target.value)}
+                className="border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              />
             </div>
-          ) : blocks.length === 0 ? (
-            <p className="text-muted-foreground">{t.noBlockedDates}</p>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">Block</label>
+              <div className="flex gap-2">
+                {(["both", "lunch", "dinner"] as const).map(m => (
+                  <button
+                    key={m}
+                    onClick={() => setBlockMeal(m)}
+                    className={`px-3 py-2 rounded-md text-sm border transition-colors ${
+                      blockMeal === m
+                        ? "bg-foreground text-background border-foreground"
+                        : "bg-background border-border hover:bg-muted"
+                    }`}
+                  >
+                    {m === "both" ? "All day" : m.charAt(0).toUpperCase() + m.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button
+              onClick={() => addBlock.mutate({ hostListingId, blockDate, mealType: blockMeal })}
+              disabled={!blockDate || addBlock.isPending}
+              size="sm"
+              className="shrink-0"
+            >
+              {addBlock.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Block Date"}
+            </Button>
+          </div>
+
+          {/* Blocked dates list */}
+          {blocksQuery.isLoading ? (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading blocked dates…
+            </div>
+          ) : dateBlocks.length === 0 ? (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm py-4">
+              <CalendarX className="h-4 w-4" />
+              No specific dates blocked
+            </div>
           ) : (
             <div className="space-y-2">
-              {blocks.map((block) => (
+              {dateBlocks.map((block: any) => (
                 <div
                   key={block.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
+                  className="flex items-center justify-between rounded-lg border px-4 py-3 bg-muted/20"
                 >
-                  <div>
-                    <p className="font-medium">
-                      {block.blockType === "weekday" && block.blockWeekday != null
-                        ? `${weekdayNames[block.blockWeekday]} — ${mealTypeLabel(block.mealType)}`
-                        : `${block.blockDate ?? ""} — ${mealTypeLabel(block.mealType)}`}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium">{formatBlockDate(block.blockDate)}</span>
+                    <Badge variant="secondary" className="text-xs capitalize">
+                      {block.mealType === "both" ? "All day" : block.mealType}
+                    </Badge>
+                    {block.reason && (
+                      <span className="text-xs text-muted-foreground">{block.reason}</span>
+                    )}
                   </div>
                   <Button
                     variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteBlock(block.id)}
-                    disabled={removeBlockMutation.isPending}
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    onClick={() => removeBlock.mutate({ blockId: block.id })}
+                    disabled={removeBlock.isPending}
                   >
-                    {removeBlockMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}

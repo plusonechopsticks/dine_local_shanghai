@@ -150,7 +150,7 @@ export default function HostPortal() {
           </TabsList>
 
           <TabsContent value="calendar">
-            <HostCalendarTab hostId={hostId} language={language} />
+            <HostCalendarTab hostId={hostId} listing={listing!} language={language} />
           </TabsContent>
 
           <TabsContent value="bookings">
