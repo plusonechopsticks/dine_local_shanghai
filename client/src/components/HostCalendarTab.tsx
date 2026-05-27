@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,7 +23,7 @@ const MEALS = ["lunch", "dinner"] as const;
 
 type AvailabilityGrid = Record<string, { lunch: boolean; dinner: boolean }>;
 
-function parseAvailability(raw: Record<string, string[]>): AvailabilityGrid {
+function parseAvailability(raw: Record<string, string[]> | null | undefined): AvailabilityGrid {
   const grid: AvailabilityGrid = {};
   for (const day of DAYS) {
     const meals = raw?.[day.key] || [];
@@ -69,10 +69,19 @@ export default function HostCalendarTab({
   const hostListingId = listing?.id ?? hostId;
 
   // ── Weekly availability grid ──
+  // Initialise from listing prop; re-sync when listing data arrives (async load)
   const [grid, setGrid] = useState<AvailabilityGrid>(() =>
-    parseAvailability(listing?.availability || {})
+    parseAvailability(listing?.availability)
   );
   const [gridDirty, setGridDirty] = useState(false);
+
+  // Re-populate grid when listing data loads (fixes blank checkboxes on first load)
+  useEffect(() => {
+    if (listing?.availability) {
+      setGrid(parseAvailability(listing.availability));
+      setGridDirty(false);
+    }
+  }, [listing?.id, JSON.stringify(listing?.availability)]);
 
   const updateAvailability = trpc.hostAuth.updateWeeklyAvailability.useMutation({
     onSuccess: () => {
@@ -101,15 +110,18 @@ export default function HostCalendarTab({
   );
   const utils = trpc.useUtils();
 
-  const [blockDate, setBlockDate] = useState<string>(todayStr);
+  const today = todayStr();
+  const [blockStart, setBlockStart] = useState<string>(today);
+  const [blockEnd, setBlockEnd] = useState<string>(today);
   const [blockMeal, setBlockMeal] = useState<"lunch" | "dinner" | "both">("both");
 
-  const addBlock = trpc.hostAuth.addBlockDate.useMutation({
-    onSuccess: () => {
-      toast.success("Date blocked");
+  const addBlockRange = trpc.hostAuth.addBlockRange.useMutation({
+    onSuccess: (data) => {
+      const days = (data as any).count ?? 1;
+      toast.success(days === 1 ? "Date blocked" : `${days} dates blocked`);
       utils.hostAuth.getAvailabilityBlocks.invalidate({ hostListingId });
     },
-    onError: () => toast.error("Failed to block date"),
+    onError: () => toast.error("Failed to block dates"),
   });
 
   const removeBlock = trpc.hostAuth.removeBlockDate.useMutation({
@@ -185,47 +197,73 @@ export default function HostCalendarTab({
         <CardHeader>
           <CardTitle className="text-base">Block Specific Dates</CardTitle>
           <CardDescription>
-            Override your weekly schedule by blocking individual dates (e.g. holidays, travel).
+            Override your weekly schedule by blocking a date or a range of dates (e.g. holidays, travel).
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Add block form */}
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
-            <div className="flex flex-col gap-1 flex-1">
-              <label className="text-xs font-medium text-muted-foreground">Date</label>
-              <input
-                type="date"
-                value={blockDate}
-                onChange={e => setBlockDate(e.target.value)}
-                className="border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">Block</label>
-              <div className="flex gap-2">
-                {(["both", "lunch", "dinner"] as const).map(m => (
-                  <button
-                    key={m}
-                    onClick={() => setBlockMeal(m)}
-                    className={`px-3 py-2 rounded-md text-sm border transition-colors ${
-                      blockMeal === m
-                        ? "bg-foreground text-background border-foreground"
-                        : "bg-background border-border hover:bg-muted"
-                    }`}
-                  >
-                    {m === "both" ? "All day" : m.charAt(0).toUpperCase() + m.slice(1)}
-                  </button>
-                ))}
+          <div className="flex flex-col gap-3">
+            {/* Date range row */}
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+              <div className="flex flex-col gap-1 flex-1">
+                <label className="text-xs font-medium text-muted-foreground">From</label>
+                <input
+                  type="date"
+                  value={blockStart}
+                  onChange={e => {
+                    setBlockStart(e.target.value);
+                    // If end is before new start, snap end to start
+                    if (blockEnd < e.target.value) setBlockEnd(e.target.value);
+                  }}
+                  className="border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+              <div className="flex flex-col gap-1 flex-1">
+                <label className="text-xs font-medium text-muted-foreground">To</label>
+                <input
+                  type="date"
+                  value={blockEnd}
+                  min={blockStart}
+                  onChange={e => setBlockEnd(e.target.value)}
+                  className="border rounded-md px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                />
               </div>
             </div>
-            <Button
-              onClick={() => addBlock.mutate({ hostListingId, blockDate, mealType: blockMeal })}
-              disabled={!blockDate || addBlock.isPending}
-              size="sm"
-              className="shrink-0"
-            >
-              {addBlock.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Block Date"}
-            </Button>
+
+            {/* Meal selector + submit */}
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">Block</label>
+                <div className="flex gap-2">
+                  {(["both", "lunch", "dinner"] as const).map(m => (
+                    <button
+                      key={m}
+                      onClick={() => setBlockMeal(m)}
+                      className={`px-3 py-2 rounded-md text-sm border transition-colors ${
+                        blockMeal === m
+                          ? "bg-foreground text-background border-foreground"
+                          : "bg-background border-border hover:bg-muted"
+                      }`}
+                    >
+                      {m === "both" ? "All day" : m.charAt(0).toUpperCase() + m.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Button
+                onClick={() => addBlockRange.mutate({
+                  hostListingId,
+                  startDate: blockStart,
+                  endDate: blockEnd,
+                  mealType: blockMeal,
+                })}
+                disabled={!blockStart || !blockEnd || addBlockRange.isPending}
+                size="sm"
+                className="shrink-0"
+              >
+                {addBlockRange.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Block Dates"}
+              </Button>
+            </div>
           </div>
 
           {/* Blocked dates list */}

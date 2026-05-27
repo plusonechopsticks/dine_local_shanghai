@@ -1365,6 +1365,33 @@ export const appRouter = router({
         });
         return { success: !!block, block };
       }),
+    addBlockRange: publicProcedure
+      .input(z.object({
+        hostListingId: z.number(),
+        startDate: z.string(),
+        endDate: z.string(),
+        mealType: z.enum(["lunch", "dinner", "both"]).default("both"),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const start = new Date(input.startDate + 'T00:00:00Z');
+        const end = new Date(input.endDate + 'T00:00:00Z');
+        if (end < start) return { success: false, count: 0 };
+        const blocks = [];
+        const cur = new Date(start);
+        while (cur <= end) {
+          const block = await createAvailabilityBlock({
+            hostListingId: input.hostListingId,
+            blockType: "date",
+            blockDate: new Date(cur) as any,
+            mealType: input.mealType,
+            reason: input.reason,
+          });
+          if (block) blocks.push(block);
+          cur.setUTCDate(cur.getUTCDate() + 1);
+        }
+        return { success: blocks.length > 0, count: blocks.length };
+      }),
     removeBlockDate: publicProcedure
       .input(z.object({ blockId: z.number() }))
       .mutation(async ({ input }) => {
