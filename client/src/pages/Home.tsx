@@ -386,17 +386,17 @@ export default function Home() {
       <section className="py-16 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
           <p className="text-center text-xs font-semibold tracking-widest uppercase text-gray-400 mb-10">As seen in</p>
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row justify-center gap-6 max-w-2xl mx-auto">
+            {/* Card 1: Sophie Serves Up */}
             <a
               href="https://www.sophieservesup.com/articles/shanghais-first-home-dining-platform-launches-as-1-chopsticks/"
               target="_blank"
               rel="noopener noreferrer"
-              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer max-w-sm w-full"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer flex-1 min-w-0"
             >
               {/* Color patch header */}
               <div className="h-36 bg-gradient-to-br from-amber-500 to-orange-600 flex flex-col items-center justify-center px-6 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '12px 12px'}} />
-                {/* Verified press badge */}
                 <span className="absolute top-3 right-3 inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
                   <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                   Editorial
@@ -409,7 +409,6 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 group-hover:underline underline-offset-2 transition-colors duration-200">
                   Shanghai's First Home Dining Platform Launches as +1 Chopsticks
                 </h3>
-                {/* Pull-quote */}
                 <blockquote className="border-l-4 border-amber-400 pl-4 mb-4">
                   <p className="text-sm text-gray-700 italic leading-relaxed">
                     &ldquo;&hellip;some of the most bona fide benbang cai we&rsquo;ve had in, well, as long as we can remember.&rdquo;
@@ -426,6 +425,50 @@ export default function Home() {
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-700 border border-red-200 rounded-full px-3 py-1 group-hover:bg-red-50 transition-colors">
+                  Read the article
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+              </div>
+            </a>
+
+            {/* Card 2: City News Service / Shanghai Daily */}
+            <a
+              href="https://www.citynewsservice.cn/articles/cns/shanghai-living/shanghai-secrets/3n70zlqm"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer flex-1 min-w-0"
+            >
+              {/* Color patch header */}
+              <div className="h-36 bg-gradient-to-br from-sky-600 to-blue-800 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '12px 12px'}} />
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Editorial
+                </span>
+                <span className="font-serif text-2xl font-bold text-white tracking-tight drop-shadow-sm text-center leading-tight">City News Service<br/><span className="text-lg font-semibold">Shanghai Daily</span></span>
+                <span className="text-sky-100 text-xs mt-1 font-medium tracking-wide">shine.cn · Shanghai Daily affiliate</span>
+              </div>
+              {/* Card body */}
+              <div className="p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-700 group-hover:underline underline-offset-2 transition-colors duration-200">
+                  [Shanghai Secrets] A Home Dining Platform You Probably Don't Know!
+                </h3>
+                <blockquote className="border-l-4 border-sky-400 pl-4 mb-4">
+                  <p className="text-sm text-gray-700 italic leading-relaxed">
+                    &ldquo;The best restaurant in Shanghai that isn&rsquo;t a restaurant. These are the kind of meals that never make it into any restaurant guide because they happen in someone&rsquo;s living room.&rdquo;
+                  </p>
+                </blockquote>
+                <div className="flex items-center gap-3 mb-4">
+                  <img
+                    src="https://obj.shine.cn/files/2026/05/08/31faec26-e690-4f23-a1e0-0ec684083584_0.png"
+                    alt="City News Service / Shanghai Daily"
+                    className="w-10 h-10 rounded-full object-cover object-top flex-shrink-0 border-2 border-sky-200"
+                  />
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    Sophie — <span className="font-medium text-gray-700">City News Service</span>, Shanghai Daily affiliate &middot; May 19, 2026
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 border border-blue-200 rounded-full px-3 py-1 group-hover:bg-blue-50 transition-colors">
                   Read the article
                   <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
