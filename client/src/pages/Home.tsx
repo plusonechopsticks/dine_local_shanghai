@@ -386,7 +386,7 @@ export default function Home() {
       <section className="py-16 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
           <p className="text-center text-xs font-semibold tracking-widest uppercase text-gray-400 mb-10">As seen in</p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-center gap-6 max-w-5xl mx-auto">
             {/* Card 1: Sophie Serves Up */}
             <a
               href="https://www.sophieservesup.com/articles/shanghais-first-home-dining-platform-launches-as-1-chopsticks/"
@@ -469,6 +469,50 @@ export default function Home() {
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 border border-blue-200 rounded-full px-3 py-1 group-hover:bg-blue-50 transition-colors">
+                  Read the article
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+              </div>
+            </a>
+
+            {/* Card 3: The World of Chinese */}
+            <a
+              href="https://www.theworldofchinese.com/2026/05/shanghai-magic-city-cuisine-benbangcai/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer flex-1 min-w-0"
+            >
+              {/* Color patch header */}
+              <div className="h-36 bg-gradient-to-br from-rose-700 to-red-900 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '12px 12px'}} />
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1 bg-white/20 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Editorial
+                </span>
+                <span className="font-serif text-2xl font-bold text-white tracking-tight drop-shadow-sm text-center leading-tight">The World<br/>of Chinese</span>
+                <span className="text-rose-100 text-xs mt-1 font-medium tracking-wide">theworldofchinese.com</span>
+              </div>
+              {/* Card body */}
+              <div className="p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-rose-700 group-hover:underline underline-offset-2 transition-colors duration-200">
+                  Our Gang&rsquo;s Food: The Mixed-Up Cuisine of the Magic City
+                </h3>
+                <blockquote className="border-l-4 border-rose-400 pl-4 mb-4">
+                  <p className="text-sm text-gray-700 italic leading-relaxed">
+                    &ldquo;It is at these types of meals that conceptions of fengtu can best be understood &mdash; through chefs who have an inherent bias to shape their kitchen flame to the local winds.&rdquo;
+                  </p>
+                </blockquote>
+                <div className="flex items-center gap-3 mb-4">
+                  <img
+                    src="https://cdn.theworldofchinese.com/media/images/Customers_at_a_Shang.2e16d0ba.format-jpeg.fill-1600x1200.jpg"
+                    alt="The World of Chinese"
+                    className="w-10 h-10 rounded-full object-cover object-top flex-shrink-0 border-2 border-rose-200"
+                  />
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    <span className="font-medium text-gray-700">The World of Chinese</span> &middot; May 27, 2026
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 border border-rose-200 rounded-full px-3 py-1 group-hover:bg-rose-50 transition-colors">
                   Read the article
                   <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
