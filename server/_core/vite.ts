@@ -6,6 +6,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from "url";
 import viteConfig from "../../vite.config";
+import { injectHostMeta } from "../host-meta";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -41,7 +42,14 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`
       );
-      const page = await vite.transformIndexHtml(url, template);
+      let page = await vite.transformIndexHtml(url, template);
+
+      // Inject host-specific meta tags for /hosts/:id routes
+      const hostMatch = url.match(/^\/hosts\/(\d+)/);
+      if (hostMatch) {
+        page = injectHostMeta(page, parseInt(hostMatch[1], 10));
+      }
+
       res.status(200).set({
         "Content-Type": "text/html",
         "Link": [
@@ -69,6 +77,26 @@ export function serveStatic(app: Express) {
   }
 
   app.use(express.static(distPath));
+
+  // Inject host-specific meta tags for /hosts/:id routes (production)
+  app.use("/hosts/:id", (req, res) => {
+    const listingId = parseInt((req as any).params.id, 10);
+    const indexPath = path.resolve(distPath, "index.html");
+    let html = fs.readFileSync(indexPath, "utf-8");
+    if (!isNaN(listingId)) {
+      html = injectHostMeta(html, listingId);
+    }
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader(
+      "Link",
+      [
+        '</.well-known/api-catalog>; rel="api-catalog"',
+        '</api/trpc>; rel="service-desc"',
+        `<https://plus1chopsticks.com/hosts/${listingId}>; rel="canonical"`,
+      ].join(", ")
+    );
+    res.send(html);
+  });
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
