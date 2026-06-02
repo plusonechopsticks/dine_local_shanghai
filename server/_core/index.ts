@@ -37,7 +37,16 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer(): Promise<any> {
   const app = express();
   const server = createServer(app);
-  
+
+  // Block staging domain from being indexed by search engines
+  app.use((req: any, res: any, next: any) => {
+    const host = req.headers.host || '';
+    if (host.includes('manus.space')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    next();
+  });
+
   // Stripe webhook endpoint - MUST be before express.json()
   app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req: any, res: any) => {
     const sig = req.headers["stripe-signature"];
