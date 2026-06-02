@@ -7,6 +7,7 @@ import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from "url";
 import viteConfig from "../../vite.config";
 import { injectHostMeta } from "../host-meta";
+import { injectBlogMeta } from "../blog-meta";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -50,6 +51,12 @@ export async function setupVite(app: Express, server: Server) {
         page = injectHostMeta(page, parseInt(hostMatch[1], 10));
       }
 
+      // Inject blog-post-specific meta tags for /blog/:slug routes
+      const blogMatch = url.match(/^\/blog\/([^/?#]+)/);
+      if (blogMatch) {
+        page = injectBlogMeta(page, blogMatch[1]);
+      }
+
       res.status(200).set({
         "Content-Type": "text/html",
         "Link": [
@@ -77,6 +84,24 @@ export function serveStatic(app: Express) {
   }
 
   app.use(express.static(distPath));
+
+  // Inject blog-post-specific meta tags for /blog/:slug routes (production)
+  app.use("/blog/:slug", (req, res) => {
+    const slug = (req as any).params.slug as string;
+    const indexPath = path.resolve(distPath, "index.html");
+    let html = fs.readFileSync(indexPath, "utf-8");
+    html = injectBlogMeta(html, slug);
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader(
+      "Link",
+      [
+        '</.well-known/api-catalog>; rel="api-catalog"',
+        '</api/trpc>; rel="service-desc"',
+        `<https://plus1chopsticks.com/blog/${slug}>; rel="canonical"`,
+      ].join(", ")
+    );
+    res.send(html);
+  });
 
   // Inject host-specific meta tags for /hosts/:id routes (production)
   app.use("/hosts/:id", (req, res) => {
