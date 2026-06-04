@@ -502,6 +502,16 @@ export default function HostDetail() {
           className="fixed inset-0 z-[100] flex items-center justify-center"
           style={{ background: 'rgba(0,0,0,0.92)' }}
           onClick={() => setLightboxIndex(null)}
+          onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+          onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+          onTouchEnd={() => {
+            if (!touchStart || !touchEnd) return;
+            const dist = touchStart - touchEnd;
+            if (dist > 50) setLightboxIndex((lightboxIndex + 1) % foodPhotos.length);
+            else if (dist < -50) setLightboxIndex((lightboxIndex - 1 + foodPhotos.length) % foodPhotos.length);
+            setTouchStart(0);
+            setTouchEnd(0);
+          }}
         >
           {/* Close button */}
           <button
