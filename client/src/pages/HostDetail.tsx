@@ -84,6 +84,7 @@ export default function HostDetail() {
   // State management
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentFoodImageIndex, setCurrentFoodImageIndex] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [expandedBio, setExpandedBio] = useState(false);
@@ -472,12 +473,8 @@ export default function HostDetail() {
               return (
                 <button
                   key={idx}
-                  onClick={() => {
-                    setCurrentImageIndex(heroOffset + idx);
-                    // Scroll back to top so user can see the hero carousel
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="relative overflow-hidden rounded-lg focus:outline-none"
+                  onClick={() => setLightboxIndex(idx)}
+                  className="relative overflow-hidden rounded-lg focus:outline-none hover:opacity-90 transition-opacity"
                   style={{ aspectRatio: '1/1' }}
                   aria-label={isLast && remaining > 0 ? `View all ${foodPhotos.length} photos` : `View photo ${idx + 1}`}
                 >
@@ -495,6 +492,60 @@ export default function HostDetail() {
                 </button>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* FULLSCREEN LIGHTBOX for food photos */}
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.92)' }}
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Close button */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightboxIndex(null); }}
+            className="absolute top-4 right-4 z-10 text-white/80 hover:text-white transition"
+            aria-label="Close gallery"
+          >
+            <X size={32} />
+          </button>
+
+          {/* Prev */}
+          {foodPhotos.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex((lightboxIndex - 1 + foodPhotos.length) % foodPhotos.length); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft size={28} className="text-white" />
+            </button>
+          )}
+
+          {/* Image */}
+          <img
+            src={getProxiedImageUrl(foodPhotos[lightboxIndex])}
+            alt={`${host.hostName} food photo ${lightboxIndex + 1}`}
+            className="max-w-full max-h-full object-contain"
+            style={{ maxWidth: '90vw', maxHeight: '90vh' }}
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {/* Next */}
+          {foodPhotos.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex((lightboxIndex + 1) % foodPhotos.length); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
+              aria-label="Next photo"
+            >
+              <ChevronRight size={28} className="text-white" />
+            </button>
+          )}
+
+          {/* Counter */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/70 text-sm">
+            {lightboxIndex + 1} / {foodPhotos.length}
           </div>
         </div>
       )}
