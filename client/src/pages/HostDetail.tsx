@@ -458,6 +458,47 @@ export default function HostDetail() {
         </div>
       </section>
 
+      {/* FOOD PHOTO THUMBNAIL STRIP — immediately below hero, before any text */}
+      {foodPhotos.length > 0 && (
+        <div className="w-full bg-black px-4 py-3">
+          <div className="max-w-6xl mx-auto grid grid-cols-4 gap-2">
+            {foodPhotos.slice(0, 4).map((photo, idx) => {
+              const isLast = idx === 3;
+              const remaining = foodPhotos.length - 4;
+              // When tapping a thumbnail, jump the hero carousel to that food photo
+              // Hero images = [profilePhoto?, ...foodPhotos], so food photo idx maps to
+              // (profilePhoto ? 1 : 0) + idx in the hero carousel
+              const heroOffset = host.profilePhotoUrl ? 1 : 0;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setCurrentImageIndex(heroOffset + idx);
+                    // Scroll back to top so user can see the hero carousel
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="relative overflow-hidden rounded-lg focus:outline-none"
+                  style={{ aspectRatio: '1/1' }}
+                  aria-label={isLast && remaining > 0 ? `View all ${foodPhotos.length} photos` : `View photo ${idx + 1}`}
+                >
+                  <img
+                    src={getProxiedImageUrl(photo)}
+                    alt={`${host.hostName} food photo ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  {isLast && remaining > 0 && (
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.55)' }}>
+                      <span className="text-white font-semibold text-lg">+{remaining}</span>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* MAIN CONTENT */}
       <main className="container py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
