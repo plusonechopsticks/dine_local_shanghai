@@ -18,22 +18,31 @@ export async function sendReviewEmails(dateOverride?: string): Promise<{ sent: n
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  // Determine yesterday in Shanghai time (UTC+8)
-  let yesterdayStr: string;
+  // Determine the target dining date (yesterday in Shanghai time, UTC+8).
+  // Bookings are stored as UTC midnight (e.g. 2026-06-07T00:00:00Z for a June 7 dinner).
+  // We compare using a UTC date range to avoid timezone drift:
+  //   requestedDate >= YYYY-MM-DDT00:00:00Z AND requestedDate < YYYY-MM-DDT00:00:00Z (next day)
+  let targetDateStr: string;
   if (dateOverride) {
-    yesterdayStr = dateOverride;
+    // dateOverride should be the actual dining date (YYYY-MM-DD), e.g. "2026-06-07"
+    targetDateStr = dateOverride;
   } else {
     const now = new Date();
-    // Shift to CST (UTC+8)
+    // Shift to CST (UTC+8) to get "today" in Shanghai
     const cstNow = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+    // Yesterday in Shanghai = today CST minus 1 day
     const yesterday = new Date(cstNow);
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-    yesterdayStr = yesterday.toISOString().split("T")[0]; // YYYY-MM-DD
+    targetDateStr = yesterday.toISOString().split("T")[0]; // YYYY-MM-DD
   }
 
-  console.log(`[ReviewEmails] Looking for confirmed bookings on ${yesterdayStr}`);
+  // Build UTC range for the target date (bookings stored as UTC midnight)
+  const targetStart = `${targetDateStr}T00:00:00.000Z`;
+  const targetEnd = new Date(new Date(targetStart).getTime() + 24 * 60 * 60 * 1000).toISOString();
 
-  // Find confirmed bookings from yesterday that haven't had a review email sent
+  console.log(`[ReviewEmails] Looking for confirmed bookings on ${targetDateStr} (UTC range: ${targetStart} → ${targetEnd})`);
+
+  // Find confirmed bookings from the target date that haven't had a review email sent
   const eligibleBookings = await db
     .select({
       id: bookings.id,
@@ -48,7 +57,7 @@ export async function sendReviewEmails(dateOverride?: string): Promise<{ sent: n
     .where(
       and(
         eq(bookings.bookingStatus, "confirmed"),
-        sql`DATE(${bookings.requestedDate}) = ${yesterdayStr}`,
+        sql`${bookings.requestedDate} >= ${targetStart} AND ${bookings.requestedDate} < ${targetEnd}`,
         eq(bookings.reviewEmailSent, false)
       )
     );
