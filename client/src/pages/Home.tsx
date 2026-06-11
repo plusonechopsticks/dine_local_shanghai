@@ -382,7 +382,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 2.5: As Seen In Press */}
+      {/* Section 2.5: Guest Stories */}
+      <div id="reviews">
+        <MergedReviewsSection />
+      </div>
+
+      {/* Section 2.6: As Seen In Press */}
       <section className="py-16 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
           <p className="text-center text-xs font-semibold tracking-widest uppercase text-gray-400 mb-10">As seen in</p>
@@ -716,12 +721,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 5.5: Guest Stories */}
-      <div id="reviews">
-        <MergedReviewsSection />
-      </div>
-
-      {/* Section 5.6: Useful Food and Travel Advice */}
+      {/* Section 5.5: Useful Food and Travel Advice */}
       <HomeBlogSection />
 
       {/* Section 6: Become a Host */}
