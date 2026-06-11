@@ -522,11 +522,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 2.6: Guest Stories */}
-      <div id="reviews">
-        <MergedReviewsSection />
-      </div>
-
       {/* Section 3: Brand Identity & Story */}
       <section id="brand-story" className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -721,7 +716,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section 5.5: Useful Food and Travel Advice */}
+      {/* Section 5.5: Guest Stories */}
+      <div id="reviews">
+        <MergedReviewsSection />
+      </div>
+
+      {/* Section 5.6: Useful Food and Travel Advice */}
       <HomeBlogSection />
 
       {/* Section 6: Become a Host */}
