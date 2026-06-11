@@ -22,6 +22,7 @@ interface RegistrationData {
   name: string;
   email: string;
   district: string;
+  wechatId: string;
   cuisineStyle: string;
   title: string;
   menuDescription: string;
@@ -48,6 +49,7 @@ const INITIAL_DATA: RegistrationData = {
   name: "",
   email: "",
   district: "",
+  wechatId: "",
   cuisineStyle: "",
   title: "",
   menuDescription: "",
@@ -457,6 +459,17 @@ export default function HostRegister() {
                 </div>
 
                 <div>
+                  <Label className="text-base font-semibold text-gray-700">WeChat ID</Label>
+                  <Input
+                    type="text"
+                    placeholder="your_wechat_id"
+                    value={data.wechatId}
+                    onChange={(e) => updateField("wechatId", e.target.value)}
+                    className="mt-2 h-12"
+                  />
+                </div>
+
+                <div>
                   <Label className="text-base font-semibold text-gray-700">District *</Label>
                   <select
                     value={data.district}
@@ -479,7 +492,7 @@ export default function HostRegister() {
                     }
                     // Silently capture host interest before proceeding to full form
                     submitInterestMutation.mutate(
-                      { name: data.name, email: data.email, district: data.district },
+                      { name: data.name, email: data.email, district: data.district, contact: data.wechatId || data.email },
                       { onError: (e) => console.error("[HostInterest] Failed to capture interest:", e) }
                     );
                     setPhase("form");
