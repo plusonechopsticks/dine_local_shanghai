@@ -1,0 +1,1 @@
+ALTER TABLE `host_interests` ADD `outreachEmailSent` boolean DEFAULT false NOT NULL;

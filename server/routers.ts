@@ -305,9 +305,13 @@ export const appRouter = router({
             subject: `Hosting with +1 Chopsticks — let's chat!`,
             html: generateHostInterestOutreachEmail({ name: input.name }),
           });
+          // Mark outreach email as sent so the safety-net job skips this record
+          const db = await getDb();
+          await db.update(hostInterests).set({ outreachEmailSent: true }).where(eq(hostInterests.id, interest.id));
           console.log(`[hostInterest] Outreach email sent to ${input.email}`);
         } catch (e) {
           console.error("[hostInterest] Failed to send outreach email:", e);
+          // outreachEmailSent stays false — daily safety-net job will retry
         }
 
         // Send owner email notification

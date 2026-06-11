@@ -327,6 +327,19 @@ async function startServer(): Promise<any> {
     }
   });
 
+  // Safety-net: send outreach emails to host interests that missed the auto-send on form submission
+  // Called daily to catch any failures
+  app.post("/api/scheduled/send-host-outreach-emails", async (req: any, res: any) => {
+    try {
+      const { sendHostOutreachEmails } = await import("../send-host-outreach-emails");
+      const result = await sendHostOutreachEmails();
+      return res.json({ success: true, ...result });
+    } catch (error: any) {
+      console.error("[HostOutreach] Failed to send host outreach emails:", error);
+      return res.status(500).json({ success: false, error: error?.message || "Unknown error" });
+    }
+  });
+
   // Heartbeat cron: daily traffic report (called daily at 8am CST by manus-heartbeat)
   // Auth: platform cron cookie via /api/scheduled/* gateway
   app.post("/api/scheduled/daily-traffic-report", async (req: any, res: any) => {

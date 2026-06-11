@@ -46,6 +46,7 @@ export const hostInterests = mysqlTable("host_interests", {
   district: varchar("district", { length: 100 }).notNull(),
   contact: varchar("contact", { length: 255 }).notNull().default(""), // Email or WeChat ID
   hidden: boolean("hidden").default(false),
+  outreachEmailSent: boolean("outreachEmailSent").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
