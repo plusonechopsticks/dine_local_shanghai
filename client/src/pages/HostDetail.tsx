@@ -461,40 +461,89 @@ export default function HostDetail() {
 
       {/* FOOD PHOTO THUMBNAIL STRIP — immediately below hero, before any text */}
       {foodPhotos.length > 0 && (
-        <div className="w-full bg-black px-4 py-3">
-          <div className="max-w-6xl mx-auto grid grid-cols-4 gap-2">
-            {foodPhotos.slice(0, 4).map((photo, idx) => {
-              const isLast = idx === 3;
-              const remaining = foodPhotos.length - 4;
-              // When tapping a thumbnail, jump the hero carousel to that food photo
-              // Hero images = [profilePhoto?, ...foodPhotos], so food photo idx maps to
-              // (profilePhoto ? 1 : 0) + idx in the hero carousel
-              const heroOffset = host.profilePhotoUrl ? 1 : 0;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setLightboxIndex(idx)}
-                  className="relative overflow-hidden rounded-lg focus:outline-none hover:opacity-90 transition-opacity"
-                  style={{ aspectRatio: '1/1' }}
-                  aria-label={isLast && remaining > 0 ? `View all ${foodPhotos.length} photos` : `View photo ${idx + 1}`}
-                >
-                  <img
-                    src={getProxiedImageUrl(photo)}
-                    alt={`${host.hostName} food photo ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  {isLast && remaining > 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.55)' }}>
-                      <span className="text-white font-semibold text-lg">+{remaining}</span>
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+        <div className="grid grid-cols-4 gap-[2px] p-[2px] bg-[#f5f4f0]">
+          {foodPhotos.slice(0, 4).map((photo, idx) => {
+            const isLast = idx === 3 && foodPhotos.length > 3;
+            const remainingCount = foodPhotos.length - 3;
+            return (
+              <div
+                key={idx}
+                className="relative aspect-square overflow-hidden cursor-pointer"
+                onClick={() => setLightboxIndex(idx)}
+              >
+                <img
+                  src={getProxiedImageUrl(photo)}
+                  className="w-full h-full object-cover object-center"
+                  alt={`Food photo ${idx + 1}`}
+                  loading="lazy"
+                />
+                {isLast && remainingCount > 0 && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <span className="text-white text-sm font-semibold">+{remainingCount} more</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
+
+      {/* HOST INTRO VIDEO — immediately below photo strip (or below hero if no photos) */}
+      {host.introVideoUrl && (() => {
+        const [isPlaying, setIsPlaying] = [_meetVideoPlaying, setMeetVideoPlaying];
+        return (
+          <div
+            className="relative w-full aspect-video bg-black overflow-hidden cursor-pointer"
+            onClick={() => {
+              if (!isPlaying) {
+                setIsPlaying(true);
+                setTimeout(() => {
+                  if (meetVideoRef.current) {
+                    meetVideoRef.current.muted = false;
+                    meetVideoRef.current.play().catch(() => {
+                      meetVideoRef.current!.muted = true;
+                      meetVideoRef.current!.play().catch(() => {});
+                    });
+                  }
+                }, 80);
+              }
+            }}
+          >
+            {!isPlaying && (
+              <>
+                <img
+                  src={host.profilePhotoUrl ? getProxiedImageUrl(host.profilePhotoUrl) : undefined}
+                  className="w-full h-full object-cover opacity-75"
+                  alt={`Meet ${host.hostName}`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/45" />
+                {/* Play button */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white/95 rounded-full flex items-center justify-center shadow-lg pointer-events-none">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#1a1a1a">
+                    <polygon points="5,3 19,12 5,21"/>
+                  </svg>
+                </div>
+                {/* Label */}
+                <div className="absolute bottom-3 left-4 pointer-events-none">
+                  <p className="text-white text-[13px] font-semibold">Meet {host.hostName}</p>
+                  <p className="text-white/75 text-[11px] mt-0.5">Hear their story in their own words</p>
+                </div>
+              </>
+            )}
+            {isPlaying && (
+              <video
+                ref={meetVideoRef}
+                src={host.introVideoUrl}
+                className="w-full h-full object-cover"
+                controls
+                autoPlay
+                playsInline
+                onEnded={() => setMeetVideoPlaying(false)}
+              />
+            )}
+          </div>
+        );
+      })()}
 
       {/* FULLSCREEN LIGHTBOX for food photos */}
       {lightboxIndex !== null && (
@@ -644,144 +693,25 @@ export default function HostDetail() {
               <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to left, transparent, rgba(0,0,0,0.12))' }} />
             </div>
 
-            {/* Food Photos Carousel */}
-            {foodPhotos.length > 0 && (
-              <section>
-                <h2 className="text-4xl font-light mb-6">At the Dining Table</h2>
-                <div className="relative w-full rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                  {/* Blurred background */}
-                  <img
-                    src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-50"
-                    loading="lazy"
-                  />
-                  {/* Main image */}
-                  <img
-                    src={getProxiedImageUrl(foodPhotos[currentFoodImageIndex])}
-                    alt={`${host.hostName} food photo ${currentFoodImageIndex + 1}`}
-                    className="relative w-full h-full object-contain z-10"
-                    loading="lazy"
-                  />
-                  {foodPhotos.length > 1 && (
-                    <>
-                      <button
-                        onClick={prevFoodImage}
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
-                      >
-                        <ChevronLeft size={24} className="text-white" />
-                      </button>
-                      <button
-                        onClick={nextFoodImage}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
-                      >
-                        <ChevronRight size={24} className="text-white" />
-                      </button>
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                        {foodPhotos.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentFoodImageIndex(index)}
-                            className={`h-2 rounded-full transition-all ${
-                              index === currentFoodImageIndex
-                                ? "w-6 bg-white"
-                                : "w-2 bg-white/60 hover:bg-white/80"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {/* Section Divider */}
-            <div className="flex items-center gap-4">
-              <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.12))' }} />
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(212,175,55,0.5)' }} />
-              <div className="flex-1" style={{ height: '1px', background: 'linear-gradient(to left, transparent, rgba(0,0,0,0.12))' }} />
-            </div>
-
             {/* Meet Host Section */}
             <section>
               <h2 className="text-4xl font-light mb-8">Meet {host.hostName}</h2>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Video thumbnail (if available) or Profile Picture */}
-                {(host.introVideoUrl || host.profilePhotoUrl) && (
+                {/* Profile Picture */}
+                {host.profilePhotoUrl && (
                   <div className="lg:col-span-1">
-                    {host.introVideoUrl ? (
-                      /* Video player — lazy loaded, click to play with sound + fullscreen */
-                      <div className="relative rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
-                        {/* Hidden video element — only src-loaded after user clicks play */}
-                        <video
-                          ref={meetVideoRef}
-                          src={_meetVideoPlaying ? host.introVideoUrl : undefined}
-                          className={`w-full h-full object-cover transition-opacity duration-300 ${_meetVideoPlaying ? 'opacity-100' : 'opacity-0 absolute inset-0'}`}
-                          playsInline
-                          controls
-                          onEnded={() => setMeetVideoPlaying(false)}
-                        />
-                        {/* Poster / thumbnail shown until play is clicked */}
-                        {!_meetVideoPlaying && (
-                          <>
-                            <img
-                              src={host.profilePhotoUrl ? getProxiedImageUrl(host.profilePhotoUrl) : undefined}
-                              alt={host.hostName}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                            {/* Dark overlay */}
-                            <div className="absolute inset-0 bg-black/30" />
-                            {/* Play button */}
-                            <button
-                              onClick={() => {
-                                setMeetVideoPlaying(true);
-                                // Give React a tick to set src, then play with sound
-                                setTimeout(() => {
-                                  if (meetVideoRef.current) {
-                                    meetVideoRef.current.muted = false;
-                                    meetVideoRef.current.play().catch(() => {
-                                      // fallback: muted if browser blocks sound
-                                      meetVideoRef.current!.muted = true;
-                                      meetVideoRef.current!.play().catch(() => {});
-                                    });
-                                    // Request fullscreen
-                                    if (meetVideoRef.current.requestFullscreen) {
-                                      meetVideoRef.current.requestFullscreen();
-                                    } else if ((meetVideoRef.current as any).webkitEnterFullscreen) {
-                                      (meetVideoRef.current as any).webkitEnterFullscreen();
-                                    } else if ((meetVideoRef.current as any).webkitRequestFullscreen) {
-                                      (meetVideoRef.current as any).webkitRequestFullscreen();
-                                    }
-                                  }
-                                }, 80);
-                              }}
-                              className="absolute inset-0 flex items-center justify-center group"
-                              aria-label="Play intro video"
-                            >
-                              <div className="w-16 h-16 rounded-full bg-black/60 group-hover:bg-black/80 backdrop-blur-sm flex items-center justify-center transition-all group-hover:scale-110 shadow-2xl border border-white/20">
-                                <Play size={28} fill="white" className="text-white ml-1" />
-                              </div>
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
-                        <img
-                          src={getProxiedImageUrl(host.profilePhotoUrl!)}
-                          alt={host.hostName}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      </div>
-                    )}
+                    <div className="rounded-2xl overflow-hidden shadow-md" style={{ aspectRatio: '4/5' }}>
+                      <img
+                        src={getProxiedImageUrl(host.profilePhotoUrl)}
+                        alt={host.hostName}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                 )}
                 {/* Bio and Info Sub-sections */}
-                <div className={(host.introVideoUrl || host.profilePhotoUrl) ? "lg:col-span-2" : "lg:col-span-3"}>
+                <div className={host.profilePhotoUrl ? "lg:col-span-2" : "lg:col-span-3"}>
                   <div className="space-y-6">
 
                     {/* About Me */}
@@ -865,7 +795,7 @@ export default function HostDetail() {
             </section>
 
             {/* What Guests Say — reviews carousel, shown before booking widget */}
-            <HostReviewsSection hostListingId={hostId} />
+            <HostReviewsSection hostListingId={hostId!} />
 
           </div>
 
@@ -923,7 +853,7 @@ export default function HostDetail() {
                         onChange={(e) => setBookingData({ ...bookingData, guestName: e.target.value })}
                         placeholder="Full name"
                         className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-white/25 outline-none transition-all focus:ring-1"
-                        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', focusRingColor: '#d4af37' }}
+                        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
                         onFocus={e => (e.target.style.borderColor = 'rgba(212,175,55,0.6)')}
                         onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
                       />
