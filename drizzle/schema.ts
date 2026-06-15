@@ -80,6 +80,8 @@ export const hostListings = mysqlTable("host_listings", {
   // Location
   district: varchar("district", { length: 100 }).notNull(),
   fullAddress: text("fullAddress"), // Only filled after approval
+  latitude: varchar("latitude", { length: 30 }), // e.g. "31.1953"
+  longitude: varchar("longitude", { length: 30 }), // e.g. "121.4267"
   
   // Availability - stored as JSON for flexibility
   // e.g., { "monday": ["lunch", "dinner"], "saturday": ["dinner"] }

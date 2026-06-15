@@ -25,6 +25,8 @@ function mapReview(r: {
   isPublished: boolean;
   createdAt: Date | string;
 }): Testimonial {
+  const DEFAULT_REVIEW_IMAGE = "https://res.cloudinary.com/drxfcfayd/image/upload/v1781537197/reviews/defaults/plus1chopsticks-default-review.jpg";
+
   let images: { url: string; alt: string }[] = [];
   if (r.photoUrls) {
     try {
@@ -38,6 +40,10 @@ function mapReview(r: {
     } catch {
       // ignore parse errors
     }
+  }
+  // Fall back to the +1 Chopsticks logo for reviews without photos
+  if (images.length === 0) {
+    images = [{ url: DEFAULT_REVIEW_IMAGE, alt: "+1 Chopsticks" }];
   }
 
   const segment = toSegment(r.travellerCategory);
