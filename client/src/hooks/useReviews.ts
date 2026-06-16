@@ -28,14 +28,16 @@ function mapReview(r: {
   const DEFAULT_REVIEW_IMAGE = "https://res.cloudinary.com/drxfcfayd/image/upload/v1781537197/reviews/defaults/plus1chopsticks-default-review.jpg";
 
   let images: { url: string; alt: string }[] = [];
+  let hasRealPhoto = false;
   if (r.photoUrls) {
     try {
       const parsed = JSON.parse(r.photoUrls);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         images = parsed.map((url: string) => ({
           url,
           alt: `Photo by ${r.guestName} at ${r.hostName}`,
         }));
+        hasRealPhoto = true;
       }
     } catch {
       // ignore parse errors
@@ -70,20 +72,30 @@ function mapReview(r: {
     previewText: r.comment.length > 160 ? r.comment.slice(0, 157) + "..." : r.comment,
     fullText: r.comment,
     images,
+    hasRealPhoto,
     cta: "Read more",
   };
+}
+
+/** Sort reviews so those with real guest photos come first */
+function sortReviews(reviews: (Testimonial & { hasRealPhoto?: boolean })[]) {
+  return [...reviews].sort((a, b) => {
+    const aReal = (a as any).hasRealPhoto ? 1 : 0;
+    const bReal = (b as any).hasRealPhoto ? 1 : 0;
+    return bReal - aReal; // real photos first
+  });
 }
 
 /** Fetch all published DB reviews and return them as Testimonial[] */
 export function useAllDbReviews() {
   const { data, isLoading } = trpc.review.getPublished.useQuery();
-  const testimonials = useMemo(() => (data ?? []).map(mapReview), [data]);
+  const testimonials = useMemo(() => sortReviews((data ?? []).map(mapReview)), [data]);
   return { testimonials, isLoading };
 }
 
 /** Fetch published reviews for a specific host listing */
 export function useHostReviews(hostListingId: number) {
   const { data, isLoading } = trpc.review.getByHostListing.useQuery({ hostListingId });
-  const testimonials = useMemo(() => (data ?? []).map(mapReview), [data]);
+  const testimonials = useMemo(() => sortReviews((data ?? []).map(mapReview)), [data]);
   return { testimonials, isLoading };
 }
