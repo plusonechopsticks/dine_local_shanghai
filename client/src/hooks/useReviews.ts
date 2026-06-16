@@ -37,7 +37,8 @@ function mapReview(r: {
           url,
           alt: `Photo by ${r.guestName} at ${r.hostName}`,
         }));
-        hasRealPhoto = true;
+        // Only count as a real photo if it's NOT the default logo
+        hasRealPhoto = parsed.some((url: string) => url !== DEFAULT_REVIEW_IMAGE);
       }
     } catch {
       // ignore parse errors
