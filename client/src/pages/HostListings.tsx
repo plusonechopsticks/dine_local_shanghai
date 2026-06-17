@@ -22,7 +22,12 @@ import {
   Star,
   Eye,
   Tag,
+  List,
+  Map,
 } from "lucide-react";
+import { lazy, Suspense } from "react";
+
+const HostMapView = lazy(() => import("@/components/HostMapView"));
 
 const DAYS_OF_WEEK = [
   { id: "monday", label: "Monday" },
@@ -56,6 +61,7 @@ const SHANGHAI_DISTRICTS = [
 
 export default function HostListings() {
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const { mutate: trackPageView } = trpc.analytics.trackPageView.useMutation();
   
   // Scroll to top when component mounts
@@ -195,8 +201,8 @@ export default function HostListings() {
           </p>
         </div>
 
-        {/* City Filter Tabs */}
-        <div className="flex gap-2 mb-8">
+        {/* City Filter Tabs + Map/List Toggle */}
+        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-1">
           {([
             { key: "all", label: "All Hosts", count: cityCounts.all },
             { key: "shanghai", label: "Shanghai", count: cityCounts.shanghai },
@@ -220,28 +226,64 @@ export default function HostListings() {
               </span>
             </button>
           ))}
+
+          {/* Map / List toggle */}
+          <div className="flex items-center gap-1 ml-auto flex-shrink-0 border border-border rounded-full p-0.5 bg-background">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                viewMode === "list"
+                  ? "bg-red-600 text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <List className="h-3.5 w-3.5" />
+              List
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                viewMode === "map"
+                  ? "bg-red-600 text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Map className="h-3.5 w-3.5" />
+              Map
+            </button>
+          </div>
         </div>
 
-
+        {/* Map View */}
+        {viewMode === "map" && (
+          <Suspense fallback={<div className="w-full rounded-2xl bg-secondary animate-pulse" style={{ height: "clamp(360px, 55vh, 560px)" }} />}>
+            <HostMapView
+              hosts={filteredHosts ?? []}
+              selectedCity={selectedCity}
+            />
+          </Suspense>
+        )}
 
         {/* Listings Grid */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : filteredHosts && filteredHosts.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-lg text-muted-foreground mb-2">No hosts found</p>
-            <p className="text-sm text-muted-foreground">
-              Try adjusting your filters
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredHosts?.map(host => (
-              <HostCard key={host.id} host={host} />
-            ))}
-          </div>
+        {viewMode === "list" && (
+          isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : filteredHosts && filteredHosts.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-lg text-muted-foreground mb-2">No hosts found</p>
+              <p className="text-sm text-muted-foreground">
+                Try adjusting your filters
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredHosts?.map(host => (
+                <HostCard key={host.id} host={host} />
+              ))}
+            </div>
+          )
         )}
       </div>
     </div>
