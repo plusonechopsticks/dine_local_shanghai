@@ -256,12 +256,15 @@ export default function HostListings() {
 
         {/* Map View */}
         {viewMode === "map" && (
-          <Suspense fallback={<div className="w-full rounded-2xl bg-secondary animate-pulse" style={{ height: "clamp(360px, 55vh, 560px)" }} />}>
-            <HostMapView
-              hosts={filteredHosts ?? []}
-              selectedCity={selectedCity}
-            />
-          </Suspense>
+          <>
+            <Suspense fallback={<div className="w-full rounded-2xl bg-secondary animate-pulse" style={{ height: "clamp(360px, 55vh, 560px)" }} />}>
+              <HostMapView
+                hosts={filteredHosts ?? []}
+                selectedCity={selectedCity}
+              />
+            </Suspense>
+            <p className="text-center italic text-sm text-muted-foreground mt-2">map view only available for Shanghai now</p>
+          </>
         )}
 
         {/* Listings Grid */}
