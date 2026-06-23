@@ -143,6 +143,26 @@ export default function Home() {
       image: IMAGES.aboutGallery3,
       caption: "Steven teaching a new friend how to play '15-20', a famous Chinese drinking game",
     },
+    {
+      image: "https://res.cloudinary.com/drxfcfayd/image/upload/q_auto,f_auto,w_1600/gallery/jiading-ayi-group-dinner.jpg",
+      caption: "A full table of new friends sharing a home-cooked feast at Jiading Ayi's place",
+    },
+    {
+      image: "https://res.cloudinary.com/drxfcfayd/image/upload/q_auto,f_auto,w_1600/gallery/seattle-scientist-chuan-guangxi.jpg",
+      caption: "Seattle scientist visiting Chuan's Guangxi kitchen",
+    },
+    {
+      image: "https://res.cloudinary.com/drxfcfayd/image/upload/q_auto,f_auto,w_1600/gallery/two-americans-msg-free-meal.jpg",
+      caption: "Two Americans flying over to China for the first time to find an MSG-free home meal",
+    },
+    {
+      image: "https://res.cloudinary.com/drxfcfayd/image/upload/q_auto,f_auto,w_1600/gallery/sandrine-son-dumpling-echo.jpg",
+      caption: "Sandrine of Air France: her son learns dumpling-making with Echo's family",
+    },
+    {
+      image: "https://res.cloudinary.com/drxfcfayd/image/upload/q_auto,f_auto,w_1600/gallery/greek-family-norika-steven-dinner.jpg",
+      caption: "All this Greek family wants is Li-Ning, Anta and authentic Chinese food",
+    },
   ];
 
   // FAQ Section - scroll target
