@@ -1,0 +1,1 @@
+ALTER TABLE `host_listings` ADD `lifestylePhotoUrls` json DEFAULT ('[]') NOT NULL;

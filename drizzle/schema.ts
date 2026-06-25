@@ -95,6 +95,7 @@ export const hostListings = mysqlTable("host_listings", {
   title: varchar("title", { length: 500 }), // AI-generated or custom title for the experience
   menuDescription: text("menuDescription").notNull(),
   foodPhotoUrls: json("foodPhotoUrls").$type<string[]>().notNull(), // At least 3 photos
+  lifestylePhotoUrls: json("lifestylePhotoUrls").$type<string[]>().default([] as any).notNull(), // Non-food lifestyle/activity photos
   introVideoUrl: varchar("introVideoUrl", { length: 500 }), // Host introductory video URL
   dietaryNote: text("dietaryNote"), // e.g., "Can accommodate vegetarian, vegan, gluten-free. Not suitable for shellfish allergy."
   mealDurationMinutes: int("mealDurationMinutes").notNull().default(120),

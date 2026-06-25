@@ -99,6 +99,13 @@
       "when": 1782351252580,
       "tag": "0013_huge_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1782404798511,
+      "tag": "0014_narrow_quicksilver",
+      "breakpoints": true
     }
   ]
 }

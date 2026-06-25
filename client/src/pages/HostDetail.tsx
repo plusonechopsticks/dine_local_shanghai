@@ -738,6 +738,27 @@ export default function HostDetail() {
                       </div>
                     )}
 
+                    {/* Lifestyle Photos */}
+                    {(host as any).lifestylePhotoUrls && ((host as any).lifestylePhotoUrls as string[]).length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                          <Sparkles size={18} style={{ color: '#b8962e' }} /> Life Outside the Kitchen
+                        </h3>
+                        <div className="grid grid-cols-3 gap-1.5">
+                          {((host as any).lifestylePhotoUrls as string[]).map((url: string, idx: number) => (
+                            <div key={idx} className="aspect-square overflow-hidden rounded-md">
+                              <img
+                                src={getProxiedImageUrl(url)}
+                                alt={`Lifestyle photo ${idx + 1}`}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                loading="lazy"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Languages */}
                     {host.languages && host.languages.length > 0 && (
                       <div>
