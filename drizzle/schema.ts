@@ -118,6 +118,8 @@ export const hostListings = mysqlTable("host_listings", {
   // Promotions
   discountPercentage: int("discountPercentage").notNull().default(0), // 0-100, e.g., 25 for 25% off
   
+  // New Host Badge
+  isNewHost: boolean("isNewHost").notNull().default(false),
   // Display Order (lower number = higher priority, 0 = default)
   displayOrder: int("displayOrder").notNull().default(0),
   

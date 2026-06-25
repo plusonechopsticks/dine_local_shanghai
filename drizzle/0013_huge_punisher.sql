@@ -1,0 +1,1 @@
+ALTER TABLE `host_listings` ADD `isNewHost` boolean DEFAULT false NOT NULL;

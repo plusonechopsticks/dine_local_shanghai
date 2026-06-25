@@ -390,9 +390,15 @@ function HostCard({ host }: { host: any }) {
                 </div>
               )}
 
+              {/* New Host Badge - Top Right */}
+              {host.isNewHost && (
+                <Badge className="absolute top-4 right-4 bg-emerald-500 text-white border-0 shadow-lg text-xs font-semibold px-2.5 py-1">
+                  ✨ New Host
+                </Badge>
+              )}
               {/* Heart Icon - Top Right */}
               <button
-                className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
+                className={`absolute ${host.isNewHost ? 'top-12' : 'top-4'} right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors`}
                 onClick={(e) => {
                   e.preventDefault();
                   // TODO: Add to favorites
