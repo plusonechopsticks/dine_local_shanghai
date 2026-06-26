@@ -3,9 +3,9 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { getThumbnailUrl } from "@/lib/imageUtils";
 
-// District-level coordinates for each host (not exact addresses)
+// District-level coordinates for each host (not exact addresses) — fallback only when DB has no lat/lng
 const HOST_COORDINATES: Record<number, [number, number]> = {
-  1:      [121.3950, 31.0350], // Norika & Steven — Qingpu (Jiasong Middle Rd area)
+  1:      [121.2195, 31.1661], // Norika & Steven — Songjiang
   90002:  [121.4350, 31.1893], // Grace — Xuhui (Xujiahui area)
   150001: [121.2654, 31.3756], // Jiading Ayi — Jiading district
   180001: [121.4267, 31.1953], // Chuan — Xuhui (Jiaotong Uni area)
@@ -32,6 +32,8 @@ interface HostPin {
   pricePerPerson: number;
   profilePhotoUrl: string | null;
   discountPercentage: number;
+  latitude?: string | null;
+  longitude?: string | null;
 }
 
 interface HostMapViewProps {
@@ -94,7 +96,16 @@ export default function HostMapView({ hosts, selectedCity }: HostMapViewProps) {
     popupsRef.current = [];
 
     hosts.forEach(host => {
-      const coords = HOST_COORDINATES[host.id];
+      // Prefer DB coordinates, fall back to hardcoded lookup
+      let coords: [number, number] | undefined;
+      if (host.latitude && host.longitude) {
+        const lat = parseFloat(host.latitude);
+        const lng = parseFloat(host.longitude);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          coords = [lng, lat]; // MapLibre uses [lng, lat]
+        }
+      }
+      if (!coords) coords = HOST_COORDINATES[host.id];
       if (!coords) return;
 
       const effectivePrice = host.discountPercentage > 0
