@@ -5,7 +5,7 @@ import { getThumbnailUrl } from "@/lib/imageUtils";
 
 // District-level coordinates for each host (not exact addresses) — fallback only when DB has no lat/lng
 const HOST_COORDINATES: Record<number, [number, number]> = {
-  1:      [121.2195, 31.1661], // Norika & Steven — Songjiang
+  1:      [121.3950, 31.0350], // Norika & Steven — Qingpu (Jiasong Middle Rd area)
   90002:  [121.4350, 31.1893], // Grace — Xuhui (Xujiahui area)
   150001: [121.2654, 31.3756], // Jiading Ayi — Jiading district
   180001: [121.4267, 31.1953], // Chuan — Xuhui (Jiaotong Uni area)
