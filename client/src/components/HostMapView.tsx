@@ -3,18 +3,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { getThumbnailUrl } from "@/lib/imageUtils";
 
-// District-level coordinates for each host (not exact addresses) — fallback only when DB has no lat/lng
-const HOST_COORDINATES: Record<number, [number, number]> = {
-  1:      [121.3950, 31.0350], // Norika & Steven — Qingpu (Jiasong Middle Rd area)
-  90002:  [121.4350, 31.1893], // Grace — Xuhui (Xujiahui area)
-  150001: [121.2654, 31.3756], // Jiading Ayi — Jiading district
-  180001: [121.4267, 31.1953], // Chuan — Xuhui (Jiaotong Uni area)
-  210001: [121.5520, 31.2280], // Echo — Pudong (Yushan Rd area)
-  240001: [121.3900, 31.2400], // Sookie — Putuo district-level
-  330001: [114.0579, 22.5431], // Filbert — Longhua, Shenzhen district-level
-  360001: [121.3680, 31.2050], // Eating (Yiting) — Gubei, Changning district-level
-  390001: [104.0665, 30.5723], // Dragon — Wuhou, Chengdu district-level
-};
+// No hardcoded coordinates — DB latitude/longitude is the single source of truth
 
 // City view configs — Shanghai defaults to zoom 10.2 centered on metro area
 const CITY_VIEWS: Record<string, { center: [number, number]; zoom: number }> = {
@@ -96,17 +85,12 @@ export default function HostMapView({ hosts, selectedCity }: HostMapViewProps) {
     popupsRef.current = [];
 
     hosts.forEach(host => {
-      // Prefer DB coordinates, fall back to hardcoded lookup
-      let coords: [number, number] | undefined;
-      if (host.latitude && host.longitude) {
-        const lat = parseFloat(host.latitude);
-        const lng = parseFloat(host.longitude);
-        if (!isNaN(lat) && !isNaN(lng)) {
-          coords = [lng, lat]; // MapLibre uses [lng, lat]
-        }
-      }
-      if (!coords) coords = HOST_COORDINATES[host.id];
-      if (!coords) return;
+      // Use DB coordinates — latitude/longitude are the single source of truth
+      if (!host.latitude || !host.longitude) return;
+      const lat = parseFloat(host.latitude);
+      const lng = parseFloat(host.longitude);
+      if (isNaN(lat) || isNaN(lng)) return;
+      const coords: [number, number] = [lng, lat]; // MapLibre uses [lng, lat]
 
       const effectivePrice = host.discountPercentage > 0
         ? Math.round(host.pricePerPerson * (1 - host.discountPercentage / 100))
