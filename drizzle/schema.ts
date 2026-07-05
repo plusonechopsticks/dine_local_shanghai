@@ -539,3 +539,26 @@ export const reviewTokens = mysqlTable("review_tokens", {
 });
 export type ReviewToken = typeof reviewTokens.$inferSelect;
 export type InsertReviewToken = typeof reviewTokens.$inferInsert;
+
+/**
+ * Guest survey responses - collected post-payment or via email link
+ */
+export const surveyResponses = mysqlTable("survey_responses", {
+  id: int("id").autoincrement().primaryKey(),
+
+  // One response per booking
+  bookingId: int("bookingId").notNull().unique().references(() => bookings.id, { onDelete: "cascade" }),
+  guestEmail: varchar("guestEmail", { length: 320 }),
+
+  // Answers (all optional - guest may skip partway)
+  countries: json("countries").$type<string[]>(),
+  ageGroups: json("ageGroups").$type<string[]>(),
+  firstTimeChina: mysqlEnum("firstTimeChina", ["all_first_time", "some_first_time", "all_been_before", "live_in_china"]),
+  channel: mysqlEnum("channel", ["instagram", "reddit", "google", "ota", "friend", "press", "other"]),
+
+  source: mysqlEnum("source", ["post_payment", "email"]).default("post_payment").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SurveyResponse = typeof surveyResponses.$inferSelect;
+export type InsertSurveyResponse = typeof surveyResponses.$inferInsert;

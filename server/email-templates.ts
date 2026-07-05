@@ -1,6 +1,7 @@
 interface BookingConfirmationData {
   guestName: string;
   bookingId: number;
+  guestEmail?: string;
   hostName: string;
   requestedDate: string;
   mealType: string;
@@ -158,6 +159,16 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
                   To cancel your booking, please contact <strong>plusonechopsticks@gmail.com</strong> with your cancellation reason and we will process it right away.
                 </p>
               </div>
+            </td>
+          </tr>
+
+          <!-- Survey P.S. -->
+          <tr>
+            <td style="padding: 0 40px 24px 40px; text-align: center;">
+              <p style="margin-top:0; color: #6b7280; font-size: 14px;">
+                P.S. Help us make your experience even better &mdash;
+                <a href="https://plus1chopsticks.com/survey?bookingId=${data.bookingId}&email=${encodeURIComponent(data.guestEmail ?? '')}" style="color:#C9A84C;font-weight:600;">answer 4 quick questions</a> (takes 20 seconds).
+              </p>
             </td>
           </tr>
 

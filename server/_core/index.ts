@@ -137,6 +137,7 @@ async function startServer(): Promise<any> {
                   const emailHtml = generateBookingConfirmationEmail({
                     guestName: bookingWithHost.guestName,
                     bookingId: bookingWithHost.id,
+                    guestEmail: bookingWithHost.guestEmail,
                     hostName: bookingWithHost.hostListing.hostName,
                     requestedDate: bookingWithHost.requestedDate.toISOString(),
                     mealType: bookingWithHost.mealType,

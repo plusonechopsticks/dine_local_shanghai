@@ -903,6 +903,23 @@ export const appRouter = router({
   }),
   
   payment: router({
+    /** Look up a booking by its Stripe session ID — used on the success page */
+    getBookingBySessionId: publicProcedure
+      .input(z.object({ sessionId: z.string() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return null;
+        const { bookings } = await import("../drizzle/schema");
+        const rows = await db.select({
+          bookingId: bookings.id,
+          guestEmail: bookings.guestEmail,
+          numberOfGuests: bookings.numberOfGuests,
+        }).from(bookings)
+          .where(eq(bookings.stripeSessionId, input.sessionId))
+          .limit(1);
+        return rows[0] ?? null;
+      }),
+
     createCheckoutSession: publicProcedure
       .input(z.object({
         bookingId: z.number(),
@@ -1787,6 +1804,59 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getPublishedReviews(input.hostListingId);
       }),
+  }),
+
+  // ─── Guest Survey ─────────────────────────────────────────────────────────
+  survey: router({
+    /** Submit survey answers (idempotent — duplicate bookingId is silently ignored) */
+    submit: publicProcedure
+      .input(z.object({
+        bookingId: z.number(),
+        guestEmail: z.string().email().optional(),
+        countries: z.array(z.string().max(100)).optional(),
+        ageGroups: z.array(z.enum(["under-18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"])).optional(),
+        firstTimeChina: z.enum(["all_first_time", "some_first_time", "all_been_before", "live_in_china"]).optional(),
+        channel: z.enum(["instagram", "reddit", "google", "ota", "friend", "press", "other"]).optional(),
+        source: z.enum(["post_payment", "email"]).default("post_payment"),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database connection failed");
+        const { surveyResponses } = await import("../drizzle/schema");
+        const existing = await db.select().from(surveyResponses)
+          .where(eq(surveyResponses.bookingId, input.bookingId)).limit(1);
+        if (existing.length > 0) return { success: true, alreadySubmitted: true };
+        await db.insert(surveyResponses).values({
+          bookingId: input.bookingId,
+          guestEmail: input.guestEmail ?? null,
+          countries: input.countries ?? null,
+          ageGroups: input.ageGroups ?? null,
+          firstTimeChina: input.firstTimeChina ?? null,
+          channel: input.channel ?? null,
+          source: input.source,
+        });
+        return { success: true, alreadySubmitted: false };
+      }),
+
+    /** Check if a booking already has a survey response */
+    hasResponded: publicProcedure
+      .input(z.object({ bookingId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { responded: false };
+        const { surveyResponses } = await import("../drizzle/schema");
+        const rows = await db.select().from(surveyResponses)
+          .where(eq(surveyResponses.bookingId, input.bookingId)).limit(1);
+        return { responded: rows.length > 0 };
+      }),
+
+    /** Admin: list all survey responses */
+    listAll: publicProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      const { surveyResponses } = await import("../drizzle/schema");
+      return await db.select().from(surveyResponses).orderBy(sql`${surveyResponses.createdAt} DESC`);
+    }),
   }),
 });
 export type AppRouter = typeof appRouter;
