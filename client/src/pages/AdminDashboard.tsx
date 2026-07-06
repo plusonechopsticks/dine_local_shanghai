@@ -176,6 +176,75 @@ function AdminNotesEditor({ hostId, initialNotes }: { hostId: number; initialNot
   );
 }
 
+// ─── Survey Responses Tab ───────────────────────────────────────────────────
+const FIRST_TIME_LABELS: Record<string, string> = {
+  all_first_time: "First time for everyone",
+  some_first_time: "Some first-timers",
+  all_been_before: "All been before",
+  live_in_china: "Live in China",
+};
+
+function SurveyResponsesTab() {
+  const { data: responses = [], isLoading } = trpc.survey.listAll.useQuery();
+
+  if (isLoading) return <div className="py-8 text-center text-muted-foreground">Loading survey responses...</div>;
+  if (responses.length === 0) return (
+    <Card><CardContent className="py-10 text-center text-muted-foreground">No survey responses yet.</CardContent></Card>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Survey Responses ({responses.length})</h3>
+      </div>
+      <div className="overflow-x-auto rounded-lg border">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/50">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Booking</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Guest Email</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Countries</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Age Groups</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">First Time China</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Channel</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Source</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Date</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {responses.map((r) => (
+              <tr key={r.id} className="hover:bg-muted/30 transition-colors">
+                <td className="px-4 py-3 font-mono text-xs">#{r.bookingId}</td>
+                <td className="px-4 py-3 text-xs">{r.guestEmail ?? <span className="text-muted-foreground">—</span>}</td>
+                <td className="px-4 py-3">
+                  {r.countries && r.countries.length > 0
+                    ? <div className="flex flex-wrap gap-1">{r.countries.map((c: string) => <span key={c} className="inline-block px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs">{c}</span>)}</div>
+                    : <span className="text-muted-foreground text-xs">—</span>}
+                </td>
+                <td className="px-4 py-3">
+                  {r.ageGroups && r.ageGroups.length > 0
+                    ? <div className="flex flex-wrap gap-1">{r.ageGroups.map((a: string) => <span key={a} className="inline-block px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 text-xs">{a}</span>)}</div>
+                    : <span className="text-muted-foreground text-xs">—</span>}
+                </td>
+                <td className="px-4 py-3 text-xs">{r.firstTimeChina ? (FIRST_TIME_LABELS[r.firstTimeChina] ?? r.firstTimeChina) : <span className="text-muted-foreground">—</span>}</td>
+                <td className="px-4 py-3 text-xs">{r.channel ?? <span className="text-muted-foreground">—</span>}</td>
+                <td className="px-4 py-3">
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs ${
+                    r.source === "post_payment" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"
+                  }`}>{r.source === "post_payment" ? "Post-payment" : "Email link"}</span>
+                </td>
+                <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                  {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // MySQL tinyint(1) can be returned as string "0" or "1", number 0/1, or boolean.
 // This helper normalizes all forms to a proper boolean.
 function isHidden(val: unknown): boolean {
@@ -383,6 +452,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="livechat">Live Chat</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="influencer">Influencer Pages</TabsTrigger>
+          <TabsTrigger value="surveys">Survey Responses</TabsTrigger>
         </TabsList>
 
         <TabsContent value="applications" className="space-y-4">
@@ -1134,6 +1204,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="influencer" className="space-y-4">
           <InfluencerPagesTab />
+        </TabsContent>
+
+        <TabsContent value="surveys" className="space-y-4">
+          <SurveyResponsesTab />
         </TabsContent>
       </Tabs>
     </div>

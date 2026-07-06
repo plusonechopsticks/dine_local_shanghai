@@ -730,3 +730,133 @@ export function generateHostInterestOutreachEmail(data: { name: string }): strin
 </html>
   `.trim();
 }
+
+
+// ─── Survey notification email ───────────────────────────────────────────────
+
+interface SurveyNotificationData {
+  bookingId: number;
+  guestName: string;
+  guestEmail?: string | null;
+  hostName: string;
+  requestedDate: string;
+  mealType: string;
+  numberOfGuests: number;
+  countries?: string[] | null;
+  ageGroups?: string[] | null;
+  firstTimeChina?: string | null;
+}
+
+const FIRST_TIME_LABELS: Record<string, string> = {
+  all_first_time: "Yes — first time for everyone",
+  some_first_time: "Some of us are first-timers",
+  all_been_before: "No — we've all been before",
+  live_in_china: "We live in China",
+};
+
+export function generateSurveyNotificationEmail(data: SurveyNotificationData): string {
+  const formattedDate = new Date(data.requestedDate).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "Asia/Shanghai",
+  });
+
+  const countriesText = data.countries && data.countries.length > 0
+    ? data.countries.join(", ")
+    : "—";
+
+  const ageGroupsText = data.ageGroups && data.ageGroups.length > 0
+    ? data.ageGroups.join(", ")
+    : "—";
+
+  const firstTimeChinaText = data.firstTimeChina
+    ? (FIRST_TIME_LABELS[data.firstTimeChina] ?? data.firstTimeChina)
+    : "—";
+
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 560px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #3a7d44; padding: 32px 40px; text-align: center;">
+              <p style="margin: 0 0 8px 0; font-size: 32px;">📋</p>
+              <h1 style="margin: 0 0 6px 0; color: #ffffff; font-size: 22px; font-weight: 700;">Guest Survey Completed</h1>
+              <p style="margin: 0; color: rgba(255,255,255,0.8); font-size: 14px;">
+                Booking #${data.bookingId} · ${formattedDate} ${data.mealType.charAt(0).toUpperCase() + data.mealType.slice(1)}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Guest info -->
+          <tr>
+            <td style="padding: 28px 40px 0 40px;">
+              <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Guest</p>
+              <p style="margin: 0; color: #111827; font-size: 16px; font-weight: 600;">${data.guestName}${data.guestEmail ? ` &lt;${data.guestEmail}&gt;` : ""}</p>
+              <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">${data.numberOfGuests} guest${data.numberOfGuests > 1 ? "s" : ""} · Dining with ${data.hostName}</p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr><td style="padding: 20px 40px 0 40px;"><hr style="border: none; border-top: 1px solid #e5e7eb; margin: 0;"></td></tr>
+
+          <!-- Survey answers -->
+          <tr>
+            <td style="padding: 24px 40px 0 40px;">
+              <p style="margin: 0 0 16px 0; color: #111827; font-size: 15px; font-weight: 700;">Survey Answers</p>
+
+              <!-- Q1 -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+                <tr>
+                  <td style="padding: 12px 16px; background-color: #f9fafb; border-radius: 8px;">
+                    <p style="margin: 0 0 4px 0; color: #C9A84C; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">Where is your group from?</p>
+                    <p style="margin: 0; color: #111827; font-size: 14px;">${countriesText}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Q2 -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+                <tr>
+                  <td style="padding: 12px 16px; background-color: #f9fafb; border-radius: 8px;">
+                    <p style="margin: 0 0 4px 0; color: #C9A84C; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">Age groups in the party</p>
+                    <p style="margin: 0; color: #111827; font-size: 14px;">${ageGroupsText}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Q3 -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 12px 16px; background-color: #f9fafb; border-radius: 8px;">
+                    <p style="margin: 0 0 4px 0; color: #C9A84C; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">First time in China?</p>
+                    <p style="margin: 0; color: #111827; font-size: 14px;">${firstTimeChinaText}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 20px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">© 2026 +1 Chopsticks | Authentic Chinese Home Dining Experience</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}

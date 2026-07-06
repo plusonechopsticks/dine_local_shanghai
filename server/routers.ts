@@ -1837,6 +1837,49 @@ export const appRouter = router({
           channel: input.channel ?? null,
           source: input.source,
         });
+
+        // Send notification emails (host + BCC owner) — fire and forget
+        try {
+          const { bookings, hostListings } = await import("../drizzle/schema");
+          const rows = await db.select({
+            guestName: bookings.guestName,
+            guestEmail: bookings.guestEmail,
+            requestedDate: bookings.requestedDate,
+            mealType: bookings.mealType,
+            numberOfGuests: bookings.numberOfGuests,
+            hostName: hostListings.hostName,
+            hostEmail: hostListings.email,
+          }).from(bookings)
+            .leftJoin(hostListings, eq(bookings.hostListingId, hostListings.id))
+            .where(eq(bookings.id, input.bookingId))
+            .limit(1);
+
+          const row = rows[0];
+          if (row && row.hostEmail) {
+            const { generateSurveyNotificationEmail } = await import("../email-templates");
+            const html = generateSurveyNotificationEmail({
+              bookingId: input.bookingId,
+              guestName: row.guestName,
+              guestEmail: input.guestEmail ?? row.guestEmail,
+              hostName: row.hostName ?? "your host",
+              requestedDate: row.requestedDate.toISOString(),
+              mealType: row.mealType,
+              numberOfGuests: row.numberOfGuests,
+              countries: input.countries ?? null,
+              ageGroups: input.ageGroups ?? null,
+              firstTimeChina: input.firstTimeChina ?? null,
+            });
+            const subject = `📋 Guest survey: ${row.guestName} · Booking #${input.bookingId}`;
+            await sendEmail({
+              to: row.hostEmail,
+              subject,
+              html,
+            });
+          }
+        } catch (err) {
+          console.error("[Survey] Failed to send notification email:", err);
+        }
+
         return { success: true, alreadySubmitted: false };
       }),
 
