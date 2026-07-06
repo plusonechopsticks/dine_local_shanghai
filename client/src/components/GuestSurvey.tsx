@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { X, ChevronRight, Check } from "lucide-react";
+import { X } from "lucide-react";
 
 interface GuestSurveyProps {
   bookingId: number;
   guestEmail?: string;
   numberOfGuests?: number;
+  hostName?: string;
   source: "post_payment" | "email";
   onComplete: () => void;
 }
@@ -38,17 +38,27 @@ const CHANNEL_OPTIONS = [
   { value: "other", label: "✨ Other" },
 ] as const;
 
+const QUICK_COUNTRIES: { flag: string; name: string }[] = [
+  { flag: "🇺🇸", name: "USA" },
+  { flag: "🇬🇧", name: "UK" },
+  { flag: "🇦🇺", name: "Australia" },
+  { flag: "🇸🇬", name: "Singapore" },
+  { flag: "🇨🇦", name: "Canada" },
+  { flag: "🇩🇪", name: "Germany" },
+  { flag: "🇫🇷", name: "France" },
+  { flag: "🇮🇳", name: "India" },
+];
+
 type AgeGroup = "under-18" | "18-24" | "25-34" | "35-44" | "45-54" | "55-64" | "65+";
 type FirstTimeChina = "all_first_time" | "some_first_time" | "all_been_before" | "live_in_china";
 type Channel = "instagram" | "reddit" | "google" | "ota" | "friend" | "press" | "other";
 
 const TOTAL_QUESTIONS = 4;
 
-export function GuestSurvey({ bookingId, guestEmail, numberOfGuests, source, onComplete }: GuestSurveyProps) {
-  const [step, setStep] = useState(0); // 0-3 = questions, 4 = thank you
+export function GuestSurvey({ bookingId, guestEmail, numberOfGuests, hostName, source, onComplete }: GuestSurveyProps) {
+  const [step, setStep] = useState(0); // 0–3 = questions, 4 = thank you
   const [submitted, setSubmitted] = useState(false);
 
-  // Answers
   const [countries, setCountries] = useState<string[]>([]);
   const [countryInput, setCountryInput] = useState("");
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>([]);
@@ -56,7 +66,6 @@ export function GuestSurvey({ bookingId, guestEmail, numberOfGuests, source, onC
   const [channel, setChannel] = useState<Channel | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
   const submitMutation = trpc.survey.submit.useMutation();
 
   const canProceed = () => {
@@ -80,29 +89,20 @@ export function GuestSurvey({ bookingId, guestEmail, numberOfGuests, source, onC
         channel: !skipRemaining ? (channel ?? undefined) : undefined,
         source,
       });
-    } catch (e) {
-      // silently ignore errors — survey is optional
+    } catch {
+      // survey is optional — silently ignore errors
     }
     setStep(4);
   };
 
-  const handleSkip = async () => {
-    await handleSubmit(true);
-  };
-
   const handleNext = async () => {
-    if (step === 3) {
-      await handleSubmit(false);
-    } else {
-      setStep(s => s + 1);
-    }
+    if (step === 3) await handleSubmit(false);
+    else setStep(s => s + 1);
   };
 
-  const addCountry = (val: string) => {
-    const trimmed = val.trim();
-    if (trimmed && !countries.includes(trimmed)) {
-      setCountries(c => [...c, trimmed]);
-    }
+  const addCountry = (name: string) => {
+    const trimmed = name.trim();
+    if (trimmed && !countries.includes(trimmed)) setCountries(c => [...c, trimmed]);
     setCountryInput("");
   };
 
@@ -110,215 +110,221 @@ export function GuestSurvey({ bookingId, guestEmail, numberOfGuests, source, onC
   const toggleAgeGroup = (g: AgeGroup) =>
     setAgeGroups(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]);
 
-  // Popular country quick-picks
-  const QUICK_COUNTRIES = ["USA", "UK", "Australia", "Canada", "Germany", "France", "Singapore", "Japan"];
-
-  // Progress dots
+  // ── Progress dots ──────────────────────────────────────────────────────────
   const ProgressDots = () => (
-    <div className="flex items-center justify-center gap-2 mb-6">
+    <div className="flex items-center justify-center gap-2 my-5">
       {Array.from({ length: TOTAL_QUESTIONS }).map((_, i) => (
         <div
           key={i}
           className={`rounded-full transition-all duration-300 ${
-            i === step ? "w-6 h-2.5 bg-[#8B3A3A]" :
-            i < step ? "w-2.5 h-2.5 bg-[#8B3A3A] opacity-60" :
-            "w-2.5 h-2.5 bg-gray-200"
+            i === step
+              ? "w-7 h-2.5 bg-gray-800"
+              : i < step
+              ? "w-2.5 h-2.5 bg-gray-400"
+              : "w-2.5 h-2.5 bg-gray-200"
           }`}
         />
       ))}
     </div>
   );
 
-  // Thank-you screen
+  // ── Thank-you screen ───────────────────────────────────────────────────────
   if (step === 4) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-          <Check className="w-8 h-8 text-green-600" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank you! 🙏</h2>
-        <p className="text-gray-500 mb-8 max-w-xs">
-          Your answers help us keep improving the experience for every guest.
+      <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+        <div className="text-5xl mb-4">🙏</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank you!</h2>
+        <p className="text-gray-500 mb-8 max-w-xs text-sm">
+          Your answers help your host and future guests have an even better experience.
         </p>
-        <Button
+        <button
           onClick={onComplete}
-          className="bg-[#8B3A3A] hover:bg-[#7a3232] text-white px-8"
+          className="bg-gray-900 hover:bg-gray-700 text-white px-8 py-3 rounded-full font-medium transition-colors"
         >
           View my booking
-        </Button>
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-lg mx-auto px-4 py-6">
-      {/* Header */}
-      <div className="text-center mb-2">
-        <p className="text-sm text-gray-400 font-medium tracking-wide uppercase">Quick survey</p>
-        <h2 className="text-xl font-bold text-gray-900 mt-1">
-          Help us improve
-          {numberOfGuests && numberOfGuests > 1 ? ` · ${numberOfGuests} guests` : ""}
-        </h2>
+    <div className="w-full">
+      {/* ── Green confirmation banner ── */}
+      <div className="bg-[#3a7d44] rounded-t-xl px-6 py-7 text-center text-white">
+        <div className="text-4xl mb-3">🎉</div>
+        <h2 className="text-2xl font-bold mb-1">Booking Confirmed!</h2>
+        <p className="text-sm text-white/80">
+          Your home dining experience{hostName ? ` with ${hostName}` : ""} is set
+          {numberOfGuests ? ` · ${numberOfGuests} guest${numberOfGuests > 1 ? "s" : ""}` : ""}
+        </p>
       </div>
 
-      <ProgressDots />
+      {/* ── Survey body ── */}
+      <div className="bg-white rounded-b-xl px-6 pb-8 pt-6">
+        {/* Intro line */}
+        <p className="text-gray-700 text-center text-[15px] leading-snug mb-1">
+          While you're here —{" "}
+          <strong>4 quick questions about your group</strong>{" "}
+          to help your host prepare 🥢
+        </p>
 
-      {/* Q1: Countries */}
-      {step === 0 && (
-        <div>
-          <p className="text-base font-semibold text-gray-800 mb-1 text-center">
-            Where is your group from?
-          </p>
-          <p className="text-sm text-gray-400 text-center mb-4">Add all countries represented</p>
+        <ProgressDots />
 
-          {/* Quick-pick chips */}
-          <div className="flex flex-wrap gap-2 mb-3 justify-center">
-            {QUICK_COUNTRIES.filter(c => !countries.includes(c)).map(c => (
-              <button
-                key={c}
-                onClick={() => setCountries(prev => [...prev, c])}
-                className="px-3 py-1.5 rounded-full border border-gray-200 text-sm text-gray-600 hover:border-[#8B3A3A] hover:text-[#8B3A3A] transition-colors"
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+        {/* Question label */}
+        <p className="text-center text-xs font-semibold tracking-widest uppercase text-[#C9A84C] mb-2">
+          Question {step + 1} of {TOTAL_QUESTIONS}
+        </p>
 
-          {/* Free-text input */}
-          <div className="flex gap-2 mb-3">
+        {/* ── Q1: Countries ── */}
+        {step === 0 && (
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-1">
+              Where is your group from?
+            </h3>
+            <p className="text-sm text-gray-400 text-center mb-4">Add every country in your group</p>
+
+            {/* Text input */}
             <input
               ref={inputRef}
               type="text"
               value={countryInput}
               onChange={e => setCountryInput(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addCountry(countryInput); } }}
-              placeholder="Type a country and press Enter…"
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#8B3A3A]"
+              placeholder="Type a country and press Enter..."
+              className="w-full border border-gray-200 bg-[#faf9f7] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gray-400 mb-4"
             />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => addCountry(countryInput)}
-              disabled={!countryInput.trim()}
-              className="shrink-0"
-            >
-              Add
-            </Button>
-          </div>
 
-          {/* Selected tags */}
-          {countries.length > 0 && (
+            {/* Selected tags */}
+            {countries.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {countries.map(c => (
+                  <span
+                    key={c}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-900 text-white text-sm"
+                  >
+                    {c}
+                    <button onClick={() => removeCountry(c)} className="hover:opacity-70">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Quick-pick chips with flags */}
             <div className="flex flex-wrap gap-2">
-              {countries.map(c => (
-                <span
-                  key={c}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#8B3A3A] text-white text-sm"
+              {QUICK_COUNTRIES.filter(c => !countries.includes(c.name)).map(({ flag, name }) => (
+                <button
+                  key={name}
+                  onClick={() => setCountries(prev => [...prev, name])}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-700 hover:border-gray-400 transition-colors bg-white"
                 >
-                  {c}
-                  <button onClick={() => removeCountry(c)} className="hover:opacity-70">
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
+                  <span>{flag}</span>
+                  <span>{name}</span>
+                </button>
               ))}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
 
-      {/* Q2: Age groups */}
-      {step === 1 && (
-        <div>
-          <p className="text-base font-semibold text-gray-800 mb-1 text-center">
-            What age groups are in your party?
-          </p>
-          <p className="text-sm text-gray-400 text-center mb-4">Select all that apply</p>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {AGE_GROUPS.map(({ value, label }) => {
-              const selected = ageGroups.includes(value);
-              return (
+        {/* ── Q2: Age groups ── */}
+        {step === 1 && (
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-1">
+              What age groups are in your party?
+            </h3>
+            <p className="text-sm text-gray-400 text-center mb-5">Select all that apply</p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {AGE_GROUPS.map(({ value, label }) => {
+                const selected = ageGroups.includes(value);
+                return (
+                  <button
+                    key={value}
+                    onClick={() => toggleAgeGroup(value)}
+                    className={`py-3 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                      selected
+                        ? "border-gray-900 bg-gray-900 text-white"
+                        : "border-gray-200 text-gray-700 hover:border-gray-400 bg-white"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Q3: First time in China ── */}
+        {step === 2 && (
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-1">
+              Is this your first time in China?
+            </h3>
+            <p className="text-sm text-gray-400 text-center mb-5">For your whole group</p>
+            <div className="flex flex-col gap-2">
+              {FIRST_TIME_OPTIONS.map(({ value, label }) => (
                 <button
                   key={value}
-                  onClick={() => toggleAgeGroup(value)}
-                  className={`py-3 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
-                    selected
-                      ? "border-[#8B3A3A] bg-[#8B3A3A] text-white"
-                      : "border-gray-200 text-gray-700 hover:border-[#8B3A3A]"
+                  onClick={() => setFirstTimeChina(value)}
+                  className={`py-3 px-5 rounded-xl border-2 text-sm font-medium text-left transition-all ${
+                    firstTimeChina === value
+                      ? "border-gray-900 bg-gray-900 text-white"
+                      : "border-gray-200 text-gray-700 hover:border-gray-400 bg-white"
                   }`}
                 >
                   {label}
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Q3: First time in China */}
-      {step === 2 && (
-        <div>
-          <p className="text-base font-semibold text-gray-800 mb-1 text-center">
-            Is this your first time in China?
-          </p>
-          <p className="text-sm text-gray-400 text-center mb-4">For your whole group</p>
-          <div className="flex flex-col gap-2">
-            {FIRST_TIME_OPTIONS.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setFirstTimeChina(value)}
-                className={`py-3 px-5 rounded-xl border-2 text-sm font-medium text-left transition-all ${
-                  firstTimeChina === value
-                    ? "border-[#8B3A3A] bg-[#8B3A3A] text-white"
-                    : "border-gray-200 text-gray-700 hover:border-[#8B3A3A]"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+        {/* ── Q4: How did you find us ── */}
+        {step === 3 && (
+          <div>
+            <h3 className="text-2xl font-bold text-gray-900 text-center mb-1">
+              How did you find +1 Chopsticks?
+            </h3>
+            <p className="text-sm text-gray-400 text-center mb-5">Pick the best one</p>
+            <div className="flex flex-col gap-2">
+              {CHANNEL_OPTIONS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setChannel(value)}
+                  className={`py-3 px-5 rounded-xl border-2 text-sm font-medium text-left transition-all ${
+                    channel === value
+                      ? "border-gray-900 bg-gray-900 text-white"
+                      : "border-gray-200 text-gray-700 hover:border-gray-400 bg-white"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Q4: How did you find us */}
-      {step === 3 && (
-        <div>
-          <p className="text-base font-semibold text-gray-800 mb-1 text-center">
-            How did you find +1 Chopsticks?
-          </p>
-          <p className="text-sm text-gray-400 text-center mb-4">Pick the best one</p>
-          <div className="flex flex-col gap-2">
-            {CHANNEL_OPTIONS.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setChannel(value)}
-                className={`py-3 px-5 rounded-xl border-2 text-sm font-medium text-left transition-all ${
-                  channel === value
-                    ? "border-[#8B3A3A] bg-[#8B3A3A] text-white"
-                    : "border-gray-200 text-gray-700 hover:border-[#8B3A3A]"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+        {/* ── Navigation ── */}
+        <div className="flex items-center justify-between mt-8">
+          <button
+            onClick={() => handleSubmit(true)}
+            className="text-sm text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors"
+          >
+            Skip for now
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={!canProceed() || submitMutation.isPending}
+            className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
+              canProceed()
+                ? "bg-gray-900 text-white hover:bg-gray-700"
+                : "bg-[#e8e0d0] text-[#b8a898] cursor-not-allowed"
+            }`}
+          >
+            {step === 3 ? "Finish" : "Next →"}
+          </button>
         </div>
-      )}
-
-      {/* Navigation */}
-      <div className="flex items-center justify-between mt-8">
-        <button
-          onClick={handleSkip}
-          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          Skip for now
-        </button>
-        <Button
-          onClick={handleNext}
-          disabled={!canProceed() || submitMutation.isPending}
-          className="bg-[#8B3A3A] hover:bg-[#7a3232] text-white px-6 gap-2"
-        >
-          {step === 3 ? "Finish" : "Next"}
-          {step < 3 && <ChevronRight className="w-4 h-4" />}
-        </Button>
       </div>
     </div>
   );

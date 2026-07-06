@@ -32,6 +32,7 @@ export default function BookingSuccess() {
   const bookingId = bookingData?.bookingId;
   const guestEmail = bookingData?.guestEmail;
   const numberOfGuests = bookingData?.numberOfGuests;
+  const hostName = bookingData?.hostName;
 
   // Check if survey already answered (e.g. page refresh)
   const { data: hasResponded } = trpc.survey.hasResponded.useQuery(
@@ -61,17 +62,16 @@ export default function BookingSuccess() {
       <main className="container py-12">
         <div className="max-w-lg mx-auto">
           {showSurvey ? (
-            <Card>
-              <CardContent className="pt-6">
-                <GuestSurvey
-                  bookingId={bookingId}
-                  guestEmail={guestEmail ?? undefined}
-                  numberOfGuests={numberOfGuests ?? undefined}
-                  source="post_payment"
-                  onComplete={() => setSurveyDone(true)}
-                />
-              </CardContent>
-            </Card>
+            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100">
+              <GuestSurvey
+                bookingId={bookingId}
+                guestEmail={guestEmail ?? undefined}
+                numberOfGuests={numberOfGuests ?? undefined}
+                hostName={hostName ?? undefined}
+                source="post_payment"
+                onComplete={() => setSurveyDone(true)}
+              />
+            </div>
           ) : (
             <Card>
               <CardContent className="pt-6 text-center space-y-6">

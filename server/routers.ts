@@ -909,12 +909,14 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const db = await getDb();
         if (!db) return null;
-        const { bookings } = await import("../drizzle/schema");
+        const { bookings, hostListings } = await import("../drizzle/schema");
         const rows = await db.select({
           bookingId: bookings.id,
           guestEmail: bookings.guestEmail,
           numberOfGuests: bookings.numberOfGuests,
+          hostName: hostListings.hostName,
         }).from(bookings)
+          .leftJoin(hostListings, eq(bookings.hostListingId, hostListings.id))
           .where(eq(bookings.stripeSessionId, input.sessionId))
           .limit(1);
         return rows[0] ?? null;
