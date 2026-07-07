@@ -930,7 +930,7 @@ export default function Home() {
               <div className="border-l-4 border-red-600 pl-6">
                 <h3 className="text-3xl font-bold text-gray-900 mb-4">Hi, I'm Steven</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  I'm the founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have studied in the US, married my beautiful wife from Tianjin, and lived and worked in China for more than 15 years. As an expert in cultural travel experiences and authentic dining, I'm passionate about creating genuine connections between travelers and local communities through home-cooked meals.
+                  I'm the founder and CEO of +1 Chopsticks. Born and raised in Hong Kong, I have studied in the US, married my beautiful wife from Tianjin, and lived and worked in mainland China for more than 15 years. As an expert in cultural travel experiences and authentic dining, I'm passionate about creating genuine connections between travelers and local communities through home-cooked meals.
                 </p>
               </div>
 
