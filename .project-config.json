@@ -12,10 +12,10 @@
   "experiments": null,
   "git_remote": {
     "repo_url": "s3://vida-prod-gitrepo/webdev-git/310519663228681359/mkW6ExSEHJcqGWsa6M4fqn",
-    "access_key_id": "ASIAZV3A2ECZLGAVNXW2",
-    "secret_access_key": "1uKGQSbkdILM024p0ssBZqcO5sSvhg5SAsY5WbLf",
-    "session_token": "IQoJb3JpZ2luX2VjEIf//////////wEaCXVzLWVhc3QtMSJIMEYCIQC6zDz/xjHFrbU5XblF9wbxtU59cgFcmi3+7MYf5qz+UAIhAIi8XPF+uq9ui8ziz8hT/bTOncJKSjwDBearQ6VrQjoBKvYDCFAQBBoMNjY1Mzg2MDk4ODY2Igy4uXz5upY5mXioHasq0wNZPBmVEAfPuaWPP4frxouOCaBDkCDeHvvud1Y5BHD69hdj7/ZueHharzs+bEEGlMsQeEic2cG8rT6TetQvDA5duvuHfpJ23nMcNlK2l30gq/iGI+wxiIyjxmFTeonu2ANfNVAfDgIGkh8uHEQ2hhET1ZTWzvHRecQgZDz0hYwr8Kos44+sRNPe11e1nEnEVVzTU56zJ3/kEwON11qHxt9I4UDIHp2t1e6sSv3Pv9R0xgF6mcZuGOWPqTrLUljBf/6f7Kmv/PzabZL2KNO+G/2T3CmUiQeyd3ccPzvt5C7mvVve1aP1uFLCkCia43XRRQ1bJTJUnZDCeomdCROgAqtsmeqfd7+FYs7zn3t8ExlbLtKOKtyIs8XvS4xGiokey9ShmIOInyZuDGLS1MAVj+/R7BoIY7VvdZ0PxRZ9ilHjTZ7m5PXbOw3o0PP3sliT8DDuyXeFt7dWKCLSJv3FwGdtmuT3/ERFFQ26owThhQsPNGxWJ6zpNKE2uM4yd5X3lgIgoan3gknwfp97OtxpwJ+Upd6wEaOc2WBaRawvTyrn2H0LNrXuedyI3pT6l2OG7eOt68P4s0n+fXUn6BXmDFIy2yKlR6+bBE0gdnOAK/N9NlWytzC6g/XRBjqcAQ9yntqpyUoYIPwbbrDs2Qe+MkJyivKb/UZvR3/Bu2Y2PGr/6mwG2tXpzvNzMLTH8ulzzMGJAowUv14oXG8T2Wit2l4bjWLNiQncvM7vGN1tL860FvTBn6U6WIt90wkKalBuG5bQwinc61O/Sz3Z4T0cAbRu6okPHHUlfX+dapSuou1aCRXZeUlXnMnhJRLuyHwCw0AUOz2H1byxpw==",
-    "expiration": "2026-06-26T02:56:58.000Z",
+    "access_key_id": "ASIAZV3A2ECZDIIDQZYX",
+    "secret_access_key": "QQKZL5LkVRwrTQH9e6xboy5h67wAh7N4vMtAOriC",
+    "session_token": "IQoJb3JpZ2luX2VjEPf//////////wEaCXVzLWVhc3QtMSJHMEUCIEYySUio/9C95crFEi3pA5HowZGjvup2+ZCeiyvdIi4dAiEAxXCYt9mxTjWRqe+x8sQ7evy/RlnnAwbTGSyftxqu9Ncq/wMIwP//////////ARAEGgw2NjUzODYwOTg4NjYiDKFciue+GaHe3EGwMCrTAy9Q7yGZADkiOVdkt0GkoTE6OmdrWQEL8Za2ivOibhahHWaaicTKgAdhpcRokji8p2YvOiLZonNIeNFly7if5/TQ5SVulDnLDKKNDm9njxhIvSmO6+SIt4sY9RPt6JmzmATENWRv+m+0ew3j1OIIuwtcgFaV/4DkB667f3QgRWZHfiVW+lQvEmYcO3fEJZ4T5jnkz7RUmriR9lTC5aNSrulorO0cGlvZYKA1DTu9jcjrVIJ8JBW4zmKEB8jcpiaBlG4i0lbgKmO2DN3XBWmE02EwnocaoKhHe81I9XrT8Xg1jH0oGvnQG+egwm2EtK8vH2AF2CTr8AHZ0d0JdF5r0/9XBDwijmekRIeAICOUDgfdzB8Pt6cUHqPCntkqZWJO+ygNdoH/5ujw+q8ZfASNAi9gOxc6dCiZi1CzgWOZKg+yzMW1Z4uXPhjPBiJCAKWeC3lDuK8kpCcyIqmazmNsXCXk2iALHCOhkvwxwRLOJtGCXy/GU/deC+1okCGe99Z9w3AqSKIn7tq3CK8/Fvulq9BzsF3WR7Izh/LI6mvpYwU/zCruoCKO+pRio+69dREZ13MntShoIc9KPraLN55/UeiQ1+qy+yYdgqkEQNAn4TfdyfjRMOjxxdIGOp0B0ghb0600YzKfNNeJunYdL6Dkc/3Irh6FR4IrMN6J3LKgTMN4DzR6kHrdvutmhOUTfPzod5n+cCbYcpLYfBkPqaxfx6JBTA8OLVD6J8eO7VITIX8NRSSNL7uRSN3VruZzscw3f5FNzBgQYjZcUGLOgWV8WSO6izCDgh1Lo56wwGOWE7zXJcxOfm1cD40lGw8RBdxPrAE7NCsIrbmSUg==",
+    "expiration": "2026-07-11T10:57:44.000Z",
     "backend": "GIT_BACKEND_S3"
   },
   "name": "dine_local_shanghai",

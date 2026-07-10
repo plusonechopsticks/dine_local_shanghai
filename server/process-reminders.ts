@@ -1,6 +1,6 @@
 import { getDb } from "./db";
 import { bookings, hostListings } from "../drizzle/schema";
-import { eq, and, lte, isNull, or } from "drizzle-orm";
+import { eq, and, lte, isNull, or, sql } from "drizzle-orm";
 import { sendEmail } from "./email";
 import { generateGuestReminderEmail } from "./guest-reminder-email";
 import { generateHostReminderEmail } from "./host-reminder-email";
@@ -50,8 +50,8 @@ export async function processPendingReminders(): Promise<{
     .where(
       and(
         eq(bookings.paymentStatus, "paid"),
-        // reminderEmailSent is false or null
-        or(eq(bookings.reminderEmailSent, false), isNull(bookings.reminderEmailSent)),
+        // reminderEmailSent is false or null (use sql to avoid Drizzle boolean/tinyint mismatch)
+        sql`(${bookings.reminderEmailSent} = 0 OR ${bookings.reminderEmailSent} IS NULL)`,
         // requestedDate <= now + 48h (reminder window has arrived or passed)
         lte(bookings.requestedDate, cutoffTime)
       )
