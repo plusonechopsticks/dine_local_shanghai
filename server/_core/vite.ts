@@ -83,6 +83,15 @@ export function serveStatic(app: Express) {
     );
   }
 
+  // Block staging/manus.space domains from being indexed
+  app.use((req: any, res: any, next: any) => {
+    const host = req.headers.host || '';
+    if (host.includes('manus.space')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    next();
+  });
+
   app.use(express.static(distPath));
 
   // Inject blog-post-specific meta tags for /blog/:slug routes (production)
@@ -100,6 +109,9 @@ export function serveStatic(app: Express) {
         `<https://plus1chopsticks.com/blog/${slug}>; rel="canonical"`,
       ].join(", ")
     );
+    if ((req as any).headers.host?.includes('manus.space')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
     res.send(html);
   });
 
@@ -120,11 +132,14 @@ export function serveStatic(app: Express) {
         `<https://plus1chopsticks.com/hosts/${listingId}>; rel="canonical"`,
       ].join(", ")
     );
+    if ((req as any).headers.host?.includes('manus.space')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
     res.send(html);
   });
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
+  app.use("*", (req: any, res: any) => {
     res.setHeader(
       "Link",
       [
@@ -133,6 +148,9 @@ export function serveStatic(app: Express) {
         '<https://plus1chopsticks.com>; rel="canonical"',
       ].join(", ")
     );
+    if (req.headers.host?.includes('manus.space')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
