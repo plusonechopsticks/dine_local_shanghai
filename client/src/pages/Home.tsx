@@ -962,6 +962,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Factual About Section — SEO/crawler-visible */}
+      <section className="bg-gray-50 border-t border-gray-200 py-12">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="text-gray-600 text-base leading-relaxed">
+            +1 Chopsticks is Shanghai's first home dining marketplace, connecting international travelers with vetted local host families for authentic home-cooked meals. Founded in Shanghai in 2026, the platform now offers experiences across Shanghai, Shenzhen, and Chengdu, with prices from ¥280 per person. Unlike restaurants or food tours, every +1 Chopsticks experience takes place in a real family home — guests share the table, the stories, and the dishes of local Chinese families. Real connection is the new luxury.
+          </p>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-12">
         <div className="container mx-auto px-4">
