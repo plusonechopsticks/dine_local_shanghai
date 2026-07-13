@@ -1,34 +1,11 @@
 # robots.txt for +1 Chopsticks
-# Allow all search engines and AI crawlers
-
 User-agent: *
 Allow: /
-
-# Allow AI search engine bots
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: CCBot
-Allow: /
-
-User-agent: Apify
-Allow: /
-
-User-agent: Diffbot
-Allow: /
-
-# Disallow admin and private areas
-Disallow: /admin/
+Disallow: /admin
+Disallow: /host/
 Disallow: /api/
-Disallow: /private/
 
-# Block spam bots
+# Block known scraper bots
 User-agent: SemrushBot
 Disallow: /
 
@@ -38,10 +15,5 @@ Disallow: /
 User-agent: MojeekBot
 Disallow: /
 
-# Sitemap locations
-# Main XML sitemap with all pages
 Sitemap: https://plus1chopsticks.com/sitemap.xml
-
-# GEO-sitemap for location-based SEO
-# Includes Shanghai districts and specific coordinates for better local search visibility
 Sitemap: https://plus1chopsticks.com/geo-sitemap.xml
