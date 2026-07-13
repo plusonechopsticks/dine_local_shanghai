@@ -815,6 +815,26 @@ export default function HostDetail() {
               </div>
             </section>
 
+            {/* meetlocal@chengdu cross-link — shown only for Dragon's Chengdu listing */}
+            {hostId === 390001 && (
+              <section className="py-8 px-0">
+                <div className="rounded-2xl px-6 py-5" style={{ background: 'rgba(212,175,55,0.07)', border: '1px solid rgba(212,175,55,0.18)' }}>
+                  <p className="text-sm" style={{ color: 'rgba(255,255,255,0.75)', lineHeight: '1.65' }}>
+                    Spending more time in Chengdu? Our partner{' '}
+                    <a
+                      href="https://meetlocalchengdu.com/?utm_source=plus1chopsticks&utm_medium=host_page&utm_campaign=chengdu_partner"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: '#d4af37', textDecoration: 'underline' }}
+                    >
+                      meetlocal@chengdu
+                    </a>{' '}
+                    runs free walking tours and local experiences across the city — a great way to spend the afternoon before dinner with Dragon.
+                  </p>
+                </div>
+              </section>
+            )}
+
             {/* What Guests Say — reviews carousel, shown before booking widget */}
             <HostReviewsSection hostListingId={hostId!} />
 

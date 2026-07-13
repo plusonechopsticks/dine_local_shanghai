@@ -26,6 +26,7 @@ import EventDetail from "./pages/EventDetail";
 import Disclaimer from "./pages/Disclaimer";
 import ReviewPage from "./pages/ReviewPage";
 import SurveyPage from "./pages/Survey";
+import PartnerMeetlocalChengdu from "./pages/PartnerMeetlocalChengdu";
 
 
 function Router() {
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/disclaimer" component={Disclaimer} />
       <Route path="/review/:token" component={ReviewPage} />
       <Route path="/survey" component={SurveyPage} />
+      <Route path="/partners/meetlocal-chengdu" component={PartnerMeetlocalChengdu} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />    </Switch>
