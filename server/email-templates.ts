@@ -93,16 +93,7 @@ export function generateBookingConfirmationEmail(data: BookingConfirmationData):
                     <td style="color: #78716c; font-size: 14px; font-weight: 600;">Guests:</td>
                     <td style="color: #1f2937; font-size: 14px;">${data.numberOfGuests} ${data.numberOfGuests === 1 ? 'guest' : 'guests'}</td>
                   </tr>
-                  <tr>
-                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Total Paid:</td>
-                    <td style="color: #7c2d12; font-size: 16px; font-weight: 600;">¥${data.totalAmount}</td>
-                  </tr>
                 </table>
-
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #d6d3d1;">
-                  <p style="margin: 0; color: #78716c; font-size: 12px;">Payment Date: ${formattedPaymentDate}</p>
-                  <p style="margin: 4px 0 0 0; color: #78716c; font-size: 12px;">Transaction ID: ${data.stripeSessionId}</p>
-                </div>
               </div>
             </td>
           </tr>
@@ -509,14 +500,6 @@ export function generateHostNotificationEmail(data: HostNotificationData): strin
                   <tr>
                     <td style="color: #78716c; font-size: 14px; font-weight: 600;">Number of Guests:</td>
                     <td style="color: #1f2937; font-size: 14px;">${data.numberOfGuests} ${data.numberOfGuests === 1 ? 'person' : 'people'}</td>
-                  </tr>
-                  <tr>
-                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Total Amount Paid:</td>
-                    <td style="color: #7c2d12; font-size: 16px; font-weight: 600;">¥${data.totalAmount.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td style="color: #78716c; font-size: 14px; font-weight: 600;">Payment Status:</td>
-                    <td style="color: #16a34a; font-size: 14px; font-weight: 600;">✅ Confirmed</td>
                   </tr>
                 </table>
               </div>

@@ -1803,3 +1803,10 @@
 ## Host Portal — Welcome Email & Account Init (May 2026)
 - [x] Add welcome email (EN + ZH) to initializeHostAccount() in server/hostAuth.ts
 - [x] Initialize test host account: Steven & Norika (listingId=1, globe.stevento@gmail.com)
+
+## meetlocal@chengdu Partner Brief — July 2026
+- [x] Create /partners/meetlocal-chengdu page (PartnerMeetlocalChengdu.tsx) with content, FAQ, meta tags, canonical URL, and UTM-tagged links (no rel=nofollow)
+- [x] Add meetlocal@chengdu cross-link to Dragon's host page (ID 390001) — gold banner shown only for Dragon
+- [x] Add meetlocal@chengdu sentence to blog post planning-first-china-trip-itinerary-questions (ID 4) in Chengdu/multi-city section
+- [x] Add /partners/meetlocal-chengdu route to App.tsx
+- [x] Add /partners/meetlocal-chengdu and /hosts/390001 to sitemap.xml
