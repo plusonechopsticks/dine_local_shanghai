@@ -213,6 +213,9 @@ export default function BlogPost() {
                 Back to Blog
               </Button>
             </div>
+            <p className="text-center text-xs text-gray-400 mt-8">
+              Featured in City News Service (Shanghai Daily) · World of Chinese
+            </p>
           </footer>
         </div>
       </article>

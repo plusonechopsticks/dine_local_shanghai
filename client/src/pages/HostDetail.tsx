@@ -1281,6 +1281,10 @@ export default function HostDetail() {
           </div>
         </div>
       )}
+      {/* Trust line */}
+      <p className="text-center text-xs text-gray-400 py-6">
+        Featured in City News Service (Shanghai Daily) · World of Chinese
+      </p>
     </div>
   );
 }
