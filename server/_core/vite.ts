@@ -6,8 +6,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { fileURLToPath } from "url";
 import viteConfig from "../../vite.config";
-import { injectHostMeta } from "../host-meta";
-import { injectBlogMeta } from "../blog-meta";
+import { injectHostContent, injectBlogContent } from "../ssr-inject";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,16 +44,16 @@ export async function setupVite(app: Express, server: Server) {
       );
       let page = await vite.transformIndexHtml(url, template);
 
-      // Inject host-specific meta tags for /hosts/:id routes
+      // Inject host content (meta + body) for /hosts/:id routes
       const hostMatch = url.match(/^\/hosts\/(\d+)/);
       if (hostMatch) {
-        page = injectHostMeta(page, parseInt(hostMatch[1], 10));
+        page = await injectHostContent(page, parseInt(hostMatch[1], 10));
       }
 
-      // Inject blog-post-specific meta tags for /blog/:slug routes
+      // Inject blog content (meta + body) for /blog/:slug routes
       const blogMatch = url.match(/^\/blog\/([^/?#]+)/);
       if (blogMatch) {
-        page = injectBlogMeta(page, blogMatch[1]);
+        page = await injectBlogContent(page, blogMatch[1]);
       }
 
       res.status(200).set({
@@ -94,12 +93,12 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  // Inject blog-post-specific meta tags for /blog/:slug routes (production)
-  app.use("/blog/:slug", (req, res) => {
-    const slug = (req as any).params.slug as string;
+  // Inject blog content (meta + body) for /blog/:slug routes (production)
+  app.use("/blog/:slug", async (req: any, res: any) => {
+    const slug = req.params.slug as string;
     const indexPath = path.resolve(distPath, "index.html");
     let html = fs.readFileSync(indexPath, "utf-8");
-    html = injectBlogMeta(html, slug);
+    html = await injectBlogContent(html, slug);
     res.setHeader("Content-Type", "text/html");
     res.setHeader(
       "Link",
@@ -109,19 +108,19 @@ export function serveStatic(app: Express) {
         `<https://plus1chopsticks.com/blog/${slug}>; rel="canonical"`,
       ].join(", ")
     );
-    if ((req as any).headers.host?.includes('manus.space')) {
+    if (req.headers.host?.includes('manus.space')) {
       res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     }
     res.send(html);
   });
 
-  // Inject host-specific meta tags for /hosts/:id routes (production)
-  app.use("/hosts/:id", (req, res) => {
-    const listingId = parseInt((req as any).params.id, 10);
+  // Inject host content (meta + body) for /hosts/:id routes (production)
+  app.use("/hosts/:id", async (req: any, res: any) => {
+    const listingId = parseInt(req.params.id, 10);
     const indexPath = path.resolve(distPath, "index.html");
     let html = fs.readFileSync(indexPath, "utf-8");
     if (!isNaN(listingId)) {
-      html = injectHostMeta(html, listingId);
+      html = await injectHostContent(html, listingId);
     }
     res.setHeader("Content-Type", "text/html");
     res.setHeader(
@@ -132,7 +131,7 @@ export function serveStatic(app: Express) {
         `<https://plus1chopsticks.com/hosts/${listingId}>; rel="canonical"`,
       ].join(", ")
     );
-    if ((req as any).headers.host?.includes('manus.space')) {
+    if (req.headers.host?.includes('manus.space')) {
       res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     }
     res.send(html);

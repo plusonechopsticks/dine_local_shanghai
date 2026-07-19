@@ -1810,3 +1810,12 @@
 - [x] Add meetlocal@chengdu sentence to blog post planning-first-china-trip-itinerary-questions (ID 4) in Chengdu/multi-city section
 - [x] Add /partners/meetlocal-chengdu route to App.tsx
 - [x] Add /partners/meetlocal-chengdu and /hosts/390001 to sitemap.xml
+## AI Crawler Visibility — SSR Body Injection (July 2026)
+- [x] Add <!--SSR_BODY--> placeholder inside #root in client/index.html
+- [x] Create server/ssr-inject.ts with injectHostContent and injectBlogContent (async DB queries, meta + body)
+- [x] Update server/_core/vite.ts to use async injectHostContent/injectBlogContent for both dev and production
+- [x] Hardcoded meta overrides preserved in host-meta.ts and blog-meta.ts; DB used as fallback for new hosts
+- [x] Create /llms.txt at client/public/llms.txt (served as text/plain at site root)
+- [x] Verified: /hosts/150001 body contains h1 (host name), bio, cuisine, price, reviews
+- [x] Verified: /blog/:slug body contains article title, excerpt, full content
+- [x] Verified: /llms.txt returns correct content
