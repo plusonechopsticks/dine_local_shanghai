@@ -91,30 +91,8 @@ export function serveStatic(app: Express) {
     next();
   });
 
-  app.use(express.static(distPath));
-
-  // Inject blog content (meta + body) for /blog/:slug routes (production)
-  app.use("/blog/:slug", async (req: any, res: any) => {
-    const slug = req.params.slug as string;
-    const indexPath = path.resolve(distPath, "index.html");
-    let html = fs.readFileSync(indexPath, "utf-8");
-    html = await injectBlogContent(html, slug);
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader(
-      "Link",
-      [
-        '</.well-known/api-catalog>; rel="api-catalog"',
-        '</api/trpc>; rel="service-desc"',
-        `<https://plus1chopsticks.com/blog/${slug}>; rel="canonical"`,
-      ].join(", ")
-    );
-    if (req.headers.host?.includes('manus.space')) {
-      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    }
-    res.send(html);
-  });
-
   // Inject host content (meta + body) for /hosts/:id routes (production)
+  // MUST be registered BEFORE express.static so it intercepts before static file serving
   app.use("/hosts/:id", async (req: any, res: any) => {
     const listingId = parseInt(req.params.id, 10);
     const indexPath = path.resolve(distPath, "index.html");
@@ -136,6 +114,30 @@ export function serveStatic(app: Express) {
     }
     res.send(html);
   });
+
+  // Inject blog content (meta + body) for /blog/:slug routes (production)
+  // MUST be registered BEFORE express.static so it intercepts before static file serving
+  app.use("/blog/:slug", async (req: any, res: any) => {
+    const slug = req.params.slug as string;
+    const indexPath = path.resolve(distPath, "index.html");
+    let html = fs.readFileSync(indexPath, "utf-8");
+    html = await injectBlogContent(html, slug);
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader(
+      "Link",
+      [
+        '</.well-known/api-catalog>; rel="api-catalog"',
+        '</api/trpc>; rel="service-desc"',
+        `<https://plus1chopsticks.com/blog/${slug}>; rel="canonical"`,
+      ].join(", ")
+    );
+    if (req.headers.host?.includes('manus.space')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+    res.send(html);
+  });
+
+  app.use(express.static(distPath));
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (req: any, res: any) => {
